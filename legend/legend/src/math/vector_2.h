@@ -5,7 +5,7 @@
  * @file vector_2.h
  * @brief 二次元ベクトルクラス定義
  */
-namespace dx12_lib {
+namespace legend {
 namespace math {
 
 /**
@@ -129,5 +129,5 @@ inline Vector2 operator*(float k, const Vector2& v) { return Vector2(v) *= k; }
 inline Vector2 operator/(const Vector2& v, float k) { return Vector2(v) /= k; }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_MATH_VECTOR_2_H_

@@ -8,7 +8,7 @@
 
 #include "src/directx/directx12_device.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace buffer {
 /**
@@ -71,6 +71,6 @@ inline bool VertexBuffer::WriteBufferResource(const std::vector<T>& vertices) {
 
 }  // namespace buffer
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DIRECTX_BUFFER_VERTEX_BUFFER_H_

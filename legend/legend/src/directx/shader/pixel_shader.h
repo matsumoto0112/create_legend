@@ -8,7 +8,7 @@
 
 #include "src/directx/directx12_device.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace shader {
 class PixelShader {
@@ -27,6 +27,6 @@ class PixelShader {
 
 }  // namespace shader
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  //! LEGEND_DIRECTX_SHADER_PIXEL_SHADER_H_

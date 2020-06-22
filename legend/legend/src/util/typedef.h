@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace dx12_lib {
+namespace legend {
 
 using i8 = int_least8_t;
 using i16 = int_least16_t;
@@ -14,6 +14,6 @@ using u16 = uint_least16_t;
 using u32 = uint_least32_t;
 using u64 = uint_least64_t;
 
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_UTIL_TYPEDEF_H_

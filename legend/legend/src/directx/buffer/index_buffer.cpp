@@ -1,6 +1,6 @@
 #include "src/directx/buffer/index_buffer.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace buffer {
 IndexBuffer::IndexBuffer()
@@ -57,4 +57,4 @@ void IndexBuffer::Draw(DirectX12Device& device) {
 
 }  // namespace buffer
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

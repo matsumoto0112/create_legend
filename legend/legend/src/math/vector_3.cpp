@@ -2,7 +2,7 @@
 
 #include "src/math/math_util.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace math {
 //íËêî
 const Vector3 Vector3::kZeroVector = Vector3(0.0f, 0.0f, 0.0f);
@@ -81,4 +81,4 @@ Vector3 Vector3::Cross(const Vector3& v, const Vector3& w) {
 }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend

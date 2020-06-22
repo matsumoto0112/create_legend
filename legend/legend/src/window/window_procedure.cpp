@@ -1,6 +1,6 @@
 #include "src/window/window_procedure.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace window {
 namespace procedure {
 /**
@@ -66,4 +66,4 @@ long long Paint(IWindowProcedureEventCallback* callback) {
 }  // namespace details
 }  // namespace procedure
 }  // namespace window
-}  // namespace dx12_lib
+}  // namespace legend

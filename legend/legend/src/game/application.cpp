@@ -10,7 +10,7 @@
 #include "src/util/debug.h"
 #include "src/window/window_procedure.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace device {
 
 //コンストラクタ
@@ -87,4 +87,4 @@ void Application::FrameBegin() { device_->Prepare(); }
 void Application::FrameEnd() { device_->Present(); }
 
 }  // namespace device
-}  // namespace dx12_lib
+}  // namespace legend

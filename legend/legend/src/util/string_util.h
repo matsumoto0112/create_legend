@@ -7,7 +7,7 @@
  */
 
 
-namespace dx12_lib {
+namespace legend {
 namespace util {
 namespace string_util {
 
@@ -24,5 +24,5 @@ std::wstring Format(const std::wstring& format, Args... args) {
 
 }  // namespace string_util
 }  // namespace util
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_UTIL_STRING_UTIL_H_

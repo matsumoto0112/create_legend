@@ -10,7 +10,7 @@
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/vertex_shader.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace shader {
 class GraphicsPipelineState {
@@ -34,6 +34,6 @@ class GraphicsPipelineState {
 
 }  // namespace shader
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  //! LEGEND_DIRECTX_SHADER_PIPELINE_STATE_H_

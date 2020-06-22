@@ -16,9 +16,9 @@
 #include "src/util/debug.h"
 #include "src/util/typedef.h"
 
-namespace dx12_lib {
+namespace legend {
 template <class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_STDAFX_H_

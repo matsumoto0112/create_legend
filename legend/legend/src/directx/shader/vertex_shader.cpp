@@ -1,6 +1,6 @@
 #include "src/directx/shader/vertex_shader.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace shader {
 VertexShader::VertexShader() {}
@@ -23,4 +23,4 @@ bool VertexShader::Init(DirectX12Device& device, const std::wstring& filepath) {
 }
 }  // namespace shader
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

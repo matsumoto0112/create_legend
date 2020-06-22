@@ -11,7 +11,7 @@ namespace {
 static const wchar_t* CLASS_NAME = L"CLASS_NAME";
 }  // namespace
 
-namespace dx12_lib {
+namespace legend {
 namespace window {
 
 //コンストラクタ
@@ -122,4 +122,4 @@ void Window::UpdateScreenSizeAndPosition() const {
 }
 
 }  // namespace window
-}  // namespace dx12_lib
+}  // namespace legend

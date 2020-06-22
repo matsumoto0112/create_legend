@@ -8,7 +8,7 @@
  * @brief 数学系のユーティリティ関数
  */
 
-namespace dx12_lib {
+namespace legend {
 namespace math {
 namespace util {
 
@@ -34,5 +34,5 @@ inline const float Sqrt(float X) { return std::sqrtf(X); }
 
 }  // namespace util
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_MATH_MATH_UTIL_H_

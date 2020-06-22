@@ -11,7 +11,7 @@
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 /**
  * @class DirectX12Device
@@ -86,6 +86,6 @@ class DirectX12Device {
   Microsoft::WRL::Wrappers::Event fence_event_;
 };
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DIRECTX_DIRECTX12_DEVICE_H_

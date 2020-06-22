@@ -1,6 +1,6 @@
 #include "src/directx/shader/graphics_pipeline_state.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace shader {
 GraphicsPipelineState::GraphicsPipelineState()
@@ -93,4 +93,4 @@ void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
 
 }  // namespace shader
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

@@ -17,7 +17,7 @@
 
 namespace {}  // namespace
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 //コンストラクタ
 DirectX12Device::DirectX12Device()
@@ -252,7 +252,7 @@ bool DirectX12Device::CreateDevice() {
 
   MoveToNextFrame();
   return true;
-}  // namespace dx12_lib
+}  // namespace legend
 
 //ハードウェアアダプターを取得する
 ComPtr<IDXGIAdapter1> DirectX12Device::GetHardwareAdapter() {
@@ -292,4 +292,4 @@ void DirectX12Device::MoveToNextFrame() {
 }
 
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

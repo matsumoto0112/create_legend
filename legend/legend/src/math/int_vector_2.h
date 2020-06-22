@@ -1,7 +1,7 @@
 #ifndef LEGEND_MATH_INT_VECTOR_2_H_
 #define LEGEND_MATH_INT_VECTOR_2_H_
 
-namespace dx12_lib {
+namespace legend {
 namespace math {
 /**
  * @class IntVector2
@@ -113,6 +113,6 @@ inline IntVector2 operator/(const IntVector2& v, int k) {
 }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_MATH_INT_VECTOR_2_H_

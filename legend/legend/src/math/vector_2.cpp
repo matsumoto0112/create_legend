@@ -2,7 +2,7 @@
 
 #include "src/math/math_util.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace math {
 //íËêî
 const Vector2 Vector2::kZeroVector = Vector2(0.0f, 0.0f);
@@ -74,4 +74,4 @@ float Vector2::Cross(const Vector2& v, const Vector2& w) {
 }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend

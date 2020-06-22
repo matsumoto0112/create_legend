@@ -8,7 +8,7 @@
 
 #include <type_traits>
 
-namespace dx12_lib {
+namespace legend {
 namespace util {
 namespace enum_util {
 
@@ -114,13 +114,13 @@ inline constexpr bool is_bitpop(T flags) {
 
 }  // namespace enum_util
 }  // namespace util
-}  // namespace dx12_lib
+}  // namespace legend
 
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator~;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator|;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator&;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator^;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator|=;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator&=;
-using dx12_lib::util::enum_util::provides_bitwise_operators_detail::operator^=;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator~;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator|;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator&;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator^;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator|=;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator&=;
+using legend::util::enum_util::provides_bitwise_operators_detail::operator^=;
 #endif  // !LEGEND_UTIL_ENUM_UTIL_H_

@@ -9,7 +9,7 @@
 #include "src/math/vector_2.h"
 #include "src/math/vector_3.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 struct Vertex {
   math::Vector3 position;
@@ -17,6 +17,6 @@ struct Vertex {
   Vertex(const math::Vector3& position) : position(position) {}
 };
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DIRECTX_VERTEX_H_

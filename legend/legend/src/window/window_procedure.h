@@ -9,7 +9,7 @@
 
 #include "src/window/window_procedure_event_callback.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace window {
 namespace procedure {
 
@@ -22,5 +22,5 @@ long long CALLBACK WindowProcdures(HWND__* hWnd, unsigned int msg,
 
 }  // namespace procedure
 }  // namespace window
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_WINDOW_WINDOW_PROCEDURE_H_

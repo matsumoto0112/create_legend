@@ -8,7 +8,7 @@
 
 #include "src/directx/directx12_device.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace buffer {
 
@@ -61,5 +61,5 @@ class IndexBuffer {
 };
 }  // namespace buffer
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  //! LEGEND_DIRECTX_BUFFER_INDEX_BUFFER_H_

@@ -1,6 +1,6 @@
 #include "src/directx/buffer/vertex_buffer.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace buffer {
 
@@ -42,4 +42,4 @@ void VertexBuffer::SetGraphicsCommandList(DirectX12Device& device) {
 
 }  // namespace buffer
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

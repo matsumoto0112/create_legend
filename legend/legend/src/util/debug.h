@@ -9,7 +9,7 @@
 #include <assert.h>
 
 
-namespace dx12_lib {
+namespace legend {
 namespace util {
 namespace debug {
 
@@ -28,5 +28,5 @@ void Log(const std::wstring& format, ...);
 
 }  // namespace debug
 }  // namespace util
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_UTIL_DEBUG_H_

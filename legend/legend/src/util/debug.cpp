@@ -2,7 +2,7 @@
 
 #include "src/util/string_util.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace util {
 namespace debug {
 
@@ -25,4 +25,4 @@ void Log(const std::wstring& format, ...) {
 
 }  // namespace debug
 }  // namespace util
-}  // namespace dx12_lib
+}  // namespace legend

@@ -10,7 +10,7 @@
 #include "src/window/window.h"
 #include "src/window/window_procedure_event_callback.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace device {
 /**
  * @brief ゲームアプリケーションクラス
@@ -91,6 +91,6 @@ class Application : public window::IWindowProcedureEventCallback {
   Application& operator=(Application&&) = delete;
 };
 }  // namespace device
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DEVICE_APPLICATION_H_

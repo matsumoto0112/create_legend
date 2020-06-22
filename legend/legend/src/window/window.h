@@ -10,7 +10,7 @@
 #include "src/util/enum_util.h"
 #include "src/window/window_procedure_event_callback.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace window {
 
 /**
@@ -108,12 +108,12 @@ class Window {
   IWindowProcedureEventCallback* callback_object_;
 };
 }  // namespace window
-}  // namespace dx12_lib
+}  // namespace legend
 
-namespace dx12_lib::util::enum_util {
+namespace legend::util::enum_util {
 template <>
 struct provides_bitwise_operators<window::Window::UpdateWindowSettingFlags>
     : std::true_type {};
-}  // namespace dx12_lib::util::enum_util
+}  // namespace legend::util::enum_util
 
 #endif  // !LEGEND_WINDOW_WINDOW_H_

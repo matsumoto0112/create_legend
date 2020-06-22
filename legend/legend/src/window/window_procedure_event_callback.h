@@ -6,7 +6,7 @@
  * @brief ウィンドウプロシージャイベント通知先定義
  */
 
-namespace dx12_lib {
+namespace legend {
 namespace window {
 /**
  * @class IWindowProcedureEventCallback
@@ -29,6 +29,6 @@ class IWindowProcedureEventCallback {
 };
 
 }  // namespace window
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DEVICE_WINDOW_PROCEDURE_EVENT_CALLBACK_H_

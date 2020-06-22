@@ -6,11 +6,11 @@
  * @brief DirectXŒnƒwƒ‹ƒp[ŠÖ”ŒQ
  */
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace util {
 }  // namespace util
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend
 
 #endif  // !LEGEND_DIRECTX_DIRECTX_HELPER_H_

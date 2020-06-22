@@ -1,6 +1,6 @@
 #include "src/directx/shader/pixel_shader.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace directx {
 namespace shader {
 PixelShader::PixelShader() {}
@@ -25,4 +25,4 @@ bool PixelShader::Init(DirectX12Device& device, const std::wstring& filepath) {
 }
 }  // namespace shader
 }  // namespace directx
-}  // namespace dx12_lib
+}  // namespace legend

@@ -5,7 +5,7 @@
  * @file vector_3.h
  * @brief 三次元ベクトルクラス定義
  */
-namespace dx12_lib {
+namespace legend {
 namespace math {
 
 /**
@@ -135,5 +135,5 @@ inline Vector3 operator*(float k, const Vector3& v) { return Vector3(v) *= k; }
 inline Vector3 operator/(const Vector3& v, float k) { return Vector3(v) /= k; }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend
 #endif  // !LEGEND_MATH_VECTOR_3_H_

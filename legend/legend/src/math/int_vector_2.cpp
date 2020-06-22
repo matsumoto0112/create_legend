@@ -1,6 +1,6 @@
 #include "src/math/int_vector_2.h"
 
-namespace dx12_lib {
+namespace legend {
 namespace math {
     
 //’è”
@@ -46,4 +46,4 @@ IntVector2& IntVector2::operator/=(int k) {
 }
 
 }  // namespace math
-}  // namespace dx12_lib
+}  // namespace legend

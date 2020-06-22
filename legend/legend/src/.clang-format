@@ -1,0 +1,11 @@
+# Visual Studio で生成された .clang-format ファイル
+BasedOnStyle: Google
+IncludeCategories:
+  - Regex:           '^<pybind11/.*'
+    Priority:        3
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+  - Regex:           '^<.*'
+    Priority:        2
+  - Regex:           '.*'
+    Priority:        4

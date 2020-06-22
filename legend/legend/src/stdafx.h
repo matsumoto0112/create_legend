@@ -1,7 +1,7 @@
-#ifndef DX12_LIB_STDAFX_H_
-#define DX12_LIB_STDAFX_H_
+#ifndef LEGEND_STDAFX_H_
+#define LEGEND_STDAFX_H_
 
- #include <d3d12.h>
+#include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -13,9 +13,12 @@
 #include <string>
 #include <vector>
 
+#include "src/util/debug.h"
+#include "src/util/typedef.h"
+
 namespace dx12_lib {
 template <class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 }  // namespace dx12_lib
 
-#endif  // !DX12_LIB_STDAFX_H_
+#endif  // !LEGEND_STDAFX_H_

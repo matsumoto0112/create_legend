@@ -3,7 +3,6 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <TargetExt>.pyd</TargetExt>
     <_PropertySheetDisplayName>legend_d</_PropertySheetDisplayName>
   </PropertyGroup>
   <ItemDefinitionGroup />

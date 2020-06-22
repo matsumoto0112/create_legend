@@ -1,0 +1,96 @@
+#ifndef LEGEND_DEVICE_APPLICATION_H_
+#define LEGEND_DEVICE_APPLICATION_H_
+
+/**
+ * @file application.h
+ * @brief ゲームアプリケーションクラス定義
+ */
+
+#include "src/directx/directx12_device.h"
+#include "src/window/window.h"
+#include "src/window/window_procedure_event_callback.h"
+
+namespace dx12_lib {
+namespace device {
+/**
+ * @brief ゲームアプリケーションクラス
+ */
+class Application : public window::IWindowProcedureEventCallback {
+ public:
+  /**
+   * @brief コンストラクタ
+   */
+  Application();
+  /**
+   * @brief デストラクタ
+   */
+  ~Application();
+  /**
+   * @brief アプリケーションで動かすウィンドウを登録する
+   */
+  void RegisterWindow(std::shared_ptr<window::Window> window);
+  /**
+   * @brief アプリケーションの実行
+   */
+  void Run();
+
+ public:
+  /**
+   * @brief ウィンドウ破壊時に呼ばれる
+   */
+  void Destroy() override;
+  /**
+   * @brief 描画イベント時に呼ばれる
+   */
+  void Paint() override;
+
+  /**
+   * @brief アプリケーション初期化
+   */
+  virtual bool Init();
+  /**
+   * @brief アプリケーション終了処理
+   */
+  virtual void Finalize();
+  /**
+   * @brief 更新処理
+   */
+  virtual void Update();
+  /**
+   * @brief 描画処理
+   */
+  virtual void Draw();
+
+ public:
+  /**
+   * @brief デバイスを取得する
+   */
+  directx::DirectX12Device& GetDirectX12Device() const { return *device_; }
+
+ private:
+  /**
+   * @brief フレーム開始時イベント
+   */
+  void FrameBegin();
+  /**
+   * @brief フレーム終了時イベント
+   */
+  void FrameEnd();
+
+ protected:
+  //! メインウィンドウ
+  std::shared_ptr<window::Window> main_window_;
+  //! DX12デバイス
+  std::unique_ptr<directx::DirectX12Device> device_;
+
+ public:
+  //コピー禁止、ムーブ禁止
+  Application(const Application&) = delete;
+  Application& operator=(const Application&) = delete;
+  Application(Application&&) = delete;
+  Application& operator=(Application&&) = delete;
+};
+}  // namespace device
+}  // namespace dx12_lib
+
+#endif  // !LEGEND_DEVICE_APPLICATION_H_

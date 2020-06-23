@@ -24,7 +24,7 @@ bool VertexBuffer::Init(DirectX12Device& device, u32 vertex_size,
           &CD3DX12_RESOURCE_DESC::Buffer(buffer_size),
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
           IID_PPV_ARGS(&vertex_buffer_resource_)))) {
-    util::debug::Log(L"CreateCommittedResource failed.");
+    MY_LOG(L"CreateCommittedResource failed.");
     return false;
   }
 

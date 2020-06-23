@@ -54,9 +54,8 @@ class VertexBuffer {
 //ƒŠƒ\[ƒX‚É‘‚«‚Ş
 template <class T>
 inline bool VertexBuffer::WriteBufferResource(const std::vector<T>& vertices) {
-  util::debug::Assertion(
-      vertices.size() * sizeof(T) == vertex_buffer_view_.SizeInBytes,
-      L"vertices size is incorrect.");
+  MY_ASSERTION(vertices.size() * sizeof(T) == vertex_buffer_view_.SizeInBytes,
+               L"vertices size is incorrect.");
 
   void* data_begin;
   if (FAILED(vertex_buffer_resource_->Map(0, nullptr, &data_begin))) {

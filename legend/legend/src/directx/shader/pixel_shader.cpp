@@ -17,7 +17,7 @@ bool PixelShader::Init(DirectX12Device& device, const std::wstring& filepath) {
   if (FAILED(D3DCompileFromFile(filepath.c_str(), nullptr, nullptr, "PSMain",
                                 "ps_5_0", compile_flags, 0, &pixel_shader_,
                                 nullptr))) {
-    util::debug::Log(L"CompileFromFile PixelShader failed");
+    MY_LOG(L"CompileFromFile PixelShader failed");
     return false;
   }
 

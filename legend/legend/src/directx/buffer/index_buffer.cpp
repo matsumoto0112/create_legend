@@ -22,7 +22,7 @@ bool IndexBuffer::Init(DirectX12Device& device, u32 index_num) {
           &CD3DX12_RESOURCE_DESC::Buffer(index_buffer_size),
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
           IID_PPV_ARGS(&index_buffer_resource_)))) {
-    util::debug::Log(L"CreateCommittedResource IndexBuffer failed");
+    MY_LOG(L"CreateCommittedResource IndexBuffer failed");
     return false;
   }
 
@@ -37,7 +37,7 @@ bool IndexBuffer::Init(DirectX12Device& device, u32 index_num) {
 bool IndexBuffer::WriteBufferResource(const std::vector<u16>& indices) {
   void* index_data_begin;
   if (FAILED(index_buffer_resource_->Map(0, nullptr, &index_data_begin))) {
-    util::debug::Log(L"IndexBuffer Map failed");
+    MY_LOG(L"IndexBuffer Map failed");
     return false;
   }
   memcpy_s(index_data_begin, index_buffer_view_.SizeInBytes, indices.data(),

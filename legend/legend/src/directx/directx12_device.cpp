@@ -32,8 +32,7 @@ DirectX12Device::~DirectX12Device() {}
 
 //èâä˙âª
 bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
-  std::srand(0);
-  util::debug::Assertion(target_window != nullptr, L"");
+  MY_ASSERTION(target_window != nullptr, L"");
 
   this->target_window_ = target_window;
   render_target_screen_size_ = math::IntVector2::kZeroVector;
@@ -46,15 +45,13 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
   return true;
 }
 
-void DirectX12Device::Prepare() {
+bool DirectX12Device::Prepare() {
   if (FAILED(command_allocator_[frame_index_]->Reset())) {
-    SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-    return;
+    return false;
   }
   if (FAILED(command_list_->Reset(command_allocator_[frame_index_].Get(),
                                   nullptr))) {
-    SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-    return;
+    return false;
   }
 
   CD3DX12_VIEWPORT viewport(0.0f, 0.0f,
@@ -86,9 +83,11 @@ void DirectX12Device::Prepare() {
                                        nullptr);
   command_list_->IASetPrimitiveTopology(
       D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+  return true;
 }
 
-void DirectX12Device::Present() {
+bool DirectX12Device::Present() {
   constexpr D3D12_RESOURCE_STATES next_resource_state =
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT;
   if (current_resource_state_ != next_resource_state) {
@@ -100,19 +99,19 @@ void DirectX12Device::Present() {
   }
 
   if (FAILED(command_list_->Close())) {
-    SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-    return;
+    return false;
   }
 
   ID3D12CommandList* command_lists[] = {command_list_.Get()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
   if (FAILED(swap_chain_->Present(1, 0))) {
-    SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-    return;
+    return false;
   }
 
   MoveToNextFrame();
+
+  return true;
 }
 
 bool DirectX12Device::CreateDevice() {
@@ -128,19 +127,19 @@ bool DirectX12Device::CreateDevice() {
 #endif
 
   if (FAILED(CreateDXGIFactory2(dxgi_flags, IID_PPV_ARGS(&factory_)))) {
-    util::debug::Log(L"CreateDXGIFactory2 failed");
+    MY_LOG(L"CreateDXGIFactory2 failed");
     return false;
   }
 
   ComPtr<IDXGIAdapter1> hardware_adapter = GetHardwareAdapter();
   if (!hardware_adapter) {
-    util::debug::Log(L"GetHardwareAdapter failed");
+    MY_LOG(L"GetHardwareAdapter failed");
     return false;
   }
 
   if (FAILED(D3D12CreateDevice(hardware_adapter.Get(), D3D_FEATURE_LEVEL_11_0,
                                IID_PPV_ARGS(&device_)))) {
-    util::debug::Log(L"D3D12CreateDevice failed");
+    MY_LOG(L"D3D12CreateDevice failed");
     return false;
   }
 
@@ -149,7 +148,7 @@ bool DirectX12Device::CreateDevice() {
   queue_desc.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
   if (FAILED(device_->CreateCommandQueue(&queue_desc,
                                          IID_PPV_ARGS(&command_queue_)))) {
-    util::debug::Log(L"CreateCommandQueue failed");
+    MY_LOG(L"CreateCommandQueue failed");
     return false;
   }
 
@@ -163,7 +162,7 @@ bool DirectX12Device::CreateDevice() {
   swap_chain_desc.SampleDesc.Count = 1;
 
   if (target_window_.expired()) {
-    util::debug::Log(L"target_window_ not found.");
+    MY_LOG(L"target_window_ not found.");
     return false;
   }
 
@@ -171,12 +170,12 @@ bool DirectX12Device::CreateDevice() {
   if (FAILED(factory_->CreateSwapChainForHwnd(
           command_queue_.Get(), target_window_.lock()->GetHWND(),
           &swap_chain_desc, nullptr, nullptr, &swap_chain))) {
-    util::debug::Log(L"CreateSwapChainForHwnd failed");
+    MY_LOG(L"CreateSwapChainForHwnd failed");
     return false;
   }
 
   if (FAILED(swap_chain.As(&swap_chain_))) {
-    util::debug::Log(L"Cast to IDXGISwapChain4 failed");
+    MY_LOG(L"Cast to IDXGISwapChain4 failed");
     return false;
   }
 
@@ -184,7 +183,7 @@ bool DirectX12Device::CreateDevice() {
 
   if (FAILED(factory_->MakeWindowAssociation(target_window_.lock()->GetHWND(),
                                              DXGI_MWA_NO_ALT_ENTER))) {
-    util::debug::Log(L"MakeWindowAssociation failed");
+    MY_LOG(L"MakeWindowAssociation failed");
     return false;
   }
 
@@ -196,7 +195,7 @@ bool DirectX12Device::CreateDevice() {
       D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
   if (FAILED(device_->CreateDescriptorHeap(&rtv_heap_desc,
                                            IID_PPV_ARGS(&rtv_heap_)))) {
-    util::debug::Log(L"CreateDescriptorHeap failed");
+    MY_LOG(L"CreateDescriptorHeap failed");
     return false;
   }
 
@@ -205,7 +204,7 @@ bool DirectX12Device::CreateDevice() {
 
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
     if (FAILED(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&render_targets_[i])))) {
-      util::debug::Log(L"GetBuffer buffer number %d isfailed", i);
+      MY_LOG(L"GetBuffer buffer number %d isfailed", i);
       return false;
     }
 
@@ -219,7 +218,7 @@ bool DirectX12Device::CreateDevice() {
     if (FAILED(device_->CreateCommandAllocator(
             D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
             IID_PPV_ARGS(&command_allocator_[i])))) {
-      util::debug::Log(L"CreateCommandAllocator %d failed", i);
+      MY_LOG(L"CreateCommandAllocator %d failed", i);
       return false;
     }
   }
@@ -228,25 +227,25 @@ bool DirectX12Device::CreateDevice() {
           0, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
           command_allocator_[0].Get(), nullptr,
           IID_PPV_ARGS(&command_list_)))) {
-    util::debug::Log(L"CreateCommandList failed");
+    MY_LOG(L"CreateCommandList failed");
     return false;
   }
   if (FAILED(command_list_->Close())) {
-    util::debug::Log(L"ID3D12GraphicsCommandList::Close failed");
+    MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
     return false;
   }
 
   if (FAILED(device_->CreateFence(fence_values_[frame_index_],
                                   D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
                                   IID_PPV_ARGS(&fence_)))) {
-    util::debug::Log(L"CreateFence failed");
+    MY_LOG(L"CreateFence failed");
     return false;
   }
 
   fence_values_[frame_index_]++;
   fence_event_.Attach(CreateEventW(nullptr, false, false, nullptr));
   if (!fence_event_.IsValid()) {
-    util::debug::Log(L"CreateEventW failed");
+    MY_LOG(L"CreateEventW failed");
     return false;
   }
 
@@ -271,11 +270,10 @@ ComPtr<IDXGIAdapter1> DirectX12Device::GetHardwareAdapter() {
   return adapter;
 }
 
-void DirectX12Device::MoveToNextFrame() {
-  const unsigned long long fence_value = fence_values_[frame_index_];
+bool DirectX12Device::MoveToNextFrame() {
+  const u64 fence_value = fence_values_[frame_index_];
   if (FAILED(command_queue_->Signal(fence_.Get(), fence_value))) {
-    SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-    return;
+    return false;
   }
 
   frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
@@ -283,12 +281,13 @@ void DirectX12Device::MoveToNextFrame() {
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
     if (FAILED(fence_->SetEventOnCompletion(fence_values_[frame_index_],
                                             fence_event_.Get()))) {
-      SendMessage(target_window_.lock()->GetHWND(), WM_CLOSE, 0, 0);
-      return;
+      return false;
     }
     WaitForSingleObjectEx(fence_event_.Get(), INFINITE, false);
   }
   fence_values_[frame_index_] = fence_value + 1;
+
+  return true;
 }
 
 }  // namespace directx

@@ -14,8 +14,11 @@ class MyApp final : public device::Application {
   MyApp() : Application() {}
   ~MyApp() {}
   bool Init() override {
-    Application::Init();
-    util::debug::Log(L"init_myapp");
+    if (!Application::Init()) {
+      return false;
+    }
+
+    MY_LOG(L"init_myapp");
 
     constexpr float D = 0.8f;
     const std::vector<directx::Vertex> vertices = {
@@ -63,21 +66,31 @@ class MyApp final : public device::Application {
 
     return true;
   }
-  void Update() override {
-    Application::Update();
-    util::debug::Log(L"update_myapp");
+  bool Update() override {
+    if (!Application::Update()) {
+      return false;
+    }
+
+    MY_LOG(L"update_myapp");
+    return true;
   }
-  void Draw() override {
-    Application::Draw();
+
+  bool Draw() override {
+    if (!Application::Draw()) {
+      return false;
+    }
+
     pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
     vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.Draw(GetDirectX12Device());
-    util::debug::Log(L"draw_myapp");
+    MY_LOG(L"draw_myapp");
+
+    return true;
   }
   void Finalize() override {
     Application::Finalize();
-    util::debug::Log(L"init_myfinalize");
+    MY_LOG(L"init_myfinalize");
   }
 
  private:

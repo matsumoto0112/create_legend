@@ -13,7 +13,6 @@
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\vector_2.cpp" />
     <ClCompile Include="src\math\vector_3.cpp" />
-    <ClCompile Include="src\util\debug.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />

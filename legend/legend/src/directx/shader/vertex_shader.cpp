@@ -15,7 +15,7 @@ bool VertexShader::Init(DirectX12Device& device, const std::wstring& filepath) {
   if (FAILED(D3DCompileFromFile(filepath.c_str(), nullptr, nullptr, "VSMain",
                                 "vs_5_0", compile_flags, 0, &vertex_shader_,
                                 nullptr))) {
-    util::debug::Log(L"CompileFromFile VertexShader failed");
+    MY_LOG(L"CompileFromFile VertexShader failed");
     return false;
   }
 

@@ -51,14 +51,14 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
           &root_signature_desc,
           D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1, &signature,
           &error))) {
-    util::debug::Log(L"D3D12SerializeRootSignature failed");
+    MY_LOG(L"D3D12SerializeRootSignature failed");
     return false;
   }
 
   if (FAILED(device.GetDevice()->CreateRootSignature(
           0, signature->GetBufferPointer(), signature->GetBufferSize(),
           IID_PPV_ARGS(&root_signature_)))) {
-    util::debug::Log(L"CreateRootSignature failed");
+    MY_LOG(L"CreateRootSignature failed");
     return false;
   }
 

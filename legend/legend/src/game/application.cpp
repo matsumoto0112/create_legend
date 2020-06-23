@@ -16,8 +16,7 @@ namespace device {
 //コンストラクタ
 Application::Application() : main_window_(nullptr) {}
 
-Application::~Application()
-{ }
+Application::~Application() {}
 
 //ウィンドウの登録
 void Application::RegisterWindow(std::shared_ptr<window::Window> window) {
@@ -56,10 +55,30 @@ void Application::Destroy() {}
 
 //描画
 void Application::Paint() {
-  this->FrameBegin();
-  this->Update();
-  this->Draw();
-  this->FrameEnd();
+  ;
+  auto SendCloseMessage = [&]() {
+    SendMessage(main_window_->GetHWND(), WM_CLOSE, 0, 0);
+  };
+
+  if (!this->FrameBegin()) {
+    SendCloseMessage();
+    return;
+  }
+
+  if (!this->Update()) {
+    SendCloseMessage();
+    return;
+  }
+
+  if (!this->Draw()) {
+    SendCloseMessage();
+    return;
+  }
+
+  if (!this->FrameEnd()) {
+    SendCloseMessage();
+    return;
+  }
 }
 
 //初期化
@@ -69,22 +88,34 @@ bool Application::Init() {
     return false;
   }
 
-  util::debug::Log(L"初期化");
+  MY_LOG(L"初期化");
   return true;
 }
 
 //終了処理
-void Application::Finalize() { util::debug::Log(L"終了"); }
+void Application::Finalize() { MY_LOG(L"終了"); }
 
 //更新
-void Application::Update() { util::debug::Log(L"更新"); }
+bool Application::Update() {
+  MY_LOG(L"更新");
+  return true;
+}
 
 //描画
-void Application::Draw() { util::debug::Log(L"描画"); }
+bool Application::Draw() {
+  MY_LOG(L"描画");
+  return true;
+}
 
-void Application::FrameBegin() { device_->Prepare(); }
+bool Application::FrameBegin() {
+  if (!device_->Prepare()) return false;
+  return true;
+}
 
-void Application::FrameEnd() { device_->Present(); }
+bool Application::FrameEnd() {
+  if (!device_->Present()) return false;
+  return true;
+}
 
 }  // namespace device
 }  // namespace legend

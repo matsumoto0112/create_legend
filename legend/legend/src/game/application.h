@@ -55,11 +55,11 @@ class Application : public window::IWindowProcedureEventCallback {
   /**
    * @brief 更新処理
    */
-  virtual void Update();
+  virtual bool Update();
   /**
    * @brief 描画処理
    */
-  virtual void Draw();
+  virtual bool Draw();
 
  public:
   /**
@@ -71,11 +71,11 @@ class Application : public window::IWindowProcedureEventCallback {
   /**
    * @brief フレーム開始時イベント
    */
-  void FrameBegin();
+  bool FrameBegin();
   /**
    * @brief フレーム終了時イベント
    */
-  void FrameEnd();
+  bool FrameEnd();
 
  protected:
   //! メインウィンドウ

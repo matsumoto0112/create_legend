@@ -35,8 +35,8 @@ class DirectX12Device {
    */
   bool Init(std::shared_ptr<window::Window> target_window);
 
-  void Prepare();
-  void Present();
+  bool Prepare();
+  bool Present();
 
  public:
   ID3D12Device* GetDevice() const { return device_.Get(); }
@@ -47,11 +47,11 @@ class DirectX12Device {
  private:
   bool CreateDevice();
   ComPtr<IDXGIAdapter1> GetHardwareAdapter();
-  void MoveToNextFrame();
+  bool MoveToNextFrame();
 
  private:
   //! トリプルバッファを使用する
-  static constexpr unsigned int FRAME_COUNT = 3;
+  static constexpr u32 FRAME_COUNT = 3;
 
  private:
   //! レンダーターゲットとなるウィンドウ
@@ -67,21 +67,23 @@ class DirectX12Device {
   //! スワップチェイン
   ComPtr<IDXGISwapChain4> swap_chain_;
   //! バッファインデックス
-  unsigned int frame_index_;
+  i32 frame_index_;
   //! レンダーターゲットのディスクリプタヒープ
   ComPtr<ID3D12DescriptorHeap> rtv_heap_;
   //! レンダーターゲットのリソース
   std::array<ComPtr<ID3D12Resource>, FRAME_COUNT> render_targets_;
   //! レンダーターゲットのヒープサイズ
-  unsigned int rtv_heap_size_;
+  i32 rtv_heap_size_;
   //! コマンドアロケータ
   std::array<ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> command_allocator_;
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
+  //! コマンドリスト
   ComPtr<ID3D12GraphicsCommandList5> command_list_;
+  //!< 現在のレンダーターゲットの状態
   D3D12_RESOURCE_STATES current_resource_state_;
   //! フェンス値
-  std::array<unsigned long long, FRAME_COUNT> fence_values_;
+  std::array<u64, FRAME_COUNT> fence_values_;
   //! フェンスイベント
   Microsoft::WRL::Wrappers::Event fence_event_;
 };

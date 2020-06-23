@@ -18,6 +18,7 @@
     <ClCompile Include="src\directx\directx12_device.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
+    <ClCompile Include="src\math\matrix_4x4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -47,6 +48,7 @@
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
+    <ClInclude Include="src\math\matrix_4x4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

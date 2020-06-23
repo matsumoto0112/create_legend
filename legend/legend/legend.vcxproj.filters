@@ -19,6 +19,12 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\math\matrix_4x4.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\util\imgui_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -49,6 +55,15 @@
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\math\matrix_4x4.h" />
+    <ClInclude Include="src\libs\imgui\imconfig.h" />
+    <ClInclude Include="src\libs\imgui\imgui.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="src\libs\imgui\imgui_internal.h" />
+    <ClInclude Include="src\libs\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\util\imgui_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

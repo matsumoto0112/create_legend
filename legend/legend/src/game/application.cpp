@@ -89,6 +89,11 @@ bool Application::Init() {
     return false;
   }
 
+  if (!imgui_manager_.Init(main_window_->GetHWND(), device_->GetDevice(),
+                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -109,10 +114,12 @@ bool Application::Draw() {
 
 bool Application::FrameBegin() {
   if (!device_->Prepare()) return false;
+  imgui_manager_.BeginFrame();
   return true;
 }
 
 bool Application::FrameEnd() {
+  imgui_manager_.EndFrame(device_->GetCommandList());
   if (!device_->Present()) return false;
   return true;
 }

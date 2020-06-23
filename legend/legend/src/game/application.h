@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/directx12_device.h"
+#include "src/util/imgui_manager.h"
 #include "src/window/window.h"
 #include "src/window/window_procedure_event_callback.h"
 
@@ -82,6 +83,8 @@ class Application : public window::IWindowProcedureEventCallback {
   std::shared_ptr<window::Window> main_window_;
   //! DX12デバイス
   std::unique_ptr<directx::DirectX12Device> device_;
+  //! Imgui管理
+  util::ImguiManager imgui_manager_;
 
  public:
   //コピー禁止、ムーブ禁止

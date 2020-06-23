@@ -1,5 +1,8 @@
 #include "src/window/window_procedure.h"
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg,
+                                              WPARAM wParam, LPARAM lParam);
+
 namespace legend {
 namespace window {
 namespace procedure {
@@ -16,12 +19,19 @@ long long Destroy(IWindowProcedureEventCallback* callback);
 
 //描画
 long long Paint(IWindowProcedureEventCallback* callback);
+
 }  // namespace details
 
 //ウィンドウプロシージャ
 long long CALLBACK WindowProcdures(HWND__* hWnd, unsigned int msg,
                                    unsigned long long wParam,
                                    long long lParam) {
+  // Imguiイベントが発生していたら以降の処理の必要なし
+  {
+    i64 res = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+    if (res) return res;
+  }
+
   //ウィンドウ生成時に登録したポインタからコールバックを取得する
   IWindowProcedureEventCallback* callback =
       reinterpret_cast<IWindowProcedureEventCallback*>(
@@ -36,7 +46,7 @@ long long CALLBACK WindowProcdures(HWND__* hWnd, unsigned int msg,
       return details::Destroy(callback);
   }
 
-  return DefWindowProc(hWnd, msg, wParam, lParam);
+  return DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
 namespace details {

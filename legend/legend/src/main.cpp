@@ -5,6 +5,7 @@
 #include "src/directx/shader/vertex_shader.h"
 #include "src/directx/vertex.h"
 #include "src/game/application.h"
+#include "src/libs/imgui/imgui.h"
 #include "src/util/path.h"
 #include "src/window/window.h"
 
@@ -89,6 +90,17 @@ class MyApp final : public device::Application {
     if (!Application::Update()) {
       return false;
     }
+
+    if (ImGui::Begin("Debug Window")) {
+      ImGui::Text("Debug Message");
+      static float value;
+      ImGui::SliderFloat("Debug Value", &value, 0.0f, 100.0f);
+      if (ImGui::Button("Debug Button")) {
+        ImGui::Text("Debug Button Message");
+        value = 50.0f;
+      }
+    }
+    ImGui::End();
 
     MY_LOG(L"update_myapp");
     return true;

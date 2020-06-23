@@ -1041,3 +1041,4 @@ dkms.conf
 
 *.pyd
 */nsight/*
+*imgui.ini

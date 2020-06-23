@@ -89,6 +89,11 @@
     <ClCompile Include="src\directx\shader\pixel_shader.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\game\application.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\matrix_4x4.cpp" />
@@ -99,6 +104,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\util\byte_reader.cpp" />
+    <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
@@ -116,6 +122,14 @@
     <ClInclude Include="src\directx\vertex.h" />
     <ClInclude Include="src\game\application.h" />
     <ClInclude Include="src\libs\d3dx12.h" />
+    <ClInclude Include="src\libs\imgui\imconfig.h" />
+    <ClInclude Include="src\libs\imgui\imgui.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="src\libs\imgui\imgui_internal.h" />
+    <ClInclude Include="src\libs\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="src\math\int_vector_2.h" />
     <ClInclude Include="src\math\math_util.h" />
     <ClInclude Include="src\math\matrix_4x4.h" />
@@ -125,6 +139,7 @@
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
+    <ClInclude Include="src\util\imgui_manager.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\string_util.h" />

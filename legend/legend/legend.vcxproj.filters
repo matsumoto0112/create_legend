@@ -66,6 +66,7 @@
     <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
     <ClInclude Include="src\input\input.h" />
+    <ClInclude Include="src\audio\audio_source.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

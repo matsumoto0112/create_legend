@@ -1,4 +1,2 @@
-* text=auto
-
 *.vcxproj.filters merge=union
 *.vcxproj merge=union

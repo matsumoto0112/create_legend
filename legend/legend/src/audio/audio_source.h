@@ -1,5 +1,5 @@
 #ifndef LEGEND_AUDIO_AUDIO_SOURCE_H_
-#define LEGEND_AUDIO_AUDIO_SOURCE_
+#define LEGEND_AUDIO_AUDIO_SOURCE_H_
 
 namespace legend {
 namespace audio {

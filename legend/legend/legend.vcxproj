@@ -81,7 +81,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\attr_test1.cpp" />
     <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
@@ -105,7 +104,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\test_attr2.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\path.cpp" />
@@ -113,7 +111,6 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\attr_test1.h" />
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
@@ -143,7 +140,6 @@
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\test_attr2.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />

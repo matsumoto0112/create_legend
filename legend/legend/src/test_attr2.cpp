@@ -1,1 +1,0 @@
-#include "src/test_attr2.h"

@@ -39,7 +39,8 @@ class MyApp final : public device::Application {
 
     const std::vector<u16> indices = {0, 1, 2, 0, 3, 4};
     const u32 index_num = static_cast<u32>(indices.size());
-    if (!index_buffer_.Init(GetDirectX12Device(), index_num)) {
+    if (!index_buffer_.Init(GetDirectX12Device(), index_num,
+                            directx::PrimitiveTopology::TriangleList)) {
       return false;
     }
     if (!index_buffer_.WriteBufferResource(indices)) {

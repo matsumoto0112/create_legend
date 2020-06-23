@@ -81,8 +81,6 @@ bool DirectX12Device::Prepare() {
   const std::array<float, 4> CLEAR_COLOR = {0.0f, 0.2f, 0.4f, 1.0f};
   command_list_->ClearRenderTargetView(rtv_handle, CLEAR_COLOR.data(), 0,
                                        nullptr);
-  command_list_->IASetPrimitiveTopology(
-      D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   return true;
 }

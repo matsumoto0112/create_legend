@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/directx12_device.h"
+#include "src/directx/primitive_topology.h"
 
 namespace legend {
 namespace directx {
@@ -31,9 +32,10 @@ class IndexBuffer {
    * @brief 初期化
    * @param device DirectX12デバイス
    * @param index_num インデックス数
+   * @param topology プリミティブの形状
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 index_num);
+  bool Init(DirectX12Device& device, u32 index_num, PrimitiveTopology topology);
   /**
    * @brief バッファにリソースを書き込む
    * @param indices インデックス配列
@@ -58,6 +60,8 @@ class IndexBuffer {
   D3D12_INDEX_BUFFER_VIEW index_buffer_view_;
   //! インデックス数
   u32 index_num_;
+  //! プリミティブ形状
+  D3D12_PRIMITIVE_TOPOLOGY primitive_toporogy_;
 };
 }  // namespace buffer
 }  // namespace directx

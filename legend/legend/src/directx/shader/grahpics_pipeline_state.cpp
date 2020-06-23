@@ -3,14 +3,18 @@
 namespace legend {
 namespace directx {
 namespace shader {
+
+//コンストラクタ
 GraphicsPipelineState::GraphicsPipelineState()
     : pipeline_state_desc_{},
       vertex_shader_(nullptr),
       pixel_shader_(nullptr),
       pipeline_state_(nullptr) {}
 
+//デストラクタ
 GraphicsPipelineState::~GraphicsPipelineState() {}
 
+//初期化
 bool GraphicsPipelineState::Init(DirectX12Device& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
   pipeline_state_desc_.DepthStencilState.DepthEnable = FALSE;
@@ -21,6 +25,7 @@ bool GraphicsPipelineState::Init(DirectX12Device& device) {
   return true;
 }
 
+//頂点シェーダー
 void GraphicsPipelineState::SetVertexShader(
     std::shared_ptr<VertexShader> vertex_shader) {
   this->vertex_shader_ = vertex_shader;
@@ -31,6 +36,7 @@ void GraphicsPipelineState::SetVertexShader(
   }
 }
 
+//ピクセルシェーダー
 void GraphicsPipelineState::SetPixelShader(
     std::shared_ptr<PixelShader> pixel_shader) {
   this->pixel_shader_ = pixel_shader;
@@ -40,6 +46,7 @@ void GraphicsPipelineState::SetPixelShader(
   }
 }
 
+//パイプラインステート
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc;
   root_signature_desc.Init(
@@ -78,6 +85,7 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   return true;
 }
 
+//コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
   device.GetCommandList()->SetGraphicsRootSignature(root_signature_.Get());
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());

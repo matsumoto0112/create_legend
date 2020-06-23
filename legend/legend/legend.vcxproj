@@ -141,6 +141,7 @@
     <ClInclude Include="src\math\matrix_4x4.h" />
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
+    <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\test_attr2.h" />
     <ClInclude Include="src\util\byte_reader.h" />

@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
     <ClInclude Include="src\directx\buffer\vertex_buffer.h" />

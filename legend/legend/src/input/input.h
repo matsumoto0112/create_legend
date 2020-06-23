@@ -1,0 +1,4 @@
+#ifndef LEGEND_INPUT_INPUT_H_
+#define LEGEND_INPUT_INPUT_H_
+
+#endif  // ! LEGEND_INPUT_INPUT_H_

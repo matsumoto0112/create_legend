@@ -104,6 +104,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\test_attr2.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\path.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\test_attr2.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />

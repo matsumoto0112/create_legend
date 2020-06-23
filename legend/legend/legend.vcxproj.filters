@@ -26,6 +26,7 @@
     <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\input\input.cpp" />
+    <ClCompile Include="src\test_attr2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="src\util\imgui_manager.h" />
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
+    <ClInclude Include="src\test_attr2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

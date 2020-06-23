@@ -10,9 +10,9 @@ namespace math {
 class IntVector2 {
  public:
   //! x
-  int x;
+  i32 x;
   //! y
-  int y;
+  i32 y;
 
  public:
   //! ゼロベクトル
@@ -36,7 +36,7 @@ class IntVector2 {
   /**
    * @brief コンストラクタ
    */
-  IntVector2(int x, int y);
+  IntVector2(i32 x, i32 y);
   /**
    * @brief コピーコンストラクタ
    */
@@ -56,11 +56,11 @@ class IntVector2 {
   /**
    * @brief 乗算代入演算子
    */
-  IntVector2& operator*=(int k);
+  IntVector2& operator*=(i32 k);
   /**
    * @brief 除算代入演算子
    */
-  IntVector2& operator/=(int k);
+  IntVector2& operator/=(i32 k);
 };
 
 /**
@@ -94,21 +94,21 @@ inline IntVector2 operator-(const IntVector2& v, const IntVector2& w) {
 /**
  * @brief 乗算演算子
  */
-inline IntVector2 operator*(const IntVector2& v, int k) {
+inline IntVector2 operator*(const IntVector2& v, i32 k) {
   return IntVector2(v) *= k;
 }
 
 /**
  * @brief 乗算演算子
  */
-inline IntVector2 operator*(int k, const IntVector2& v) {
+inline IntVector2 operator*(i32 k, const IntVector2& v) {
   return IntVector2(v) *= k;
 }
 
 /**
  * @brief 除算演算子
  */
-inline IntVector2 operator/(const IntVector2& v, int k) {
+inline IntVector2 operator/(const IntVector2& v, i32 k) {
   return IntVector2(v) /= k;
 }
 

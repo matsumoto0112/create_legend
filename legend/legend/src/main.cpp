@@ -90,7 +90,7 @@ class MyApp final : public device::Application {
   }
   void Finalize() override {
     Application::Finalize();
-    MY_LOG(L"init_myfinalize");
+    MY_LOG(L"finalize_myapp");
   }
 
  private:

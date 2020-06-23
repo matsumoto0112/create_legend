@@ -83,12 +83,12 @@ void Application::Paint() {
 
 //‰Šú‰»
 bool Application::Init() {
+  MY_LOG(L"‰Šú‰»");
   device_ = std::make_unique<directx::DirectX12Device>();
   if (!device_->Init(main_window_)) {
     return false;
   }
 
-  MY_LOG(L"‰Šú‰»");
   return true;
 }
 

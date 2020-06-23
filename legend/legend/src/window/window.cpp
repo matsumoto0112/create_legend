@@ -36,13 +36,13 @@ Window::Window()
 
 //ウィンドウを生成する
 void Window::Create() {
-  util::debug::Assertion(RegisterClassExW(&wndclassex_),
-                         L"ウィンドウの設定に失敗しました。");
-  constexpr unsigned long WINDOW_FLAGS =
+  RegisterClassExW(&wndclassex_);
+
+  constexpr u32 WINDOW_FLAGS =
       (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
-  RECT window_rect = {0, 0, static_cast<long>(screen_size_.x),
-                      static_cast<long>(screen_size_.y)};
+  RECT window_rect = {0, 0, static_cast<i32>(screen_size_.x),
+                      static_cast<i32>(screen_size_.y)};
   AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, false);
 
   hWnd_ = CreateWindowExW(0L, CLASS_NAME, window_title_.c_str(), WINDOW_FLAGS,
@@ -51,11 +51,11 @@ void Window::Create() {
                           window_rect.bottom - window_rect.top, nullptr,
                           nullptr, nullptr, callback_object_);
 
-  util::debug::Assertion(hWnd_, L"ウィンドウの生成に失敗しました");
+  MY_ASSERTION(hWnd_, L"ウィンドウの生成に失敗しました");
 }
 
 //ウィンドウを表示する
-void Window::Show(int show_command) const { ShowWindow(hWnd_, show_command); }
+void Window::Show(i32 show_command) const { ShowWindow(hWnd_, show_command); }
 
 //ウィンドウプロシージャを設定する
 void Window::SetWindowProc(WNDPROC win_proc) {
@@ -98,8 +98,7 @@ void Window::UpdateSettings(UpdateWindowSettingFlags flags) const {
 
 //ウィンドウタイトルを更新する
 void Window::UpdateWindowTitle() const {
-  util::debug::Assertion(SetWindowTextW(hWnd_, window_title_.c_str()),
-                         L"ウィンドウタイトルの設定に失敗しました。");
+  SetWindowTextW(hWnd_, window_title_.c_str());
 }
 
 //スクリーンサイズとウィンドウ座標を更新する
@@ -111,14 +110,12 @@ void Window::UpdateScreenSizeAndPosition() const {
   GetClientRect(hWnd_, &cx);
 
   //取得した差分を使って調整する
-  const int new_width =
+  const i32 new_width =
       screen_size_.x + (rx.right - rx.left) - (cx.right - cx.left);
-  const int new_height =
+  const i32 new_height =
       screen_size_.y + (rx.bottom - rx.top) - (cx.bottom - cx.top);
-  util::debug::Assertion(
-      SetWindowPos(hWnd_, nullptr, window_position_.x, window_position_.y,
-                   new_width, new_height, SWP_SHOWWINDOW),
-      L"ウィンドウ座標もしくはサイズ設定に失敗しました。");
+  SetWindowPos(hWnd_, nullptr, window_position_.x, window_position_.y,
+               new_width, new_height, SWP_SHOWWINDOW);
 }
 
 }  // namespace window

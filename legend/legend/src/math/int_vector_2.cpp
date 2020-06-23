@@ -15,7 +15,7 @@ const IntVector2 IntVector2::kUnitVector = IntVector2(1, 1);
 IntVector2::IntVector2() : x(0), y(0) {}
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-IntVector2::IntVector2(int x, int y) : x(x), y(y) {}
+IntVector2::IntVector2(i32 x, i32 y) : x(x), y(y) {}
 
 //‰ÁZ‘ã“ü
 IntVector2& IntVector2::operator+=(const IntVector2& v) {
@@ -32,14 +32,14 @@ IntVector2& IntVector2::operator-=(const IntVector2& v) {
 }
 
 //æZ‘ã“ü
-IntVector2& IntVector2::operator*=(int k) {
+IntVector2& IntVector2::operator*=(i32 k) {
   this->x *= k;
   this->y *= k;
   return *this;
 }
 
 //œZ‘ã“ü
-IntVector2& IntVector2::operator/=(int k) {
+IntVector2& IntVector2::operator/=(i32 k) {
   this->x /= k;
   this->y /= k;
   return *this;

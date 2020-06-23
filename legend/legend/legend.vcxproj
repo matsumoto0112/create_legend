@@ -97,6 +97,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\util\byte_reader.cpp" />
+    <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -118,8 +120,11 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
+    <ClInclude Include="src\util\path.h" />
+    <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\string_util.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />
@@ -128,6 +133,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

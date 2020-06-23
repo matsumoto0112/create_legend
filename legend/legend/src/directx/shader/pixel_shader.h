@@ -37,13 +37,12 @@ class PixelShader {
    * @brief シェーダーコードを返す
    */
   CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
-    return CD3DX12_SHADER_BYTECODE(pixel_shader_->GetBufferPointer(),
-                                   pixel_shader_->GetBufferSize());
+    return CD3DX12_SHADER_BYTECODE{pixel_shader_data.data(), pixel_shader_data.size()};
   }
 
  private:
   //! ピクセルシェーダーファイル
-  ComPtr<ID3DBlob> pixel_shader_;
+  std::vector<u8> pixel_shader_data;
 };
 
 }  // namespace shader

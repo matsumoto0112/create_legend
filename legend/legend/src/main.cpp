@@ -5,6 +5,7 @@
 #include "src/directx/shader/vertex_shader.h"
 #include "src/directx/vertex.h"
 #include "src/game/application.h"
+#include "src/util/path.h"
 #include "src/window/window.h"
 
 namespace legend {
@@ -50,8 +51,9 @@ class MyApp final : public device::Application {
     }
 
     //頂点シェーダー
-    std::filesystem::path path = std::filesystem::current_path();
-    path = path / L"assets" / L"shaders" / L"Shader.hlsl";
+    std::filesystem::path path = util::Path::getInstance()->shader();
+    std::filesystem::path vertex_shader_path = path / L"VertexShader.cso";
+    std::filesystem::path pixel_shader_path = path / L"PixelShader.cso";
     std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
         {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
          D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
@@ -59,21 +61,27 @@ class MyApp final : public device::Application {
     };
     std::shared_ptr<directx::shader::VertexShader> vertex_shader =
         std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(GetDirectX12Device(), path, elements)) {
+    if (!vertex_shader->Init(GetDirectX12Device(), vertex_shader_path,
+                             elements)) {
       return false;
     }
 
     //ピクセルシェーダー
     std::shared_ptr<directx::shader::PixelShader> pixel_shader =
         std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(GetDirectX12Device(), path)) {
+    if (!pixel_shader->Init(GetDirectX12Device(), pixel_shader_path)) {
       return false;
     }
 
-    pipeline_state_.Init(GetDirectX12Device());
+    if (!pipeline_state_.Init(GetDirectX12Device())) {
+      return false;
+    }
     pipeline_state_.SetVertexShader(vertex_shader);
     pipeline_state_.SetPixelShader(pixel_shader);
-    pipeline_state_.CreatePipelineState(GetDirectX12Device());
+
+    if (!pipeline_state_.CreatePipelineState(GetDirectX12Device())) {
+      return false;
+    }
 
     return true;
   }

@@ -37,8 +37,7 @@ class VertexShader {
    * @brief シェーダーコードとして返す
    */
   CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
-    return CD3DX12_SHADER_BYTECODE(vertex_shader_->GetBufferPointer(),
-                                   vertex_shader_->GetBufferSize());
+    return CD3DX12_SHADER_BYTECODE{shader_code_.data(), shader_code_.size()};
   }
   /**
    * @brief 入力レイアウトを返す
@@ -51,6 +50,8 @@ class VertexShader {
  private:
   //! シェーダーファイル
   ComPtr<ID3DBlob> vertex_shader_;
+
+  std::vector<u8> shader_code_;
   //! 入力レイアウト
   std::vector<D3D12_INPUT_ELEMENT_DESC> elements_;
 };

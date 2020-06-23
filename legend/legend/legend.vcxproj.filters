@@ -16,6 +16,8 @@
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />
+    <ClCompile Include="src\util\byte_reader.cpp" />
+    <ClCompile Include="src\util\path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -42,8 +44,15 @@
     <ClInclude Include="src\window\window_procedure_event_callback.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
     <ClInclude Include="src\directx\shader\shader_defines.h" />
+    <ClInclude Include="src\util\byte_reader.h" />
+    <ClInclude Include="src\util\path.h" />
+    <ClInclude Include="src\util\singleton.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\VertexShader.hlsl" />
+    <FxCompile Include="assets\shaders\PixelShader.hlsl" />
   </ItemGroup>
 </Project>

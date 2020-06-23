@@ -41,6 +41,7 @@
     <ClInclude Include="src\window\window_procedure.h" />
     <ClInclude Include="src\window\window_procedure_event_callback.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
+    <ClInclude Include="src\directx\shader\shader_defines.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

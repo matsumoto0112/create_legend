@@ -11,17 +11,38 @@
 namespace legend {
 namespace directx {
 namespace shader {
+
+/**
+ * @brief ピクセルシェーダー
+ */
 class PixelShader {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   PixelShader();
+  /**
+   * @brief デストラクタ
+   */
   ~PixelShader();
-  bool Init(DirectX12Device& device, const std::wstring& filepath);
+  /**
+   * @brief 初期化
+   * @param device DirectX12デバイス
+   * @param filepath ファイルパス
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool Init(DirectX12Device& device, const std::filesystem::path& filepath);
+
+  /**
+   * @brief シェーダーコードを返す
+   */
   CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
     return CD3DX12_SHADER_BYTECODE(pixel_shader_->GetBufferPointer(),
                                    pixel_shader_->GetBufferSize());
   }
 
  private:
+  //! ピクセルシェーダーファイル
   ComPtr<ID3DBlob> pixel_shader_;
 };
 

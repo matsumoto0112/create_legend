@@ -20,6 +20,7 @@ class MyApp final : public device::Application {
 
     MY_LOG(L"init_myapp");
 
+    //頂点定義
     constexpr float D = 0.8f;
     const std::vector<directx::Vertex> vertices = {
         directx::Vertex(math::Vector3(0, 0, 0)),
@@ -37,6 +38,7 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    //インデックス定義
     const std::vector<u16> indices = {0, 1, 2, 0, 3, 4};
     const u32 index_num = static_cast<u32>(indices.size());
     if (!index_buffer_.Init(GetDirectX12Device(), index_num,
@@ -47,13 +49,21 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    //頂点シェーダー
     std::filesystem::path path = std::filesystem::current_path();
     path = path / L"assets" / L"shaders" / L"Shader.hlsl";
+    std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
+        {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+         D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+         0},
+    };
     std::shared_ptr<directx::shader::VertexShader> vertex_shader =
         std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(GetDirectX12Device(), path)) {
+    if (!vertex_shader->Init(GetDirectX12Device(), path, elements)) {
       return false;
     }
+
+    //ピクセルシェーダー
     std::shared_ptr<directx::shader::PixelShader> pixel_shader =
         std::make_shared<directx::shader::PixelShader>();
     if (!pixel_shader->Init(GetDirectX12Device(), path)) {

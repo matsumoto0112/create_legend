@@ -108,6 +108,7 @@
     <ClInclude Include="src\directx\directx_helper.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
     <ClInclude Include="src\directx\shader\pixel_shader.h" />
+    <ClInclude Include="src\directx\shader\shader_defines.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\directx\vertex.h" />
     <ClInclude Include="src\game\application.h" />

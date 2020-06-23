@@ -27,6 +27,7 @@ void GraphicsPipelineState::SetVertexShader(
 
   if (vertex_shader_) {
     pipeline_state_desc_.VS = vertex_shader_->GetShaderBytecode();
+    pipeline_state_desc_.InputLayout = vertex_shader_->GetInputLayout();
   }
 }
 
@@ -61,15 +62,6 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
     MY_LOG(L"CreateRootSignature failed");
     return false;
   }
-
-  D3D12_INPUT_ELEMENT_DESC input_element_descs[] = {
-      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-  };
-
-  pipeline_state_desc_.InputLayout = {input_element_descs,
-                                      _countof(input_element_descs)};
   pipeline_state_desc_.pRootSignature = root_signature_.Get();
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =

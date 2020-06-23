@@ -40,7 +40,7 @@ class DirectX12Device {
 
  public:
   ID3D12Device* GetDevice() const { return device_.Get(); }
-  ID3D12GraphicsCommandList5* GetCommandList() const {
+  ID3D12GraphicsCommandList4* GetCommandList() const {
     return command_list_.Get();
   }
 
@@ -79,7 +79,7 @@ class DirectX12Device {
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
   //! コマンドリスト
-  ComPtr<ID3D12GraphicsCommandList5> command_list_;
+  ComPtr<ID3D12GraphicsCommandList4> command_list_;
   //!< 現在のレンダーターゲットの状態
   D3D12_RESOURCE_STATES current_resource_state_;
   //! フェンス値

@@ -25,6 +25,7 @@
     <ClCompile Include="src\libs\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
+    <ClCompile Include="src\input\input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
+    <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
   </ItemGroup>
   <ItemGroup>

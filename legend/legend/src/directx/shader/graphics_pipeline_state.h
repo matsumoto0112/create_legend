@@ -61,6 +61,13 @@ class GraphicsPipelineState {
   ComPtr<ID3D12PipelineState> pipeline_state_;
   //! ルートシグネチャ
   ComPtr<ID3D12RootSignature> root_signature_;
+
+  ComPtr<ID3D12DescriptorHeap> heap_;
+  struct Color {
+    float color[4];
+  } color_;
+  ComPtr<ID3D12Resource> constant_buffer_;
+  
 };
 
 }  // namespace shader

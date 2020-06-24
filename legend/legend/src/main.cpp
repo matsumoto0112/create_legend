@@ -54,7 +54,7 @@ class MyApp final : public device::Application {
     //頂点シェーダー
     std::filesystem::path path = util::Path::getInstance()->shader();
     std::filesystem::path vertex_shader_path = path / L"VertexShader.cso";
-    std::filesystem::path pixel_shader_path = path / L"PixelShader.cso";
+    std::filesystem::path pixel_shader_path = path / L"ConstantBufferTest.cso";
     std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
         {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
          D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,

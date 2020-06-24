@@ -48,11 +48,30 @@ void GraphicsPipelineState::SetPixelShader(
 
 //パイプラインステート
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
-  CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc;
+  D3D12_DESCRIPTOR_HEAP_DESC heap_desc;
+  heap_desc.NumDescriptors = 1;
+  heap_desc.Type =
+      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+  heap_desc.Flags =
+      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+  heap_desc.NodeMask = 0;
+  if (FAILED(device.GetDevice()->CreateDescriptorHeap(&heap_desc,
+                                                      IID_PPV_ARGS(&heap_)))) {
+    return false;
+  }
+
+  CD3DX12_DESCRIPTOR_RANGE ranges[1];
+  ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+                 1, 0, 0);
+  CD3DX12_ROOT_PARAMETER params[1];
+  params[0].InitAsDescriptorTable(1, ranges);
+
+  CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc = {};
   root_signature_desc.Init(
-      0, nullptr, 0, nullptr,
+      1, params, 0, nullptr,
       D3D12_ROOT_SIGNATURE_FLAGS::
           D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
   ComPtr<ID3DBlob> signature;
   ComPtr<ID3DBlob> error;
   if (FAILED(D3D12SerializeRootSignature(
@@ -69,6 +88,32 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
     MY_LOG(L"CreateRootSignature failed");
     return false;
   }
+
+  if (FAILED(device.GetDevice()->CreateCommittedResource(
+          &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
+          D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+          &CD3DX12_RESOURCE_DESC::Buffer(sizeof(color_)),
+          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+          IID_PPV_ARGS(&constant_buffer_)))) {
+    return false;
+  }
+
+  color_.color[0] = 0.0f;
+  color_.color[1] = 1.0f;
+  color_.color[2] = 0.0f;
+  void* begin;
+  if (FAILED(constant_buffer_->Map(0, nullptr, &begin))) {
+    return false;
+  }
+  memcpy(begin, &color_, sizeof(color_));
+  constant_buffer_->Unmap(0, nullptr);
+
+  D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+  cbvDesc.BufferLocation = constant_buffer_->GetGPUVirtualAddress();
+  cbvDesc.SizeInBytes = 256;
+  device.GetDevice()->CreateConstantBufferView(
+      &cbvDesc, heap_->GetCPUDescriptorHandleForHeapStart());
+
   pipeline_state_desc_.pRootSignature = root_signature_.Get();
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =
@@ -87,8 +132,21 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
 
 //コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
+  float value = color_.color[1] + 0.01f;
+  if (value > 1.0f) value -= 1.0f;
+  color_.color[1] = value;
+  void* begin;
+  if (FAILED(constant_buffer_->Map(0, nullptr, &begin))) {
+    return;
+  }
+  memcpy(begin, &color_, sizeof(color_));
+
   device.GetCommandList()->SetGraphicsRootSignature(root_signature_.Get());
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
+  ID3D12DescriptorHeap* heaps[] = {heap_.Get()};
+  device.GetCommandList()->SetDescriptorHeaps(1, heaps);
+  device.GetCommandList()->SetGraphicsRootDescriptorTable(
+      0, heap_->GetGPUDescriptorHandleForHeapStart());
 }
 
 }  // namespace shader

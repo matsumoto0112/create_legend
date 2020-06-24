@@ -75,5 +75,6 @@
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
     <FxCompile Include="assets\shaders\PixelShader.hlsl" />
+    <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl" />
   </ItemGroup>
 </Project>

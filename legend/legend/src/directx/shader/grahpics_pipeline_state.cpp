@@ -61,48 +61,10 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
     return false;
   }
 
-  std::vector<CD3DX12_DESCRIPTOR_RANGE> ranges(2);
-  ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-                 1, 0, 0);
-  ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-                 1, 0, 0);
-  std::vector<CD3DX12_ROOT_PARAMETER> params(2);
-  params[0].InitAsDescriptorTable(1, &ranges[0]);
-  params[1].InitAsDescriptorTable(1, &ranges[1]);
-
-  std::vector<CD3DX12_STATIC_SAMPLER_DESC> samplers(1);
-  samplers[0].Init(
-      0, D3D12_FILTER::D3D12_FILTER_MIN_MAG_MIP_POINT,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 0.0f, 0,
-      D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NEVER,
-      D3D12_STATIC_BORDER_COLOR::D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
-      0.0f, D3D12_FLOAT32_MAX,
-      D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL, 0);
-
-  CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc = {};
-  root_signature_desc.Init(
-      2, params.data(), 1, samplers.data(),
-      D3D12_ROOT_SIGNATURE_FLAGS::
-          D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-  ComPtr<ID3DBlob> signature;
-  ComPtr<ID3DBlob> error;
-  if (FAILED(D3D12SerializeRootSignature(
-          &root_signature_desc,
-          D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1, &signature,
-          &error))) {
-    MY_LOG(L"D3D12SerializeRootSignature failed");
+  if (!root_signature_.Init(device, L"RootSignature")) {
     return false;
   }
 
-  if (FAILED(device.GetDevice()->CreateRootSignature(
-          0, signature->GetBufferPointer(), signature->GetBufferSize(),
-          IID_PPV_ARGS(&root_signature_)))) {
-    MY_LOG(L"CreateRootSignature failed");
-    return false;
-  }
   constexpr u32 constant_buffer_size = 256;
   if (FAILED(device.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
@@ -172,7 +134,7 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
-  pipeline_state_desc_.pRootSignature = root_signature_.Get();
+  pipeline_state_desc_.pRootSignature = root_signature_.GetRootSignature();
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -201,7 +163,7 @@ void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
   }
   memcpy(begin, &color_, sizeof(color_));
 
-  device.GetCommandList()->SetGraphicsRootSignature(root_signature_.Get());
+  root_signature_.SetGraphicsCommandList(device);
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
   ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
   device.GetCommandList()->SetDescriptorHeaps(1, heaps);

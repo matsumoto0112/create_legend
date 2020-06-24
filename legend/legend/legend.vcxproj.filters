@@ -27,6 +27,7 @@
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -70,6 +71,7 @@
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

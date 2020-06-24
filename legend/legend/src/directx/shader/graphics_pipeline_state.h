@@ -9,6 +9,7 @@
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
 
 namespace legend {
@@ -61,7 +62,7 @@ class GraphicsPipelineState {
   //! パイプラインステート
   ComPtr<ID3D12PipelineState> pipeline_state_;
   //! ルートシグネチャ
-  ComPtr<ID3D12RootSignature> root_signature_;
+  RootSignature root_signature_;
 
   DescriptorHeap heap_;
   struct Color {

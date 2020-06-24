@@ -15,5 +15,5 @@ struct PSInput
 float4 main(PSInput i) : SV_TARGET
 {
     float4 col = g_texture.Sample(g_sampler,i.uv);
-	return col;
+	return col * g_color.color;
 }

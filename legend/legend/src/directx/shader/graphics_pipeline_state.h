@@ -6,6 +6,7 @@
  * @brief パイプラインステート定義
  */
 
+#include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -62,14 +63,13 @@ class GraphicsPipelineState {
   //! ルートシグネチャ
   ComPtr<ID3D12RootSignature> root_signature_;
 
-  ComPtr<ID3D12DescriptorHeap> heap_;
+  DescriptorHeap heap_;
   struct Color {
     float color[4];
   } color_;
   ComPtr<ID3D12Resource> constant_buffer_;
   ComPtr<ID3D12Resource> texture_resource_;
   ComPtr<ID3D12Resource> immediate_texture_resource_;
-
 };
 
 }  // namespace shader

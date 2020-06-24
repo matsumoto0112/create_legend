@@ -25,11 +25,11 @@ class MyApp final : public device::Application {
     //頂点定義
     constexpr float D = 0.8f;
     const std::vector<directx::Vertex> vertices = {
-        directx::Vertex(math::Vector3(0, 0, 0)),
-        directx::Vertex(math::Vector3(0, D, 0)),
-        directx::Vertex(math::Vector3(D, 0, 0)),
-        directx::Vertex(math::Vector3(0, -D, 0)),
-        directx::Vertex(math::Vector3(-D, 0, 0)),
+        directx::Vertex(math::Vector3(0, 0, 0), math::Vector2(0.5f, 0.5f)),
+        directx::Vertex(math::Vector3(0, D, 0), math::Vector2(0.5f, 0.0f)),
+        directx::Vertex(math::Vector3(D, 0, 0), math::Vector2(1.0f, 0.5f)),
+        directx::Vertex(math::Vector3(0, -D, 0), math::Vector2(0.5f, 1.0f)),
+        directx::Vertex(math::Vector3(-D, 0, 0), math::Vector2(0.0f, 0.5f)),
     };
     const u32 vertex_size = sizeof(directx::Vertex);
     const u32 vertex_num = static_cast<u32>(vertices.size());
@@ -54,9 +54,14 @@ class MyApp final : public device::Application {
     //頂点シェーダー
     std::filesystem::path path = util::Path::getInstance()->shader();
     std::filesystem::path vertex_shader_path = path / L"VertexShader.cso";
-    std::filesystem::path pixel_shader_path = path / L"ConstantBufferTest.cso";
+    std::filesystem::path pixel_shader_path = path / L"TextureTest.cso";
     std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
-        {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+        {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
+         D3D12_APPEND_ALIGNED_ELEMENT,
+         D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+         0},
+        {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
+         D3D12_APPEND_ALIGNED_ELEMENT,
          D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
          0},
     };

@@ -67,7 +67,9 @@ class GraphicsPipelineState {
     float color[4];
   } color_;
   ComPtr<ID3D12Resource> constant_buffer_;
-  
+  ComPtr<ID3D12Resource> texture_resource_;
+  ComPtr<ID3D12Resource> immediate_texture_resource_;
+
 };
 
 }  // namespace shader

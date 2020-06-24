@@ -35,9 +35,13 @@ void Application::Run() {
 
   if (!this->Init()) {
     Finalize();
-    SendMessage(main_window_->GetHWND(), WM_CLOSE, 0, 0);
+    return;
   }
 
+  if (!this->device_->InitAfter()) {
+    Finalize();
+    return;
+  }
   main_window_->Show(SW_SHOW);
 
   tagMSG msg = {};

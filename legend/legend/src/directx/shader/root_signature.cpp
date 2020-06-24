@@ -1,5 +1,7 @@
 #include "src/directx/shader/root_signature.h"
 
+#include "src/directx/shader/defined_static_sampler.h"
+
 namespace {
 constexpr legend::u32 CBV_DESCRIPTOR_NUM = 16;
 constexpr legend::u32 SRV_DESCRIPTOR_NUM = 48;
@@ -32,16 +34,14 @@ bool RootSignature::Init(DirectX12Device& device, const std::wstring& name) {
   params[1].InitAsDescriptorTable(1, &ranges[1]);
   params[2].InitAsDescriptorTable(1, &ranges[2]);
 
-  std::vector<CD3DX12_STATIC_SAMPLER_DESC> samplers(1);
-  samplers[0].Init(
-      0, D3D12_FILTER::D3D12_FILTER_MIN_MAG_MIP_POINT,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-      D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 0.0f, 0,
-      D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NEVER,
-      D3D12_STATIC_BORDER_COLOR::D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
-      0.0f, D3D12_FLOAT32_MAX,
-      D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL, 0);
+  std::vector<D3D12_STATIC_SAMPLER_DESC> samplers{
+      defined_sampler::CreateStaticSampler(
+          0, D3D12_FILTER::D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+          D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_WRAP),
+      defined_sampler::CreateStaticSampler(
+          1, D3D12_FILTER::D3D12_FILTER_MIN_MAG_MIP_POINT,
+          D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_WRAP),
+  };
 
   CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc = {};
   root_signature_desc.Init(
@@ -56,6 +56,7 @@ bool RootSignature::Init(DirectX12Device& device, const std::wstring& name) {
           &root_signature_desc,
           D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1, &signature,
           &error))) {
+    char* mes = static_cast<char*>(error->GetBufferPointer());
     MY_LOG(L"D3D12SerializeRootSignature failed");
     return false;
   }

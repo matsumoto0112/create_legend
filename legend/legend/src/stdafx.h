@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "src/libs/d3dx12.h"
+#include "src/libs/imgui/imgui.h"
 #include "src/util/debug.h"
 #include "src/util/typedef.h"
 

@@ -9,6 +9,7 @@
 #include "src/directx/vertex.h"
 #include "src/game/application.h"
 #include "src/libs/imgui/imgui.h"
+#include "src/math/matrix_4x4.h"
 #include "src/util/path.h"
 #include "src/window/window.h"
 
@@ -16,6 +17,11 @@ namespace legend {
 
 struct Color {
   std::array<float, 4> color;
+};
+struct Matrix {
+  math::Matrix4x4 world;
+  math::Matrix4x4 view;
+  math::Matrix4x4 proj;
 };
 
 class MyApp final : public device::Application {
@@ -45,6 +51,20 @@ class MyApp final : public device::Application {
     Color& color = color_constant_buffer.GetStagingRef();
     color.color = {0.0f, 1.0f, 0.0f, 1.0f};
 
+    if (!matrix_constant_buffer.Init(
+            GetDirectX12Device(), heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
+            L"Matrix ConstantBuffer")) {
+      return false;
+    }
+    Matrix& mat = matrix_constant_buffer.GetStagingRef();
+    mat.world = math::Matrix4x4::kIdentity;
+    mat.view = math::Matrix4x4::CreateView(math::Vector3(0, 0, -10),
+                                           math::Vector3(0, 0, 0),
+                                           math::Vector3::kUpVector);
+    const math::IntVector2 screen_size = main_window_->GetScreenSize();
+    mat.proj = math::Matrix4x4::CreateProjection(
+        45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
+
     constexpr u32 WIDTH = 32;
     constexpr u32 HEIGHT = 32;
     struct Pixel {
@@ -61,7 +81,7 @@ class MyApp final : public device::Application {
     }
 
     texture_.Init(GetDirectX12Device(), DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                  WIDTH, HEIGHT, heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
+                  WIDTH, HEIGHT, heap_.GetCPUHandle(2), heap_.GetGPUHandle(2),
                   L"Yellow Texture");
     texture_.WriteResource(GetDirectX12Device(), datas.data());
 
@@ -169,6 +189,10 @@ class MyApp final : public device::Application {
     color_constant_buffer.GetStagingRef().color[1] = value;
     color_constant_buffer.UpdateStaging();
 
+    matrix_constant_buffer.GetStagingRef().world *=
+        math::Matrix4x4::CreateRotationY(0.1f);
+    matrix_constant_buffer.UpdateStaging();
+
     ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
     GetDirectX12Device().GetCommandList()->SetDescriptorHeaps(1, heaps);
 
@@ -192,10 +216,8 @@ class MyApp final : public device::Application {
   directx::buffer::IndexBuffer index_buffer_;
   directx::shader::GraphicsPipelineState pipeline_state_;
   directx::DescriptorHeap heap_;
-  struct Color {
-    std::array<float, 4> color;
-  };
   directx::buffer::ConstantBuffer<Color> color_constant_buffer;
+  directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
   directx::buffer::Texture2D texture_;
 };
 }  // namespace legend

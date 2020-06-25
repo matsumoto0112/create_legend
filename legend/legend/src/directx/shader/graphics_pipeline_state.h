@@ -65,13 +65,6 @@ class GraphicsPipelineState {
   ComPtr<ID3D12PipelineState> pipeline_state_;
   //! ルートシグネチャ
   RootSignature root_signature_;
-
-  DescriptorHeap heap_;
-  struct Color {
-    std::array<float, 4> color;
-  };
-  buffer::ConstantBuffer<Color> color_constant_buffer;
-  buffer::Texture2D texture_;
 };
 
 }  // namespace shader

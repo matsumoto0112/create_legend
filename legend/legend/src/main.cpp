@@ -1,4 +1,6 @@
+#include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
@@ -11,6 +13,10 @@
 #include "src/window/window.h"
 
 namespace legend {
+
+struct Color {
+  std::array<float, 4> color;
+};
 
 class MyApp final : public device::Application {
  public:
@@ -30,6 +36,34 @@ class MyApp final : public device::Application {
     if (!heap_.Init(GetDirectX12Device(), heap_desc, L"ShaderResourceHeap")) {
       return false;
     }
+
+    if (!color_constant_buffer.Init(GetDirectX12Device(), heap_.GetCPUHandle(0),
+                                    heap_.GetGPUHandle(0),
+                                    L"Color ConstantBuffer")) {
+      return false;
+    }
+    Color& color = color_constant_buffer.GetStagingRef();
+    color.color = {0.0f, 1.0f, 0.0f, 1.0f};
+
+    constexpr u32 WIDTH = 32;
+    constexpr u32 HEIGHT = 32;
+    struct Pixel {
+      u8 color[4];
+    };
+    std::vector<Pixel> datas(WIDTH * HEIGHT);
+    for (u32 w = 0; w < WIDTH; w++) {
+      for (u32 h = 0; h < HEIGHT; h++) {
+        datas[h * WIDTH + w].color[0] = 0xff;
+        datas[h * WIDTH + w].color[1] = 0xff;
+        datas[h * WIDTH + w].color[2] = 0;
+        datas[h * WIDTH + w].color[3] = 0xff;
+      }
+    }
+
+    texture_.Init(GetDirectX12Device(), DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                  WIDTH, HEIGHT, heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
+                  L"Yellow Texture");
+    texture_.WriteResource(GetDirectX12Device(), datas.data());
 
     //’¸“_’è‹`
     constexpr float D = 0.8f;
@@ -128,6 +162,19 @@ class MyApp final : public device::Application {
     }
 
     pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
+
+    float value = color_constant_buffer.GetStagingRef().color[1];
+    value += 0.01f;
+    if (value > 1.0f) value -= 1.0f;
+    color_constant_buffer.GetStagingRef().color[1] = value;
+    color_constant_buffer.UpdateStaging();
+
+    ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
+    GetDirectX12Device().GetCommandList()->SetDescriptorHeaps(1, heaps);
+
+    color_constant_buffer.SetGraphicsCommandList(GetDirectX12Device(), 0);
+    texture_.SetGraphicsCommandList(GetDirectX12Device(), 1);
+
     vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.Draw(GetDirectX12Device());
@@ -145,6 +192,11 @@ class MyApp final : public device::Application {
   directx::buffer::IndexBuffer index_buffer_;
   directx::shader::GraphicsPipelineState pipeline_state_;
   directx::DescriptorHeap heap_;
+  struct Color {
+    std::array<float, 4> color;
+  };
+  directx::buffer::ConstantBuffer<Color> color_constant_buffer;
+  directx::buffer::Texture2D texture_;
 };
 }  // namespace legend
 

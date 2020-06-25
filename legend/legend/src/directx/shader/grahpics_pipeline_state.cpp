@@ -52,48 +52,9 @@ void GraphicsPipelineState::SetPixelShader(
 
 //パイプラインステート
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
-  DescriptorHeap::Desc heap_desc = {};
-  heap_desc.descriptor_num = 10;
-  heap_desc.type = HeapType::CBV_SRV_UAV;
-  heap_desc.flag = HeapFlag::ShaderVisible;
-  if (!heap_.Init(device, heap_desc, L"ShaderResourceHeap")) {
-    return false;
-  }
-
   if (!root_signature_.Init(device, L"RootSignature")) {
     return false;
   }
-
-  if (!color_constant_buffer.Init(device, heap_.GetCPUHandle(0),
-                                  heap_.GetGPUHandle(0),
-                                  L"Color ConstantBuffer")) {
-    return false;
-  }
-  Color& color = color_constant_buffer.GetStagingRef();
-  color.color = {0.0f, 1.0f, 0.0f, 1.0f};
-
-  heap_size_ = device.GetDevice()->GetDescriptorHandleIncrementSize(
-      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-  constexpr u32 WIDTH = 32;
-  constexpr u32 HEIGHT = 32;
-  struct Pixel {
-    u8 color[4];
-  };
-  std::vector<Pixel> datas(WIDTH * HEIGHT);
-  for (u32 w = 0; w < WIDTH; w++) {
-    for (u32 h = 0; h < HEIGHT; h++) {
-      datas[h * WIDTH + w].color[0] = 0xff;
-      datas[h * WIDTH + w].color[1] = 0xff;
-      datas[h * WIDTH + w].color[2] = 0;
-      datas[h * WIDTH + w].color[3] = 0xff;
-    }
-  }
-
-  texture_.Init(device, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, WIDTH, HEIGHT,
-                heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
-                L"Yellow Texture");
-  texture_.WriteResource(device, datas.data());
 
   pipeline_state_desc_.pRootSignature = root_signature_.GetRootSignature();
   pipeline_state_desc_.SampleMask = UINT_MAX;
@@ -113,21 +74,8 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
 
 //コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
-  float value = color_constant_buffer.GetStagingRef().color[1];
-  value += 0.01f;
-  if (value > 1.0f) value -= 1.0f;
-  color_constant_buffer.GetStagingRef().color[1] = value;
-  color_constant_buffer.UpdateStaging();
-
   root_signature_.SetGraphicsCommandList(device);
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
-  ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
-  device.GetCommandList()->SetDescriptorHeaps(1, heaps);
-
-  color_constant_buffer.SetGraphicsCommandList(device, 0);
-  texture_.SetGraphicsCommandList(device, 1);
-  // device.GetCommandList()->SetGraphicsRootDescriptorTable(
-  //    1, heap_.GetGPUHandle(1));
 }
 
 }  // namespace shader

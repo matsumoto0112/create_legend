@@ -8,8 +8,7 @@
 
 namespace legend {
 namespace directx {
-namespace util {
-}  // namespace util
+namespace util {}  // namespace util
 }  // namespace directx
 }  // namespace legend
 

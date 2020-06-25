@@ -56,8 +56,7 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   heap_desc.descriptor_num = 10;
   heap_desc.type = HeapType::CBV_SRV_UAV;
   heap_desc.flag = HeapFlag::ShaderVisible;
-  heap_desc.name = L"ShaderResourceHeap";
-  if (!heap_.Init(device, heap_desc)) {
+  if (!heap_.Init(device, heap_desc, L"ShaderResourceHeap")) {
     return false;
   }
 
@@ -65,27 +64,15 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
     return false;
   }
 
-  constexpr u32 constant_buffer_size = 256;
-  if (FAILED(device.GetDevice()->CreateCommittedResource(
-          &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
-          D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
-          &CD3DX12_RESOURCE_DESC::Buffer(constant_buffer_size),
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-          IID_PPV_ARGS(&constant_buffer_)))) {
+  if (!constant_buffer.Init(device, heap_.GetCPUHandle(0),
+                            heap_.GetGPUHandle(0), L"Color ConstantBuffer")) {
     return false;
   }
+  Color& color = constant_buffer.GetStagingRef();
+  color.color = {0.0f, 1.0f, 0.0f, 1.0f};
+
   heap_size_ = device.GetDevice()->GetDescriptorHandleIncrementSize(
       D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-  color_.color[0] = 0.0f;
-  color_.color[1] = 1.0f;
-  color_.color[2] = 0.0f;
-  void* begin;
-  if (FAILED(constant_buffer_->Map(0, nullptr, &begin))) {
-    return false;
-  }
-  memcpy(begin, &color_, sizeof(color_));
-  constant_buffer_->Unmap(0, nullptr);
 
   constexpr u32 WIDTH = 32;
   constexpr u32 HEIGHT = 32;
@@ -152,33 +139,18 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
 
 //コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
-  float value = color_.color[1] + 0.01f;
+  float value = constant_buffer.GetStagingRef().color[1];
+  value += 0.01f;
   if (value > 1.0f) value -= 1.0f;
-  color_.color[0] = value;
-  color_.color[1] = value;
-  color_.color[2] = value;
-  void* begin;
-  if (FAILED(constant_buffer_->Map(0, nullptr, &begin))) {
-    return;
-  }
-  memcpy(begin, &color_, sizeof(color_));
+  constant_buffer.GetStagingRef().color[1] = value;
+  constant_buffer.UpdateStaging();
 
   root_signature_.SetGraphicsCommandList(device);
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
   ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
   device.GetCommandList()->SetDescriptorHeaps(1, heaps);
 
-  static u32 index = 0;
-
-  D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-  cbvDesc.BufferLocation = constant_buffer_->GetGPUVirtualAddress();
-  cbvDesc.SizeInBytes = 256;
-  device.GetDevice()->CreateConstantBufferView(&cbvDesc,
-                                               heap_.GetCPUHandle(index));
-  device.GetCommandList()->SetGraphicsRootDescriptorTable(
-      0, heap_.GetGPUHandle(index));
-  index++;
-  index %= 10;
+  constant_buffer.SetGraphicsCommandList(device, 0);
 
   D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
   srv_desc.Texture2D.MipLevels = 1;
@@ -186,11 +158,9 @@ void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
   srv_desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
   srv_desc.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
   device.GetDevice()->CreateShaderResourceView(
-      texture_resource_.Get(), &srv_desc, heap_.GetCPUHandle(index));
+      texture_resource_.Get(), &srv_desc, heap_.GetCPUHandle(1));
   device.GetCommandList()->SetGraphicsRootDescriptorTable(
-      1, heap_.GetGPUHandle(index));
-  index++;
-  index %= 10;
+      1, heap_.GetGPUHandle(1));
 }
 
 }  // namespace shader

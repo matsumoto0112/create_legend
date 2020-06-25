@@ -6,6 +6,7 @@
  * @brief パイプラインステート定義
  */
 
+#include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
@@ -66,9 +67,9 @@ class GraphicsPipelineState {
 
   DescriptorHeap heap_;
   struct Color {
-    float color[4];
-  } color_;
-  ComPtr<ID3D12Resource> constant_buffer_;
+    std::array<float, 4> color;
+  };
+  buffer::ConstantBuffer<Color> constant_buffer;
   ComPtr<ID3D12Resource> texture_resource_;
   ComPtr<ID3D12Resource> immediate_texture_resource_;
 };

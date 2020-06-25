@@ -37,8 +37,6 @@ class DescriptorHeap {
    * @brief ディスクリプタヒープディスク
    */
   struct Desc {
-    //! ヒープ名
-    std::wstring name;
     //! 使用するディスクリプタヒープの数
     u32 descriptor_num;
     //! ヒープの種類
@@ -60,9 +58,11 @@ class DescriptorHeap {
    * @brief 初期化
    * @param device DirectX12デバイス
    * @param desc 作成するヒープの設定
+   * @param name ヒープ名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, const Desc& desc);
+  bool Init(DirectX12Device& device, const Desc& desc,
+            const std::wstring& name);
   /**
    * @brief CPUハンドルを取得する
    * @param index ハンドルインデックス

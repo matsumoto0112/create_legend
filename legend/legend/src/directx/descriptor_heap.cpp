@@ -37,7 +37,8 @@ DescriptorHeap::DescriptorHeap() : heap_(nullptr), heap_size_(0) {}
 DescriptorHeap::~DescriptorHeap() {}
 
 // 初期化
-bool DescriptorHeap::Init(DirectX12Device& device, const Desc& desc) {
+bool DescriptorHeap::Init(DirectX12Device& device, const Desc& desc,
+                          const std::wstring& name) {
   this->heap_.Reset();
   this->heap_size_ = 0;
 
@@ -53,12 +54,12 @@ bool DescriptorHeap::Init(DirectX12Device& device, const Desc& desc) {
   heap_desc.NodeMask = 0;
   if (FAILED(device.GetDevice()->CreateDescriptorHeap(&heap_desc,
                                                       IID_PPV_ARGS(&heap_)))) {
-    MY_LOG(L"CreateDescriptorHeap failed.");
+    MY_LOG(L"CreateDescriptorHeap %s failed.", name.c_str());
     return false;
   }
 
   //デバッグ用の名前を付ける
-  if (FAILED(heap_->SetName(desc.name.c_str()))) {
+  if (FAILED(heap_->SetName(name.c_str()))) {
     return false;
   }
 

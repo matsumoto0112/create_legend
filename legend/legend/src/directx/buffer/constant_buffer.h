@@ -21,9 +21,11 @@ class ConstantBuffer {
   ~ConstantBuffer();
   bool Init(DirectX12Device& device, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
             D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle, const std::wstring& name);
-  void SetGraphicsCommandList(DirectX12Device& device, u32 index);
   T& GetStagingRef() { return staging_; }
   void UpdateStaging() const;
+
+  D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() const { return cpu_handle_; }
+  D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const { return gpu_handle_; }
 
  public:
   //コピー・ムーブ禁止
@@ -80,12 +82,6 @@ inline bool ConstantBuffer<T>::Init(DirectX12Device& device,
   }
 
   return true;
-}
-
-template <class T>
-inline void ConstantBuffer<T>::SetGraphicsCommandList(DirectX12Device& device,
-                                                      u32 index) {
-  device.GetCommandList()->SetGraphicsRootDescriptorTable(index, gpu_handle_);
 }
 
 template <class T>

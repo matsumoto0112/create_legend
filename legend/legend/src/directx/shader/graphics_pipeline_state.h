@@ -36,6 +36,10 @@ class GraphicsPipelineState {
    */
   bool Init(DirectX12Device& device);
   /**
+   * @brief ルートシグネチャをセットする
+   */
+  void SetRootSignature(std::shared_ptr<RootSignature> root_signature);
+  /**
    * @brief 頂点シェーダーをセットする
    */
   void SetVertexShader(std::shared_ptr<VertexShader> vertex_shader);
@@ -64,7 +68,7 @@ class GraphicsPipelineState {
   //! パイプラインステート
   ComPtr<ID3D12PipelineState> pipeline_state_;
   //! ルートシグネチャ
-  RootSignature root_signature_;
+  std::shared_ptr<RootSignature> root_signature_;
 };
 
 }  // namespace shader

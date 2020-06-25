@@ -20,7 +20,8 @@ class Texture2D {
             D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
             D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle, const std::wstring& name);
   void WriteResource(DirectX12Device& device, const void* data);
-  void SetGraphicsCommandList(DirectX12Device& device, u32 index);
+  D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() const { return cpu_handle_; }
+  D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const { return gpu_handle_; }
 
  private:
   buffer::CommittedResource texture_;

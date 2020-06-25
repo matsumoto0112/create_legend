@@ -5,6 +5,7 @@
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/pixel_shader.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
 #include "src/directx/vertex.h"
 #include "src/game/application.h"
@@ -33,8 +34,6 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    MY_LOG(L"init_myapp");
-
     directx::DescriptorHeap::Desc heap_desc = {};
     heap_desc.descriptor_num = 10;
     heap_desc.type = directx::HeapType::CBV_SRV_UAV;
@@ -56,9 +55,13 @@ class MyApp final : public device::Application {
             L"Matrix ConstantBuffer")) {
       return false;
     }
+
+    position_ = math::Vector3(0, 0, 0);
+    rotation_ = math::Vector3(0, 0, 0);
     Matrix& mat = matrix_constant_buffer.GetStagingRef();
-    mat.world = math::Matrix4x4::kIdentity;
-    mat.view = math::Matrix4x4::CreateView(math::Vector3(0, 0, -10),
+    mat.world = math::Matrix4x4::CreateRotation(rotation_) *
+                math::Matrix4x4::CreateTranslate(position_);
+    mat.view = math::Matrix4x4::CreateView(math::Vector3(0, 10, -10),
                                            math::Vector3(0, 0, 0),
                                            math::Vector3::kUpVector);
     const math::IntVector2 screen_size = main_window_->GetScreenSize();
@@ -88,11 +91,35 @@ class MyApp final : public device::Application {
     //頂点定義
     constexpr float D = 0.8f;
     const std::vector<directx::Vertex> vertices = {
-        directx::Vertex(math::Vector3(0, 0, 0), math::Vector2(0.5f, 0.5f)),
-        directx::Vertex(math::Vector3(0, D, 0), math::Vector2(0.5f, 0.0f)),
-        directx::Vertex(math::Vector3(D, 0, 0), math::Vector2(1.0f, 0.5f)),
-        directx::Vertex(math::Vector3(0, -D, 0), math::Vector2(0.5f, 1.0f)),
-        directx::Vertex(math::Vector3(-D, 0, 0), math::Vector2(0.0f, 0.5f)),
+        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 1.0f)),
+
+        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, D, D), math::Vector2(1.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
+
+        directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(1.0f, 0.0f)),
+        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(0.0f, 1.0f)),
+
+        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
+        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(0.0f, 1.0f)),
+
+        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 1.0f)),
+        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
+
+        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 0.0f)),
+        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
+        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
+        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 0.0f)),
     };
     const u32 vertex_size = sizeof(directx::Vertex);
     const u32 vertex_num = static_cast<u32>(vertices.size());
@@ -105,7 +132,9 @@ class MyApp final : public device::Application {
     }
 
     //インデックス定義
-    const std::vector<u16> indices = {0, 1, 2, 0, 3, 4};
+    const std::vector<u16> indices = {
+        0,  1,  2,  0,  2,  3,  4,  5,  6,  4,  6,  7,  8,  9,  10, 8,  10, 11,
+        12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23};
     const u32 index_num = static_cast<u32>(indices.size());
     if (!index_buffer_.Init(GetDirectX12Device(), index_num,
                             directx::PrimitiveTopology::TriangleList,
@@ -115,6 +144,13 @@ class MyApp final : public device::Application {
     if (!index_buffer_.WriteBufferResource(indices)) {
       return false;
     }
+
+    root_signature_ = std::make_shared<directx::shader::RootSignature>();
+    if (!root_signature_->Init(GetDirectX12Device(),
+                               L"Global Root Signature")) {
+      return false;
+    }
+    pipeline_state_.SetRootSignature(root_signature_);
 
     //頂点シェーダー
     std::filesystem::path path = util::Path::getInstance()->shader();
@@ -161,18 +197,16 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    if (ImGui::Begin("Debug Window")) {
-      ImGui::Text("Debug Message");
-      static float value;
-      ImGui::SliderFloat("Debug Value", &value, 0.0f, 100.0f);
-      if (ImGui::Button("Debug Button")) {
-        ImGui::Text("Debug Button Message");
-        value = 50.0f;
-      }
+    if (ImGui::Begin("Cube Transform")) {
+      static std::array<float, 3> position;
+      ImGui::SliderFloat3("position", position.data(), -100.0f, 100.0f);
+      static std::array<float, 3> rotation;
+      ImGui::SliderFloat3("rotation", rotation.data(), 0.0f, 360.0f);
+      position_ = math::Vector3(position[0], position[1], position[2]);
+      rotation_ = math::Vector3(rotation[0], rotation[1], rotation[2]);
     }
     ImGui::End();
 
-    MY_LOG(L"update_myapp");
     return true;
   }
 
@@ -181,6 +215,7 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    root_signature_->SetGraphicsCommandList(GetDirectX12Device());
     pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
 
     float value = color_constant_buffer.GetStagingRef().color[1];
@@ -189,36 +224,38 @@ class MyApp final : public device::Application {
     color_constant_buffer.GetStagingRef().color[1] = value;
     color_constant_buffer.UpdateStaging();
 
-    matrix_constant_buffer.GetStagingRef().world *=
-        math::Matrix4x4::CreateRotationY(0.1f);
+    matrix_constant_buffer.GetStagingRef().world =
+        math::Matrix4x4::CreateRotation(rotation_) *
+        math::Matrix4x4::CreateTranslate(position_);
     matrix_constant_buffer.UpdateStaging();
 
     ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
     GetDirectX12Device().GetCommandList()->SetDescriptorHeaps(1, heaps);
 
-    color_constant_buffer.SetGraphicsCommandList(GetDirectX12Device(), 0);
-    texture_.SetGraphicsCommandList(GetDirectX12Device(), 1);
+    GetDirectX12Device().GetCommandList()->SetGraphicsRootDescriptorTable(
+        0, heap_.GetGPUHandle(0));
+    GetDirectX12Device().GetCommandList()->SetGraphicsRootDescriptorTable(
+        1, heap_.GetGPUHandle(2));
 
     vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.Draw(GetDirectX12Device());
-    MY_LOG(L"draw_myapp");
 
     return true;
   }
-  void Finalize() override {
-    Application::Finalize();
-    MY_LOG(L"finalize_myapp");
-  }
+  void Finalize() override { Application::Finalize(); }
 
  private:
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
+  std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
   directx::DescriptorHeap heap_;
   directx::buffer::ConstantBuffer<Color> color_constant_buffer;
   directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
   directx::buffer::Texture2D texture_;
+  math::Vector3 position_;
+  math::Vector3 rotation_;
 };
 }  // namespace legend
 

@@ -56,11 +56,6 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
-void Texture2D::SetGraphicsCommandList(DirectX12Device& device, u32 index) {
-  device.GetCommandList()->SetGraphicsRootDescriptorTable(index,
-                                                          this->gpu_handle_);
-}
-
 }  // namespace buffer
 }  // namespace directx
 }  // namespace legend

@@ -29,14 +29,23 @@ bool GraphicsPipelineState::Init(DirectX12Device& device) {
   return true;
 }
 
+void GraphicsPipelineState::SetRootSignature(
+    std::shared_ptr<RootSignature> root_signature) {
+  this->root_signature_ = root_signature;
+  if (this->root_signature_) {
+    pipeline_state_desc_.pRootSignature =
+        this->root_signature_->GetRootSignature();
+  }
+}
+
 //頂点シェーダー
 void GraphicsPipelineState::SetVertexShader(
     std::shared_ptr<VertexShader> vertex_shader) {
   this->vertex_shader_ = vertex_shader;
 
-  if (vertex_shader_) {
-    pipeline_state_desc_.VS = vertex_shader_->GetShaderBytecode();
-    pipeline_state_desc_.InputLayout = vertex_shader_->GetInputLayout();
+  if (this->vertex_shader_) {
+    pipeline_state_desc_.VS = this->vertex_shader_->GetShaderBytecode();
+    pipeline_state_desc_.InputLayout = this->vertex_shader_->GetInputLayout();
   }
 }
 
@@ -45,18 +54,13 @@ void GraphicsPipelineState::SetPixelShader(
     std::shared_ptr<PixelShader> pixel_shader) {
   this->pixel_shader_ = pixel_shader;
 
-  if (pixel_shader_) {
-    pipeline_state_desc_.PS = pixel_shader_->GetShaderBytecode();
+  if (this->pixel_shader_) {
+    pipeline_state_desc_.PS = this->pixel_shader_->GetShaderBytecode();
   }
 }
 
 //パイプラインステート
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
-  if (!root_signature_.Init(device, L"RootSignature")) {
-    return false;
-  }
-
-  pipeline_state_desc_.pRootSignature = root_signature_.GetRootSignature();
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -74,7 +78,6 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
 
 //コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
-  root_signature_.SetGraphicsCommandList(device);
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
 }
 

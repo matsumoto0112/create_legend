@@ -48,7 +48,7 @@ class MyApp final : public device::Application {
       return false;
     }
     Color& color = color_constant_buffer.GetStagingRef();
-    color.color = {0.0f, 1.0f, 0.0f, 1.0f};
+    color.color = {1.0f, 1.0f, 1.0f, 1.0f};
 
     if (!matrix_constant_buffer.Init(
             GetDirectX12Device(), heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
@@ -73,11 +73,12 @@ class MyApp final : public device::Application {
     struct Pixel {
       u8 color[4];
     };
+
     std::vector<Pixel> datas(WIDTH * HEIGHT);
     for (u32 w = 0; w < WIDTH; w++) {
       for (u32 h = 0; h < HEIGHT; h++) {
-        datas[h * WIDTH + w].color[0] = 0xff;
-        datas[h * WIDTH + w].color[1] = 0xff;
+        datas[h * WIDTH + w].color[0] = (w + h) * 4;
+        datas[h * WIDTH + w].color[1] = 0x00;
         datas[h * WIDTH + w].color[2] = 0;
         datas[h * WIDTH + w].color[3] = 0xff;
       }
@@ -121,6 +122,7 @@ class MyApp final : public device::Application {
         directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
         directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 0.0f)),
     };
+
     const u32 vertex_size = sizeof(directx::Vertex);
     const u32 vertex_num = static_cast<u32>(vertices.size());
     if (!vertex_buffer_.Init(GetDirectX12Device(), vertex_size, vertex_num,
@@ -203,7 +205,8 @@ class MyApp final : public device::Application {
       static std::array<float, 3> rotation;
       ImGui::SliderFloat3("rotation", rotation.data(), 0.0f, 360.0f);
       position_ = math::Vector3(position[0], position[1], position[2]);
-      rotation_ = math::Vector3(rotation[0], rotation[1], rotation[2]);
+      rotation_ = math::Vector3(rotation[0], rotation[1], rotation[2]) *
+                  math::util::DEG_2_RAD;
     }
     ImGui::End();
 

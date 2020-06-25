@@ -12,6 +12,17 @@ namespace legend {
 namespace math {
 namespace util {
 
+//! 円周率 π
+static inline const float PI = std::acosf(-1);
+//! 2 * π
+static inline const float PI2 = 2 * PI;
+
+//! 度からラジアンに変換する係数
+static inline const float DEG_2_RAD = PI / 180.0f;
+
+//! ラジアンから度に変換する係数
+static inline const float RAD_2_DEG = 180.0f / PI;
+
 /**
  * @brief sin(X)
  * @param X 単位はラジアン

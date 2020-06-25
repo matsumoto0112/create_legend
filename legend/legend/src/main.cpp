@@ -1,5 +1,6 @@
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/descriptor_heap.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -21,6 +22,14 @@ class MyApp final : public device::Application {
     }
 
     MY_LOG(L"init_myapp");
+
+    directx::DescriptorHeap::Desc heap_desc = {};
+    heap_desc.descriptor_num = 10;
+    heap_desc.type = directx::HeapType::CBV_SRV_UAV;
+    heap_desc.flag = directx::HeapFlag::ShaderVisible;
+    if (!heap_.Init(GetDirectX12Device(), heap_desc, L"ShaderResourceHeap")) {
+      return false;
+    }
 
     //’¸“_’è‹`
     constexpr float D = 0.8f;
@@ -135,6 +144,7 @@ class MyApp final : public device::Application {
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
   directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::DescriptorHeap heap_;
 };
 }  // namespace legend
 

@@ -30,6 +30,7 @@
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

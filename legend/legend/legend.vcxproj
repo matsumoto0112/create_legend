@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
@@ -117,6 +118,7 @@
   <ItemGroup>
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\descriptor_heap.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />

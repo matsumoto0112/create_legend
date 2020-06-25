@@ -31,8 +31,12 @@ class CommittedResource {
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitAsBuffer(DirectX12Device& device, u32 buffer_size,
+  bool InitAsBuffer(DirectX12Device& device, u64 buffer_size,
                     const std::wstring& name);
+  bool InitAsTex2D(DirectX12Device& device, DXGI_FORMAT format, u32 width,
+                   u32 height, const std::wstring& name);
+
+  void Transition(DirectX12Device& device, D3D12_RESOURCE_STATES next_state);
   /**
    * @brief リソースを取得する
    */
@@ -44,11 +48,19 @@ class CommittedResource {
    */
   bool WriteResource(const void* data);
 
+  u64 GetBufferSize() const { return buffer_size_; }
+
+ public:
+  static void UpdateSubresource(DirectX12Device& device,
+                                CommittedResource* dest_resource,
+                                CommittedResource* immediate_resource,
+                                const void* data, u64 row, u64 slice);
+
  private:
   //! 管理しているリソース
   ComPtr<ID3D12Resource> resource_;
   //! バッファのメモリサイズ
-  u32 buffer_size_;
+  u64 buffer_size_;
   //! リソースの状態
   D3D12_RESOURCE_STATES current_state_;
 };

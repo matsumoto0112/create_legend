@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/texture_2d.h"
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
@@ -69,9 +70,8 @@ class GraphicsPipelineState {
   struct Color {
     std::array<float, 4> color;
   };
-  buffer::ConstantBuffer<Color> constant_buffer;
-  ComPtr<ID3D12Resource> texture_resource_;
-  ComPtr<ID3D12Resource> immediate_texture_resource_;
+  buffer::ConstantBuffer<Color> color_constant_buffer;
+  buffer::Texture2D texture_;
 };
 
 }  // namespace shader

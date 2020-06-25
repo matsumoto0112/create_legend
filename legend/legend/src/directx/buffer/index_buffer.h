@@ -6,6 +6,7 @@
  * @brief インデックスバッファ定義
  */
 
+#include "src/directx/buffer/committed_resource.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/primitive_topology.h"
 
@@ -54,8 +55,8 @@ class IndexBuffer {
   void Draw(DirectX12Device& device);
 
  private:
-  //! インデックスバッファリソース
-  ComPtr<ID3D12Resource> index_buffer_resource_;
+  //! インデックスバッファのリソースデータ
+  CommittedResource resource_;
   //! バッファビュー
   D3D12_INDEX_BUFFER_VIEW index_buffer_view_;
   //! インデックス数

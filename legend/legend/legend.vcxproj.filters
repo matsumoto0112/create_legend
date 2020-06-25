@@ -29,6 +29,7 @@
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -74,6 +75,7 @@
     <ClInclude Include="src\directx\descriptor_heap.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\buffer\committed_resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

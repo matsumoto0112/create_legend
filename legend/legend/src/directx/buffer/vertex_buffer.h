@@ -6,6 +6,7 @@
  * @brief 頂点バッファ定義
  */
 
+#include "src/directx/buffer/committed_resource.h"
 #include "src/directx/directx12_device.h"
 
 namespace legend {
@@ -46,7 +47,7 @@ class VertexBuffer {
 
  protected:
   //! 頂点リソース
-  ComPtr<ID3D12Resource> vertex_buffer_resource_;
+  CommittedResource resource_;
   //! 頂点バッファビュー
   D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
 };
@@ -57,15 +58,7 @@ inline bool VertexBuffer::WriteBufferResource(const std::vector<T>& vertices) {
   MY_ASSERTION(vertices.size() * sizeof(T) == vertex_buffer_view_.SizeInBytes,
                L"vertices size is incorrect.");
 
-  void* data_begin;
-  if (FAILED(vertex_buffer_resource_->Map(0, nullptr, &data_begin))) {
-    return false;
-  }
-
-  memcpy_s(data_begin, vertex_buffer_view_.SizeInBytes, vertices.data(),
-           vertex_buffer_view_.SizeInBytes);
-  vertex_buffer_resource_->Unmap(0, nullptr);
-  return true;
+  return resource_.WriteResource(vertices.data());
 }
 
 }  // namespace buffer

@@ -38,13 +38,13 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\properties\dx12_lib_base.props" />
-    <Import Project="..\properties\dx12_lib_d.props" />
+    <Import Project="..\properties\legend_base.props" />
+    <Import Project="..\properties\legend_d.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\properties\dx12_lib_base.props" />
-    <Import Project="..\properties\dx12_lib_r.props" />
+    <Import Project="..\properties\legend_base.props" />
+    <Import Project="..\properties\legend_r.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -81,6 +81,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\audio\audio_source.cpp" />
+    <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />
@@ -111,6 +113,8 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\input\input.h" />
+    <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
     <ClInclude Include="src\directx\buffer\vertex_buffer.h" />

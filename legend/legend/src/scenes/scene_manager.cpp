@@ -7,22 +7,36 @@ namespace scenes {
 SceneManager::SceneManager() : scene_() {}
 
 SceneManager::~SceneManager() { 
-	delete scene_; 
+	scene_.reset(); 
 }
 
 void SceneManager::Update() { 
-	Scene *s = scene_->Update();
+	if (scene_ == nullptr) {
+	    return;
+	}
+
+	std::unique_ptr<Scene> s;
+    s = std::move(scene_);
+    s->Update();
 	if (s != scene_) {
-        delete scene_;
-        scene_ = s;
+		scene_.reset();
+        scene_ = std::move(s);
 	}
 }
 
 void SceneManager::Add() {}
 
-void SceneManager::Change() {}
+void SceneManager::Change() { 
+	if (scene_ != nullptr) {
+	    return;
+	}
+}
 
 void SceneManager::Draw() const { 
+	if (scene_ == nullptr) {
+	    return;
+	}
+
 	scene_->Draw(); 
 }
 }  // namespace scene

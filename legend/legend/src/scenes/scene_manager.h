@@ -1,10 +1,11 @@
 #ifndef LEGEND_SCENES_SCENE_MANAGER_H_
 #define LEGEND_SCENES_SCENE_MANAGER_H_
 
+#include "src/scenes/scene.h"
+
 namespace legend {
 namespace scenes {
 
-class Scene;
 /**
  * @class SceneManager
  * @brief ÉVÅ[Éìä«óù
@@ -29,7 +30,7 @@ class SceneManager {
   ~SceneManager();
 
  private:
-  Scene *scene_;
+  std::unique_ptr<Scene> scene_;
 
  public:
    /**

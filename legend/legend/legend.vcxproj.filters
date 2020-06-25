@@ -70,6 +70,8 @@
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
+    <ClInclude Include="src\scenes\scene.h" />
+    <ClInclude Include="src\scenes\title.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

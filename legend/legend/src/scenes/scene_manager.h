@@ -3,6 +3,8 @@
 
 namespace legend {
 namespace scenes {
+
+class Scene;
 /**
  * @class SceneManager
  * @brief シーン管理
@@ -26,6 +28,10 @@ class SceneManager {
    */
   ~SceneManager();
 
+ private:
+  Scene *scene_;
+
+ public:
    /**
    * @brief 更新
    */
@@ -42,9 +48,6 @@ class SceneManager {
    * @brief 描画
    */
   void Draw() const;
-
- private:
-
 };
 
 }  // namespace scenes

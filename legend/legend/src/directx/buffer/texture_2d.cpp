@@ -2,13 +2,17 @@
 
 #include "src/directx/directx_helper.h"
 
-namespace {}  // namespace
-
 namespace legend {
 namespace directx {
 namespace buffer {
+
+//コンストラクタ
 Texture2D::Texture2D() {}
+
+//デストラクタ
 Texture2D::~Texture2D() {}
+
+//初期化
 bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
                      u32 height, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
                      D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
@@ -24,6 +28,7 @@ bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
     return false;
   }
 
+  //パラメータの設定
   this->format_ = format;
   this->width_ = width;
   this->height_ = height;
@@ -42,6 +47,8 @@ bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
 
   return true;
 }
+
+//リソースを書き込む
 void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
   const u64 row = width_ * util::CalcPixelSizeFromFormat(format_);
   const u64 slice = row * height_;
@@ -51,9 +58,8 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
 
   CommittedResource::UpdateSubresource(device, &texture_, &texture_immediate_,
                                        data, row, slice);
-  texture_.Transition(
-      device,
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+  texture_.Transition(device,
+                      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 }  // namespace buffer

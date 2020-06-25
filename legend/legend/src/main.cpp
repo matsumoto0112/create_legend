@@ -33,7 +33,8 @@ class MyApp final : public device::Application {
     };
     const u32 vertex_size = sizeof(directx::Vertex);
     const u32 vertex_num = static_cast<u32>(vertices.size());
-    if (!vertex_buffer_.Init(GetDirectX12Device(), vertex_size, vertex_num)) {
+    if (!vertex_buffer_.Init(GetDirectX12Device(), vertex_size, vertex_num,
+                             L"TestTriangle_VertexBuffer")) {
       return false;
     }
     if (!vertex_buffer_.WriteBufferResource(vertices)) {
@@ -44,7 +45,8 @@ class MyApp final : public device::Application {
     const std::vector<u16> indices = {0, 1, 2, 0, 3, 4};
     const u32 index_num = static_cast<u32>(indices.size());
     if (!index_buffer_.Init(GetDirectX12Device(), index_num,
-                            directx::PrimitiveTopology::TriangleList)) {
+                            directx::PrimitiveTopology::TriangleList,
+                            L"TestTriangles_IndexBuffer")) {
       return false;
     }
     if (!index_buffer_.WriteBufferResource(indices)) {

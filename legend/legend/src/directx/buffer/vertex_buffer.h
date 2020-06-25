@@ -30,9 +30,11 @@ class VertexBuffer {
    * @param device デバイス
    * @param vertex_size 頂点構造体のメモリサイズ
    * @param vertex_num 頂点数
+   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 vertex_size, u32 vertex_num);
+  bool Init(DirectX12Device& device, u32 vertex_size, u32 vertex_num,
+            const std::wstring& name);
   /**
    * @brief リソースにデータを書き込む書き込む
    * @param vertices 書き込む頂点データ

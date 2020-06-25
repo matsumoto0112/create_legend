@@ -12,12 +12,11 @@ VertexBuffer::~VertexBuffer() {}
 
 //èâä˙âª
 bool VertexBuffer::Init(DirectX12Device& device, u32 vertex_size,
-                        u32 vertex_num) {
+                        u32 vertex_num, const std::wstring& name) {
   vertex_buffer_view_ = {};
 
   const u32 buffer_size = vertex_size * vertex_num;
-  if (!resource_.InitAsBuffer(device, buffer_size, L"VertexBufferResource")) {
-    MY_LOG(L"CreateCommittedResource failed.");
+  if (!resource_.InitAsBuffer(device, buffer_size, name)) {
     return false;
   }
 

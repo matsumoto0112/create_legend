@@ -23,7 +23,7 @@ IndexBuffer::IndexBuffer() : resource_(), index_buffer_view_{}, index_num_(0) {}
 IndexBuffer::~IndexBuffer() {}
 
 bool IndexBuffer::Init(DirectX12Device& device, u32 index_num,
-                       PrimitiveTopology topology) {
+                       PrimitiveTopology topology, const std::wstring& name) {
   index_buffer_view_ = {};
   this->index_num_ = index_num;
   this->primitive_toporogy_ = convert(topology);
@@ -31,8 +31,7 @@ bool IndexBuffer::Init(DirectX12Device& device, u32 index_num,
   constexpr DXGI_FORMAT index_format = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
   const u32 index_buffer_size = index_num * sizeof(Index);
 
-  if (!resource_.InitAsBuffer(device, index_buffer_size,
-                              L"IndexBufferResource")) {
+  if (!resource_.InitAsBuffer(device, index_buffer_size, name)) {
     return false;
   }
 

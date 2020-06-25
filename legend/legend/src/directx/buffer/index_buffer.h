@@ -34,9 +34,11 @@ class IndexBuffer {
    * @param device DirectX12デバイス
    * @param index_num インデックス数
    * @param topology プリミティブの形状
+   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 index_num, PrimitiveTopology topology);
+  bool Init(DirectX12Device& device, u32 index_num, PrimitiveTopology topology,
+            const std::wstring& name);
   /**
    * @brief バッファにリソースを書き込む
    * @param indices インデックス配列

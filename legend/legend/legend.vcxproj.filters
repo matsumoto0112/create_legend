@@ -28,6 +28,11 @@
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
+    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -72,6 +77,12 @@
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\title.h" />
+    <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
+    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\buffer\committed_resource.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -79,5 +90,7 @@
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
     <FxCompile Include="assets\shaders\PixelShader.hlsl" />
+    <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl" />
+    <FxCompile Include="assets\shaders\TextureTest.hlsl" />
   </ItemGroup>
 </Project>

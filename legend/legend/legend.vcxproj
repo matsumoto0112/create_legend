@@ -82,6 +82,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audio\audio_source.cpp" />
+    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
@@ -113,6 +118,12 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\directx\buffer\committed_resource.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
+    <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
@@ -160,9 +171,21 @@
     <None Include="src\.clang-format" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
     <FxCompile Include="assets\shaders\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\TextureTest.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
     <FxCompile Include="assets\shaders\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

@@ -13,8 +13,10 @@ namespace legend {
 namespace directx {
 struct Vertex {
   math::Vector3 position;
+  math::Vector2 uv;
 
-  Vertex(const math::Vector3& position) : position(position) {}
+  Vertex(const math::Vector3& position, const math::Vector2& uv)
+      : position(position), uv(uv) {}
 };
 }  // namespace directx
 }  // namespace legend

@@ -1,7 +1,5 @@
 #include "src/directx/buffer/index_buffer.h"
 
-#include <unordered_map>
-
 namespace {
 D3D12_PRIMITIVE_TOPOLOGY convert(legend::directx::PrimitiveTopology topology) {
   using legend::directx::PrimitiveTopology;
@@ -20,14 +18,12 @@ D3D12_PRIMITIVE_TOPOLOGY convert(legend::directx::PrimitiveTopology topology) {
 namespace legend {
 namespace directx {
 namespace buffer {
-IndexBuffer::IndexBuffer()
-    : index_buffer_resource_(nullptr), index_buffer_view_{}, index_num_(0) {}
+IndexBuffer::IndexBuffer() : resource_(), index_buffer_view_{}, index_num_(0) {}
 
 IndexBuffer::~IndexBuffer() {}
 
 bool IndexBuffer::Init(DirectX12Device& device, u32 index_num,
-                       PrimitiveTopology topology) {
-  index_buffer_resource_.Reset();
+                       PrimitiveTopology topology, const std::wstring& name) {
   index_buffer_view_ = {};
   this->index_num_ = index_num;
   this->primitive_toporogy_ = convert(topology);
@@ -35,18 +31,12 @@ bool IndexBuffer::Init(DirectX12Device& device, u32 index_num,
   constexpr DXGI_FORMAT index_format = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
   const u32 index_buffer_size = index_num * sizeof(Index);
 
-  if (FAILED(device.GetDevice()->CreateCommittedResource(
-          &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
-          D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
-          &CD3DX12_RESOURCE_DESC::Buffer(index_buffer_size),
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-          IID_PPV_ARGS(&index_buffer_resource_)))) {
-    MY_LOG(L"CreateCommittedResource IndexBuffer failed");
+  if (!resource_.InitAsBuffer(device, index_buffer_size, name)) {
     return false;
   }
 
   index_buffer_view_.BufferLocation =
-      index_buffer_resource_->GetGPUVirtualAddress();
+      resource_.GetResource()->GetGPUVirtualAddress();
   index_buffer_view_.Format = index_format;
   index_buffer_view_.SizeInBytes = index_buffer_size;
 
@@ -54,16 +44,7 @@ bool IndexBuffer::Init(DirectX12Device& device, u32 index_num,
 }
 
 bool IndexBuffer::WriteBufferResource(const std::vector<u16>& indices) {
-  void* index_data_begin;
-  if (FAILED(index_buffer_resource_->Map(0, nullptr, &index_data_begin))) {
-    MY_LOG(L"IndexBuffer Map failed");
-    return false;
-  }
-  memcpy_s(index_data_begin, index_buffer_view_.SizeInBytes, indices.data(),
-           index_buffer_view_.SizeInBytes);
-  index_buffer_resource_->Unmap(0, nullptr);
-
-  return true;
+  return resource_.WriteResource(indices.data());
 }
 
 void IndexBuffer::SetGraphicsCommandList(DirectX12Device& device) {

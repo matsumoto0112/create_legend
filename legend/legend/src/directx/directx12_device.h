@@ -35,6 +35,7 @@ class DirectX12Device {
    */
   bool Init(std::shared_ptr<window::Window> target_window);
 
+  bool InitAfter();
   bool Prepare();
   bool Present();
 

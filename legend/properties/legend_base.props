@@ -31,6 +31,8 @@
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(OutDir)%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>5.1</ShaderModel>
+      <AdditionalOptions>/Zpr</AdditionalOptions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

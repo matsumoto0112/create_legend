@@ -5,7 +5,7 @@ namespace legend {
 namespace scenes {
 
 /**
-* @class BaseScene
+* @class Scene
 * @brief シーンの基底クラス
 */
 class Scene {

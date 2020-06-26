@@ -37,7 +37,7 @@ DescriptorHeap::DescriptorHeap() : heap_(nullptr), heap_size_(0) {}
 DescriptorHeap::~DescriptorHeap() {}
 
 // ‰Šú‰»
-bool DescriptorHeap::Init(DirectX12Device& device, const Desc& desc,
+bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc,
                           const std::wstring& name) {
   this->heap_.Reset();
   this->heap_size_ = 0;

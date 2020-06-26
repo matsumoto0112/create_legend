@@ -15,6 +15,7 @@
 //#include "src/window/window.h"
 //
 //namespace legend {
+//constexpr u32 CUBE_NUM = 100;
 //
 //struct Color {
 //  std::array<float, 4> color;
@@ -34,29 +35,19 @@
 //      return false;
 //    }
 //
-//    directx::DescriptorHeap::Desc heap_desc = {};
-//    heap_desc.descriptor_num = 10;
-//    heap_desc.type = directx::HeapType::CBV_SRV_UAV;
-//    heap_desc.flag = directx::HeapFlag::ShaderVisible;
-//    if (!heap_.Init(GetDirectX12Device(), heap_desc, L"ShaderResourceHeap")) {
-//      return false;
-//    }
-//
-//    if (!color_constant_buffer.Init(GetDirectX12Device(), heap_.GetCPUHandle(0),
-//                                    heap_.GetGPUHandle(0),
+//    if (!color_constant_buffer.Init(GetDirectX12Device(), 0,
 //                                    L"Color ConstantBuffer")) {
 //      return false;
 //    }
 //    Color& color = color_constant_buffer.GetStagingRef();
 //    color.color = {1.0f, 1.0f, 1.0f, 1.0f};
 //
-//    if (!matrix_constant_buffer.Init(
-//            GetDirectX12Device(), heap_.GetCPUHandle(1), heap_.GetGPUHandle(1),
-//            L"Matrix ConstantBuffer")) {
+//    if (!matrix_constant_buffer.Init(GetDirectX12Device(), 1,
+//                                     L"Matrix ConstantBuffer")) {
 //      return false;
 //    }
 //
-//    position_ = math::Vector3(0, 0, 0);
+//    position_ = math::Vector3(0.0f, 0.0f, 0.0f);
 //    rotation_ = math::Vector3(0, 0, 0);
 //    Matrix& mat = matrix_constant_buffer.GetStagingRef();
 //    mat.world = math::Matrix4x4::CreateRotation(rotation_) *
@@ -84,8 +75,8 @@
 //      }
 //    }
 //
-//    texture_.Init(GetDirectX12Device(), DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-//                  WIDTH, HEIGHT, heap_.GetCPUHandle(2), heap_.GetGPUHandle(2),
+//    texture_.Init(GetDirectX12Device(), 0,
+//                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, WIDTH, HEIGHT,
 //                  L"Yellow Texture");
 //    texture_.WriteResource(GetDirectX12Device(), datas.data());
 //
@@ -221,25 +212,25 @@
 //    root_signature_->SetGraphicsCommandList(GetDirectX12Device());
 //    pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
 //
+//    GetDirectX12Device().GetHeapManager().SetGraphicsCommandList(
+//        GetDirectX12Device());
+//
 //    float value = color_constant_buffer.GetStagingRef().color[1];
 //    value += 0.01f;
 //    if (value > 1.0f) value -= 1.0f;
 //    color_constant_buffer.GetStagingRef().color[1] = value;
 //    color_constant_buffer.UpdateStaging();
 //
+//    color_constant_buffer.SetToHeap(GetDirectX12Device());
 //    matrix_constant_buffer.GetStagingRef().world =
 //        math::Matrix4x4::CreateRotation(rotation_) *
 //        math::Matrix4x4::CreateTranslate(position_);
 //    matrix_constant_buffer.UpdateStaging();
+//    matrix_constant_buffer.SetToHeap(GetDirectX12Device());
 //
-//    ID3D12DescriptorHeap* heaps[] = {heap_.GetHeap()};
-//    GetDirectX12Device().GetCommandList()->SetDescriptorHeaps(1, heaps);
-//
-//    GetDirectX12Device().GetCommandList()->SetGraphicsRootDescriptorTable(
-//        0, heap_.GetGPUHandle(0));
-//    GetDirectX12Device().GetCommandList()->SetGraphicsRootDescriptorTable(
-//        1, heap_.GetGPUHandle(2));
-//
+//    texture_.SetToHeap(GetDirectX12Device());
+//    GetDirectX12Device().GetHeapManager().CopyHeapAndSetToGraphicsCommandList(
+//        GetDirectX12Device());
 //    vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
 //    index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
 //    index_buffer_.Draw(GetDirectX12Device());
@@ -253,7 +244,6 @@
 //  directx::buffer::IndexBuffer index_buffer_;
 //  std::shared_ptr<directx::shader::RootSignature> root_signature_;
 //  directx::shader::GraphicsPipelineState pipeline_state_;
-//  directx::DescriptorHeap heap_;
 //  directx::buffer::ConstantBuffer<Color> color_constant_buffer;
 //  directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
 //  directx::buffer::Texture2D texture_;

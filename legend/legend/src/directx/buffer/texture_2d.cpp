@@ -1,6 +1,7 @@
 #include "src/directx/buffer/texture_2d.h"
 
 #include "src/directx/directx_helper.h"
+#include "src/directx/heap_manager.h"
 
 namespace legend {
 namespace directx {
@@ -13,9 +14,8 @@ Texture2D::Texture2D() {}
 Texture2D::~Texture2D() {}
 
 //‰Šú‰»
-bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
-                     u32 height, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
-                     D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
+bool Texture2D::Init(DirectX12Device& device, u32 register_num,
+                     DXGI_FORMAT format, u32 width, u32 height,
                      const std::wstring& name) {
   if (!texture_.InitAsTex2D(device, format, width, height, name)) {
     return false;
@@ -29,12 +29,14 @@ bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
   }
 
   //ƒpƒ‰ƒ[ƒ^‚ÌÝ’è
+  this->register_num_ = register_num;
   this->format_ = format;
   this->width_ = width;
   this->height_ = height;
 
-  this->cpu_handle_ = cpu_handle;
-  this->gpu_handle_ = gpu_handle;
+  DescriptorHandle handle = device.GetHeapManager().GetLocalHandle();
+  this->cpu_handle_ = handle.cpu_handle_;
+  this->gpu_handle_ = handle.gpu_handle_;
 
   this->srv_view_.Texture2D.MipLevels = 1;
   this->srv_view_.Format = format;
@@ -60,6 +62,11 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
                                        data, row, slice);
   texture_.Transition(device,
                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+void Texture2D::SetToHeap(DirectX12Device& device) {
+  device.GetHeapManager().SetHandleToLocalHeap(register_num_, ResourceType::Srv,
+                                          cpu_handle_);
 }
 
 }  // namespace buffer

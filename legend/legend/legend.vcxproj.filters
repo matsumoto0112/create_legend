@@ -37,6 +37,7 @@
     <ClCompile Include="src\input\mouse.cpp" />
     <ClCompile Include="src\input\inputManager.cpp" />
     <ClCompile Include="src\input\gamePad.cpp" />
+    <ClCompile Include="src\directx\heap_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -62,7 +63,6 @@
     <ClInclude Include="src\window\window_procedure.h" />
     <ClInclude Include="src\window\window_procedure_event_callback.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
-    <ClInclude Include="src\directx\shader\shader_defines.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
@@ -92,6 +92,10 @@
     <ClInclude Include="src\input\inputManager.h" />
     <ClInclude Include="src\input\gamePad.h" />
     <ClInclude Include="src\input\joyCode.h" />
+    <ClInclude Include="src\directx\heap_manager.h" />
+    <ClInclude Include="src\directx\descriptor_handle.h" />
+    <ClInclude Include="src\directx\directx_accessor.h" />
+    <ClInclude Include="src\directx\resource_type.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

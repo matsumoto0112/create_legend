@@ -88,6 +88,7 @@
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\input\inputManager.cpp" />
@@ -129,7 +130,11 @@
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
+    <ClInclude Include="src\directx\descriptor_handle.h" />
     <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\directx_accessor.h" />
+    <ClInclude Include="src\directx\heap_manager.h" />
+    <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\input\inputManager.h" />
@@ -141,7 +146,6 @@
     <ClInclude Include="src\directx\directx_helper.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
     <ClInclude Include="src\directx\shader\pixel_shader.h" />
-    <ClInclude Include="src\directx\shader\shader_defines.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\directx\vertex.h" />
     <ClInclude Include="src\game\application.h" />

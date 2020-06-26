@@ -1,9 +1,5 @@
 #include "src/directx/shader/graphics_pipeline_state.h"
 
-namespace {
-legend::u32 heap_size_;
-}  // namespace
-
 namespace legend {
 namespace directx {
 namespace shader {
@@ -29,6 +25,7 @@ bool GraphicsPipelineState::Init(DirectX12Device& device) {
   return true;
 }
 
+//ルートシグネチャをセットする
 void GraphicsPipelineState::SetRootSignature(
     std::shared_ptr<RootSignature> root_signature) {
   this->root_signature_ = root_signature;
@@ -38,7 +35,7 @@ void GraphicsPipelineState::SetRootSignature(
   }
 }
 
-//頂点シェーダー
+//頂点シェーダーをセットする
 void GraphicsPipelineState::SetVertexShader(
     std::shared_ptr<VertexShader> vertex_shader) {
   this->vertex_shader_ = vertex_shader;
@@ -49,7 +46,7 @@ void GraphicsPipelineState::SetVertexShader(
   }
 }
 
-//ピクセルシェーダー
+//ピクセルシェーダーをセットする
 void GraphicsPipelineState::SetPixelShader(
     std::shared_ptr<PixelShader> pixel_shader) {
   this->pixel_shader_ = pixel_shader;
@@ -59,7 +56,7 @@ void GraphicsPipelineState::SetPixelShader(
   }
 }
 
-//パイプラインステート
+//パイプラインステートをセットする
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =

@@ -14,10 +14,13 @@
 #include <unordered_map>
 #include <vector>
 
+// clang-format off
+#include "src/util/typedef.h"
 #include "src/libs/d3dx12.h"
 #include "src/libs/imgui/imgui.h"
+
 #include "src/util/debug.h"
-#include "src/util/typedef.h"
+//clang-format on
 
 namespace legend {
 template <class T>

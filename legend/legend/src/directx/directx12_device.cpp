@@ -42,6 +42,8 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   if (!CreateDevice()) return false;
+  if (!heap_manager_.Init(*this)) return false;
+
   MY_LOG(L"Create Device finished");
   return true;
 }
@@ -95,7 +97,7 @@ bool DirectX12Device::Prepare() {
   const std::array<float, 4> CLEAR_COLOR = {0.0f, 0.2f, 0.4f, 1.0f};
   command_list_->ClearRenderTargetView(rtv_handle, CLEAR_COLOR.data(), 0,
                                        nullptr);
-
+  heap_manager_.BeginFrame();
   return true;
 }
 

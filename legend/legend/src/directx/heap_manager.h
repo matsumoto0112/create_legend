@@ -6,7 +6,7 @@
  * @brief ヒープ管理クラス定義
  */
 
-#include "src/directx/DescriptorHandle.h"
+#include "src/directx/descriptor_handle.h"
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 

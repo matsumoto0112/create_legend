@@ -15,6 +15,7 @@
 #include "src/window/window.h"
 
 namespace legend {
+constexpr u32 CUBE_NUM = 100;
 
 struct Color {
   std::array<float, 4> color;
@@ -34,11 +35,6 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    directx::DescriptorHeap::Desc heap_desc = {};
-    heap_desc.descriptor_num = 10;
-    heap_desc.type = directx::HeapType::CBV_SRV_UAV;
-    heap_desc.flag = directx::HeapFlag::ShaderVisible;
-
     if (!color_constant_buffer.Init(GetDirectX12Device(), 0,
                                     L"Color ConstantBuffer")) {
       return false;
@@ -51,7 +47,7 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    position_ = math::Vector3(0, 0, 0);
+    position_ = math::Vector3(0.0f, 0.0f, 0.0f);
     rotation_ = math::Vector3(0, 0, 0);
     Matrix& mat = matrix_constant_buffer.GetStagingRef();
     mat.world = math::Matrix4x4::CreateRotation(rotation_) *
@@ -222,19 +218,15 @@ class MyApp final : public device::Application {
     color_constant_buffer.GetStagingRef().color[1] = value;
     color_constant_buffer.UpdateStaging();
 
-    matrix_constant_buffer.GetStagingRef().world =
-        math::Matrix4x4::CreateRotation(rotation_) *
-        math::Matrix4x4::CreateTranslate(position_);
-    matrix_constant_buffer.UpdateStaging();
-
     GetDirectX12Device().GetHeapManager()->SetGraphicsCommandList(
         GetDirectX12Device());
     color_constant_buffer.SetToHeap(GetDirectX12Device());
     matrix_constant_buffer.SetToHeap(GetDirectX12Device());
+    matrix_constant_buffer.UpdateStaging();
+
     texture_.SetToHeap(GetDirectX12Device());
     GetDirectX12Device().GetHeapManager()->PushToGlobalHeapAndSetCommandList(
         GetDirectX12Device());
-
     vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.Draw(GetDirectX12Device());

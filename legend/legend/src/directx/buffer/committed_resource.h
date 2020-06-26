@@ -6,7 +6,7 @@
  * @brief バッファ管理クラス定義
  */
 
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -26,17 +26,32 @@ class CommittedResource {
   ~CommittedResource();
   /**
    * @brief バッファとして初期化する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param buffer_size バッファのメモリサイズ
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitAsBuffer(DirectX12Device& device, u64 buffer_size,
+  bool InitAsBuffer(IDirectXAccessor& accessor, u64 buffer_size,
                     const std::wstring& name);
-  bool InitAsTex2D(DirectX12Device& device, DXGI_FORMAT format, u32 width,
+  /**
+   * @brief 2Dテクスチャとして初期化する
+   * @param accessor DirectX12デバイスアクセサ
+   * @param format テクスチャのフォーマット
+   * @param width テクスチャの幅
+   * @param height テクスチャの高さ
+   * @param name リソース名
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool InitAsTex2D(IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width,
                    u32 height, const std::wstring& name);
 
-  void Transition(DirectX12Device& device, D3D12_RESOURCE_STATES next_state);
+  /**
+   * @brief 状態を遷移させる
+   * @param accessor DirectX12デバイスアクセサ
+   * @param next_state 次の状態
+   */
+  void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
+
   /**
    * @brief リソースを取得する
    */
@@ -47,11 +62,22 @@ class CommittedResource {
    * @return 書き込みに成功したらtrueを返す
    */
   bool WriteResource(const void* data);
-
+  /**
+   * @brief バッファサイズを取得する
+   */
   u64 GetBufferSize() const { return buffer_size_; }
 
  public:
-  static void UpdateSubresource(DirectX12Device& device,
+  /**
+   * @brief テクスチャなどに利用する2つの
+   * @param accessor DirectX12デバイスアクセサ
+   * @param dest_resource　書き込み先のリソース
+   * @param immediate_resource 一時的なリソース
+   * @param data 書き込むデータ
+   * @param row 1行のメモリサイズ (width * sizeof(Pixel))
+   * @param slice 全体のメモリサイズ (row * height)
+   */
+  static void UpdateSubresource(IDirectXAccessor& accessor,
                                 CommittedResource* dest_resource,
                                 CommittedResource* immediate_resource,
                                 const void* data, u64 row, u64 slice);

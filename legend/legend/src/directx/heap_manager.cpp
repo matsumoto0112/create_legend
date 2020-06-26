@@ -42,6 +42,7 @@ DescriptorHandle HeapManager::GetLocalHandle() {
 }
 
 void HeapManager::SetGraphicsCommandList(IDirectXAccessor& device) {
+  global_heap_index_ = 0;
   ID3D12DescriptorHeap* heaps[] = {global_heap_.GetHeap()};
   device.GetCommandList()->SetDescriptorHeaps(1, heaps);
 }
@@ -80,6 +81,7 @@ void HeapManager::PushToGlobalHeapAndSetCommandList(IDirectXAccessor& device) {
     device.GetCommandList()->SetGraphicsRootDescriptorTable(
         0, global_heap_.GetGPUHandle(global_heap_index_));
     global_heap_index_ += count;
+    cbv_handles.clear();
   }
   {
     u32 count = static_cast<u32>(srv_handles.size());
@@ -91,6 +93,7 @@ void HeapManager::PushToGlobalHeapAndSetCommandList(IDirectXAccessor& device) {
     device.GetCommandList()->SetGraphicsRootDescriptorTable(
         1, global_heap_.GetGPUHandle(global_heap_index_));
     global_heap_index_ += count;
+    srv_handles.clear();
   }
 }
 

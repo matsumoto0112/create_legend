@@ -13,11 +13,12 @@ CommittedResource::CommittedResource() {}
 CommittedResource::~CommittedResource() {}
 
 //バッファとして初期化する
-bool CommittedResource::InitAsBuffer(DirectX12Device& device, u64 buffer_size,
+bool CommittedResource::InitAsBuffer(IDirectXAccessor& accessor,
+                                     u64 buffer_size,
                                      const std::wstring& name) {
   this->buffer_size_ = 0;
 
-  if (FAILED(device.GetDevice()->CreateCommittedResource(
+  if (FAILED(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
           D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
           &CD3DX12_RESOURCE_DESC::Buffer(buffer_size),
@@ -37,17 +38,20 @@ bool CommittedResource::InitAsBuffer(DirectX12Device& device, u64 buffer_size,
   return true;
 }
 
-bool CommittedResource::InitAsTex2D(DirectX12Device& device, DXGI_FORMAT format,
-                                    u32 width, u32 height,
+// 2Dテクスチャとしてバッファを初期化
+bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
+                                    DXGI_FORMAT format, u32 width, u32 height,
                                     const std::wstring& name) {
-  if (FAILED(device.GetDevice()->CreateCommittedResource(
+  if (FAILED(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
           D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
           &CD3DX12_RESOURCE_DESC::Tex2D(format, width, height),
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
           IID_PPV_ARGS(&resource_)))) {
+    MY_LOG(L"CreateCommittedResource %s failed.", name.c_str());
     return false;
   }
+
   if (FAILED(resource_->SetName(name.c_str()))) {
     return false;
   }
@@ -58,11 +62,13 @@ bool CommittedResource::InitAsTex2D(DirectX12Device& device, DXGI_FORMAT format,
   return true;
 }
 
-void CommittedResource::Transition(DirectX12Device& device,
+//状態を遷移させる
+void CommittedResource::Transition(IDirectXAccessor& accessor,
                                    D3D12_RESOURCE_STATES next_state) {
+  //前と同じならスルー
   if (current_state_ == next_state) return;
 
-  device.GetCommandList()->ResourceBarrier(
+  accessor.GetCommandList()->ResourceBarrier(
       1, &CD3DX12_RESOURCE_BARRIER::Transition(resource_.Get(), current_state_,
                                                next_state));
   this->current_state_ = next_state;
@@ -81,7 +87,8 @@ bool CommittedResource::WriteResource(const void* data) {
   return true;
 }
 
-void CommittedResource::UpdateSubresource(DirectX12Device& device,
+//テクスチャなどに利用する2つのバッファを利用した書き込み
+void CommittedResource::UpdateSubresource(IDirectXAccessor& accessor,
                                           CommittedResource* dest_resource,
                                           CommittedResource* immediate_resource,
                                           const void* data, u64 row,
@@ -90,7 +97,7 @@ void CommittedResource::UpdateSubresource(DirectX12Device& device,
   subresource_data.pData = data;
   subresource_data.RowPitch = row;
   subresource_data.SlicePitch = slice;
-  UpdateSubresources(device.GetCommandList(), dest_resource->GetResource(),
+  UpdateSubresources(accessor.GetCommandList(), dest_resource->GetResource(),
                      immediate_resource->GetResource(), 0, 0, 1,
                      &subresource_data);
 }

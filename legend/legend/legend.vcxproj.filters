@@ -87,6 +87,7 @@
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\descriptor_handle.h" />
+    <ClInclude Include="src\directx\directx_accessor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

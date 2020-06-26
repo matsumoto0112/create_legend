@@ -125,6 +125,7 @@
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\descriptor_handle.h" />
     <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\directx_accessor.h" />
     <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />

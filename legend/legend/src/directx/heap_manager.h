@@ -8,26 +8,33 @@
 
 #include "src/directx/descriptor_handle.h"
 #include "src/directx/descriptor_heap.h"
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
 
-enum class Type {
+enum class ResourceType {
   Cbv,
   Srv,
+  Uav,
 };
 
+/**
+ * @brief ヒープ管理クラス
+ */
 class HeapManager {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   HeapManager();
   ~HeapManager();
-  bool Init(DirectX12Device& device);
+  bool Init(IDirectXAccessor& device);
   DescriptorHandle GetLocalHandle();
-  void SetGraphicsCommandList(DirectX12Device& device);
-  void StackLocalHeap(u32 register_num, Type type,
+  void SetGraphicsCommandList(IDirectXAccessor& device);
+  void StackLocalHeap(u32 register_num, ResourceType type,
                       D3D12_CPU_DESCRIPTOR_HANDLE handle);
-  void PushToGlobalHeapAndSetCommandList(DirectX12Device& device);
+  void PushToGlobalHeapAndSetCommandList(IDirectXAccessor& device);
 
  private:
   DescriptorHeap global_heap_;

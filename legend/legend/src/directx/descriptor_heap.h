@@ -1,12 +1,12 @@
 #ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
 #define LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
 
-#include "src/directx/directx12_device.h"
-
 /**
  * @file descriptor_heap.h
  * @brief ディスクリプタヒープ定義
  */
+
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -61,7 +61,7 @@ class DescriptorHeap {
    * @param name ヒープ名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, const Desc& desc,
+  bool Init(IDirectXAccessor& device, const Desc& desc,
             const std::wstring& name);
   /**
    * @brief CPUハンドルを取得する

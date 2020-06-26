@@ -7,7 +7,6 @@
 #include <random>
 
 #include "src/directx/buffer/index_buffer.h"
-#include "src/directx/heap_manager.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/vertex_shader.h"

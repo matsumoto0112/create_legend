@@ -8,20 +8,19 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
+#include "src/directx/directx_accessor.h"
+#include "src/directx/heap_manager.h"
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
 
 namespace legend {
 namespace directx {
 
-// TODO:あとで直す
-class HeapManager;
-
 /**
  * @class DirectX12Device
  * @brief DirectX12デバイス
  */
-class DirectX12Device {
+class DirectX12Device : public IDirectXAccessor {
  public:
   /**
    * @brief コンストラクタ
@@ -44,10 +43,11 @@ class DirectX12Device {
   bool Present();
 
  public:
-  ID3D12Device* GetDevice() const { return device_.Get(); }
-  ID3D12GraphicsCommandList4* GetCommandList() const {
+  virtual ID3D12Device* GetDevice() const override { return device_.Get(); }
+  virtual ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_list_.Get();
   }
+
   HeapManager* GetHeapManager() const { return heap_manager_.get(); }
 
  private:

@@ -65,7 +65,7 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
 }
 
 void Texture2D::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager()->StackLocalHeap(register_num_, Type::Srv,
+  device.GetHeapManager()->StackLocalHeap(register_num_, ResourceType::Srv,
                                           cpu_handle_);
 }
 

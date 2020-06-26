@@ -10,7 +10,7 @@ HeapManager::HeapManager() {}
 HeapManager::~HeapManager() {}
 
 //‰Šú‰»
-bool HeapManager::Init(DirectX12Device& device) {
+bool HeapManager::Init(IDirectXAccessor& device) {
   DescriptorHeap::Desc global_desc = {};
   global_desc.descriptor_num = 10000;
   global_desc.type = HeapType::CBV_SRV_UAV;
@@ -41,12 +41,12 @@ DescriptorHandle HeapManager::GetLocalHandle() {
   return res;
 }
 
-void HeapManager::SetGraphicsCommandList(DirectX12Device& device) {
+void HeapManager::SetGraphicsCommandList(IDirectXAccessor& device) {
   ID3D12DescriptorHeap* heaps[] = {global_heap_.GetHeap()};
   device.GetCommandList()->SetDescriptorHeaps(1, heaps);
 }
 
-void HeapManager::StackLocalHeap(u32 register_num, Type type,
+void HeapManager::StackLocalHeap(u32 register_num, ResourceType type,
                                  D3D12_CPU_DESCRIPTOR_HANDLE handle) {
   auto SetToHandlesAndAppendIfNeed =
       [](u32 register_num, std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handles,
@@ -58,10 +58,10 @@ void HeapManager::StackLocalHeap(u32 register_num, Type type,
       };
 
   switch (type) {
-    case legend::directx::Type::Cbv:
+    case legend::directx::ResourceType::Cbv:
       SetToHandlesAndAppendIfNeed(register_num, &cbv_handles, handle);
       break;
-    case legend::directx::Type::Srv:
+    case legend::directx::ResourceType::Srv:
       SetToHandlesAndAppendIfNeed(register_num, &srv_handles, handle);
       break;
     default:
@@ -69,7 +69,7 @@ void HeapManager::StackLocalHeap(u32 register_num, Type type,
   }
 }
 
-void HeapManager::PushToGlobalHeapAndSetCommandList(DirectX12Device& device) {
+void HeapManager::PushToGlobalHeapAndSetCommandList(IDirectXAccessor& device) {
   {
     u32 count = static_cast<u32>(cbv_handles.size());
     D3D12_CPU_DESCRIPTOR_HANDLE dst_handle =

@@ -149,7 +149,7 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 
 template <class T>
 inline void ConstantBuffer<T>::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager()->StackLocalHeap(this->register_num_, Type::Cbv,
+  device.GetHeapManager()->StackLocalHeap(this->register_num_, ResourceType::Cbv,
                                           this->cpu_handle_);
 }
 

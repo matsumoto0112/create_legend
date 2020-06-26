@@ -1,6 +1,7 @@
 #include "src/directx/buffer/texture_2d.h"
 
 #include "src/directx/directx_helper.h"
+#include "src/directx/heap_manager.h"
 
 namespace legend {
 namespace directx {
@@ -33,8 +34,9 @@ bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
   this->width_ = width;
   this->height_ = height;
 
-  this->cpu_handle_ = cpu_handle;
-  this->gpu_handle_ = gpu_handle;
+  DescriptorHandle handle = device.GetHeapManager()->GetLocalHandle();
+  this->cpu_handle_ = handle.cpu_handle_;
+  this->gpu_handle_ = handle.gpu_handle_;
 
   this->srv_view_.Texture2D.MipLevels = 1;
   this->srv_view_.Format = format;

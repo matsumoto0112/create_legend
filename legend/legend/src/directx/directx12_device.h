@@ -13,6 +13,10 @@
 
 namespace legend {
 namespace directx {
+
+// TODO:あとで直す
+class HeapManager;
+
 /**
  * @class DirectX12Device
  * @brief DirectX12デバイス
@@ -44,6 +48,7 @@ class DirectX12Device {
   ID3D12GraphicsCommandList4* GetCommandList() const {
     return command_list_.Get();
   }
+  HeapManager* GetHeapManager() const { return heap_manager_.get(); }
 
  private:
   bool CreateDevice();
@@ -87,6 +92,8 @@ class DirectX12Device {
   std::array<u64, FRAME_COUNT> fence_values_;
   //! フェンスイベント
   Microsoft::WRL::Wrappers::Event fence_event_;
+
+  std::unique_ptr<HeapManager> heap_manager_;
 };
 }  // namespace directx
 }  // namespace legend

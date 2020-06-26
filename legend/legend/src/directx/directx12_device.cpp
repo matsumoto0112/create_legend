@@ -7,6 +7,7 @@
 #include <random>
 
 #include "src/directx/buffer/index_buffer.h"
+#include "src/directx/heap_manager.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -42,6 +43,9 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   if (!CreateDevice()) return false;
+  heap_manager_ = std::make_unique<HeapManager>();
+  if (!heap_manager_->Init(*this)) return false;
+
   MY_LOG(L"Create Device finished");
   return true;
 }

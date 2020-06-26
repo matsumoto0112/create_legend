@@ -8,6 +8,7 @@
 
 #include "src/directx/buffer/committed_resource.h"
 #include "src/directx/directx12_device.h"
+#include "src/directx/heap_manager.h"
 #include "src/math/math_util.h"
 
 namespace legend {
@@ -112,8 +113,9 @@ inline bool ConstantBuffer<T>::Init(DirectX12Device& device,
     return false;
   }
 
-  this->cpu_handle_ = cpu_handle;
-  this->gpu_handle_ = gpu_handle;
+  DescriptorHandle handle = device.GetHeapManager()->GetLocalHandle();
+  this->cpu_handle_ = handle.cpu_handle_;
+  this->gpu_handle_ = handle.gpu_handle_;
   this->view_.BufferLocation = resource_.GetResource()->GetGPUVirtualAddress();
   this->view_.SizeInBytes = buffer_aligned_size_;
   device.GetDevice()->CreateConstantBufferView(&view_, this->cpu_handle_);

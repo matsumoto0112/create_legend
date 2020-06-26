@@ -15,7 +15,7 @@ namespace string_util {
  */
 template <typename... Args>
 inline std::wstring Format(const std::wstring& format, Args... args) {
-  size_t len = std::swprintf(nullptr, 0, format.c_str(), args...);
+  u64 len = std::swprintf(nullptr, 0, format.c_str(), args...);
   std::vector<wchar_t> buf(len + 1);
   std::swprintf(&buf[0], len + 1, format.c_str(), args...);
   return std::wstring(&buf[0], &buf[0] + len);
@@ -28,8 +28,8 @@ inline std::wstring Format(const std::wstring& format, Args... args) {
  * @return •ÏŠ·‚³‚ê‚½•¶Žš—ñ
  */
 static inline std::wstring CP_2_Wide(const std::string& s, UINT codepage) {
-  const int in_length = (int)s.length();
-  const int out_length =
+  const i32 in_length = static_cast<i32>(s.length());
+  const i32 out_length =
       MultiByteToWideChar(codepage, 0, s.c_str(), in_length, 0, 0);
   std::wstring result(out_length, L'\0');
   if (out_length)
@@ -45,8 +45,8 @@ static inline std::wstring CP_2_Wide(const std::string& s, UINT codepage) {
  * @return •ÏŠ·‚³‚ê‚½•¶Žš—ñ
  */
 static inline std::string Wide_2_CP(const std::wstring& s, UINT codepage) {
-  const int in_length = (int)s.length();
-  const int out_length =
+  const i32 in_length = static_cast<i32>(s.length());
+  const i32 out_length =
       WideCharToMultiByte(codepage, 0, s.c_str(), in_length, 0, 0, 0, 0);
   std::string result(out_length, '\0');
   if (out_length)

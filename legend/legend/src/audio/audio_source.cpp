@@ -29,6 +29,8 @@ bool legend::audio::AudioSource::Init(HWND* window) {
   //if (direct_sound_->CreateSoundBuffer(&direct_sound_buffer_,
   //    &direct_sound_buffer_, NULL))
   //  ;
+
+  return true;
 }
 
 bool legend::audio::AudioSource::Play() { return false; }

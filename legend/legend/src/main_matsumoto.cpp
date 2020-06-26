@@ -59,26 +59,16 @@
 //    mat.proj = math::Matrix4x4::CreateProjection(
 //        45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
 //
-//    constexpr u32 WIDTH = 32;
-//    constexpr u32 HEIGHT = 32;
-//    struct Pixel {
-//      u8 color[4];
-//    };
-//
-//    std::vector<Pixel> datas(WIDTH * HEIGHT);
-//    for (u32 w = 0; w < WIDTH; w++) {
-//      for (u32 h = 0; h < HEIGHT; h++) {
-//        datas[h * WIDTH + w].color[0] = (w + h) * 4;
-//        datas[h * WIDTH + w].color[1] = 0x00;
-//        datas[h * WIDTH + w].color[2] = 0;
-//        datas[h * WIDTH + w].color[3] = 0xff;
-//      }
-//    }
+//    std::filesystem::path p = util::Path::getInstance()->texture() / L"tex.png";
+//    int x, y, comp;
+//    stbi_uc* begin = stbi_load(p.generic_string().c_str(), &x, &y, &comp, 4);
+//    std::vector<u8> pixels(begin, begin + x * y * 4);
 //
 //    texture_.Init(GetDirectX12Device(), 0,
-//                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, WIDTH, HEIGHT,
-//                  L"Yellow Texture");
-//    texture_.WriteResource(GetDirectX12Device(), datas.data());
+//                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, x, y, L"tex.png");
+//    texture_.WriteResource(GetDirectX12Device(), pixels.data());
+//    stbi_image_free(begin);
+//    pixels.clear();
 //
 //    //’¸“_’è‹`
 //    constexpr float D = 0.8f;

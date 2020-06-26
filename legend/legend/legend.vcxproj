@@ -151,6 +151,7 @@
     <ClInclude Include="src\libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\libs\stb_image.h" />
     <ClInclude Include="src\math\int_vector_2.h" />
     <ClInclude Include="src\math\math_util.h" />
     <ClInclude Include="src\math\matrix_4x4.h" />

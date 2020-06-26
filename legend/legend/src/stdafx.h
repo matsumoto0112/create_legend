@@ -14,6 +14,10 @@
 #include <unordered_map>
 #include <vector>
 
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include "src/libs/stb_image.h"
+
 // clang-format off
 #include "src/util/typedef.h"
 #include "src/libs/d3dx12.h"

@@ -14,7 +14,9 @@ Path::Path() {
   this->exe_filepath_.remove_filename();
 
   this->shader_filepath_ = exe_filepath_ / "assets" / "shaders";
+  this->texture_filepath_ = exe_filepath_ / "assets" / "textures";
 }
+
 
 Path::~Path() {}
 

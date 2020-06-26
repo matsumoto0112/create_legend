@@ -16,11 +16,16 @@ class AudioSource {
   /**
    * @brief コンストラクタ
    */
-  AudioSource(HWND* window);
+  AudioSource();
   /**
    * @brief デストラクタ
    */
   ~AudioSource();
+  /**
+   * @brief 初期化処理
+   * @return 処理が正しく終了したらtrueを返す
+   */
+  bool Init(HWND* window);
   /**
    * @brief 再生
    * @return 再生に成功したらtrueを返す
@@ -35,7 +40,7 @@ class AudioSource {
    */
   void Stop();
 
-  public:
+ public:
   //! ループ再生するかどうか
   bool is_loop_;
   //! ミュートかどうか
@@ -45,7 +50,9 @@ class AudioSource {
 
  private:
   //! サウンドデバイス
-  IDirectSound8 *direct_sound_;
+  IDirectSound8* direct_sound_;
+  //プライマリサウンドバッファ
+  //LPDIRECTSOUNDBUFFER* direct_sound_buffer_;
   //! 再生中かどうか
   bool is_playing_;
 };

@@ -14,9 +14,8 @@ Texture2D::Texture2D() {}
 Texture2D::~Texture2D() {}
 
 //‰Šú‰»
-bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
-                     u32 height, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
-                     D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
+bool Texture2D::Init(DirectX12Device& device, u32 register_num,
+                     DXGI_FORMAT format, u32 width, u32 height,
                      const std::wstring& name) {
   if (!texture_.InitAsTex2D(device, format, width, height, name)) {
     return false;
@@ -30,6 +29,7 @@ bool Texture2D::Init(DirectX12Device& device, DXGI_FORMAT format, u32 width,
   }
 
   //ƒpƒ‰ƒ[ƒ^‚ÌÝ’è
+  this->register_num_ = register_num;
   this->format_ = format;
   this->width_ = width;
   this->height_ = height;
@@ -62,6 +62,11 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
                                        data, row, slice);
   texture_.Transition(device,
                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+void Texture2D::SetToHeap(DirectX12Device& device) {
+  device.GetHeapManager()->StackLocalHeap(register_num_, Type::Srv,
+                                          cpu_handle_);
 }
 
 }  // namespace buffer

@@ -38,19 +38,15 @@ class MyApp final : public device::Application {
     heap_desc.descriptor_num = 10;
     heap_desc.type = directx::HeapType::CBV_SRV_UAV;
     heap_desc.flag = directx::HeapFlag::ShaderVisible;
-    // if (!heap_.Init(GetDirectX12Device(), heap_desc, L"ShaderResourceHeap"))
-    // {
-    //  return false;
-    //}
 
-    if (!color_constant_buffer.Init(GetDirectX12Device(), {}, {},
+    if (!color_constant_buffer.Init(GetDirectX12Device(), 0,
                                     L"Color ConstantBuffer")) {
       return false;
     }
     Color& color = color_constant_buffer.GetStagingRef();
     color.color = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    if (!matrix_constant_buffer.Init(GetDirectX12Device(), {}, {},
+    if (!matrix_constant_buffer.Init(GetDirectX12Device(), 1,
                                      L"Matrix ConstantBuffer")) {
       return false;
     }
@@ -83,8 +79,9 @@ class MyApp final : public device::Application {
       }
     }
 
-    texture_.Init(GetDirectX12Device(), DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                  WIDTH, HEIGHT, {}, {}, L"Yellow Texture");
+    texture_.Init(GetDirectX12Device(), 0,
+                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, WIDTH, HEIGHT,
+                  L"Yellow Texture");
     texture_.WriteResource(GetDirectX12Device(), datas.data());
 
     //’¸“_’è‹`
@@ -232,12 +229,9 @@ class MyApp final : public device::Application {
 
     GetDirectX12Device().GetHeapManager()->SetGraphicsCommandList(
         GetDirectX12Device());
-    GetDirectX12Device().GetHeapManager()->StackLocalHeap(
-        0, directx::Type::Cbv, color_constant_buffer.GetCPUHandle());
-    GetDirectX12Device().GetHeapManager()->StackLocalHeap(
-        1, directx::Type::Cbv, matrix_constant_buffer.GetCPUHandle());
-    GetDirectX12Device().GetHeapManager()->StackLocalHeap(
-        0, directx::Type::Srv, texture_.GetCPUHandle());
+    color_constant_buffer.SetToHeap(GetDirectX12Device());
+    matrix_constant_buffer.SetToHeap(GetDirectX12Device());
+    texture_.SetToHeap(GetDirectX12Device());
     GetDirectX12Device().GetHeapManager()->PushToGlobalHeapAndSetCommandList(
         GetDirectX12Device());
 

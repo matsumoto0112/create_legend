@@ -28,37 +28,35 @@ class Texture2D {
   /**
    * @brief 初期化
    * @param device DirectX12デバイス
+   * @param register_num シェーダーのレジスター番号
    * @param format テクスチャのフォーマット
    * @param width テクスチャの幅
    * @param height テクスチャの高さ
-   * @param cpu_handle 使用するCPUハンドル
-   * @param gpu_handle 使用するGPUハンドル
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, DXGI_FORMAT format, u32 width, u32 height,
-            D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
-            D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle, const std::wstring& name);
+  bool Init(DirectX12Device& device, u32 register_num, DXGI_FORMAT format,
+            u32 width, u32 height, const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
    * @param device DirectX12デバイス
    * @param data テクスチャデータ
    */
   void WriteResource(DirectX12Device& device, const void* data);
+
   /**
-   * @brief CPUハンドルを取得する
+   * @brief ヒープに自身を追加する
+   * @param device DirectX12デバイス
    */
-  D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() const { return cpu_handle_; }
-  /**
-   * @brief GPUハンドルを取得する
-   */
-  D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const { return gpu_handle_; }
+  void SetToHeap(DirectX12Device& device);
 
  private:
   //! テクスチャデータ
   buffer::CommittedResource texture_;
   //! コピー用のテクスチャリソース
   buffer::CommittedResource texture_immediate_;
+  //! シェーダーのレジスター番号
+  u32 register_num_;
   //! テクスチャのフォーマット
   DXGI_FORMAT format_;
   //! テクスチャの幅

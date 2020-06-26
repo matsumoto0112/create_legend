@@ -34,7 +34,7 @@ bool Texture2D::Init(DirectX12Device& device, u32 register_num,
   this->width_ = width;
   this->height_ = height;
 
-  DescriptorHandle handle = device.GetHeapManager()->GetLocalHandle();
+  DescriptorHandle handle = device.GetHeapManager().GetLocalHandle();
   this->cpu_handle_ = handle.cpu_handle_;
   this->gpu_handle_ = handle.gpu_handle_;
 
@@ -65,7 +65,7 @@ void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
 }
 
 void Texture2D::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager()->StackLocalHeap(register_num_, ResourceType::Srv,
+  device.GetHeapManager().SetHandleToLocalHeap(register_num_, ResourceType::Srv,
                                           cpu_handle_);
 }
 

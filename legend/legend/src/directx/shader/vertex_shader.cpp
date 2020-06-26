@@ -1,6 +1,5 @@
 #include "src/directx/shader/vertex_shader.h"
 
-#include "src/directx/shader/shader_defines.h"
 #include "src/util/byte_reader.h"
 
 namespace legend {

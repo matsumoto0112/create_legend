@@ -4,20 +4,20 @@
 /**
  * @file heap_manager.h
  * @brief ヒープ管理クラス定義
+ * @details ディスクリプタヒープ管理クラスの実装について
+ グローバルヒープとローカルヒープの二種類のヒープを使い分け、実装されている。
+ グローバルヒープは実際にGPUに転送されるヒープ、ローカルヒープはCPU内のみで使用される。
+ 通常、SRV,CBVなどを作成するときにはCPU、GPUハンドルともに必要で、その段階からハンドルを変更できないため、任意の順、任意の数転送するのが困難になっている
+ そのため、SRVを作るときにはローカルヒープのハンドルを使用し、それを必要になり次第グローバルにコピーして使う戦略を今回は選択した。
  */
 
 #include "src/directx/descriptor_handle.h"
 #include "src/directx/descriptor_heap.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/resource_type.h"
 
 namespace legend {
 namespace directx {
-
-enum class ResourceType {
-  Cbv,
-  Srv,
-  Uav,
-};
 
 /**
  * @brief ヒープ管理クラス
@@ -28,22 +28,56 @@ class HeapManager {
    * @brief コンストラクタ
    */
   HeapManager();
+  /**
+   * @brief デストラクタ
+   */
   ~HeapManager();
-  bool Init(IDirectXAccessor& device);
+  /**
+   * @brief 初期化
+   * @param accessor DirectX12アクセサ
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool Init(IDirectXAccessor& accessor);
+  /**
+   * @brief ローカルヒープのディスクリプタハンドルを取得する
+   */
   DescriptorHandle GetLocalHandle();
-  void SetGraphicsCommandList(IDirectXAccessor& device);
-  void StackLocalHeap(u32 register_num, ResourceType type,
-                      D3D12_CPU_DESCRIPTOR_HANDLE handle);
-  void PushToGlobalHeapAndSetCommandList(IDirectXAccessor& device);
+  /**
+   * @brief フレーム開始時イベント
+   */
+  void BeginFrame();
+  /**
+   * @brief コマンドリストにグローバルヒープをセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void SetGraphicsCommandList(IDirectXAccessor& accessor) const;
+  /**
+   * @brief ローカルヒープにハンドルをセットする
+   * @param register_num 使用するリソースのシェーダーにおけるレジスター番号
+   * @param type 使用するリソースの種類
+   * @param handle セットするCPUハンドル
+   */
+  void SetHandleToLocalHeap(u32 register_num, ResourceType type,
+                            D3D12_CPU_DESCRIPTOR_HANDLE handle);
+  /**
+   * @brief ローカルからグローバルにヒープをコピーしコマンドリストにセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void CopyHeapAndSetToGraphicsCommandList(IDirectXAccessor& accessor);
 
  private:
+  //! グローバルヒープ
   DescriptorHeap global_heap_;
+  //! ローカルヒープ
   DescriptorHeap local_heap_;
+  //! ローカルヒープの現在の割り当て数
   u32 local_heap_allocated_count_;
-  u32 global_heap_index_;
-
-  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles;
-  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles;
+  //! グローバルヒープの現在フレームにおける割り当て数
+  u32 global_heap_allocated_count_;
+  //! コンスタントバッファのハンドル
+  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles_;
+  //! シェーダーリソースのハンドル
+  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles_;
 };
 
 }  // namespace directx

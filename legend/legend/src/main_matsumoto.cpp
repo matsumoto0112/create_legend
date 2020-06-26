@@ -212,20 +212,24 @@ class MyApp final : public device::Application {
     root_signature_->SetGraphicsCommandList(GetDirectX12Device());
     pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
 
+    GetDirectX12Device().GetHeapManager().SetGraphicsCommandList(
+        GetDirectX12Device());
+
     float value = color_constant_buffer.GetStagingRef().color[1];
     value += 0.01f;
     if (value > 1.0f) value -= 1.0f;
     color_constant_buffer.GetStagingRef().color[1] = value;
     color_constant_buffer.UpdateStaging();
 
-    GetDirectX12Device().GetHeapManager()->SetGraphicsCommandList(
-        GetDirectX12Device());
     color_constant_buffer.SetToHeap(GetDirectX12Device());
-    matrix_constant_buffer.SetToHeap(GetDirectX12Device());
+    matrix_constant_buffer.GetStagingRef().world =
+        math::Matrix4x4::CreateRotation(rotation_) *
+        math::Matrix4x4::CreateTranslate(position_);
     matrix_constant_buffer.UpdateStaging();
+    matrix_constant_buffer.SetToHeap(GetDirectX12Device());
 
     texture_.SetToHeap(GetDirectX12Device());
-    GetDirectX12Device().GetHeapManager()->PushToGlobalHeapAndSetCommandList(
+    GetDirectX12Device().GetHeapManager().CopyHeapAndSetToGraphicsCommandList(
         GetDirectX12Device());
     vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
     index_buffer_.SetGraphicsCommandList(GetDirectX12Device());

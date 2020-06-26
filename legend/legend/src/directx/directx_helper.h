@@ -9,9 +9,15 @@
 namespace legend {
 namespace directx {
 namespace util {
+/**
+ * @brief テクスチャのフォーマットからピクセルのメモリサイズを取得する
+ * @param format 調べるフォーマット
+ * @return フォーマットに対応したメモリサイズ
+ */
 constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
   switch (format) {
     case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM:
+        //RGBAそれぞれ1Byteで合計4Byte
       return 4;
     default:
       MY_LOG(L"未定義のフォーマットが選択されました。");

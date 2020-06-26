@@ -13,7 +13,9 @@ namespace directx {
  * @details 二つのハンドル CPU・GPUをまとめた構造体
  */
 struct DescriptorHandle {
+  //! CPUハンドル
   D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle_;
+  //! GPUハンドル
   D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle_;
 };
 

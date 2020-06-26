@@ -57,7 +57,7 @@ class ConstantBuffer {
   void UpdateStaging() const;
   /**
    * @brief ヒープに自身を追加する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    */
   void SetToHeap(DirectX12Device& device);
 
@@ -109,7 +109,7 @@ inline bool ConstantBuffer<T>::Init(DirectX12Device& device, u32 register_num,
     return false;
   }
 
-  DescriptorHandle handle = device.GetHeapManager()->GetLocalHandle();
+  DescriptorHandle handle = device.GetHeapManager().GetLocalHandle();
   this->cpu_handle_ = handle.cpu_handle_;
   this->gpu_handle_ = handle.gpu_handle_;
   this->register_num_ = register_num;
@@ -147,10 +147,11 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
   memcpy_s(resource_begin_, buffer_aligned_size_, &staging_, sizeof(T));
 }
 
+//ヒープにセットする
 template <class T>
 inline void ConstantBuffer<T>::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager()->StackLocalHeap(this->register_num_, ResourceType::Cbv,
-                                          this->cpu_handle_);
+  device.GetHeapManager().SetHandleToLocalHeap(this->register_num_,
+                                          ResourceType::Cbv, this->cpu_handle_);
 }
 
 }  // namespace buffer

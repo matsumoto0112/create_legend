@@ -81,6 +81,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\input\gamePad.cpp" />
+    <ClCompile Include="src\input\mouse.cpp" />
+    <ClCompile Include="src\input\keyboard.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
@@ -88,7 +91,7 @@
     <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
-    <ClCompile Include="src\input\input.cpp" />
+    <ClCompile Include="src\input\inputManager.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />
@@ -120,6 +123,10 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\input\gamePad.h" />
+    <ClInclude Include="src\input\joyCode.h" />
+    <ClInclude Include="src\input\mouse.h" />
+    <ClInclude Include="src\input\keyboard.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
@@ -130,7 +137,7 @@
     <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
-    <ClInclude Include="src\input\input.h" />
+    <ClInclude Include="src\input\inputManager.h" />
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
@@ -142,6 +149,7 @@
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\directx\vertex.h" />
     <ClInclude Include="src\game\application.h" />
+    <ClInclude Include="src\input\keycode.h" />
     <ClInclude Include="src\libs\d3dx12.h" />
     <ClInclude Include="src\libs\imgui\imconfig.h" />
     <ClInclude Include="src\libs\imgui\imgui.h" />

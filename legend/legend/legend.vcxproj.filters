@@ -26,7 +26,6 @@
     <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
-    <ClCompile Include="src\input\input.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
@@ -34,6 +33,10 @@
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\main_matsumoto.cpp" />
+    <ClCompile Include="src\input\keyboard.cpp" />
+    <ClCompile Include="src\input\mouse.cpp" />
+    <ClCompile Include="src\input\inputManager.cpp" />
+    <ClCompile Include="src\input\gamePad.cpp" />
     <ClCompile Include="src\directx\heap_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -73,7 +76,6 @@
     <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
-    <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\audio\audio_source.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\scenes\scene.h" />
@@ -84,6 +86,12 @@
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
+    <ClInclude Include="src\input\keycode.h" />
+    <ClInclude Include="src\input\keyboard.h" />
+    <ClInclude Include="src\input\mouse.h" />
+    <ClInclude Include="src\input\inputManager.h" />
+    <ClInclude Include="src\input\gamePad.h" />
+    <ClInclude Include="src\input\joyCode.h" />
     <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\descriptor_handle.h" />
     <ClInclude Include="src\directx\directx_accessor.h" />

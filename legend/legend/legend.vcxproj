@@ -119,6 +119,7 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\path.cpp" />
+    <ClCompile Include="src\util\texture_loader.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="src\libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\libs\stb_image.h" />
     <ClInclude Include="src\math\int_vector_2.h" />
     <ClInclude Include="src\math\math_util.h" />
     <ClInclude Include="src\math\matrix_4x4.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\string_util.h" />
+    <ClInclude Include="src\util\texture_loader.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\window\window_procedure.h" />

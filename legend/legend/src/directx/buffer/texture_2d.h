@@ -38,6 +38,15 @@ class Texture2D {
   bool Init(DirectX12Device& device, u32 register_num, DXGI_FORMAT format,
             u32 width, u32 height, const std::wstring& name);
   /**
+   * @brief テクスチャを読み込みつつ初期化する
+   * @param device DirectX12デバイス
+   * @param register_num シェーダーのレジスター番号
+   * @param filename ファイル名
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool Init(DirectX12Device& device, u32 register_num,
+            const std::filesystem::path& filename);
+  /**
    * @brief テクスチャデータを書き込む
    * @param device DirectX12デバイス
    * @param data テクスチャデータ
@@ -49,6 +58,27 @@ class Texture2D {
    * @param device DirectX12デバイス
    */
   void SetToHeap(DirectX12Device& device);
+  /**
+   * @brief レジスター番号を指定してヒープに自信を追加する
+   * @param device DirectX12デバイス
+   * @param overwrite_register_num 上書きするレジスター番号
+   */
+  void SetToHeap(DirectX12Device& device, u32 overwrite_register_num);
+
+ private:
+  /**
+   * @brief テクスチャバッファを初期化する
+   * @param device DirectX12デバイス
+   * @param register_num シェーダーのレジスター番号
+   * @param format テクスチャのフォーマット
+   * @param width テクスチャの幅
+   * @param height テクスチャの高さ
+   * @param name リソース名
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool InitTexBuffer(DirectX12Device& device, u32 register_num,
+                     DXGI_FORMAT format, u32 width, u32 height,
+                     const std::wstring& name);
 
  private:
   //! テクスチャデータ

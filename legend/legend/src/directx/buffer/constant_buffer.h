@@ -39,14 +39,7 @@ class ConstantBuffer {
    */
   bool Init(DirectX12Device& device, u32 register_num,
             const std::wstring& name);
-  /**
-   * @brief 書き込み開始
-   */
-  bool WriteStart();
-  /**
-   * @brief 書き込み終了
-   */
-  void WriteEnd();
+
   /**
    * @brief 現在のコンスタントバッファ構造体の参照を取得する
    */
@@ -61,12 +54,15 @@ class ConstantBuffer {
    */
   void SetToHeap(DirectX12Device& device);
 
- public:
-  //コピー・ムーブ禁止
-  ConstantBuffer(const ConstantBuffer&) = delete;
-  ConstantBuffer& operator=(const ConstantBuffer&) = delete;
-  ConstantBuffer(ConstantBuffer&&) = delete;
-  ConstantBuffer& operator=(ConstantBuffer&&) = delete;
+ private:
+  /**
+   * @brief 書き込み開始
+   */
+  bool WriteStart();
+  /**
+   * @brief 書き込み終了
+   */
+  void WriteEnd();
 
  private:
   //! コンスタントバッファ構造体
@@ -150,8 +146,8 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 //ヒープにセットする
 template <class T>
 inline void ConstantBuffer<T>::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager().SetHandleToLocalHeap(this->register_num_,
-                                          ResourceType::Cbv, this->cpu_handle_);
+  device.GetHeapManager().SetHandleToLocalHeap(
+      this->register_num_, ResourceType::Cbv, this->cpu_handle_);
 }
 
 }  // namespace buffer

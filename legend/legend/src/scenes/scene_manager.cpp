@@ -1,44 +1,76 @@
 #include "src/scenes/scene_manager.h"
+
 #include "src/scenes/title.h"
+#include "src/scenes/game_over.h"
 
 namespace legend {
 namespace scenes {
 
-SceneManager::SceneManager() : scene_() {}
-
-SceneManager::~SceneManager() { 
-	scene_.reset(); 
+//コンストラクタ
+SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
+  //シーン遷移は現状、この方法でしか分からない
+  current_scene_ = static_cast<Scene*>(new Title(this));
 }
 
-void SceneManager::Update() { 
-	if (scene_ == nullptr) {
-	    return;
-	}
+//初期化
+void SceneManager::Initialize() {
+  if (current_scene_ == nullptr) {
+    return;
+  }
 
-	std::unique_ptr<Scene> s;
-    s = std::move(scene_);
-    s->Update();
-	if (s != scene_) {
-		scene_.reset();
-        scene_ = std::move(s);
-	}
+  current_scene_->Initialize();
 }
 
-void SceneManager::Add() {}
+//終了
+void SceneManager::Finalize() {
+  if (current_scene_ == nullptr) {
+    return;
+  }
 
-void SceneManager::Change() { 
-	if (scene_ != nullptr) {
-	    return;
-	}
+  current_scene_->Finalize();
 }
 
-void SceneManager::Draw() const { 
-	if (scene_ == nullptr) {
-	    return;
-	}
+//更新
+void SceneManager::Update() {
+  if (current_scene_ == nullptr) {
+    return;
+  }
 
-	scene_->Draw(); 
+  if (next_scene_ != SceneType::NONE) {
+    current_scene_->Finalize();
+    delete current_scene_;
+
+    //シーン遷移は現状、この方法でしか分からない
+    switch (next_scene_) {
+      case SceneType::TITLE:
+        current_scene_ = static_cast<Scene*>(new Title(this));
+        break;
+      case SceneType::GAMEOVER:
+          current_scene_ = static_cast<Scene*>(new GameOver(this));
+          break;
+      default:
+        break;
+    }
+
+    next_scene_ = SceneType::NONE;
+    current_scene_->Initialize();
+  }
+
+  current_scene_->Update();
 }
-}  // namespace scene
+
+//描画
+void SceneManager::Draw() {
+  if (current_scene_ == nullptr) {
+    return;
+  }
+
+  current_scene_->Draw();
+}
+
+//シーン遷移
+void SceneManager::ChangeScene(SceneType next_scene) {
+  next_scene_ = next_scene;
+}
+}  // namespace scenes
 }  // namespace legend
-

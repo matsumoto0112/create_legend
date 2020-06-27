@@ -2,6 +2,7 @@
 #define LEGEND_SCENES_SCENE_MANAGER_H_
 
 #include "src/scenes/scene.h"
+#include "src/scenes/scene_change.h"
 
 namespace legend {
 namespace scenes {
@@ -10,48 +11,41 @@ namespace scenes {
  * @class SceneManager
  * @brief シーン管理
  */
-class SceneManager {
+class SceneManager : public ISceneChange, Task {
  public:
   /**
    * @brief コンストラクタ
    */
   SceneManager();
   /**
-   * @brief コピーコンストラクタ禁止
+   * @brief 初期化
    */
-  SceneManager(const SceneManager &) = delete;
+  void Initialize() override;
   /**
-   * @brief コピーコンストラクタ禁止
+   * @brief 終了
    */
-  SceneManager &operator=(const SceneManager &) = delete;
+  void Finalize() override;
   /**
-   * @brief デストラクタ
-   */
-  ~SceneManager();
-
- private:
-  std::unique_ptr<Scene> scene_;
-
- public:
-   /**
    * @brief 更新
    */
-  void Update();
-  /**
-   * @brief シーンの追加
-   */
-  void Add();
-  /**
-   * @brief シーン遷移
-   */
-  void Change();
+  void Update() override;
   /**
    * @brief 描画
    */
-  void Draw() const;
+  void Draw() override;
+  /**
+   * @brief シーン遷移
+   */
+  void ChangeScene(SceneType next_scene) override;
+
+ private:
+  //! 現在のシーン
+  Scene* current_scene_;
+  //! 次のシーン
+  SceneType next_scene_;
 };
 
 }  // namespace scenes
 }  // namespace legend
 
-#endif //! LEGEND_SCENES_SCENE_MANAGER_H_
+#endif  //! LEGEND_SCENES_SCENE_MANAGER_H_

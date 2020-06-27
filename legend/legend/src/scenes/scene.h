@@ -1,47 +1,48 @@
-#ifndef LEGEND_SCENES_BASE_SCENE_H_
-#define LEGEND_SCENES_BASE_SCENE_H_
+#ifndef LEGEND_SCENES_SCENE_H_
+#define LEGEND_SCENES_SCENE_H_
+
+#include "src/scenes/scene_change.h"
+#include "src/scenes/task.h"
 
 namespace legend {
 namespace scenes {
 
 /**
-* @class Scene
-* @brief シーンの基底クラス
-*/
-class Scene {
+ * @class Scene
+ * @brief シーンの基底クラス
+ */
+class Scene : public Task {
  protected:
-  /**
-  * @brief コンストラクタ
-  */
-  Scene() {}
+  ISceneChange* scene_change_;
 
  public:
   /**
-   * @brief コピーコンストラクタ禁止
+   * @brief コンストラクタ
    */
-  Scene(const Scene &) = delete;
-  /**
-   * @brief コピーコンストラクタ禁止
-   */
-  Scene &operator=(const Scene &) = delete;
-
+  Scene(ISceneChange* scene_change);
   /**
    * @brief 仮想デストラクタ
    */
-  virtual ~Scene() = default;
-
- public:
+  virtual ~Scene() {}
+  /**
+   * @brief 初期化
+   */
+  virtual void Initialize() override {}
+  /**
+   * @brief 終了
+   */
+  virtual void Finalize() override;
   /**
    * @brief 更新
    */
-  virtual Scene *Update() = 0;
+  virtual void Update() override {}
   /**
    * @brief 描画
    */
-  virtual void Draw() const = 0;
+  virtual void Draw() override;
 };
 
-} // namespace scenes
-} // namespace legend
+}  // namespace scenes
+}  // namespace legend
 
-#endif //! LEGEND_SCENES_BASE_SCENE_H_
+#endif  //! LEGEND_SCENES_SCENE_H_

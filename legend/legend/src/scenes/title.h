@@ -7,30 +7,30 @@ namespace legend {
 namespace scenes {
 
 /**
-* @class Title
-* @brief タイトルシーン
-*/
+ * @class Title
+ * @brief タイトルシーン
+ */
 class Title : public Scene {
  public:
   /**
-  * @brief コンストラクタ
-  */
-  Title();
-  /**
-   * @brief デストラクタ
+   * @brief コンストラクタ
    */
-  virtual ~Title();
+  Title(ISceneChange* scene_change);
+  /**
+   * @brief 初期化
+   */
+  void Initialize() override;
   /**
    * @brief 更新
    */
-  virtual Scene *Update() override;
+  void Update() override;
   /**
    * @brief 描画
    */
-  virtual void Draw() const override;
+  void Draw() override;
 };
 
-} // namespace scenes
-} // namespace legend
+}  // namespace scenes
+}  // namespace legend
 
-#endif //! LEGEND_SCENES_TITLE_H_
+#endif  //! LEGEND_SCENES_TITLE_H_

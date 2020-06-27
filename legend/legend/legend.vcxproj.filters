@@ -27,6 +27,11 @@
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
+    <ClCompile Include="src\main_hiraoka.cpp" />
+    <ClCompile Include="src\scenes\title.cpp" />
+    <ClCompile Include="src\scenes\scene_change.cpp" />
+    <ClCompile Include="src\scenes\scene.cpp" />
+    <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\directx\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
@@ -81,6 +86,9 @@
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\title.h" />
+    <ClInclude Include="src\scenes\scene_change.h" />
+    <ClInclude Include="src\scenes\task.h" />
+    <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\directx\descriptor_heap.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />

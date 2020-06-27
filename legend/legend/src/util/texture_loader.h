@@ -10,13 +10,29 @@ namespace legend {
 namespace util {
 
 namespace texture_loader {
+/**
+ * @brief 読み込んだテクスチャデータ
+ */
 struct LoadedTextureData {
+  //! テクスチャ名
   std::wstring name;
+  //! テクスチャ幅
   u32 width;
+  //! テクスチャ高さ
   u32 height;
+  //! ピクセル配列
   std::vector<u8> pixels;
-};
 
+  /**
+   * @brief デフォルトコンストラクタ
+   */
+  LoadedTextureData() : name(L""), width(0), height(0), pixels() {}
+};
+/**
+ * @brief テクスチャを読み込む
+ * @param filename 読み込むファイル名
+ * @return 読み込んだ　テクスチャデータ
+ */
 LoadedTextureData Load(const std::filesystem::path& filename);
 
 }  // namespace texture_loader

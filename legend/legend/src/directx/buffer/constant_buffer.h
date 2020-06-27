@@ -64,13 +64,6 @@ class ConstantBuffer {
    */
   void WriteEnd();
 
- public:
-  //コピー・ムーブ禁止
-  // ConstantBuffer(const ConstantBuffer&) = delete;
-  // ConstantBuffer& operator=(const ConstantBuffer&) = delete;
-  // ConstantBuffer(ConstantBuffer&&) = delete;
-  // ConstantBuffer& operator=(ConstantBuffer&&) = delete;
-
  private:
   //! コンスタントバッファ構造体
   T staging_;

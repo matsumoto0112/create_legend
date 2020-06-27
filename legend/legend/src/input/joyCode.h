@@ -1,11 +1,13 @@
+#ifndef LEGEND_INPUT_JOYCODE_H_
+#define LEGEND_INPUT_JOYCODE_H_
+
 /**
  * @file joyCode.h
  * @brief ゲームパッド定義
  */
 
-#pragma once
-
-namespace Framework::Input {
+namespace legend {
+namespace input {
 namespace joyCode {
 /**
  * @enum Enum
@@ -25,3 +27,6 @@ enum Enum : int {
 };
 }  // namespace joyCode
 }  // namespace input
+}  // namespace legend
+
+#endif  // !LEGEND_INPUT_JOYCODE_H_

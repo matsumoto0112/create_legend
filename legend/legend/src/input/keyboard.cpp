@@ -1,36 +1,37 @@
 #include "src/input/keyboard.h"
 
-namespace Framework::Input {
+namespace legend {
+namespace input {
 //コンストラクタ
-keyboard::keyboard(HWND hWnd) : mCurrentKeys(), mPrevKeys() {}
+Keyboard::Keyboard(HWND hWnd) : mCurrentKeys_(), mPrevKeys_() {}
 //デストラクタ
-keyboard::~keyboard() {}
+Keyboard::~Keyboard() {}
 //更新
-void keyboard::update() {
+void Keyboard::Update() {
   //前フレームのキーの情報をコピーする
-  std::copy(mCurrentKeys.begin(), mCurrentKeys.end(), mPrevKeys.begin());
+  std::copy(mCurrentKeys_.begin(), mCurrentKeys_.end(), mPrevKeys_.begin());
   //現在のキーの押下状態を取得する
-  GetKeyboardState(mCurrentKeys.data());
+  GetKeyboardState(mCurrentKeys_.data());
 }
 //キーの押下情報の取得
-bool keyboard::getKey(KeyCode key) const {
-  return checkKeyDown(mCurrentKeys, key);
+bool Keyboard::GetKey(KeyCode key) const {
+  return CheckKeyDown(mCurrentKeys_, key);
 }
 //キーの押した瞬間かどうかを取得
-bool keyboard::getKeyDown(KeyCode key) const {
-  bool prev = checkKeyDown(mPrevKeys, key);
-  bool cur = checkKeyDown(mCurrentKeys, key);
+bool Keyboard::GetKeyDown(KeyCode key) const {
+  bool prev = CheckKeyDown(mPrevKeys_, key);
+  bool cur = CheckKeyDown(mCurrentKeys_, key);
   return !prev && cur;
 }
 //キーの離した瞬間かどうかを取得
-bool keyboard::getKeyUp(KeyCode key) const {
-  bool prev = checkKeyDown(mPrevKeys, key);
-  bool cur = checkKeyDown(mCurrentKeys, key);
+bool Keyboard::GetKeyUp(KeyCode key) const {
+  bool prev = CheckKeyDown(mPrevKeys_, key);
+  bool cur = CheckKeyDown(mCurrentKeys_, key);
   return prev && !cur;
 }
 //キーが押されているかどうか判定
-bool keyboard::checkKeyDown(const KeyInfo& keys, KeyCode key) const {
+bool Keyboard::CheckKeyDown(const KeyInfo& keys, KeyCode key) const {
   return (keys[key] & 0x80) != 0;
 }
-
-}  // namespace Framework::Input
+}  // namespace input
+}  // namespace legend

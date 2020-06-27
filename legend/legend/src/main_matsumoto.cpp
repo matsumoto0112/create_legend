@@ -35,29 +35,18 @@
 //      return false;
 //    }
 //
-//    if (!color_constant_buffer.Init(GetDirectX12Device(), 0,
-//                                    L"Color ConstantBuffer")) {
-//      return false;
+//    constexpr u16 OBJ_NUM = 10;
+//    objects.resize(OBJ_NUM);
+//    for (u16 i = 0; i < OBJ_NUM; i++) {
+//      if (!objects[i].Init(GetDirectX12Device(), math::Vector3(i * 3.0f, 0, 0)))
+//        return false;
 //    }
-//    Color& color = color_constant_buffer.GetStagingRef();
-//    color.color = {1.0f, 1.0f, 1.0f, 1.0f};
-//
-//    if (!matrix_constant_buffer.Init(GetDirectX12Device(), 1,
-//                                     L"Matrix ConstantBuffer")) {
-//      return false;
-//    }
-//
-//    position_ = math::Vector3(0.0f, 0.0f, 0.0f);
-//    rotation_ = math::Vector3(0, 0, 0);
-//    Matrix& mat = matrix_constant_buffer.GetStagingRef();
-//    mat.world = math::Matrix4x4::CreateRotation(rotation_) *
-//                math::Matrix4x4::CreateTranslate(position_);
-//    mat.view = math::Matrix4x4::CreateView(math::Vector3(0, 10, -10),
-//                                           math::Vector3(0, 0, 0),
-//                                           math::Vector3::kUpVector);
 //    const math::IntVector2 screen_size = main_window_->GetScreenSize();
-//    mat.proj = math::Matrix4x4::CreateProjection(
+//    projection_ = math::Matrix4x4::CreateProjection(
 //        45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
+//    view_ = math::Matrix4x4::CreateView(math::Vector3(0, 10, -10),
+//                                        math::Vector3(0, 0, 0),
+//                                        math::Vector3::kUpVector);
 //
 //    std::filesystem::path p = util::Path::getInstance()->texture() / L"tex.png";
 //    int x, y, comp;
@@ -69,64 +58,6 @@
 //    texture_.WriteResource(GetDirectX12Device(), pixels.data());
 //    stbi_image_free(begin);
 //    pixels.clear();
-//
-//    //頂点定義
-//    constexpr float D = 0.8f;
-//    const std::vector<directx::Vertex> vertices = {
-//        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 1.0f)),
-//
-//        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, D, D), math::Vector2(1.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
-//
-//        directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(1.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(0.0f, 1.0f)),
-//
-//        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(0.0f, 1.0f)),
-//
-//        directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
-//
-//        directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 0.0f)),
-//        directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
-//        directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 0.0f)),
-//    };
-//
-//    const u32 vertex_size = sizeof(directx::Vertex);
-//    const u32 vertex_num = static_cast<u32>(vertices.size());
-//    if (!vertex_buffer_.Init(GetDirectX12Device(), vertex_size, vertex_num,
-//                             L"TestTriangle_VertexBuffer")) {
-//      return false;
-//    }
-//    if (!vertex_buffer_.WriteBufferResource(vertices)) {
-//      return false;
-//    }
-//
-//    //インデックス定義
-//    const std::vector<u16> indices = {
-//        0,  1,  2,  0,  2,  3,  4,  5,  6,  4,  6,  7,  8,  9,  10, 8,  10, 11,
-//        12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23};
-//    const u32 index_num = static_cast<u32>(indices.size());
-//    if (!index_buffer_.Init(GetDirectX12Device(), index_num,
-//                            directx::PrimitiveTopology::TriangleList,
-//                            L"TestTriangles_IndexBuffer")) {
-//      return false;
-//    }
-//    if (!index_buffer_.WriteBufferResource(indices)) {
-//      return false;
-//    }
 //
 //    root_signature_ = std::make_shared<directx::shader::RootSignature>();
 //    if (!root_signature_->Init(GetDirectX12Device(),
@@ -179,18 +110,6 @@
 //    if (!Application::Update()) {
 //      return false;
 //    }
-//
-//    if (ImGui::Begin("Cube Transform")) {
-//      static std::array<float, 3> position;
-//      ImGui::SliderFloat3("position", position.data(), -100.0f, 100.0f);
-//      static std::array<float, 3> rotation;
-//      ImGui::SliderFloat3("rotation", rotation.data(), 0.0f, 360.0f);
-//      position_ = math::Vector3(position[0], position[1], position[2]);
-//      rotation_ = math::Vector3(rotation[0], rotation[1], rotation[2]) *
-//                  math::util::DEG_2_RAD;
-//    }
-//    ImGui::End();
-//
 //    return true;
 //  }
 //
@@ -205,40 +124,132 @@
 //    GetDirectX12Device().GetHeapManager().SetGraphicsCommandList(
 //        GetDirectX12Device());
 //
-//    float value = color_constant_buffer.GetStagingRef().color[1];
-//    value += 0.01f;
-//    if (value > 1.0f) value -= 1.0f;
-//    color_constant_buffer.GetStagingRef().color[1] = value;
-//    color_constant_buffer.UpdateStaging();
-//
-//    color_constant_buffer.SetToHeap(GetDirectX12Device());
-//    matrix_constant_buffer.GetStagingRef().world =
-//        math::Matrix4x4::CreateRotation(rotation_) *
-//        math::Matrix4x4::CreateTranslate(position_);
-//    matrix_constant_buffer.UpdateStaging();
-//    matrix_constant_buffer.SetToHeap(GetDirectX12Device());
-//
-//    texture_.SetToHeap(GetDirectX12Device());
-//    GetDirectX12Device().GetHeapManager().CopyHeapAndSetToGraphicsCommandList(
-//        GetDirectX12Device());
-//    vertex_buffer_.SetGraphicsCommandList(GetDirectX12Device());
-//    index_buffer_.SetGraphicsCommandList(GetDirectX12Device());
-//    index_buffer_.Draw(GetDirectX12Device());
-//
+//    for (auto&& o : objects) {
+//      o.Draw(GetDirectX12Device(), view_, projection_, texture_);
+//    }
 //    return true;
 //  }
 //  void Finalize() override { Application::Finalize(); }
 //
 // private:
-//  directx::buffer::VertexBuffer vertex_buffer_;
-//  directx::buffer::IndexBuffer index_buffer_;
+//  struct Object {
+//    bool Init(directx::DirectX12Device& device, const math::Vector3& position) {
+//      //頂点定義
+//      constexpr float D = 0.8f;
+//      const std::vector<directx::Vertex> vertices = {
+//          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 1.0f)),
+//
+//          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, D, D), math::Vector2(1.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
+//
+//          directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(1.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(0.0f, 1.0f)),
+//
+//          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(0.0f, 1.0f)),
+//
+//          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
+//
+//          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 0.0f)),
+//          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
+//          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 0.0f)),
+//      };
+//
+//      const u32 vertex_size = sizeof(directx::Vertex);
+//      const u32 vertex_num = static_cast<u32>(vertices.size());
+//      if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
+//                               L"Object_VertexBuffer")) {
+//        return false;
+//      }
+//      if (!vertex_buffer_.WriteBufferResource(vertices)) {
+//        return false;
+//      }
+//
+//      //インデックス定義
+//      const std::vector<u16> indices = {0,  1,  2,  0,  2,  3,  4,  5,  6,
+//                                        4,  6,  7,  8,  9,  10, 8,  10, 11,
+//                                        12, 13, 14, 12, 14, 15, 16, 17, 18,
+//                                        16, 18, 19, 20, 21, 22, 20, 22, 23};
+//      const u32 index_num = static_cast<u32>(indices.size());
+//      if (!index_buffer_.Init(device, index_num,
+//                              directx::PrimitiveTopology::TriangleList,
+//                              L"Object_IndexBuffer")) {
+//        return false;
+//      }
+//      if (!index_buffer_.WriteBufferResource(indices)) {
+//        return false;
+//      }
+//
+//      if (!color_constant_buffer.Init(device, 0, L"Color ConstantBuffer")) {
+//        return false;
+//      }
+//      Color& color = color_constant_buffer.GetStagingRef();
+//      color.color = {1.0f, 1.0f, 1.0f, 1.0f};
+//
+//      if (!matrix_constant_buffer.Init(device, 1, L"Matrix ConstantBuffer")) {
+//        return false;
+//      }
+//
+//      position_ = position;
+//      rotation_ = math::Vector3::kZeroVector;
+//      scale_ = math::Vector3::kUnitVector;
+//
+//      matrix_constant_buffer.GetStagingRef().world =
+//          math::Matrix4x4::CreateScale(scale_) *
+//          math::Matrix4x4::CreateRotation(rotation_) *
+//          math::Matrix4x4::CreateTranslate(position_);
+//
+//      return true;
+//    }
+//    void Draw(directx::DirectX12Device& device, const math::Matrix4x4& view,
+//              const math::Matrix4x4& proj,
+//              directx::buffer::Texture2D& texture) {
+//      matrix_constant_buffer.GetStagingRef().view = view;
+//      matrix_constant_buffer.GetStagingRef().proj = proj;
+//      matrix_constant_buffer.UpdateStaging();
+//      matrix_constant_buffer.SetToHeap(device);
+//
+//      color_constant_buffer.UpdateStaging();
+//      color_constant_buffer.SetToHeap(device);
+//
+//      texture.SetToHeap(device);
+//      device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+//
+//      vertex_buffer_.SetGraphicsCommandList(device);
+//      index_buffer_.SetGraphicsCommandList(device);
+//      index_buffer_.Draw(device);
+//    }
+//
+//   private:
+//    directx::buffer::VertexBuffer vertex_buffer_;
+//    directx::buffer::IndexBuffer index_buffer_;
+//    directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
+//    directx::buffer::ConstantBuffer<Color> color_constant_buffer;
+//    math::Vector3 position_;
+//    math::Vector3 rotation_;
+//    math::Vector3 scale_;
+//  };
+//
+//  std::vector<Object> objects;
+//  math::Matrix4x4 view_;
+//  math::Matrix4x4 projection_;
+//  directx::buffer::Texture2D texture_;
+//
 //  std::shared_ptr<directx::shader::RootSignature> root_signature_;
 //  directx::shader::GraphicsPipelineState pipeline_state_;
-//  directx::buffer::ConstantBuffer<Color> color_constant_buffer;
-//  directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
-//  directx::buffer::Texture2D texture_;
-//  math::Vector3 position_;
-//  math::Vector3 rotation_;
 //};
 //}  // namespace legend
 //

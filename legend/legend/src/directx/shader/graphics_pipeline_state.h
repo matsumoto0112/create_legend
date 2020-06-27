@@ -6,8 +6,12 @@
  * @brief パイプラインステート定義
  */
 
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/texture_2d.h"
+#include "src/directx/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
 
 namespace legend {
@@ -31,6 +35,10 @@ class GraphicsPipelineState {
    * @param device DirectX12デバイス
    */
   bool Init(DirectX12Device& device);
+  /**
+   * @brief ルートシグネチャをセットする
+   */
+  void SetRootSignature(std::shared_ptr<RootSignature> root_signature);
   /**
    * @brief 頂点シェーダーをセットする
    */
@@ -60,7 +68,7 @@ class GraphicsPipelineState {
   //! パイプラインステート
   ComPtr<ID3D12PipelineState> pipeline_state_;
   //! ルートシグネチャ
-  ComPtr<ID3D12RootSignature> root_signature_;
+  std::shared_ptr<RootSignature> root_signature_;
 };
 
 }  // namespace shader

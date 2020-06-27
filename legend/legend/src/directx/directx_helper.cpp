@@ -2,6 +2,6 @@
 
 namespace legend {
 namespace directx {
-namespace util {}  // namespace util
+namespace directx_helper {}  // namespace util
 }  // namespace directx
 }  // namespace legend

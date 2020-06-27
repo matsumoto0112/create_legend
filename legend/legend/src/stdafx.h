@@ -11,10 +11,20 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
-#include "src/util/debug.h"
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include "src/libs/stb_image.h"
+
+// clang-format off
 #include "src/util/typedef.h"
+#include "src/libs/d3dx12.h"
+#include "src/libs/imgui/imgui.h"
+
+#include "src/util/debug.h"
+//clang-format on
 
 namespace legend {
 template <class T>

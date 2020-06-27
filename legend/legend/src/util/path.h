@@ -21,17 +21,24 @@ class Path : public Singleton<Path> {
   std::filesystem::path exe() const { return exe_filepath_; }
   /**
    * @brief シェーダーファイルのあるフォルダのパスを取得する
-   * @return
    */
   std::filesystem::path shader() const { return shader_filepath_; }
+  /**
+   * @brief テクスチャのあるフォルダのパスを取得する
+   */
+  std::filesystem::path texture() const { return texture_filepath_; }
 
  protected:
   Path();
   ~Path();
 
  private:
+  //! 実行ファイルのパス
   std::filesystem::path exe_filepath_;
+  //! シェーダーファイルのパス
   std::filesystem::path shader_filepath_;
+  //! テクスチャのファイルパス
+  std::filesystem::path texture_filepath_;
 };
 
 }  // namespace util

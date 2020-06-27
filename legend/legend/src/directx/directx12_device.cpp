@@ -42,6 +42,22 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   if (!CreateDevice()) return false;
+  if (!heap_manager_.Init(*this)) return false;
+
+  MY_LOG(L"Create Device finished");
+  return true;
+}
+
+bool DirectX12Device::InitAfter() {
+  if (FAILED(command_list_->Close())) {
+    MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
+    return false;
+  }
+  ID3D12CommandList* command_lists[] = {command_list_.Get()};
+  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
+
+  MoveToNextFrame();
+
   return true;
 }
 
@@ -81,7 +97,7 @@ bool DirectX12Device::Prepare() {
   const std::array<float, 4> CLEAR_COLOR = {0.0f, 0.2f, 0.4f, 1.0f};
   command_list_->ClearRenderTargetView(rtv_handle, CLEAR_COLOR.data(), 0,
                                        nullptr);
-
+  heap_manager_.BeginFrame();
   return true;
 }
 
@@ -228,11 +244,6 @@ bool DirectX12Device::CreateDevice() {
     MY_LOG(L"CreateCommandList failed");
     return false;
   }
-  if (FAILED(command_list_->Close())) {
-    MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
-    return false;
-  }
-
   if (FAILED(device_->CreateFence(fence_values_[frame_index_],
                                   D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
                                   IID_PPV_ARGS(&fence_)))) {
@@ -247,7 +258,6 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  MoveToNextFrame();
   return true;
 }  // namespace legend
 

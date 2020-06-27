@@ -35,9 +35,13 @@ void Application::Run() {
 
   if (!this->Init()) {
     Finalize();
-    SendMessage(main_window_->GetHWND(), WM_CLOSE, 0, 0);
+    return;
   }
 
+  if (!this->device_->InitAfter()) {
+    Finalize();
+    return;
+  }
   main_window_->Show(SW_SHOW);
 
   tagMSG msg = {};
@@ -83,7 +87,6 @@ void Application::Paint() {
 
 //初期化
 bool Application::Init() {
-  MY_LOG(L"初期化");
   device_ = std::make_unique<directx::DirectX12Device>();
   if (!device_->Init(main_window_)) {
     return false;
@@ -98,19 +101,13 @@ bool Application::Init() {
 }
 
 //終了処理
-void Application::Finalize() { MY_LOG(L"終了"); }
+void Application::Finalize() {}
 
 //更新
-bool Application::Update() {
-  MY_LOG(L"更新");
-  return true;
-}
+bool Application::Update() { return true; }
 
 //描画
-bool Application::Draw() {
-  MY_LOG(L"描画");
-  return true;
-}
+bool Application::Draw() { return true; }
 
 bool Application::FrameBegin() {
   if (!device_->Prepare()) return false;

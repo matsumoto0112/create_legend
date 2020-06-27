@@ -6,7 +6,8 @@
  * @brief インデックスバッファ定義
  */
 
-#include "src/directx/directx12_device.h"
+#include "src/directx/buffer/committed_resource.h"
+#include "src/directx/directx_accessor.h"
 #include "src/directx/primitive_topology.h"
 
 namespace legend {
@@ -30,12 +31,14 @@ class IndexBuffer {
   ~IndexBuffer();
   /**
    * @brief 初期化
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param index_num インデックス数
    * @param topology プリミティブの形状
+   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 index_num, PrimitiveTopology topology);
+  bool Init(IDirectXAccessor& accessor, u32 index_num,
+            PrimitiveTopology topology, const std::wstring& name);
   /**
    * @brief バッファにリソースを書き込む
    * @param indices インデックス配列
@@ -44,18 +47,18 @@ class IndexBuffer {
   bool WriteBufferResource(const std::vector<Index>& indices);
   /**
    * @brief グラフィックスコマンドリストに追加する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    */
-  void SetGraphicsCommandList(DirectX12Device& device);
+  void SetGraphicsCommandList(IDirectXAccessor& accessor);
   /**
    * @brief 描画
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    */
-  void Draw(DirectX12Device& device);
+  void Draw(IDirectXAccessor& accessor);
 
  private:
-  //! インデックスバッファリソース
-  ComPtr<ID3D12Resource> index_buffer_resource_;
+  //! インデックスバッファのリソースデータ
+  CommittedResource resource_;
   //! バッファビュー
   D3D12_INDEX_BUFFER_VIEW index_buffer_view_;
   //! インデックス数

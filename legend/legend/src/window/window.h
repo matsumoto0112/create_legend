@@ -21,7 +21,7 @@ class Window {
   /**
    * @brief 更新するウィンドウ設定フラグ
    */
-  enum class UpdateWindowSettingFlags {
+  enum class UpdateWindowSettingFlags : u32 {
     WindowTitle = 1 << 0,     //!< ウィンドウタイトル
     ScreenSize = 1 << 1,      //!< スクリーンサイズ
     WindowPosition = 1 << 2,  //!< ウィンドウ座標
@@ -39,7 +39,7 @@ class Window {
   /**
    * @brief ウィンドウを表示する
    */
-  void Show(int show_command) const;
+  void Show(i32 show_command) const;
   /**
    * @brief ウィンドウプロシージャを設定する
    */

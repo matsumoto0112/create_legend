@@ -1,11 +1,13 @@
+#ifndef LEGEND_INPUT_KEYCODE_H_
+#define LEGEND_INPUT_KEYCODE_H_
+
 /**
  * @file keyCoad.h
  * @brief キーコード定義
  */
 
-#pragma once
-
-namespace Framework::Input {
+namespace legend {
+namespace input {
 namespace keyCode {
 /**
  * @enum Enum
@@ -70,5 +72,8 @@ enum Enum : int {
   Right = VK_RIGHT,        //!< Rightキー
   Down = VK_DOWN,          //!< Downキー
 };
-}  // namespace KeyCode
-}  // namespace Framework::Input
+}  // namespace keyCode
+}  // namespace input
+}  // namespace legend
+
+#endif  // !LEGEND_INPUT_KEYCODE_H_

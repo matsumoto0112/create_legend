@@ -50,13 +50,9 @@ class MyApp final : public device::Application {
                                         math::Vector3::kUpVector);
 
     std::filesystem::path p = util::Path::getInstance()->texture() / L"tex.png";
-    util::texture_loader::LoadedTextureData data =
-        util::texture_loader::Load(p);
-
-    texture_.Init(GetDirectX12Device(), 0,
-                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, data.width,
-                  data.height, data.name);
-    texture_.WriteResource(GetDirectX12Device(), data.pixels.data());
+    if (!texture_.Init(GetDirectX12Device(), 0, p)) {
+      return false;
+    }
 
     root_signature_ = std::make_shared<directx::shader::RootSignature>();
     if (!root_signature_->Init(GetDirectX12Device(),
@@ -122,6 +118,7 @@ class MyApp final : public device::Application {
 
     GetDirectX12Device().GetHeapManager().SetGraphicsCommandList(
         GetDirectX12Device());
+    texture_.SetToHeap(GetDirectX12Device());
 
     for (auto&& o : objects) {
       o.Draw(GetDirectX12Device(), view_, projection_, texture_);
@@ -224,7 +221,6 @@ class MyApp final : public device::Application {
       color_constant_buffer.UpdateStaging();
       color_constant_buffer.SetToHeap(device);
 
-      texture.SetToHeap(device);
       device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
       vertex_buffer_.SetGraphicsCommandList(device);

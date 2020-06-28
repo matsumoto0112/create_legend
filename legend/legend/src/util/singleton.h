@@ -13,7 +13,7 @@ class Singleton {
   /**
    * @brief インスタンスの取得
    */
-  static inline T* getInstance() {
+  static inline T* GetInstance() {
     struct temp : T {
       temp() : T() {}
     };

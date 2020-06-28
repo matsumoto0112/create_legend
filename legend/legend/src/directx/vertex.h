@@ -18,6 +18,11 @@ struct Vertex {
   Vertex(const math::Vector3& position, const math::Vector2& uv)
       : position(position), uv(uv) {}
 };
+
+struct OnlyPosition
+{
+    math::Vector3 position;
+};
 }  // namespace directx
 }  // namespace legend
 

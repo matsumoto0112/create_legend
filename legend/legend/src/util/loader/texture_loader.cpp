@@ -1,5 +1,7 @@
 #include "src/util/loader/texture_loader.h"
 
+#include "src/libs/stb_image.h"
+
 namespace legend {
 namespace util {
 namespace loader {
@@ -11,6 +13,10 @@ LoadedTextureData Load(const std::filesystem::path& filename) {
   int x, y, comp;
   stbi_uc* begin =
       stbi_load(filename.generic_string().c_str(), &x, &y, &comp, 4);
+  if (!begin) {
+    MY_LOG(L"%s‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½", filename.c_str());
+    return LoadedTextureData{};
+  }
 
   LoadedTextureData res = {};
   res.width = x;

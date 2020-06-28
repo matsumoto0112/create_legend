@@ -11,6 +11,7 @@
 #include "src/game/application.h"
 #include "src/libs/imgui/imgui.h"
 #include "src/math/matrix_4x4.h"
+#include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 #include "src/window/window.h"
 
@@ -35,7 +36,7 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    constexpr u16 OBJ_NUM = 10;
+    constexpr u16 OBJ_NUM = 5;
     objects.resize(OBJ_NUM);
     for (u16 i = 0; i < OBJ_NUM; i++) {
       if (!objects[i].Init(GetDirectX12Device(), math::Vector3(i * 3.0f, 0, 0)))
@@ -44,11 +45,10 @@ class MyApp final : public device::Application {
     const math::IntVector2 screen_size = main_window_->GetScreenSize();
     projection_ = math::Matrix4x4::CreateProjection(
         45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
-    view_ = math::Matrix4x4::CreateView(math::Vector3(0, 10, -10),
-                                        math::Vector3(0, 0, 0),
-                                        math::Vector3::kUpVector);
+    camera_position_ = math::Vector3(0, 10, -10);
+    camera_at_ = math::Vector3(0, 0, 0);
 
-    std::filesystem::path p = util::Path::getInstance()->texture() / L"tex.png";
+    std::filesystem::path p = util::Path::GetInstance()->texture() / L"tex.png";
     if (!texture_.Init(GetDirectX12Device(), 0, p)) {
       return false;
     }
@@ -61,15 +61,11 @@ class MyApp final : public device::Application {
     pipeline_state_.SetRootSignature(root_signature_);
 
     //頂点シェーダー
-    std::filesystem::path path = util::Path::getInstance()->shader();
+    std::filesystem::path path = util::Path::GetInstance()->shader();
     std::filesystem::path vertex_shader_path = path / L"VertexShader.cso";
     std::filesystem::path pixel_shader_path = path / L"TextureTest.cso";
     std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
         {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-         D3D12_APPEND_ALIGNED_ELEMENT,
-         D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-         0},
-        {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
          D3D12_APPEND_ALIGNED_ELEMENT,
          D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
          0},
@@ -119,8 +115,10 @@ class MyApp final : public device::Application {
         GetDirectX12Device());
     texture_.SetToHeap(GetDirectX12Device());
 
+    math::Matrix4x4 view = math::Matrix4x4::CreateView(
+        camera_position_, camera_at_, math::Vector3::kUpVector);
     for (auto&& o : objects) {
-      o.Draw(GetDirectX12Device(), view_, projection_, texture_);
+      o.Draw(GetDirectX12Device(), view, projection_, texture_);
     }
     return true;
   }
@@ -129,43 +127,61 @@ class MyApp final : public device::Application {
  private:
   struct Object {
     bool Init(directx::DirectX12Device& device, const math::Vector3& position) {
-      //頂点定義
-      constexpr float D = 0.8f;
-      const std::vector<directx::Vertex> vertices = {
-          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 1.0f)),
+      util::loader::GLBLoader loader;
+      std::filesystem::path model_path =
+          util::Path::GetInstance()->exe() / L"assets" / L"maru_NoUV.glb";
+      util::loader::LoadedGLBModelData data = loader.Load(model_path);
 
-          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, D, D), math::Vector2(1.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
+      ////頂点定義
+      // constexpr float D = 0.8f;
+      // const std::vector<directx::Vertex> vertices = {
+      //    directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(0.0f,
+      //    0.0f)), directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f,
+      //    0.0f)), directx::Vertex(math::Vector3(D, -D, -D),
+      //    math::Vector2(1.0f, 1.0f)), directx::Vertex(math::Vector3(-D, -D,
+      //    -D), math::Vector2(0.0f, 1.0f)),
 
-          directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(1.0f, 0.0f)),
-          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(0.0f, 1.0f)),
+      //    directx::Vertex(math::Vector3(D, D, -D), math::Vector2(0.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(D, D, D), math::Vector2(1.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
+      //    directx::Vertex(math::Vector3(D, -D, -D),
+      //    math::Vector2(0.0f, 1.0f)),
 
-          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
-          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(0.0f, 1.0f)),
+      //    directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(-D, D, D), math::Vector2(1.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(-D, -D, D),
+      //    math::Vector2(1.0f, 1.0f)), directx::Vertex(math::Vector3(D, -D, D),
+      //    math::Vector2(0.0f, 1.0f)),
 
-          directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 1.0f)),
-          directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f,
+      //    0.0f)), directx::Vertex(math::Vector3(-D, -D, -D),
+      //    math::Vector2(1.0f, 1.0f)), directx::Vertex(math::Vector3(-D, -D,
+      //    D), math::Vector2(0.0f, 1.0f)),
 
-          directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f, 0.0f)),
-          directx::Vertex(math::Vector3(D, -D, -D), math::Vector2(0.0f, 1.0f)),
-          directx::Vertex(math::Vector3(D, -D, D), math::Vector2(1.0f, 1.0f)),
-          directx::Vertex(math::Vector3(-D, -D, D), math::Vector2(1.0f, 0.0f)),
-      };
+      //    directx::Vertex(math::Vector3(-D, D, D), math::Vector2(0.0f, 0.0f)),
+      //    directx::Vertex(math::Vector3(D, D, D), math::Vector2(0.0f, 1.0f)),
+      //    directx::Vertex(math::Vector3(D, D, -D), math::Vector2(1.0f, 1.0f)),
+      //    directx::Vertex(math::Vector3(-D, D, -D), math::Vector2(1.0f,
+      //    0.0f)),
 
-      const u32 vertex_size = sizeof(directx::Vertex);
-      const u32 vertex_num = static_cast<u32>(vertices.size());
-      if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
+      //    directx::Vertex(math::Vector3(-D, -D, -D), math::Vector2(0.0f,
+      //    0.0f)), directx::Vertex(math::Vector3(D, -D, -D),
+      //    math::Vector2(0.0f, 1.0f)), directx::Vertex(math::Vector3(D, -D, D),
+      //    math::Vector2(1.0f, 1.0f)), directx::Vertex(math::Vector3(-D, -D,
+      //    D), math::Vector2(1.0f, 0.0f)),
+      //};
+      const u32 size = static_cast<u32>(data.positions.size() / 3);
+      std::vector<directx::OnlyPosition> vertices(size);
+      for (u32 i = 0; i < size; i++) {
+        vertices[i].position.x = data.positions[i * 3 + 0];
+        vertices[i].position.y = data.positions[i * 3 + 1];
+        vertices[i].position.z = data.positions[i * 3 + 2];
+      }
+
+      // const u32 vertex_size = sizeof(directx::Vertex);
+      // const u32 vertex_num = static_cast<u32>(vertices.size());
+      if (!vertex_buffer_.Init(device, sizeof(directx::OnlyPosition), size,
                                L"Object_VertexBuffer")) {
         return false;
       }
@@ -173,18 +189,18 @@ class MyApp final : public device::Application {
         return false;
       }
 
-      //インデックス定義
-      const std::vector<u16> indices = {0,  1,  2,  0,  2,  3,  4,  5,  6,
-                                        4,  6,  7,  8,  9,  10, 8,  10, 11,
-                                        12, 13, 14, 12, 14, 15, 16, 17, 18,
-                                        16, 18, 19, 20, 21, 22, 20, 22, 23};
-      const u32 index_num = static_cast<u32>(indices.size());
+      ////インデックス定義
+      // const std::vector<u16> indices = {0,  1,  2,  0,  2,  3,  4,  5,  6,
+      //                                  4,  6,  7,  8,  9,  10, 8,  10, 11,
+      //                                  12, 13, 14, 12, 14, 15, 16, 17, 18,
+      //                                  16, 18, 19, 20, 21, 22, 20, 22, 23};
+      const u32 index_num = static_cast<u32>(data.indices.size());
       if (!index_buffer_.Init(device, index_num,
                               directx::PrimitiveTopology::TriangleList,
                               L"Object_IndexBuffer")) {
         return false;
       }
-      if (!index_buffer_.WriteBufferResource(indices)) {
+      if (!index_buffer_.WriteBufferResource(data.indices)) {
         return false;
       }
 
@@ -200,7 +216,7 @@ class MyApp final : public device::Application {
 
       position_ = position;
       rotation_ = math::Vector3::kZeroVector;
-      scale_ = math::Vector3::kUnitVector;
+      scale_ = math::Vector3::kUnitVector * 10.0f;
 
       matrix_constant_buffer.GetStagingRef().world =
           math::Matrix4x4::CreateScale(scale_) *
@@ -238,7 +254,8 @@ class MyApp final : public device::Application {
   };
 
   std::vector<Object> objects;
-  math::Matrix4x4 view_;
+  math::Vector3 camera_position_;
+  math::Vector3 camera_at_;
   math::Matrix4x4 projection_;
   directx::buffer::Texture2D texture_;
 

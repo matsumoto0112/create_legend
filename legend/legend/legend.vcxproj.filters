@@ -43,7 +43,7 @@
     <ClCompile Include="src\input\inputManager.cpp" />
     <ClCompile Include="src\input\gamePad.cpp" />
     <ClCompile Include="src\directx\heap_manager.cpp" />
-    <ClCompile Include="src\util\texture_loader.cpp" />
+    <ClCompile Include="src\util\loader\texture_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -106,7 +106,7 @@
     <ClInclude Include="src\directx\directx_accessor.h" />
     <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\libs\stb_image.h" />
-    <ClInclude Include="src\util\texture_loader.h" />
+    <ClInclude Include="src\util\loader\texture_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

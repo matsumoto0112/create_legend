@@ -124,7 +124,7 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\path.cpp" />
-    <ClCompile Include="src\util\texture_loader.cpp" />
+    <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -185,7 +185,7 @@
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\string_util.h" />
-    <ClInclude Include="src\util\texture_loader.h" />
+    <ClInclude Include="src\util\loader\texture_loader.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\window\window_procedure.h" />

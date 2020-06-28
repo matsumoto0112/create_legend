@@ -1,5 +1,5 @@
-#ifndef LEGEND_UTIL_TEXTURE_LOADER_H_
-#define LEGEND_UTIL_TEXTURE_LOADER_H_
+#ifndef LEGEND_UTIL_LOADER_TEXTURE_LOADER_H_
+#define LEGEND_UTIL_LOADER_TEXTURE_LOADER_H_
 
 /**
  * @file texture_loader.h
@@ -8,6 +8,7 @@
 
 namespace legend {
 namespace util {
+namespace loader {
 
 namespace texture_loader {
 /**
@@ -37,7 +38,8 @@ LoadedTextureData Load(const std::filesystem::path& filename);
 
 }  // namespace texture_loader
 
+}  // namespace loader
 }  // namespace util
 }  // namespace legend
 
-#endif  //! LEGEND_UTIL_TEXTURE_LOADER_H_
+#endif  //! LEGEND_UTIL_LOADER_TEXTURE_LOADER_H_

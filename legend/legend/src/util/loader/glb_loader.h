@@ -16,6 +16,8 @@ namespace loader {
 struct LoadedGLBModelData {
   std::wstring name;
   std::vector<float> positions;
+  std::vector<float> normals;
+  std::vector<float> uvs;
   std::vector<u16> indices;
 };
 

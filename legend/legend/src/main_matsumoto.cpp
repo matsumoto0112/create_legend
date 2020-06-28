@@ -21,10 +21,12 @@ constexpr u32 CUBE_NUM = 100;
 struct Color {
   std::array<float, 4> color;
 };
-struct Matrix {
+struct Transform {
   math::Matrix4x4 world;
+};
+struct WorldContext {
   math::Matrix4x4 view;
-  math::Matrix4x4 proj;
+  math::Matrix4x4 projection;
 };
 
 class MyApp final : public device::Application {
@@ -47,6 +49,10 @@ class MyApp final : public device::Application {
         45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
     camera_position_ = math::Vector3(0, 10, -10);
     camera_at_ = math::Vector3(0, 0, 0);
+    if (!world_constant_buffer_.Init(GetDirectX12Device(), 1,
+                                     L"World Context")) {
+      return false;
+    }
 
     std::filesystem::path p = util::Path::GetInstance()->texture() / L"tex.png";
     if (!texture_.Init(GetDirectX12Device(), 0, p)) {
@@ -62,10 +68,20 @@ class MyApp final : public device::Application {
 
     //頂点シェーダー
     std::filesystem::path path = util::Path::GetInstance()->shader();
-    std::filesystem::path vertex_shader_path = path / L"VertexShader.cso";
-    std::filesystem::path pixel_shader_path = path / L"TextureTest.cso";
+    std::filesystem::path vertex_shader_path =
+        path / L"modelview" / L"model_view_vs.cso";
+    std::filesystem::path pixel_shader_path =
+        path / L"modelview" / L"model_view_ps.cso";
     std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
         {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
+         D3D12_APPEND_ALIGNED_ELEMENT,
+         D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+         0},
+        {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
+         D3D12_APPEND_ALIGNED_ELEMENT,
+         D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+         0},
+        {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
          D3D12_APPEND_ALIGNED_ELEMENT,
          D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
          0},
@@ -117,8 +133,13 @@ class MyApp final : public device::Application {
 
     math::Matrix4x4 view = math::Matrix4x4::CreateView(
         camera_position_, camera_at_, math::Vector3::kUpVector);
+    world_constant_buffer_.GetStagingRef().view = view;
+    world_constant_buffer_.GetStagingRef().projection = projection_;
+    world_constant_buffer_.UpdateStaging();
+    world_constant_buffer_.SetToHeap(GetDirectX12Device());
+
     for (auto&& o : objects) {
-      o.Draw(GetDirectX12Device(), view, projection_, texture_);
+      o.Draw(GetDirectX12Device());
     }
     return true;
   }
@@ -129,7 +150,7 @@ class MyApp final : public device::Application {
     bool Init(directx::DirectX12Device& device, const math::Vector3& position) {
       util::loader::GLBLoader loader;
       std::filesystem::path model_path =
-          util::Path::GetInstance()->exe() / L"assets" / L"maru_NoUV.glb";
+          util::Path::GetInstance()->exe() / L"assets" / L"maru_UV.glb";
       util::loader::LoadedGLBModelData data = loader.Load(model_path);
 
       ////頂点定義
@@ -171,17 +192,24 @@ class MyApp final : public device::Application {
       //    math::Vector2(1.0f, 1.0f)), directx::Vertex(math::Vector3(-D, -D,
       //    D), math::Vector2(1.0f, 0.0f)),
       //};
-      const u32 size = static_cast<u32>(data.positions.size() / 3);
-      std::vector<directx::OnlyPosition> vertices(size);
-      for (u32 i = 0; i < size; i++) {
+      const u32 position_size = static_cast<u32>(data.positions.size() / 3);
+      std::vector<directx::Vertex> vertices(position_size);
+      MY_ASSERTION(data.positions.size() == data.normals.size(),
+                   L"normalsの数がpositionsの数と一致していません");
+      for (u32 i = 0; i < position_size; i++) {
         vertices[i].position.x = data.positions[i * 3 + 0];
         vertices[i].position.y = data.positions[i * 3 + 1];
         vertices[i].position.z = data.positions[i * 3 + 2];
+        vertices[i].normal.x = data.normals[i * 3 + 0];
+        vertices[i].normal.y = data.normals[i * 3 + 1];
+        vertices[i].normal.z = data.normals[i * 3 + 2];
+        vertices[i].uv.x = data.uvs[i * 2 + 0];
+        vertices[i].uv.y = data.uvs[i * 2 + 0];
       }
 
-      // const u32 vertex_size = sizeof(directx::Vertex);
-      // const u32 vertex_num = static_cast<u32>(vertices.size());
-      if (!vertex_buffer_.Init(device, sizeof(directx::OnlyPosition), size,
+      const u32 vertex_size = sizeof(directx::Vertex);
+      const u32 vertex_num = static_cast<u32>(vertices.size());
+      if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
                                L"Object_VertexBuffer")) {
         return false;
       }
@@ -189,11 +217,7 @@ class MyApp final : public device::Application {
         return false;
       }
 
-      ////インデックス定義
-      // const std::vector<u16> indices = {0,  1,  2,  0,  2,  3,  4,  5,  6,
-      //                                  4,  6,  7,  8,  9,  10, 8,  10, 11,
-      //                                  12, 13, 14, 12, 14, 15, 16, 17, 18,
-      //                                  16, 18, 19, 20, 21, 22, 20, 22, 23};
+      //インデックス定義
       const u32 index_num = static_cast<u32>(data.indices.size());
       if (!index_buffer_.Init(device, index_num,
                               directx::PrimitiveTopology::TriangleList,
@@ -204,13 +228,8 @@ class MyApp final : public device::Application {
         return false;
       }
 
-      if (!color_constant_buffer.Init(device, 0, L"Color ConstantBuffer")) {
-        return false;
-      }
-      Color& color = color_constant_buffer.GetStagingRef();
-      color.color = {1.0f, 1.0f, 1.0f, 1.0f};
-
-      if (!matrix_constant_buffer.Init(device, 1, L"Matrix ConstantBuffer")) {
+      if (!transform_constant_buffer_.Init(device, 0,
+                                           L"Matrix ConstantBuffer")) {
         return false;
       }
 
@@ -218,23 +237,20 @@ class MyApp final : public device::Application {
       rotation_ = math::Vector3::kZeroVector;
       scale_ = math::Vector3::kUnitVector * 10.0f;
 
-      matrix_constant_buffer.GetStagingRef().world =
+      transform_constant_buffer_.GetStagingRef().world =
           math::Matrix4x4::CreateScale(scale_) *
           math::Matrix4x4::CreateRotation(rotation_) *
           math::Matrix4x4::CreateTranslate(position_);
 
       return true;
     }
-    void Draw(directx::DirectX12Device& device, const math::Matrix4x4& view,
-              const math::Matrix4x4& proj,
-              directx::buffer::Texture2D& texture) {
-      matrix_constant_buffer.GetStagingRef().view = view;
-      matrix_constant_buffer.GetStagingRef().proj = proj;
-      matrix_constant_buffer.UpdateStaging();
-      matrix_constant_buffer.SetToHeap(device);
-
-      color_constant_buffer.UpdateStaging();
-      color_constant_buffer.SetToHeap(device);
+    void Draw(directx::DirectX12Device& device) {
+      transform_constant_buffer_.GetStagingRef().world =
+          math::Matrix4x4::CreateScale(scale_) *
+          math::Matrix4x4::CreateRotation(rotation_) *
+          math::Matrix4x4::CreateTranslate(position_);
+      transform_constant_buffer_.UpdateStaging();
+      transform_constant_buffer_.SetToHeap(device);
 
       device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
@@ -246,8 +262,7 @@ class MyApp final : public device::Application {
    private:
     directx::buffer::VertexBuffer vertex_buffer_;
     directx::buffer::IndexBuffer index_buffer_;
-    directx::buffer::ConstantBuffer<Matrix> matrix_constant_buffer;
-    directx::buffer::ConstantBuffer<Color> color_constant_buffer;
+    directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
     math::Vector3 position_;
     math::Vector3 rotation_;
     math::Vector3 scale_;
@@ -258,6 +273,7 @@ class MyApp final : public device::Application {
   math::Vector3 camera_at_;
   math::Matrix4x4 projection_;
   directx::buffer::Texture2D texture_;
+  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
 
   std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;

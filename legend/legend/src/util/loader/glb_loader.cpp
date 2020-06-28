@@ -44,12 +44,29 @@ LoadedGLBModelData GLBLoader::Load(const std::filesystem::path& filename) {
         const std::vector<float> data =
             glb_resource_reader->ReadBinaryData<float>(document, accessor);
         const u32 length = static_cast<u32>(data.size() * sizeof(float));
-        MY_LOG(L"Prim: %d", length);
+        MY_LOG(L"Prim position length: %d", length);
         res.positions = data;
+      }
+      if (prim.TryGetAttributeAccessorId(ACCESSOR_NORMAL, accessor_id)) {
+        const Accessor& accessor = document.accessors.Get(accessor_id);
+        const std::vector<float> data =
+            glb_resource_reader->ReadBinaryData<float>(document, accessor);
+        const u32 length = static_cast<u32>(data.size() * sizeof(float));
+        MY_LOG(L"Prim normal length: %d", length);
+        res.normals = data;
+      }
+      if (prim.TryGetAttributeAccessorId(ACCESSOR_TEXCOORD_0, accessor_id)) {
+        const Accessor& accessor = document.accessors.Get(accessor_id);
+        const std::vector<float> data =
+            glb_resource_reader->ReadBinaryData<float>(document, accessor);
+        const u32 length = static_cast<u32>(data.size() * sizeof(float));
+        MY_LOG(L"Prim uvs length: %d", length);
+        res.uvs = data;
       }
       const Accessor& index_accessor =
           document.accessors.Get(prim.indicesAccessorId);
-      if (index_accessor.componentType == ComponentType::COMPONENT_UNSIGNED_SHORT) {
+      if (index_accessor.componentType ==
+          ComponentType::COMPONENT_UNSIGNED_SHORT) {
         const std::vector<u16> index_data =
             glb_resource_reader->ReadBinaryData<u16>(document, index_accessor);
         res.indices = index_data;

@@ -109,15 +109,19 @@
     <ClInclude Include="src\libs\stb_image.h" />
     <ClInclude Include="src\util\loader\texture_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
+    <ClInclude Include="assets\shaders\defines\global.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
     <None Include="packages.config" />
+    <None Include="assets\shaders\modelview\model_view.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
     <FxCompile Include="assets\shaders\PixelShader.hlsl" />
     <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl" />
     <FxCompile Include="assets\shaders\TextureTest.hlsl" />
+    <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
+    <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
   </ItemGroup>
 </Project>

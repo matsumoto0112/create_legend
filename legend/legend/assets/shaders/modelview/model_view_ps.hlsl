@@ -1,0 +1,11 @@
+#ifndef LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_PS_HLSL_
+#define LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_PS_HLSL_
+
+#include "model_view.hlsli"
+
+float4 main(PSInput i) : SV_TARGET
+{
+	return PSMain(i);
+}
+
+#endif //! LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_PS_HLSL_

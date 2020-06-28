@@ -3,7 +3,7 @@
 namespace legend {
 namespace scenes {
 
-ISceneChange::~ISceneChange() {}
+//ISceneChange::~ISceneChange() {}
 
 }  // namespace scenes
 }  // namespace legend

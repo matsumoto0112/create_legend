@@ -1,7 +1,7 @@
 #include "src/scenes/scene_manager.h"
 
-#include "src/scenes/title.h"
 #include "src/scenes/game_over.h"
+#include "src/scenes/title.h"
 
 namespace legend {
 namespace scenes {
@@ -9,7 +9,7 @@ namespace scenes {
 //コンストラクタ
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
   //シーン遷移は現状、この方法でしか分からない
-  current_scene_ = static_cast<Scene*>(new Title(this));
+  current_scene_ = std::make_unique<Title>(this);
 }
 
 //初期化
@@ -38,16 +38,16 @@ void SceneManager::Update() {
 
   if (next_scene_ != SceneType::NONE) {
     current_scene_->Finalize();
-    delete current_scene_;
+    current_scene_.release();
 
     //シーン遷移は現状、この方法でしか分からない
     switch (next_scene_) {
       case SceneType::TITLE:
-        current_scene_ = static_cast<Scene*>(new Title(this));
+        current_scene_ = std::make_unique<Title>(this);
         break;
       case SceneType::GAMEOVER:
-          current_scene_ = static_cast<Scene*>(new GameOver(this));
-          break;
+        current_scene_ = std::make_unique<GameOver>(this);
+        break;
       default:
         break;
     }

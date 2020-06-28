@@ -40,7 +40,7 @@ class SceneManager : public ISceneChange, Task {
 
  private:
   //! 現在のシーン
-  Scene* current_scene_;
+  std::unique_ptr<Scene> current_scene_;
   //! 次のシーン
   SceneType next_scene_;
 };

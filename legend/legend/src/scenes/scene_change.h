@@ -17,7 +17,7 @@ class ISceneChange {
   /**
    * @brief デストラクタ
    */
-  virtual ~ISceneChange() = 0;
+  virtual ~ISceneChange() = default;
   /**
    * @brief 次のシーンに切り替える
    */

@@ -1,12 +1,24 @@
 #ifndef LEGEND_SCENES_MODEL_VIEW_H_
 #define LEGEND_SCENES_MODEL_VIEW_H_
 
+#include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/shader/root_signature.h"
+#include "src/math/matrix_4x4.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
 namespace scenes {
+
+struct Transform {
+  math::Matrix4x4 world;
+};
+struct WorldContext {
+  math::Matrix4x4 view;
+  math::Matrix4x4 projection;
+};
 
 /**
  * @class ModelView
@@ -32,8 +44,13 @@ class ModelView : public Scene {
   void Draw() override;
 
  private:
+  math::Vector3 scale_;
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
+  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::buffer::ConstantBuffer<Transform> transform_cb_;
+  directx::buffer::ConstantBuffer<WorldContext> world_cb_;
 };
 
 }  // namespace scenes

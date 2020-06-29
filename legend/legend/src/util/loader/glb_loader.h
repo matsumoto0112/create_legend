@@ -19,6 +19,7 @@ namespace loader {
 struct LoadedMeshData {
   //! ƒ‚ƒfƒ‹–¼
   std::wstring name;
+  u32 vertex_num;
   u32 position_size;
   std::vector<float> positions;
   u32 normal_size;

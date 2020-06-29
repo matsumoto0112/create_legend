@@ -2,6 +2,8 @@
 
 #include <GLTFSDK/Deserialize.h>
 
+#include <tuple>
+
 namespace legend {
 namespace util {
 namespace loader {
@@ -41,29 +43,31 @@ LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
   //アクセサ名からデータを取得する
   auto GetAttribute = [](const Document& document, const MeshPrimitive& mesh,
                          const GLBResourceReader& reader,
-                         const char* accessor_name) {
+                         const char* accessor_name, std::vector<float>* vec,
+                         u32* size) {
     std::string accessor_id;
     if (mesh.TryGetAttributeAccessorId(accessor_name, accessor_id)) {
       const Accessor& accessor = document.accessors.Get(accessor_id);
-      const std::vector<float> data =
-          reader.ReadBinaryData<float>(document, accessor);
-      u32 size = 3;
-      if (accessor.type == AccessorType::TYPE_VEC2) size = 2;
-      return (data, size);
+      *vec = reader.ReadBinaryData<float>(document, accessor);
+      *size = 3;
+      if (accessor.type == AccessorType::TYPE_VEC2) *size = 2;
     }
-    return (std::vector<float>(), 0u);
   };
 
   for (auto&& mesh : document.meshes.Elements()) {
     for (auto&& prim : mesh.primitives) {
-      res.positions,
-          res.position_size = GetAttribute(document, prim, *glb_resource_reader,
-                                           ACCESSOR_POSITION);
-      res.normals, res.normal_size = GetAttribute(
-                       document, prim, *glb_resource_reader, ACCESSOR_NORMAL);
-      res.uvs, res.uv_size = GetAttribute(document, prim, *glb_resource_reader,
-                                          ACCESSOR_TEXCOORD_0);
+      //頂点、法線、UV情報を抜き出す
+      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_POSITION,
+                   &res.positions, &res.position_size);
+      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_NORMAL,
+                   &res.normals, &res.normal_size);
+      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_TEXCOORD_0,
+                   &res.uvs, &res.uv_size);
 
+      res.vertex_num =
+          static_cast<u32>(res.positions.size() / res.position_size);
+
+      //インデックス情報を取得する
       const Accessor& index_accessor =
           document.accessors.Get(prim.indicesAccessorId);
       if (index_accessor.componentType ==

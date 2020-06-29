@@ -38,7 +38,6 @@ void SceneManager::Update() {
 
   if (next_scene_ != SceneType::NONE) {
     current_scene_->Finalize();
-    current_scene_.release();
 
     //シーン遷移は現状、この方法でしか分からない
     switch (next_scene_) {
@@ -49,6 +48,7 @@ void SceneManager::Update() {
         current_scene_ = std::make_unique<GameOver>(this);
         break;
       default:
+        MY_ASSERTION(false, L"存在しないシーンが選択されました。");
         break;
     }
 

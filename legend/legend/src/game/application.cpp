@@ -7,6 +7,7 @@
 #include <string>
 #include <typeinfo>
 
+#include "src/game/game_device.h"
 #include "src/util/debug.h"
 #include "src/window/window_procedure.h"
 
@@ -38,7 +39,7 @@ void Application::Run() {
     return;
   }
 
-  if (!this->device_->InitAfter()) {
+  if (!game::GameDevice::GetInstance()->GetDevice().InitAfter()) {
     Finalize();
     return;
   }
@@ -59,7 +60,6 @@ void Application::Destroy() {}
 
 //•`‰æ
 void Application::Paint() {
-  ;
   auto SendCloseMessage = [&]() {
     SendMessage(main_window_->GetHWND(), WM_CLOSE, 0, 0);
   };
@@ -87,13 +87,13 @@ void Application::Paint() {
 
 //‰Šú‰»
 bool Application::Init() {
-  device_ = std::make_unique<directx::DirectX12Device>();
-  if (!device_->Init(main_window_)) {
+  if (!game::GameDevice::GetInstance()->Init(main_window_)) {
     return false;
   }
-
-  if (!imgui_manager_.Init(main_window_->GetHWND(), device_->GetDevice(),
-                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
+  if (!imgui_manager_.Init(
+          main_window_->GetHWND(),
+          game::GameDevice::GetInstance()->GetDevice().GetDevice(),
+          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
     return false;
   }
 
@@ -104,20 +104,24 @@ bool Application::Init() {
 void Application::Finalize() {}
 
 //XV
-bool Application::Update() { return true; }
+bool Application::Update() {
+  game::GameDevice::GetInstance()->Update();
+  return true;
+}
 
 //•`‰æ
 bool Application::Draw() { return true; }
 
 bool Application::FrameBegin() {
-  if (!device_->Prepare()) return false;
+  if (!game::GameDevice::GetInstance()->GetDevice().Prepare()) return false;
   imgui_manager_.BeginFrame();
   return true;
 }
 
 bool Application::FrameEnd() {
-  imgui_manager_.EndFrame(device_->GetCommandList());
-  if (!device_->Present()) return false;
+  imgui_manager_.EndFrame(
+      game::GameDevice::GetInstance()->GetDevice().GetCommandList());
+  if (!game::GameDevice::GetInstance()->GetDevice().Present()) return false;
   return true;
 }
 

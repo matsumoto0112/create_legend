@@ -45,6 +45,7 @@
     <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
+    <ClCompile Include="src\game\game_device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="src\util\loader\texture_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\game\game_device.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

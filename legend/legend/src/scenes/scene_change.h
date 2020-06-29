@@ -10,6 +10,10 @@ enum class SceneType {
   NONE = 0,
   TITLE,
   GAMEOVER,
+
+  MODEL_VIEW = 100,
+  INPUT_TEST,
+  SOUND_TEST,
 };
 
 class ISceneChange {

@@ -6,7 +6,6 @@
  * @brief ゲームアプリケーションクラス定義
  */
 
-#include "src/directx/directx12_device.h"
 #include "src/util/imgui_manager.h"
 #include "src/window/window.h"
 #include "src/window/window_procedure_event_callback.h"
@@ -62,12 +61,6 @@ class Application : public window::IWindowProcedureEventCallback {
    */
   virtual bool Draw();
 
- public:
-  /**
-   * @brief デバイスを取得する
-   */
-  directx::DirectX12Device& GetDirectX12Device() const { return *device_; }
-
  private:
   /**
    * @brief フレーム開始時イベント
@@ -81,8 +74,6 @@ class Application : public window::IWindowProcedureEventCallback {
  protected:
   //! メインウィンドウ
   std::shared_ptr<window::Window> main_window_;
-  //! DX12デバイス
-  std::unique_ptr<directx::DirectX12Device> device_;
   //! Imgui管理
   util::ImguiManager imgui_manager_;
 

@@ -40,12 +40,12 @@
     <ClCompile Include="src\main_matsumoto.cpp" />
     <ClCompile Include="src\input\keyboard.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
-    <ClCompile Include="src\input\inputManager.cpp" />
-    <ClCompile Include="src\input\gamePad.cpp" />
     <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
+    <ClCompile Include="src\input\game_pad.cpp" />
+    <ClCompile Include="src\input\input_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -97,12 +97,8 @@
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
-    <ClInclude Include="src\input\keycode.h" />
     <ClInclude Include="src\input\keyboard.h" />
     <ClInclude Include="src\input\mouse.h" />
-    <ClInclude Include="src\input\inputManager.h" />
-    <ClInclude Include="src\input\gamePad.h" />
-    <ClInclude Include="src\input\joyCode.h" />
     <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\descriptor_handle.h" />
     <ClInclude Include="src\directx\directx_accessor.h" />
@@ -112,6 +108,10 @@
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\game\game_device.h" />
+    <ClInclude Include="src\input\game_pad.h" />
+    <ClInclude Include="src\input\input_manager.h" />
+    <ClInclude Include="src\input\joy_code.h" />
+    <ClInclude Include="src\input\key_code.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

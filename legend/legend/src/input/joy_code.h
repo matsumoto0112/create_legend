@@ -1,5 +1,5 @@
-#ifndef LEGEND_INPUT_JOYCODE_H_
-#define LEGEND_INPUT_JOYCODE_H_
+#ifndef LEGEND_INPUT_JOY_CODE_H_
+#define LEGEND_INPUT_JOY_CODE_H_
 
 /**
  * @file joyCode.h
@@ -8,12 +8,12 @@
 
 namespace legend {
 namespace input {
-namespace joyCode {
+namespace joy_code {
 /**
  * @enum Enum
  * @brief ÉLÅ[î‘çÜ
  */
-enum Enum : int {
+enum Enum : i32 {
   A = 1,
   B = 2,
   X = 4,
@@ -25,8 +25,8 @@ enum Enum : int {
   LEFT_STICK = 256,
   RIGHT_STICK = 512,
 };
-}  // namespace joyCode
+}  // namespace joy_code
 }  // namespace input
 }  // namespace legend
 
-#endif  // !LEGEND_INPUT_JOYCODE_H_
+#endif  // !LEGEND_INPUT_JOY_CODE_H_

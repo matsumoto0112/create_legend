@@ -1,5 +1,5 @@
-#ifndef LEGEND_INPUT_KEYCODE_H_
-#define LEGEND_INPUT_KEYCODE_H_
+#ifndef LEGEND_INPUT_KEY_CODE_H_
+#define LEGEND_INPUT_KEY_CODE_H_
 
 /**
  * @file keyCoad.h
@@ -8,12 +8,12 @@
 
 namespace legend {
 namespace input {
-namespace keyCode {
+namespace key_code {
 /**
  * @enum Enum
  * @brief キー番号
  */
-enum Enum : int {
+enum Enum : u32 {
   Escape = VK_ESCAPE,      //!< エスケープキー
   One = '1',               //!< 1キー
   Two = '2',               //!< 2キー
@@ -76,4 +76,4 @@ enum Enum : int {
 }  // namespace input
 }  // namespace legend
 
-#endif  // !LEGEND_INPUT_KEYCODE_H_
+#endif  // !LEGEND_INPUT_KEY_CODE_H_

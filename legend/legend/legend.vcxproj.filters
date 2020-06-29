@@ -43,7 +43,8 @@
     <ClCompile Include="src\input\inputManager.cpp" />
     <ClCompile Include="src\input\gamePad.cpp" />
     <ClCompile Include="src\directx\heap_manager.cpp" />
-    <ClCompile Include="src\util\texture_loader.cpp" />
+    <ClCompile Include="src\util\loader\texture_loader.cpp" />
+    <ClCompile Include="src\util\loader\glb_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -106,15 +107,21 @@
     <ClInclude Include="src\directx\directx_accessor.h" />
     <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\libs\stb_image.h" />
-    <ClInclude Include="src\util\texture_loader.h" />
+    <ClInclude Include="src\util\loader\texture_loader.h" />
+    <ClInclude Include="src\util\loader\glb_loader.h" />
+    <ClInclude Include="assets\shaders\defines\global.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
+    <None Include="packages.config" />
+    <None Include="assets\shaders\modelview\model_view.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
     <FxCompile Include="assets\shaders\PixelShader.hlsl" />
     <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl" />
     <FxCompile Include="assets\shaders\TextureTest.hlsl" />
+    <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
+    <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
   </ItemGroup>
 </Project>

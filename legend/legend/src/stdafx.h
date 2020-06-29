@@ -1,6 +1,10 @@
 #ifndef LEGEND_STDAFX_H_
 #define LEGEND_STDAFX_H_
 
+#define NOMINMAX
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
@@ -8,15 +12,12 @@
 
 #include <array>
 #include <filesystem>
+#include <fstream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-#include "src/libs/stb_image.h"
 
 // clang-format off
 #include "src/util/typedef.h"
@@ -25,6 +26,7 @@
 
 #include "src/util/debug.h"
 //clang-format on
+
 
 namespace legend {
 template <class T>

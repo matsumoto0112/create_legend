@@ -2,7 +2,7 @@
 
 #include "src/directx/directx_helper.h"
 #include "src/directx/heap_manager.h"
-#include "src/util/texture_loader.h"
+#include "src/util/loader/texture_loader.h"
 
 namespace legend {
 namespace directx {
@@ -24,8 +24,8 @@ bool Texture2D::Init(DirectX12Device& device, u32 register_num,
 //èâä˙âª
 bool Texture2D::Init(DirectX12Device& device, u32 register_num,
                      const std::filesystem::path& filename) {
-  util::texture_loader::LoadedTextureData data =
-      util::texture_loader::Load(filename);
+  util::loader::texture_loader::LoadedTextureData data =
+      util::loader::texture_loader::Load(filename);
 
   if (!InitTexBuffer(device, register_num,
                      DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, data.width,

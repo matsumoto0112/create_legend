@@ -9,7 +9,6 @@ ConstantBuffer<SceneConstant> g_scene : register(b1);
 
 struct VSInput{
     float4 pos : POSITION;
-    float2 uv : TEXCOORD0;
 };
 
 struct PSInput
@@ -26,6 +25,6 @@ PSInput main(VSInput v)
     pos = mul(pos,g_scene.proj);
     PSInput result = (PSInput)0;
     result.position =pos;
-    result.uv = v.uv;
+    result.uv = float2(0.0,0.0);
     return result;
 }

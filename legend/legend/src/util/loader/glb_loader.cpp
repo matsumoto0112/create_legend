@@ -14,55 +14,53 @@ std::shared_ptr<std::istream> StreamReader::GetInputStream(
       std::make_shared<std::ifstream>(filepath, std::ios_base::binary);
 
   if (!stream) return nullptr;
-  return (stream);
+  return stream;
 }
 
 GLBLoader::GLBLoader() : stream_reader_(std::make_unique<StreamReader>()) {}
 
 GLBLoader::~GLBLoader() {}
 
-LoadedGLBModelData GLBLoader::Load(const std::filesystem::path& filename) {
+LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
   using namespace Microsoft::glTF;
 
+  //.glb用の読み込み機を作成する
   std::shared_ptr<std::istream> glb_stream =
       stream_reader_->GetInputStream(filename.generic_string());
   std::unique_ptr<GLBResourceReader> glb_resource_reader =
       std::make_unique<GLBResourceReader>(std::move(stream_reader_),
                                           std::move(glb_stream));
 
+  //.json形式で取得できるのでデシリアライズしてデータを取得する
   std::string manifest = glb_resource_reader->GetJson();
   Document document = Deserialize(manifest);
 
-  LoadedGLBModelData res = {};
+  LoadedMeshData res = {};
   res.name = filename.filename().replace_extension();
+
+  //アクセサ名からデータを取得する
+  auto GetAttribute = [](const Document& document, const MeshPrimitive& mesh,
+                         const GLBResourceReader& reader,
+                         const char* accessor_name) {
+    std::string accessor_id;
+    if (mesh.TryGetAttributeAccessorId(accessor_name, accessor_id)) {
+      const Accessor& accessor = document.accessors.Get(accessor_id);
+      const std::vector<float> data =
+          reader.ReadBinaryData<float>(document, accessor);
+      return data;
+    }
+    return std::vector<float>();
+  };
 
   for (auto&& mesh : document.meshes.Elements()) {
     for (auto&& prim : mesh.primitives) {
-      std::string accessor_id;
-      if (prim.TryGetAttributeAccessorId(ACCESSOR_POSITION, accessor_id)) {
-        const Accessor& accessor = document.accessors.Get(accessor_id);
-        const std::vector<float> data =
-            glb_resource_reader->ReadBinaryData<float>(document, accessor);
-        const u32 length = static_cast<u32>(data.size() * sizeof(float));
-        MY_LOG(L"Prim position length: %d", length);
-        res.positions = data;
-      }
-      if (prim.TryGetAttributeAccessorId(ACCESSOR_NORMAL, accessor_id)) {
-        const Accessor& accessor = document.accessors.Get(accessor_id);
-        const std::vector<float> data =
-            glb_resource_reader->ReadBinaryData<float>(document, accessor);
-        const u32 length = static_cast<u32>(data.size() * sizeof(float));
-        MY_LOG(L"Prim normal length: %d", length);
-        res.normals = data;
-      }
-      if (prim.TryGetAttributeAccessorId(ACCESSOR_TEXCOORD_0, accessor_id)) {
-        const Accessor& accessor = document.accessors.Get(accessor_id);
-        const std::vector<float> data =
-            glb_resource_reader->ReadBinaryData<float>(document, accessor);
-        const u32 length = static_cast<u32>(data.size() * sizeof(float));
-        MY_LOG(L"Prim uvs length: %d", length);
-        res.uvs = data;
-      }
+      res.positions =
+          GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_POSITION);
+      res.normals =
+          GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_NORMAL);
+      res.uvs = GetAttribute(document, prim, *glb_resource_reader,
+                             ACCESSOR_TEXCOORD_0);
+
       const Accessor& index_accessor =
           document.accessors.Get(prim.indicesAccessorId);
       if (index_accessor.componentType ==
@@ -72,7 +70,6 @@ LoadedGLBModelData GLBLoader::Load(const std::filesystem::path& filename) {
         res.indices = index_data;
       }
     }
-    // MY_LOG(L"Mesh: %s", string_util::String_2_WString(mesh.id));
   }
 
   return res;

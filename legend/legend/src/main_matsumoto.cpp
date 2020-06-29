@@ -151,7 +151,7 @@ class MyApp final : public device::Application {
       util::loader::GLBLoader loader;
       std::filesystem::path model_path =
           util::Path::GetInstance()->exe() / L"assets" / L"maru_UV.glb";
-      util::loader::LoadedGLBModelData data = loader.Load(model_path);
+      util::loader::LoadedMeshData data = loader.Load(model_path);
 
       ////’¸“_’è‹`
       // constexpr float D = 0.8f;

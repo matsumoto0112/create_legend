@@ -79,6 +79,12 @@ LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
     }
   }
 
+  for (auto&& image : document.images.Elements()) {
+    const std::vector<u8> data =
+        glb_resource_reader->ReadBinaryData(document, image);
+    res.image = data;
+  }
+
   return res;
 }
 

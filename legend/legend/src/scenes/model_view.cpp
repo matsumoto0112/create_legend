@@ -2,6 +2,7 @@
 
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
+#include "src/libs/stb_image.h"
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 
@@ -15,7 +16,7 @@ ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
 void ModelView::Initialize() {
   util::loader::GLBLoader loader;
   std::filesystem::path model_path =
-      util::Path::GetInstance()->exe() / L"assets" / L"maru_UV.glb";
+      util::Path::GetInstance()->exe() / L"assets" / L"maru_UV_TexUmekomi.glb";
   util::loader::LoadedMeshData mesh_data = loader.Load(model_path);
 
   directx::DirectX12Device& device =
@@ -135,9 +136,11 @@ void ModelView::Initialize() {
   if (!transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
     return;
   }
-
+  rotation_ = math::Vector3::kZeroVector;
   scale_ = math::Vector3::kUnitVector * 15.0f;
-  transform_cb_.GetStagingRef().world = math::Matrix4x4::CreateScale(scale_);
+  transform_cb_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale_) *
+      math::Matrix4x4::CreateRotation(rotation_);
   transform_cb_.UpdateStaging();
 
   if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
@@ -151,10 +154,29 @@ void ModelView::Initialize() {
   world_cb_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_cb_.UpdateStaging();
+
+  int w, h, comp;
+  const u32 size = static_cast<u32>(mesh_data.image.size());
+  u8* begin =
+      stbi_load_from_memory(mesh_data.image.data(), size, &w, &h, &comp, 4);
+  std::vector<u8> image(begin, begin + w * h * 4);
+  if (!texture_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
+                     L"Image")) {
+    return;
+  }
+  texture_.WriteResource(device, image.data());
 }
 
 //çXêV
-void ModelView::Update() {}
+void ModelView::Update() {
+  rotation_.y += 0.01f;
+  rotation_.z += 0.005f;
+  scale_ = math::Vector3::kUnitVector * 15.0f;
+  transform_cb_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale_) *
+      math::Matrix4x4::CreateRotation(rotation_);
+  transform_cb_.UpdateStaging();
+}
 
 //ï`âÊ
 void ModelView::Draw() {
@@ -167,6 +189,7 @@ void ModelView::Draw() {
   device.GetHeapManager().SetGraphicsCommandList(device);
   transform_cb_.SetToHeap(device);
   world_cb_.SetToHeap(device);
+  texture_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
   vertex_buffer_.SetGraphicsCommandList(device);

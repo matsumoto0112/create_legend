@@ -47,19 +47,22 @@ LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
       const Accessor& accessor = document.accessors.Get(accessor_id);
       const std::vector<float> data =
           reader.ReadBinaryData<float>(document, accessor);
-      return data;
+      u32 size = 3;
+      if (accessor.type == AccessorType::TYPE_VEC2) size = 2;
+      return (data, size);
     }
-    return std::vector<float>();
+    return (std::vector<float>(), 0u);
   };
 
   for (auto&& mesh : document.meshes.Elements()) {
     for (auto&& prim : mesh.primitives) {
-      res.positions =
-          GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_POSITION);
-      res.normals =
-          GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_NORMAL);
-      res.uvs = GetAttribute(document, prim, *glb_resource_reader,
-                             ACCESSOR_TEXCOORD_0);
+      res.positions,
+          res.position_size = GetAttribute(document, prim, *glb_resource_reader,
+                                           ACCESSOR_POSITION);
+      res.normals, res.normal_size = GetAttribute(
+                       document, prim, *glb_resource_reader, ACCESSOR_NORMAL);
+      res.uvs, res.uv_size = GetAttribute(document, prim, *glb_resource_reader,
+                                          ACCESSOR_TEXCOORD_0);
 
       const Accessor& index_accessor =
           document.accessors.Get(prim.indicesAccessorId);

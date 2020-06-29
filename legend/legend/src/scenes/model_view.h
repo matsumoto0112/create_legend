@@ -1,6 +1,8 @@
 #ifndef LEGEND_SCENES_MODEL_VIEW_H_
 #define LEGEND_SCENES_MODEL_VIEW_H_
 
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -28,6 +30,10 @@ class ModelView : public Scene {
    * @brief •`‰æ
    */
   void Draw() override;
+
+ private:
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
 };
 
 }  // namespace scenes

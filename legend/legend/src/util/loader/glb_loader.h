@@ -19,8 +19,11 @@ namespace loader {
 struct LoadedMeshData {
   //! ƒ‚ƒfƒ‹–¼
   std::wstring name;
+  u32 position_size;
   std::vector<float> positions;
+  u32 normal_size;
   std::vector<float> normals;
+  u32 uv_size;
   std::vector<float> uvs;
   std::vector<u16> indices;
 };

@@ -37,12 +37,18 @@ class SceneManager : public ISceneChange, Task {
    * @brief シーン遷移
    */
   void ChangeScene(SceneType next_scene) override;
+  /**
+   * @brief 現在のシーンの取得
+   */
+  SceneType GetCurrentSceneType() const override;
 
  private:
   //! 現在のシーン
   std::unique_ptr<Scene> current_scene_;
   //! 次のシーン
   SceneType next_scene_;
+  //! 現在のシーン取得用変数
+  SceneType current_scene_type_;
 };
 
 }  // namespace scenes

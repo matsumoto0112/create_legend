@@ -9,6 +9,7 @@
 //#include "src/directx/shader/vertex_shader.h"
 //#include "src/directx/vertex.h"
 //#include "src/game/application.h"
+//#include "src/game/game_device.h"
 //#include "src/libs/imgui/imgui.h"
 //#include "src/math/matrix_4x4.h"
 //#include "src/util/loader/glb_loader.h"
@@ -37,11 +38,16 @@
 //    if (!Application::Init()) {
 //      return false;
 //    }
+//    float value = 1234.56789f;
+//    i32 digit = -5;
+//    value = 123.4567f, digit = 2;
+//    float res = math::util::Round(value, digit);
 //
 //    constexpr u16 OBJ_NUM = 5;
 //    objects.resize(OBJ_NUM);
 //    for (u16 i = 0; i < OBJ_NUM; i++) {
-//      if (!objects[i].Init(GetDirectX12Device(), math::Vector3(i * 3.0f, 0, 0)))
+//      if (!objects[i].Init(game::GameDevice::GetInstance()->GetDevice(),
+//                           math::Vector3(i * 3.0f, 0, 0)))
 //        return false;
 //    }
 //    const math::IntVector2 screen_size = main_window_->GetScreenSize();
@@ -49,18 +55,19 @@
 //        45.0f, screen_size.x * 1.0f / screen_size.y, 0.1f, 100.0f);
 //    camera_position_ = math::Vector3(0, 10, -10);
 //    camera_at_ = math::Vector3(0, 0, 0);
-//    if (!world_constant_buffer_.Init(GetDirectX12Device(), 1,
-//                                     L"World Context")) {
+//    if (!world_constant_buffer_.Init(
+//            game::GameDevice::GetInstance()->GetDevice(), 1,
+//            L"World Context")) {
 //      return false;
 //    }
 //
 //    std::filesystem::path p = util::Path::GetInstance()->texture() / L"tex.png";
-//    if (!texture_.Init(GetDirectX12Device(), 0, p)) {
+//    if (!texture_.Init(game::GameDevice::GetInstance()->GetDevice(), 0, p)) {
 //      return false;
 //    }
 //
 //    root_signature_ = std::make_shared<directx::shader::RootSignature>();
-//    if (!root_signature_->Init(GetDirectX12Device(),
+//    if (!root_signature_->Init(game::GameDevice::GetInstance()->GetDevice(),
 //                               L"Global Root Signature")) {
 //      return false;
 //    }
@@ -88,25 +95,27 @@
 //    };
 //    std::shared_ptr<directx::shader::VertexShader> vertex_shader =
 //        std::make_shared<directx::shader::VertexShader>();
-//    if (!vertex_shader->Init(GetDirectX12Device(), vertex_shader_path,
-//                             elements)) {
+//    if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+//                             vertex_shader_path, elements)) {
 //      return false;
 //    }
 //
 //    //ピクセルシェーダー
 //    std::shared_ptr<directx::shader::PixelShader> pixel_shader =
 //        std::make_shared<directx::shader::PixelShader>();
-//    if (!pixel_shader->Init(GetDirectX12Device(), pixel_shader_path)) {
+//    if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+//                            pixel_shader_path)) {
 //      return false;
 //    }
 //
-//    if (!pipeline_state_.Init(GetDirectX12Device())) {
+//    if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
 //      return false;
 //    }
 //    pipeline_state_.SetVertexShader(vertex_shader);
 //    pipeline_state_.SetPixelShader(pixel_shader);
 //
-//    if (!pipeline_state_.CreatePipelineState(GetDirectX12Device())) {
+//    if (!pipeline_state_.CreatePipelineState(
+//            game::GameDevice::GetInstance()->GetDevice())) {
 //      return false;
 //    }
 //
@@ -124,22 +133,27 @@
 //      return false;
 //    }
 //
-//    root_signature_->SetGraphicsCommandList(GetDirectX12Device());
-//    pipeline_state_.SetGraphicsCommandList(GetDirectX12Device());
+//    root_signature_->SetGraphicsCommandList(
+//        game::GameDevice::GetInstance()->GetDevice());
+//    pipeline_state_.SetGraphicsCommandList(
+//        game::GameDevice::GetInstance()->GetDevice());
 //
-//    GetDirectX12Device().GetHeapManager().SetGraphicsCommandList(
-//        GetDirectX12Device());
-//    texture_.SetToHeap(GetDirectX12Device());
+//    game::GameDevice::GetInstance()
+//        ->GetDevice()
+//        .GetHeapManager()
+//        .SetGraphicsCommandList(game::GameDevice::GetInstance()->GetDevice());
+//    texture_.SetToHeap(game::GameDevice::GetInstance()->GetDevice());
 //
 //    math::Matrix4x4 view = math::Matrix4x4::CreateView(
 //        camera_position_, camera_at_, math::Vector3::kUpVector);
 //    world_constant_buffer_.GetStagingRef().view = view;
 //    world_constant_buffer_.GetStagingRef().projection = projection_;
 //    world_constant_buffer_.UpdateStaging();
-//    world_constant_buffer_.SetToHeap(GetDirectX12Device());
+//    world_constant_buffer_.SetToHeap(
+//        game::GameDevice::GetInstance()->GetDevice());
 //
 //    for (auto&& o : objects) {
-//      o.Draw(GetDirectX12Device());
+//      o.Draw(game::GameDevice::GetInstance()->GetDevice());
 //    }
 //    return true;
 //  }

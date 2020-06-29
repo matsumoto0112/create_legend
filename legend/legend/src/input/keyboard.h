@@ -6,7 +6,7 @@
  * @brief キーボード入力管理
  */
 
-#include "src/input/keycode.h"
+#include "src/input/key_code.h"
 
 namespace legend {
 namespace input {
@@ -15,9 +15,9 @@ namespace input {
  * @brief キーボード入力管理クラス
  */
 class Keyboard {
-  static constexpr int KEY_MAX = 256;  //!< キー最大数
+  static constexpr i32 KEY_MAX = 256;  //!< キー最大数
   using KeyInfo = std::array<BYTE, KEY_MAX>;
-  using KeyCode = keyCode::Enum;
+  using KeyCode = key_code::Enum;
 
  public:
   /**
@@ -56,8 +56,8 @@ class Keyboard {
   bool GetKeyUp(KeyCode key) const;
 
  private:
-  KeyInfo mCurrentKeys_;  //!< 今updateで取得したキー情報
-  KeyInfo mPrevKeys_;     //!< 前updateで取得したキー情報
+  KeyInfo current_keys_;  //!< 今updateで取得したキー情報
+  KeyInfo previous_keys_;     //!< 前updateで取得したキー情報
  private:
   /**
    * @brief キーを押しているか

@@ -1,4 +1,4 @@
-#include "src/input/gamePad.h"
+#include "src/input/game_pad.h"
 #include "src/math/math_util.h"
 
 namespace {
@@ -30,7 +30,7 @@ const unsigned long GAMEPAD_STICK_VALUE_MAX =
  * @param value 変更する入力値
  * @return 変更した入力値
  */
-const float CLAMP_GAMEPAD_STICK_VALUE_MAX(unsigned long value) {
+const float Clamp_GamePadStick_ValueMax(unsigned long value) {
   float result =
       (value / static_cast<float>(GAMEPAD_STICK_VALUE_MAX) - 0.5f) * 2.0f;
   return Digit(result, 3);
@@ -41,17 +41,17 @@ namespace legend {
 namespace input {
 
 // コンストラクタ
-GamePad::GamePad(HWND hWnd) : mHWnd_(hWnd) {
-  padCount_ = (sizeof(JOYINFOEX) < PAD_MAX) ? sizeof(JOYINFOEX) : PAD_MAX;
-  mCurrentJoys_ = std::vector<JOYINFOEX>(padCount_);
-  mPreJoys_ = std::vector<u64>(padCount_);
-  mResultJoys_ = std::vector<MMRESULT>(padCount_);
+GamePad::GamePad(HWND hWnd) : hwnd_(hWnd) {
+  pad_count_ = (sizeof(JOYINFOEX) < PAD_MAX) ? sizeof(JOYINFOEX) : PAD_MAX;
+  current_joys_ = std::vector<JOYINFOEX>(pad_count_);
+  previous_joys_ = std::vector<u64>(pad_count_);
+  result_joys_ = std::vector<MMRESULT>(pad_count_);
 
-  for (i32 i = 0; i < padCount_; i++) {
-    mCurrentJoys_[i].dwSize = sizeof(JOYINFOEX);
-    mCurrentJoys_[i].dwFlags = JOY_RETURNALL;
-    mPreJoys_[i] = 0;
-    mResultJoys_[i] = 0;
+  for (i32 i = 0; i < pad_count_; i++) {
+    current_joys_[i].dwSize = sizeof(JOYINFOEX);
+    current_joys_[i].dwFlags = JOY_RETURNALL;
+    previous_joys_[i] = 0;
+    result_joys_[i] = 0;
   }
 }
 // デスクトラクタ
@@ -59,10 +59,10 @@ GamePad::~GamePad() {}
 // 更新
 void GamePad::Update() { SetState(); }
 // 接続数
-i32 GamePad::GetCount() {
+i32 GamePad::GetCount() const {
   u32 count = 0;
   for (u32 i = 0; i < joyGetNumDevs(); i++) {
-    if (static_cast<u32>(padCount_) <= i) {
+    if (static_cast<u32>(pad_count_) <= i) {
       return count;
     }
     if (NoError(i)) {
@@ -72,17 +72,17 @@ i32 GamePad::GetCount() {
   return count;
 }
 // ゲームパッドの左スティックの移動値
-legend::math::Vector2 GamePad::GetStickLeft(u32 index) {
+legend::math::Vector2 GamePad::GetStickLeft(u32 index) const {
   legend::math::Vector2 result(Stick_X_Pos(index), -Stick_Y_Pos(index));
   return result;
 }
 // ゲームパッドの右スティックの移動値
-legend::math::Vector2 GamePad::GetStickRight(u32 index) {
+legend::math::Vector2 GamePad::GetStickRight(u32 index) const {
   legend::math::Vector2 result(Stick_U_Pos(index), -Stick_R_Pos(index));
   return result;
 }
 // ゲームパッドの十字キーの移動値
-legend::math::Vector2 GamePad::GetCrossKey(u32 index) {
+legend::math::Vector2 GamePad::GetCrossKey(u32 index) const {
   legend::math::Vector2 result = legend::math::Vector2::kZeroVector;
   if (NoError(index)) {
     float h = GetCrossHorizontal(index);
@@ -96,23 +96,23 @@ legend::math::Vector2 GamePad::GetCrossKey(u32 index) {
 // キーを押しているか
 bool GamePad::GetButton(JoyCode joyCode, u32 index) const {
   if (NoError(index)) {
-    return (mCurrentJoys_[index].dwButtons & joyCode);
+    return (current_joys_[index].dwButtons & joyCode);
   }
   return false;
 }
 // キーを押したか（トリガー）
 bool GamePad::GetButtonDown(JoyCode joyCode, u32 index) const {
   if (NoError(index)) {
-    return ((mCurrentJoys_[index].dwButtons & joyCode) &&
-            !(mPreJoys_[index] & joyCode));
+    return ((current_joys_[index].dwButtons & joyCode) &&
+            !(previous_joys_[index] & joyCode));
   }
   return false;
 }
 // キーを離したか（トリガー）
 bool GamePad::GetButtonUp(JoyCode joyCode, u32 index) const {
   if (NoError(index)) {
-    return (!(mCurrentJoys_[index].dwButtons & joyCode) &&
-            (mPreJoys_[index] & joyCode));
+    return (!(current_joys_[index].dwButtons & joyCode) &&
+            (previous_joys_[index] & joyCode));
   }
   return false;
 }
@@ -129,62 +129,62 @@ bool GamePad::GetButtonUp(JoyCode joyCode) const {
 // ゲームパッドの状態更新
 void GamePad::SetState() {
 
-  for (i32 i = 0; i < padCount_; i++) {
-    mPreJoys_[i] = mCurrentJoys_[i].dwButtons;
+  for (i32 i = 0; i < pad_count_; i++) {
+    previous_joys_[i] = current_joys_[i].dwButtons;
 
-    mCurrentJoys_[i].dwSize = sizeof(JOYINFOEX);
-    mCurrentJoys_[i].dwFlags = JOY_RETURNALL;
-    mResultJoys_[i] = (JOYERR_NOERROR == joyGetPosEx(i, &mCurrentJoys_[i]));
+    current_joys_[i].dwSize = sizeof(JOYINFOEX);
+    current_joys_[i].dwFlags = JOY_RETURNALL;
+    result_joys_[i] = (JOYERR_NOERROR == joyGetPosEx(i, &current_joys_[i]));
   }
 }
 // 情報取得時、エラーが起きるか
 bool GamePad::NoError(u32 index) const {
-  if ((index < 0) || mResultJoys_.size() <= index) {
+  if ((index < 0) || result_joys_.size() <= index) {
     return false;
   }
 
-  return mResultJoys_[index];
+  return result_joys_[index];
 }
 // ゲームパッドのスティックX軸の移動値取得
-float GamePad::Stick_X_Pos(u32 index) {
+float GamePad::Stick_X_Pos(u32 index) const{
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwXpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwXpos)
              : 0.0f;
 }
 // ゲームパッドのスティックY軸の移動値取得
-float GamePad::Stick_Y_Pos(u32 index) {
+float GamePad::Stick_Y_Pos(u32 index) const {
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwYpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwYpos)
              : 0.0f;
 }
 // ゲームパッドのスティックZ軸の移動値取得
-float GamePad::Stick_Z_Pos(u32 index) {
+float GamePad::Stick_Z_Pos(u32 index) const {
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwZpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwZpos)
              : 0.0f;
 }
 // ゲームパッドのスティックU軸の移動値取得
-float GamePad::Stick_U_Pos(u32 index) {
+float GamePad::Stick_U_Pos(u32 index) const {
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwUpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwUpos)
              : 0.0f;
 }
 // ゲームパッドのスティックV軸の移動値取得
-float GamePad::Stick_V_Pos(u32 index) {
+float GamePad::Stick_V_Pos(u32 index) const {
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwVpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwVpos)
              : 0.0f;
 }
 // ゲームパッドのスティックR軸の移動値取得
-float GamePad::Stick_R_Pos(u32 index) {
+float GamePad::Stick_R_Pos(u32 index) const {
   return (NoError(index))
-             ? CLAMP_GAMEPAD_STICK_VALUE_MAX(mCurrentJoys_[index].dwRpos)
+             ? Clamp_GamePadStick_ValueMax(current_joys_[index].dwRpos)
              : 0.0f;
 }
 // ゲームパッドの十字キー横軸の移動値取得
-float GamePad::GetCrossHorizontal(u32 index) {
+float GamePad::GetCrossHorizontal(u32 index) const {
   if (NoError(index)) {
-    float crossKey = static_cast<float>(mCurrentJoys_[index].dwPOV) / 100.0f;
+    float crossKey = static_cast<float>(current_joys_[index].dwPOV) / 100.0f;
     if (360.0f <= crossKey) {
       return 0.0f;
     }
@@ -195,9 +195,9 @@ float GamePad::GetCrossHorizontal(u32 index) {
   return 0.0f;
 }
 // ゲームパッドの十字キー縦軸の移動値取得
-float GamePad::GetCrossVertical(u32 index) {
+float GamePad::GetCrossVertical(u32 index) const {
   if (NoError(index)) {
-    float crossKey = static_cast<float>(mCurrentJoys_[index].dwPOV) / 100.0f;
+    float crossKey = static_cast<float>(current_joys_[index].dwPOV) / 100.0f;
     if (360.0f <= crossKey) {
       return 0.0f;
     }

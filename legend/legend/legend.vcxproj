@@ -114,6 +114,7 @@
     <ClCompile Include="src\math\vector_2.cpp" />
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
+    <ClCompile Include="src\scenes\model_view.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_change.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\scenes\game_over.h" />
+    <ClInclude Include="src\scenes\model_view.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />

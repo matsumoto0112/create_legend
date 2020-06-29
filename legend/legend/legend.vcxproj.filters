@@ -46,6 +46,7 @@
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
+    <ClCompile Include="src\scenes\model_view.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -112,6 +113,7 @@
     <ClInclude Include="src\input\input_manager.h" />
     <ClInclude Include="src\input\joy_code.h" />
     <ClInclude Include="src\input\key_code.h" />
+    <ClInclude Include="src\scenes\model_view.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -26,6 +26,8 @@ struct LoadedMeshData {
   std::vector<float> normals;
   u32 uv_size;
   std::vector<float> uvs;
+  u32 tangent_size;
+  std::vector<float> tangents;
   std::vector<u16> indices;
   std::vector<u8> image;
 };

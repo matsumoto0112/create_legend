@@ -48,6 +48,7 @@
     <ClCompile Include="src\input\input_manager.cpp" />
     <ClCompile Include="src\scenes\model_view.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
+    <ClCompile Include="src\math\vector_4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="src\input\key_code.h" />
     <ClInclude Include="src\scenes\model_view.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
+    <ClInclude Include="src\math\vector_4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

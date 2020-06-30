@@ -8,6 +8,7 @@
 
 #include "src/math/vector_2.h"
 #include "src/math/vector_3.h"
+#include "src/math/vector_4.h"
 
 namespace legend {
 namespace directx {
@@ -15,6 +16,7 @@ struct Vertex {
   math::Vector3 position;
   math::Vector3 normal;
   math::Vector2 uv;
+  math::Vector4 tangent;
 };
 
 struct OnlyPosition {

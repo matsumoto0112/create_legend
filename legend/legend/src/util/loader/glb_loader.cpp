@@ -63,6 +63,8 @@ LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
                    &res.normals, &res.normal_size);
       GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_TEXCOORD_0,
                    &res.uvs, &res.uv_size);
+      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_TANGENT,
+                   &res.tangents, &res.tangent_size);
 
       res.vertex_num =
           static_cast<u32>(res.positions.size() / res.position_size);

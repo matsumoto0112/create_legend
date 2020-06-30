@@ -33,15 +33,17 @@ class StreamReader final : public Microsoft::glTF::IStreamReader {
  */
 class GLBLoader {
  public:
-  /**
-   * @brief コンストラクタ
-   * @param filename ファイル名
-   */
-  GLBLoader(const std::filesystem::path& filename);
+  GLBLoader();
   /**
    * @brief デストラクタ
    */
   ~GLBLoader();
+  /**
+   * @brief モデルを読み込む
+   * @param filename ファイル名
+   * @return 成功したらtrueを返す
+   */
+  bool Load(const std::filesystem::path& filename);
   /**
    * @brief 頂点数を取得する
    * @param mesh_index メッシュ番号
@@ -107,7 +109,11 @@ class GLBLoader {
    * @param primitive_index プリミティブ番号
    */
   std::vector<u16> GetIndex(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  /**
+   * @brief アルベドテクスチャを取得する
+   */
   std::vector<u8> GetAlbedo() const;
+  std::vector<u8> GetNormalMap() const;
 
  private:
   /**

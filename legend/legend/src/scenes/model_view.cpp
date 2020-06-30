@@ -22,7 +22,12 @@ void ModelView::Initialize() {
   const std::wstring name = L"maru_UV_TexUmekomi";
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / (name + L".glb");
-  util::loader::GLBLoader loader(model_path);
+  util::loader::GLBLoader loader;
+  if (!loader.Load(model_path)) {
+    MY_LOG(L"モデルの読み込みに失敗しました。対象のファイルは%sです。",
+           model_path.generic_wstring().c_str());
+    return;
+  }
 
   const u32 vertex_num = loader.GetVertexNum();
   std::vector<directx::Vertex> vertices(vertex_num);

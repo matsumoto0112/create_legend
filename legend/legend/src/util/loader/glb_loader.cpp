@@ -21,23 +21,30 @@ std::shared_ptr<std::istream> StreamReader::GetInputStream(
 }
 
 //コンストラクタ
-GLBLoader::GLBLoader(const std::filesystem::path& filename)
-    : stream_reader_(std::make_unique<StreamReader>()) {
-  using namespace Microsoft::glTF;
-
-  //.glb用の読み込み機を作成する
-  std::shared_ptr<std::istream> glb_stream =
-      stream_reader_->GetInputStream(filename.generic_string());
-  glb_resource_reader_ = std::make_unique<GLBResourceReader>(
-      std::move(stream_reader_), std::move(glb_stream));
-
-  //.json形式で取得できるのでデシリアライズしてデータを取得する
-  std::string manifest = glb_resource_reader_->GetJson();
-  document_ = Deserialize(manifest);
-}
+GLBLoader::GLBLoader()
+    : stream_reader_(nullptr), glb_resource_reader_(nullptr), document_() {}
 
 //デストラクタ
 GLBLoader::~GLBLoader() {}
+
+bool GLBLoader::Load(const std::filesystem::path& filename) {
+  stream_reader_ = std::make_unique<StreamReader>();
+  try {
+    //.glb用の読み込み機を作成する
+    std::shared_ptr<std::istream> glb_stream =
+        stream_reader_->GetInputStream(filename.generic_string());
+    glb_resource_reader_ = std::make_unique<GLBResourceReader>(
+        std::move(stream_reader_), std::move(glb_stream));
+    //.json形式で取得できるのでデシリアライズしてデータを取得する
+    std::string manifest = glb_resource_reader_->GetJson();
+    document_ = Deserialize(manifest);
+  } catch (const std::exception& e) {
+    MY_LOG(string_util::String_2_WString(e.what()));
+    return false;
+  }
+
+  return true;
+}
 
 //頂点数の取得
 u32 GLBLoader::GetVertexNum(u32 mesh_index, u32 primitive_index) const {
@@ -120,6 +127,8 @@ std::vector<u8> GLBLoader::GetAlbedo() const {
   const Image& image = document_.images[0];
   return glb_resource_reader_->ReadBinaryData(document_, image);
 }
+
+std::vector<u8> GLBLoader::GetNormalMap() const { return std::vector<u8>(); }
 
 //メッシュを取得する
 const Microsoft::glTF::MeshPrimitive& GLBLoader::GetMesh(

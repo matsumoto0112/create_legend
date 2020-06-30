@@ -27,7 +27,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, u32 width, u32 height,
 
   if (FAILED(accessor.GetDevice()->CreateCommittedResource(
           &props, D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE, &desc,
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
           &clear_value, IID_PPV_ARGS(&resource_)))) {
     return false;
   }
@@ -47,11 +47,24 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, u32 width, u32 height,
   return true;
 }
 
+void RenderTarget::CreateShaderResourceView(IDirectXAccessor& accessor,
+                                            HeapManager& heap_manager) {
+  srv_handle_ = heap_manager.GetLocalHandle();
+  D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+  srv_desc.Texture2D.MipLevels = 1;
+  srv_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  srv_desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+  srv_desc.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+
+  accessor.GetDevice()->CreateShaderResourceView(resource_.Get(), &srv_desc,
+                                                 srv_handle_.cpu_handle_);
+}
+
 void RenderTarget::SetGraphicsCommandList(IDirectXAccessor& accessor) const {
   accessor.GetCommandList()->ResourceBarrier(
       1, &CD3DX12_RESOURCE_BARRIER::Transition(
              resource_.Get(),
-             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
              D3D12_RESOURCE_STATE_RENDER_TARGET));
 
   accessor.GetCommandList()->OMSetRenderTargets(1, &cpu_handle_, false,
@@ -65,7 +78,7 @@ void RenderTarget::EndDraw(IDirectXAccessor& accessor) {
       1, &CD3DX12_RESOURCE_BARRIER::Transition(
              resource_.Get(),
              D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET,
-             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ));
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 }
 
 }  // namespace buffer

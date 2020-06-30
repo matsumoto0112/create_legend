@@ -112,26 +112,6 @@ bool DirectX12Device::Present() {
 }
 
 void DirectX12Device::SetBackBuffer(ID3D12Resource* buffer) {
-  {
-    constexpr D3D12_RESOURCE_STATES next_resource_state =
-        D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST;
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), current_resource_state_,
-        next_resource_state);
-    command_list_->ResourceBarrier(1, &barrier);
-    current_resource_state_ = next_resource_state;
-  }
-
-  command_list_->CopyResource(render_targets_[frame_index_].Get(), buffer);
-  {
-    constexpr D3D12_RESOURCE_STATES next_resource_state =
-        D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), current_resource_state_,
-        next_resource_state);
-    command_list_->ResourceBarrier(1, &barrier);
-    current_resource_state_ = next_resource_state;
-  }
   CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
       rtv_heap_->GetCPUDescriptorHandleForHeapStart(), frame_index_,
       rtv_heap_size_);

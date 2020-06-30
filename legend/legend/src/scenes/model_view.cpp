@@ -185,6 +185,10 @@ void ModelView::Initialize() {
     return;
   }
 
+  if (!transform_cb_2_.Init(device, 0, L"Transform 2 ConstantBuffer")) {
+    return;
+  }
+
   rotation_ = math::Vector3::kZeroVector;
   scale_ = math::Vector3::kUnitVector * 15.0f;
   transform_cb_.GetStagingRef().world =
@@ -221,6 +225,7 @@ void ModelView::Initialize() {
                            rtv_heap_.Get(), 0, L"RTV")) {
     return;
   }
+  render_target_.CreateShaderResourceView(device, device.GetHeapManager());
 }
 
 //XV
@@ -256,6 +261,27 @@ void ModelView::Draw() {
 
   render_target_.EndDraw(device);
   device.SetBackBuffer(render_target_.GetResource());
+
+  root_signature_->SetGraphicsCommandList(device);
+  pipeline_state_.SetGraphicsCommandList(device);
+  device.GetHeapManager().SetGraphicsCommandList(device);
+  math::Vector3 new_position = math::Vector3(3, 3, 0);
+  transform_cb_2_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale_) *
+      math::Matrix4x4::CreateRotation(rotation_) *
+      math::Matrix4x4::CreateTranslate(new_position);
+  transform_cb_2_.UpdateStaging();
+  transform_cb_2_.SetToHeap(device);
+  world_cb_.SetToHeap(device);
+
+  device.GetHeapManager().SetHandleToLocalHeap(
+      0, directx::ResourceType::Srv, render_target_.srv_handle_.cpu_handle_);
+
+  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+
+  vertex_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.Draw(device);
 }
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();

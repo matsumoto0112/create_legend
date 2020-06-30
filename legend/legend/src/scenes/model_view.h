@@ -32,6 +32,10 @@ class ModelView : public Scene {
    */
   ModelView(ISceneChange* scene_change);
   /**
+   * @brief デストラクタ
+   */
+  ~ModelView();
+  /**
    * @brief 初期化
    */
   void Initialize() override;
@@ -43,6 +47,11 @@ class ModelView : public Scene {
    * @brief 描画
    */
   void Draw() override;
+
+  /**
+   * @brief 終了処理
+  */
+  void Finalize() override;
 
  private:
   math::Vector3 rotation_;

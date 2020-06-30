@@ -14,25 +14,6 @@ namespace util {
 namespace loader {
 
 /**
- * @brief 読み込んだモデルデータ
- */
-struct LoadedMeshData {
-  //! モデル名
-  std::wstring name;
-  u32 vertex_num;
-  u32 position_size;
-  std::vector<float> positions;
-  u32 normal_size;
-  std::vector<float> normals;
-  u32 uv_size;
-  std::vector<float> uvs;
-  u32 tangent_size;
-  std::vector<float> tangents;
-  std::vector<u16> indices;
-  std::vector<u8> image;
-};
-
-/**
  * @brief 読み込み
  */
 class StreamReader final : public Microsoft::glTF::IStreamReader {
@@ -54,23 +35,122 @@ class GLBLoader {
  public:
   /**
    * @brief コンストラクタ
+   * @param filename ファイル名
    */
-  GLBLoader();
+  GLBLoader(const std::filesystem::path& filename);
   /**
    * @brief デストラクタ
    */
   ~GLBLoader();
   /**
-   * @brief 読み込む
-   * @param filename 読み込むファイル名
-   * @return 読み込んだデータからモデルの情報を返す
-   * @details 現状シングルメッシュしかうまく取得できません
+   * @brief 頂点数を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
    */
-  LoadedMeshData Load(const std::filesystem::path& filename);
+  u32 GetVertexNum(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  /**
+   * @brief 頂点座標配列を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  std::vector<float> GetPosition(u32 mesh_index = 0,
+                                 u32 primitive_index = 0) const;
+  /**
+   * @brief 一頂点座標の要素数を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  u32 GetPositionComponentSize(u32 mesh_index = 0,
+                               u32 primitive_index = 0) const;
+  /**
+   * @brief 法線配列を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  std::vector<float> GetNormal(u32 mesh_index = 0,
+                               u32 primitive_index = 0) const;
+  /**
+   * @brief 一法線の要素数を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  u32 GetNormalComponentSize(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  /**
+   * @brief UV座標配列を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  std::vector<float> GetUV(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  /**
+   * @brief 一座標の要素数を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  u32 GetUVComponentSize(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  /**
+   * @brief 接線配列を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  std::vector<float> GetTangent(u32 mesh_index = 0,
+                                u32 primitive_index = 0) const;
+  /**
+   * @brief 一接線の要素数を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  u32 GetTangentComponentSize(u32 mesh_index = 0,
+                              u32 primitive_index = 0) const;
+  /**
+   * @brief インデックス配列を取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  std::vector<u16> GetIndex(u32 mesh_index = 0, u32 primitive_index = 0) const;
+  std::vector<u8> GetAlbedo() const;
+
+ private:
+  /**
+   * @brief メッシュを取得する
+   * @param mesh_index メッシュ番号
+   * @param primitive_index プリミティブ番号
+   */
+  const Microsoft::glTF::MeshPrimitive& GetMesh(u32 mesh_index,
+                                                u32 primitive_index) const;
+  /**
+   * @brief アクセサが存在すればそれを取得する
+   * @param mesh 対象メッシュ
+   * @param accessor_name アクセサ名
+   * @param accessor 取得したアクセサ（戻り値）
+   * @return アクセサが存在したらtrueを返す
+   */
+  bool GetAccessor(const Microsoft::glTF::MeshPrimitive& mesh,
+                   const char* accessor_name,
+                   Microsoft::glTF::Accessor* accessor) const;
+  /**
+   * @brief アクセサ名に対応したアトリビュートを取得する
+   * @param mesh 対象メッシュ
+   * @param accessor_name アクセサ名
+   * @return アクセサ名に対応した要素を、存在しなければ空の配列を返す
+   */
+  std::vector<float> GetAttribute(const Microsoft::glTF::MeshPrimitive& mesh,
+                                  const char* accessor_name) const;
+  /**
+   * @brief アクセサ名に対応したアトリビュートの要素数を取得する
+   * @param mesh 対象メッシュ
+   * @param accessor_name アクセサ名
+   * @return アクセサ名に対応した要素を、存在しなければ0を返す
+   */
+  u32 GetAttributeComponentSize(const Microsoft::glTF::MeshPrimitive& mesh,
+                                const char* accessor_name) const;
 
  private:
   //! ストリーム読み込み器
   std::unique_ptr<StreamReader> stream_reader_;
+  //! バイナリ読み込み
+  std::unique_ptr<Microsoft::glTF::GLBResourceReader> glb_resource_reader_;
+  //! デシリアライズされたデータ
+  Microsoft::glTF::Document document_;
 };
 
 }  // namespace loader

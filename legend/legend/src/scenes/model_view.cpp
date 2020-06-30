@@ -12,66 +12,99 @@ namespace scenes {
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
 
+ModelView::~ModelView() {}
+
 //初期化
 void ModelView::Initialize() {
-  util::loader::GLBLoader loader;
-  std::filesystem::path model_path =
-      util::Path::GetInstance()->exe() / L"assets" / L"maru_UV_TexUmekomi.glb";
-  util::loader::LoadedMeshData mesh_data = loader.Load(model_path);
-
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  std::vector<directx::Vertex> vertices(mesh_data.vertex_num);
-  //頂点座標は(x,y,z)である必要がある
-  if (mesh_data.position_size == 3) {
-    for (u32 i = 0; i < mesh_data.vertex_num; i++) {
-      vertices[i].position.x = mesh_data.positions[i * 3 + 0];
-      vertices[i].position.y = mesh_data.positions[i * 3 + 1];
-      vertices[i].position.z = mesh_data.positions[i * 3 + 2];
+  const std::wstring name = L"maru_UV_TexUmekomi";
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / (name + L".glb");
+  util::loader::GLBLoader loader(model_path);
+
+  const u32 vertex_num = loader.GetVertexNum();
+  std::vector<directx::Vertex> vertices(vertex_num);
+
+  //頂点座標
+  {
+    const std::vector<float> position_list = loader.GetPosition();
+    const u32 position_component_size = loader.GetPositionComponentSize();
+
+    if (position_component_size == 3) {
+      for (u32 i = 0; i < vertex_num; i++) {
+        vertices[i].position.x = position_list[i * position_component_size + 0];
+        vertices[i].position.y = position_list[i * position_component_size + 1];
+        vertices[i].position.z = position_list[i * position_component_size + 2];
+      }
+    } else {
+      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです", name);
     }
-  } else {
-    MY_LOG(L"頂点座標の格納に失敗しました。リソース名は%sです", mesh_data.name);
   }
 
-  //法線情報も(x,y,z)である必要がある
-  if (mesh_data.normal_size == 3) {
-    for (u32 i = 0; i < mesh_data.vertex_num; i++) {
-      vertices[i].normal.x = mesh_data.normals[i * 3 + 0];
-      vertices[i].normal.y = mesh_data.normals[i * 3 + 1];
-      vertices[i].normal.z = mesh_data.normals[i * 3 + 2];
+  //法線
+  {
+    const std::vector<float> normal_list = loader.GetNormal();
+    const u32 normal_component_size = loader.GetNormalComponentSize();
+    if (normal_component_size == 3) {
+      for (u32 i = 0; i < vertex_num; i++) {
+        vertices[i].normal.x = normal_list[i * normal_component_size + 0];
+        vertices[i].normal.y = normal_list[i * normal_component_size + 1];
+        vertices[i].normal.z = normal_list[i * normal_component_size + 2];
+      }
+    } else {
+      MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", name);
     }
-  } else {
-    MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", mesh_data.name);
   }
 
-  // UV情報は(u,v)である必要がある
-  if (mesh_data.uv_size == 2) {
-    for (u32 i = 0; i < mesh_data.vertex_num; i++) {
-      vertices[i].uv.x = mesh_data.uvs[i * 2 + 0];
-      vertices[i].uv.y = mesh_data.uvs[i * 2 + 1];
+  // UV
+  {
+    const std::vector<float> uv_list = loader.GetUV();
+    const u32 uv_component_size = loader.GetUVComponentSize();
+    if (uv_component_size == 2) {
+      for (u32 i = 0; i < vertex_num; i++) {
+        vertices[i].uv.x = uv_list[i * uv_component_size + 0];
+        vertices[i].uv.y = uv_list[i * uv_component_size + 1];
+      }
+    } else {
+      MY_LOG(L"UV情報の格納に失敗しました。リソース名は%sです", name);
     }
-  } else {
-    MY_LOG(L"UV情報の格納に失敗しました。リソース名は%sです", mesh_data.name);
+  }
+
+  //接線
+  {
+    const std::vector<float> tangent_list = loader.GetTangent();
+    const u32 tangent_component_size = loader.GetTangentComponentSize();
+    if (tangent_component_size == 4) {
+      for (u32 i = 0; i < vertex_num; i++) {
+        vertices[i].tangent.x = tangent_list[i * tangent_component_size + 0];
+        vertices[i].tangent.y = tangent_list[i * tangent_component_size + 1];
+        vertices[i].tangent.z = tangent_list[i * tangent_component_size + 2];
+        vertices[i].tangent.w = tangent_list[i * tangent_component_size + 3];
+      }
+    } else {
+      MY_LOG(L"接線情報の格納に失敗しました。リソース名は%sです", name);
+    }
   }
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex),
-                           mesh_data.vertex_num,
-                           mesh_data.name + L"_VertexBuffer")) {
+  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
+                           name + L"_VertexBuffer")) {
     return;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
     return;
   }
 
+  const std::vector<u16> index = loader.GetIndex();
   //インデックスバッファ作成
-  if (!index_buffer_.Init(device, static_cast<u32>(mesh_data.indices.size()),
+  if (!index_buffer_.Init(device, static_cast<u32>(index.size()),
                           directx::PrimitiveTopology::TriangleList,
-                          mesh_data.name + L"_IndexBuffer")) {
+                          name + L"_IndexBuffer")) {
     return;
   }
-  if (!index_buffer_.WriteBufferResource(mesh_data.indices)) {
+  if (!index_buffer_.WriteBufferResource(index)) {
     return;
   }
 
@@ -139,6 +172,7 @@ void ModelView::Initialize() {
   if (!transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
     return;
   }
+
   rotation_ = math::Vector3::kZeroVector;
   scale_ = math::Vector3::kUnitVector * 15.0f;
   transform_cb_.GetStagingRef().world =
@@ -159,22 +193,21 @@ void ModelView::Initialize() {
   world_cb_.UpdateStaging();
 
   int w, h, comp;
-  const u32 size = static_cast<u32>(mesh_data.image.size());
-  u8* begin =
-      stbi_load_from_memory(mesh_data.image.data(), size, &w, &h, &comp, 4);
-  std::vector<u8> image(begin, begin + w * h * 4);
+  const std::vector<u8> albedo = loader.GetAlbedo();
+  const u32 size = static_cast<u32>(albedo.size());
+  u8* begin = stbi_load_from_memory(albedo.data(), size, &w, &h, &comp, 4);
   if (!texture_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
                      L"Image")) {
     return;
   }
-  texture_.WriteResource(device, image.data());
+  texture_.WriteResource(device, begin);
+  stbi_image_free(begin);
 }
 
 //更新
 void ModelView::Update() {
-  rotation_.y += 0.01f;
-  rotation_.z += 0.005f;
-  scale_ = math::Vector3::kUnitVector * 15.0f;
+  // rotation_.y += 0.01f;
+  // rotation_.z += 0.005f;
   transform_cb_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale_) *
       math::Matrix4x4::CreateRotation(rotation_);
@@ -199,5 +232,6 @@ void ModelView::Draw() {
   index_buffer_.SetGraphicsCommandList(device);
   index_buffer_.Draw(device);
 }
+void ModelView::Finalize() {}
 }  // namespace scenes
 }  // namespace legend

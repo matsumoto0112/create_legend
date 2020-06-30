@@ -7,6 +7,7 @@
 namespace legend {
 namespace util {
 namespace loader {
+using namespace Microsoft::glTF;
 
 StreamReader::StreamReader() {}
 
@@ -19,75 +20,152 @@ std::shared_ptr<std::istream> StreamReader::GetInputStream(
   return stream;
 }
 
-GLBLoader::GLBLoader() : stream_reader_(std::make_unique<StreamReader>()) {}
-
-GLBLoader::~GLBLoader() {}
-
-LoadedMeshData GLBLoader::Load(const std::filesystem::path& filename) {
+//コンストラクタ
+GLBLoader::GLBLoader(const std::filesystem::path& filename)
+    : stream_reader_(std::make_unique<StreamReader>()) {
   using namespace Microsoft::glTF;
 
   //.glb用の読み込み機を作成する
   std::shared_ptr<std::istream> glb_stream =
       stream_reader_->GetInputStream(filename.generic_string());
-  std::unique_ptr<GLBResourceReader> glb_resource_reader =
-      std::make_unique<GLBResourceReader>(std::move(stream_reader_),
-                                          std::move(glb_stream));
+  glb_resource_reader_ = std::make_unique<GLBResourceReader>(
+      std::move(stream_reader_), std::move(glb_stream));
 
   //.json形式で取得できるのでデシリアライズしてデータを取得する
-  std::string manifest = glb_resource_reader->GetJson();
-  Document document = Deserialize(manifest);
+  std::string manifest = glb_resource_reader_->GetJson();
+  document_ = Deserialize(manifest);
+}
 
-  LoadedMeshData res = {};
-  res.name = filename.filename().replace_extension();
+//デストラクタ
+GLBLoader::~GLBLoader() {}
 
-  //アクセサ名からデータを取得する
-  auto GetAttribute = [](const Document& document, const MeshPrimitive& mesh,
-                         const GLBResourceReader& reader,
-                         const char* accessor_name, std::vector<float>* vec,
-                         u32* size) {
-    std::string accessor_id;
-    if (mesh.TryGetAttributeAccessorId(accessor_name, accessor_id)) {
-      const Accessor& accessor = document.accessors.Get(accessor_id);
-      *vec = reader.ReadBinaryData<float>(document, accessor);
-      *size = 3;
-      if (accessor.type == AccessorType::TYPE_VEC2) *size = 2;
-    }
-  };
+//頂点数の取得
+u32 GLBLoader::GetVertexNum(u32 mesh_index, u32 primitive_index) const {
+  //座標数が頂点数と一致していると仮定する
+  return static_cast<u32>(
+      GetPosition(mesh_index, primitive_index).size() /
+      GetPositionComponentSize(mesh_index, primitive_index));
+}
 
-  for (auto&& mesh : document.meshes.Elements()) {
-    for (auto&& prim : mesh.primitives) {
-      //頂点、法線、UV情報を抜き出す
-      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_POSITION,
-                   &res.positions, &res.position_size);
-      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_NORMAL,
-                   &res.normals, &res.normal_size);
-      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_TEXCOORD_0,
-                   &res.uvs, &res.uv_size);
-      GetAttribute(document, prim, *glb_resource_reader, ACCESSOR_TANGENT,
-                   &res.tangents, &res.tangent_size);
+//頂点座標
+std::vector<float> GLBLoader::GetPosition(u32 mesh_index,
+                                          u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttribute(primitive, ACCESSOR_POSITION);
+}
 
-      res.vertex_num =
-          static_cast<u32>(res.positions.size() / res.position_size);
+//頂点座標の要素数
+u32 GLBLoader::GetPositionComponentSize(u32 mesh_index,
+                                        u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttributeComponentSize(primitive, ACCESSOR_POSITION);
+}
 
-      //インデックス情報を取得する
-      const Accessor& index_accessor =
-          document.accessors.Get(prim.indicesAccessorId);
-      if (index_accessor.componentType ==
-          ComponentType::COMPONENT_UNSIGNED_SHORT) {
-        const std::vector<u16> index_data =
-            glb_resource_reader->ReadBinaryData<u16>(document, index_accessor);
-        res.indices = index_data;
-      }
-    }
+//法線
+std::vector<float> GLBLoader::GetNormal(u32 mesh_index,
+                                        u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttribute(primitive, ACCESSOR_NORMAL);
+}
+
+//法線の要素数
+u32 GLBLoader::GetNormalComponentSize(u32 mesh_index,
+                                      u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttributeComponentSize(primitive, ACCESSOR_NORMAL);
+}
+
+// UV
+std::vector<float> GLBLoader::GetUV(u32 mesh_index, u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttribute(primitive, ACCESSOR_TEXCOORD_0);
+}
+
+// UVの要素数
+u32 GLBLoader::GetUVComponentSize(u32 mesh_index, u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttributeComponentSize(primitive, ACCESSOR_TEXCOORD_0);
+}
+
+//接線
+std::vector<float> GLBLoader::GetTangent(u32 mesh_index,
+                                         u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttribute(primitive, ACCESSOR_TANGENT);
+}
+
+//接線の要素数
+u32 GLBLoader::GetTangentComponentSize(u32 mesh_index,
+                                       u32 primitive_index) const {
+  const MeshPrimitive& primitive = GetMesh(mesh_index, primitive_index);
+  return GetAttributeComponentSize(primitive, ACCESSOR_TANGENT);
+}
+
+//インデックス配列
+std::vector<u16> GLBLoader::GetIndex(u32 mesh_index,
+                                     u32 primitive_index) const {
+  const MeshPrimitive& mesh = GetMesh(mesh_index, primitive_index);
+  //インデックス情報を取得する
+  const Accessor& index_accessor =
+      document_.accessors.Get(mesh.indicesAccessorId);
+
+  // u16で格納されているか確認
+  if (index_accessor.componentType == ComponentType::COMPONENT_UNSIGNED_SHORT) {
+    return glb_resource_reader_->ReadBinaryData<u16>(document_, index_accessor);
   }
+  return std::vector<u16>();
+}
 
-  for (auto&& image : document.images.Elements()) {
-    const std::vector<u8> data =
-        glb_resource_reader->ReadBinaryData(document, image);
-    res.image = data;
+std::vector<u8> GLBLoader::GetAlbedo() const {
+  const Image& image = document_.images[0];
+  return glb_resource_reader_->ReadBinaryData(document_, image);
+}
+
+//メッシュを取得する
+const Microsoft::glTF::MeshPrimitive& GLBLoader::GetMesh(
+    u32 mesh_index, u32 primitive_index) const {
+  const Mesh& mesh = document_.meshes[mesh_index];
+  return mesh.primitives[primitive_index];
+}
+
+//アクセサを取得する
+bool GLBLoader::GetAccessor(const Microsoft::glTF::MeshPrimitive& mesh,
+                            const char* accessor_name,
+                            Microsoft::glTF::Accessor* accessor) const {
+  std::string accessor_id;
+  if (mesh.TryGetAttributeAccessorId(accessor_name, accessor_id)) {
+    *accessor = document_.accessors.Get(accessor_id);
+    return true;
   }
+  return false;
+}
 
+//アトリビュートを取得する
+std::vector<float> GLBLoader::GetAttribute(
+    const Microsoft::glTF::MeshPrimitive& mesh,
+    const char* accessor_name) const {
+  std::vector<float> res;
+  if (Accessor accessor; GetAccessor(mesh, accessor_name, &accessor)) {
+    res = glb_resource_reader_->ReadBinaryData<float>(document_, accessor);
+  }
   return res;
+}
+
+//アトリビュートの要素数を取得する
+u32 GLBLoader::GetAttributeComponentSize(
+    const Microsoft::glTF::MeshPrimitive& mesh,
+    const char* accessor_name) const {
+  if (Accessor accessor; GetAccessor(mesh, accessor_name, &accessor)) {
+    switch (accessor.type) {
+      case AccessorType::TYPE_VEC2:
+        return 2;
+      case AccessorType::TYPE_VEC3:
+        return 3;
+      case AccessorType::TYPE_VEC4:
+        return 4;
+    }
+  }
+  return 0;
 }
 
 }  // namespace loader

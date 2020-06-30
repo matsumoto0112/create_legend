@@ -27,6 +27,10 @@ class Path : public Singleton<Path> {
    * @brief テクスチャのあるフォルダのパスを取得する
    */
   std::filesystem::path texture() const { return texture_filepath_; }
+  /**
+   * @brief モデルのあるフォルダのパスを取得する
+   */
+  std::filesystem::path model() const { return model_filepath_; }
 
  protected:
   Path();
@@ -39,6 +43,8 @@ class Path : public Singleton<Path> {
   std::filesystem::path shader_filepath_;
   //! テクスチャのファイルパス
   std::filesystem::path texture_filepath_;
+  //! モデルのファイルパス
+  std::filesystem::path model_filepath_;
 };
 
 }  // namespace util

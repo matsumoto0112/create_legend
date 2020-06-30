@@ -15,6 +15,7 @@ Path::Path() {
 
   this->shader_filepath_ = exe_filepath_ / "assets" / "shaders";
   this->texture_filepath_ = exe_filepath_ / "assets" / "textures";
+  this->model_filepath_ = exe_filepath_ / "assets" / "models";
 }
 
 

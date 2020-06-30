@@ -39,7 +39,8 @@ void ModelView::Initialize() {
         vertices[i].position.z = position_list[i * position_component_size + 2];
       }
     } else {
-      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです", name.c_str());
+      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです",
+             name.c_str());
     }
   }
 
@@ -105,6 +106,12 @@ void ModelView::Initialize() {
     return;
   }
   if (!index_buffer_.WriteBufferResource(index)) {
+    return;
+  }
+
+  //メインテクスチャの書き込み
+  const std::vector<u8> albedo = loader.GetAlbedo();
+  if (!texture_.InitAndWrite(device, 0, albedo, name + L"_Albedo")) {
     return;
   }
 
@@ -191,17 +198,6 @@ void ModelView::Initialize() {
   world_cb_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_cb_.UpdateStaging();
-
-  int w, h, comp;
-  const std::vector<u8> albedo = loader.GetAlbedo();
-  const u32 size = static_cast<u32>(albedo.size());
-  u8* begin = stbi_load_from_memory(albedo.data(), size, &w, &h, &comp, 4);
-  if (!texture_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
-                     L"Image")) {
-    return;
-  }
-  texture_.WriteResource(device, begin);
-  stbi_image_free(begin);
 }
 
 //更新

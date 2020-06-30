@@ -1,22 +1,5 @@
 #include "src/directx/directx12_device.h"
 
-#include <d3dcompiler.h>
-
-#include <filesystem>
-#include <iostream>
-#include <random>
-
-#include "src/directx/buffer/index_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
-#include "src/directx/shader/pixel_shader.h"
-#include "src/directx/shader/vertex_shader.h"
-#include "src/directx/vertex.h"
-#include "src/math/vector_3.h"
-#include "src/util/debug.h"
-#include "src/util/typedef.h"
-
-namespace {}  // namespace
-
 namespace legend {
 namespace directx {
 //コンストラクタ
@@ -126,6 +109,33 @@ bool DirectX12Device::Present() {
   MoveToNextFrame();
 
   return true;
+}
+
+void DirectX12Device::SetBackBuffer(ID3D12Resource* buffer) {
+  {
+    constexpr D3D12_RESOURCE_STATES next_resource_state =
+        D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST;
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        render_targets_[frame_index_].Get(), current_resource_state_,
+        next_resource_state);
+    command_list_->ResourceBarrier(1, &barrier);
+    current_resource_state_ = next_resource_state;
+  }
+
+  command_list_->CopyResource(render_targets_[frame_index_].Get(), buffer);
+  {
+    constexpr D3D12_RESOURCE_STATES next_resource_state =
+        D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        render_targets_[frame_index_].Get(), current_resource_state_,
+        next_resource_state);
+    command_list_->ResourceBarrier(1, &barrier);
+    current_resource_state_ = next_resource_state;
+  }
+  CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
+      rtv_heap_->GetCPUDescriptorHandleForHeapStart(), frame_index_,
+      rtv_heap_size_);
+  command_list_->OMSetRenderTargets(1, &rtv_handle, false, nullptr);
 }
 
 void DirectX12Device::WaitForGPU() noexcept {

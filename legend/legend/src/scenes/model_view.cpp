@@ -203,6 +203,24 @@ void ModelView::Initialize() {
   world_cb_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_cb_.UpdateStaging();
+
+  D3D12_DESCRIPTOR_HEAP_DESC rtv_heap_desc = {};
+  rtv_heap_desc.NumDescriptors = 1;
+  rtv_heap_desc.Type =
+      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+  rtv_heap_desc.Flags =
+      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+  if (FAILED(device.GetDevice()->CreateDescriptorHeap(
+          &rtv_heap_desc, IID_PPV_ARGS(&rtv_heap_)))) {
+    MY_LOG(L"CreateDescriptorHeap failed");
+    return;
+  }
+
+  if (!render_target_.Init(device, 1280, 720,
+                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                           rtv_heap_.Get(), 0, L"RTV")) {
+    return;
+  }
 }
 
 //XV
@@ -221,6 +239,9 @@ void ModelView::Draw() {
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
+
+  render_target_.SetGraphicsCommandList(device);
+
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
@@ -232,6 +253,9 @@ void ModelView::Draw() {
   vertex_buffer_.SetGraphicsCommandList(device);
   index_buffer_.SetGraphicsCommandList(device);
   index_buffer_.Draw(device);
+
+  render_target_.EndDraw(device);
+  device.SetBackBuffer(render_target_.GetResource());
 }
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();

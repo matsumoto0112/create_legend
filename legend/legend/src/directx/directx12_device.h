@@ -53,6 +53,8 @@ class DirectX12Device : public IDirectXAccessor {
    */
   bool Present();
 
+  void SetBackBuffer(ID3D12Resource* buffer);
+
   /**
    * @brief GPU‚Ìˆ—‚ğ‘Ò‹@‚·‚é
    */

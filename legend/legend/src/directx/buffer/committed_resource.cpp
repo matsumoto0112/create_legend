@@ -56,7 +56,8 @@ bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
     return false;
   }
 
-  this->buffer_size_ = width * height * directx_helper::CalcPixelSizeFromFormat(format);
+  this->buffer_size_ =
+      width * height * directx_helper::CalcPixelSizeFromFormat(format);
   this->current_state_ =
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ;
   return true;

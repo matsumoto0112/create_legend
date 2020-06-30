@@ -232,6 +232,8 @@ void ModelView::Draw() {
   index_buffer_.SetGraphicsCommandList(device);
   index_buffer_.Draw(device);
 }
-void ModelView::Finalize() {}
+void ModelView::Finalize() {
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 }  // namespace scenes
 }  // namespace legend

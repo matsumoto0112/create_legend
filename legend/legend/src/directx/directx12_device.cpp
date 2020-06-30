@@ -291,7 +291,6 @@ ComPtr<IDXGIAdapter1> DirectX12Device::GetHardwareAdapter() {
 }
 
 bool DirectX12Device::MoveToNextFrame() {
-  WaitForGPU();
   const u64 fence_value = fence_values_[frame_index_];
   if (FAILED(command_queue_->Signal(fence_.Get(), fence_value))) {
     return false;

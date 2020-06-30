@@ -53,6 +53,11 @@ class DirectX12Device : public IDirectXAccessor {
    */
   bool Present();
 
+  /**
+   * @brief GPU‚Ìˆ—‚ğ‘Ò‹@‚·‚é
+   */
+  void WaitForGPU() noexcept;
+
  public:
   virtual ID3D12Device* GetDevice() const override { return device_.Get(); }
   virtual ID3D12GraphicsCommandList4* GetCommandList() const override {

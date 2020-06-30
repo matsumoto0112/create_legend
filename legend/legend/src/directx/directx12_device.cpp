@@ -28,7 +28,7 @@ DirectX12Device::DirectX12Device()
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON) {}
 
 //デストラクタ
-DirectX12Device::~DirectX12Device() {}
+DirectX12Device::~DirectX12Device() { WaitForGPU(); }
 
 //初期化
 bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
@@ -126,6 +126,18 @@ bool DirectX12Device::Present() {
   MoveToNextFrame();
 
   return true;
+}
+
+void DirectX12Device::WaitForGPU() noexcept {
+  if (command_queue_ && fence_ && fence_event_.IsValid()) {
+    u64 value = fence_values_[frame_index_];
+    if (SUCCEEDED(command_queue_->Signal(fence_.Get(), value))) {
+      if (SUCCEEDED(fence_->SetEventOnCompletion(value, fence_event_.Get()))) {
+        WaitForSingleObjectEx(fence_event_.Get(), INFINITE, FALSE);
+        fence_values_[frame_index_]++;
+      }
+    }
+  }
 }
 
 bool DirectX12Device::CreateDevice() {
@@ -279,6 +291,7 @@ ComPtr<IDXGIAdapter1> DirectX12Device::GetHardwareAdapter() {
 }
 
 bool DirectX12Device::MoveToNextFrame() {
+  WaitForGPU();
   const u64 fence_value = fence_values_[frame_index_];
   if (FAILED(command_queue_->Signal(fence_.Get(), fence_value))) {
     return false;

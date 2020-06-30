@@ -39,7 +39,7 @@ void ModelView::Initialize() {
         vertices[i].position.z = position_list[i * position_component_size + 2];
       }
     } else {
-      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです", name);
+      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです", name.c_str());
     }
   }
 
@@ -54,7 +54,7 @@ void ModelView::Initialize() {
         vertices[i].normal.z = normal_list[i * normal_component_size + 2];
       }
     } else {
-      MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", name);
+      MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", name.c_str());
     }
   }
 
@@ -68,7 +68,7 @@ void ModelView::Initialize() {
         vertices[i].uv.y = uv_list[i * uv_component_size + 1];
       }
     } else {
-      MY_LOG(L"UV情報の格納に失敗しました。リソース名は%sです", name);
+      MY_LOG(L"UV情報の格納に失敗しました。リソース名は%sです", name.c_str());
     }
   }
 
@@ -84,7 +84,7 @@ void ModelView::Initialize() {
         vertices[i].tangent.w = tangent_list[i * tangent_component_size + 3];
       }
     } else {
-      MY_LOG(L"接線情報の格納に失敗しました。リソース名は%sです", name);
+      MY_LOG(L"接線情報の格納に失敗しました。リソース名は%sです", name.c_str());
     }
   }
 

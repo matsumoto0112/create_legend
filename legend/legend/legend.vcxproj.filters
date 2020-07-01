@@ -118,6 +118,8 @@
     <ClInclude Include="src\scenes\model_view.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\math\vector_4.h" />
+    <ClInclude Include="src\input\input_code.h" />
+    <ClInclude Include="src\input\input_command.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

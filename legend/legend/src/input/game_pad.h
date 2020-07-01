@@ -60,6 +60,25 @@ class GamePad {
   math::Vector2 GetCrossKey(u32 index) const;
 
   /**
+  * @brief ゲームパッドの左スティックの移動値
+  * @return 左スティックの移動値
+  動いていない、コントローラが存在しない場合は0
+  */
+  math::Vector2 GetStickLeft() const;
+  /**
+  * @brief ゲームパッドの右スティックの移動値
+  * @return 右スティックの移動値
+  動いていない、コントローラが存在しない場合は0
+  */
+  math::Vector2 GetStickRight() const;
+  /**
+  * @brief ゲームパッドの十字キーの移動値
+  * @return 十字キーの移動値
+  動いていない、コントローラが存在しない場合は0
+  */
+  math::Vector2 GetCrossKey() const;
+
+  /**
   * @brief キーを押しているか
   * @param joy 判定するキー
   * @param index 判定するコントローラー

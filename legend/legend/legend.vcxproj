@@ -82,7 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
-    <ClCompile Include="src\directx\counting_descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -90,7 +90,7 @@
     <ClCompile Include="src\audio\audio_source.cpp" />
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
-    <ClCompile Include="src\directx\descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
@@ -138,8 +138,8 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\directx\buffer\render_target.h" />
-    <ClInclude Include="src\directx\counting_descriptor_heap.h" />
-    <ClInclude Include="src\directx\descriptor_heap_type.h" />
+    <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
+    <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\joy_code.h" />
@@ -148,8 +148,8 @@
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
-    <ClInclude Include="src\directx\descriptor_handle.h" />
-    <ClInclude Include="src\directx\descriptor_heap.h" />
+    <ClInclude Include="src\directx\descriptor_heap\descriptor_handle.h" />
+    <ClInclude Include="src\directx\descriptor_heap\descriptor_heap.h" />
     <ClInclude Include="src\directx\directx_accessor.h" />
     <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\resource_type.h" />

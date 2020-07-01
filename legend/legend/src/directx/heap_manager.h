@@ -11,9 +11,9 @@
  そのため、SRVを作るときにはローカルヒープのハンドルを使用し、それを必要になり次第グローバルにコピーして使う戦略を今回は選択した。
  */
 
-#include "src/directx/counting_descriptor_heap.h"
-#include "src/directx/descriptor_handle.h"
-#include "src/directx/descriptor_heap.h"
+#include "src/directx/descriptor_heap/counting_descriptor_heap.h"
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/resource_type.h"
 

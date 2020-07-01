@@ -20,25 +20,28 @@ HeapManager::~HeapManager() {}
 //初期化
 bool HeapManager::Init(IDirectXAccessor& device) {
   DescriptorHeap::Desc global_desc(L"GlobalHeap", GLOBAL_HEAP_DESCRIPTOR_NUM,
-                                   HeapType::CBV_SRV_UAV,
-                                   HeapFlag::ShaderVisible);
+                                   DescriptorHeapType::CBV_SRV_UAV,
+                                   DescriptorHeapFlag::SHADER_VISIBLE);
 
   if (!global_heap_.Init(device, global_desc)) {
     return false;
   }
 
   DescriptorHeap::Desc local_desc(L"LocalHeap", LOCAL_HEAP_DESCRIPTOR_NUM,
-                                  HeapType::CBV_SRV_UAV, HeapFlag::None);
+                                  DescriptorHeapType::CBV_SRV_UAV,
+                                  DescriptorHeapFlag::NONE);
   if (!cbv_srv_uav_heap_.Init(device, local_desc)) {
     return false;
   }
 
-  DescriptorHeap::Desc rtv_desc(L"RTVHeap", 100, HeapType::RTV, HeapFlag::None);
+  DescriptorHeap::Desc rtv_desc(L"RTVHeap", 100, DescriptorHeapType::RTV,
+                                DescriptorHeapFlag::NONE);
   if (!rtv_heap_.Init(device, rtv_desc)) {
     return false;
   }
 
-  DescriptorHeap::Desc dsv_desc(L"DSVHeap", 5, HeapType::DSV, HeapFlag::None);
+  DescriptorHeap::Desc dsv_desc(L"DSVHeap", 5, DescriptorHeapType::DSV,
+                                DescriptorHeapFlag::NONE);
   if (!dsv_heap_.Init(device, dsv_desc)) {
     return false;
   }
@@ -66,7 +69,7 @@ void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
                                        D3D12_CPU_DESCRIPTOR_HANDLE handle) {
   //必要に応じて配列を拡張しつつ、ハンドルをセットする
   //レジスター番号に合わせてハンドルをセットする
-  static const auto SetToHandlesAndAppendIfNeed =
+  auto SetToHandlesAndAppendIfNeed =
       [](u32 register_num, std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handles,
          D3D12_CPU_DESCRIPTOR_HANDLE handle) {
         //レジスター番号より現在サイズ数が小さければ足りない分拡張する

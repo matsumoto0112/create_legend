@@ -6,29 +6,12 @@
  * @brief ディスクリプタヒープ定義
  */
 
-#include "src/directx/descriptor_handle.h"
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/descriptor_heap/descriptor_heap_type.h"
 #include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
-/**
- * @brief ヒープの種類
- */
-enum class HeapType {
-  CBV_SRV_UAV,
-  Sampler,
-  RTV,
-  DSV,
-};
-
-/**
- * @brief ヒープのフラグ
- */
-enum class HeapFlag {
-  None,
-  ShaderVisible,
-};
-
 /**
  * @brief ディスクリプタヒープのラップクラス
  */
@@ -43,12 +26,13 @@ class DescriptorHeap {
     //! 使用するディスクリプタヒープの数
     u32 descriptor_num;
     //! ヒープの種類
-    HeapType type;
+    DescriptorHeapType type;
     //! ヒープフラグ
-    HeapFlag flag;
+    DescriptorHeapFlag flag;
 
     Desc(const std::wstring name = std::wstring(), u32 descriptor_num = 0,
-         HeapType type = HeapType::CBV_SRV_UAV, HeapFlag flag = HeapFlag::None)
+         DescriptorHeapType type = DescriptorHeapType::CBV_SRV_UAV,
+         DescriptorHeapFlag flag = DescriptorHeapFlag::NONE)
         : name(name), descriptor_num(descriptor_num), type(type), flag(flag) {}
   };
 

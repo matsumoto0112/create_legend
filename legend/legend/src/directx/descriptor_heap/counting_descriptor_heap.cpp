@@ -1,6 +1,6 @@
 #include "counting_descriptor_heap.h"
 
-#include "src/directx/descriptor_heap.h"
+#include "src/directx/descriptor_heap/descriptor_heap.h"
 
 namespace legend {
 namespace directx {

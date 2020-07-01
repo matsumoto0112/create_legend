@@ -6,8 +6,8 @@
  * @brief DirectX系のアクセサ関数インターフェース定義
  */
 
-#include "src/directx/descriptor_handle.h"
-#include "src/directx/descriptor_heap_type.h"
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/descriptor_heap/descriptor_heap_type.h"
 
 namespace legend {
 namespace directx {

@@ -16,6 +16,7 @@ namespace directx {
 namespace buffer {
 
 /**
+ * @class ConstantBuffer
  * @brief コンスタントバッファクラス
  * @tparam T コンスタントバッファとして使用する構造体
  */

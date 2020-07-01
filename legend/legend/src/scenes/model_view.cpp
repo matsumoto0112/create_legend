@@ -105,12 +105,9 @@ void ModelView::Initialize() {
 
   const std::vector<u16> index = loader.GetIndex();
   //インデックスバッファ作成
-  if (!index_buffer_.Init(device, static_cast<u32>(index.size()),
-                          directx::PrimitiveTopology::TriangleList,
-                          name + L"_IndexBuffer")) {
-    return;
-  }
-  if (!index_buffer_.WriteBufferResource(index)) {
+  if (!index_buffer_.InitAndWrite(device, index,
+                                  directx::PrimitiveTopology::TriangleList,
+                                  name + L"_IndexBuffer")) {
     return;
   }
 
@@ -220,11 +217,11 @@ void ModelView::Initialize() {
     return;
   }
 
-  if (!render_target_.Init(device, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                           1280, 720, L"RTV")) {
+  util::Color4 clear_color(0.0f, 1.0f, 0.0f, 1.0f);
+  if (!render_target_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                           1280, 720, clear_color, L"RTV")) {
     return;
   }
-  render_target_.CreateShaderResourceView(device);
 }
 
 //更新
@@ -244,7 +241,8 @@ void ModelView::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  render_target_.SetGraphicsCommandList(device);
+  render_target_.SetRenderTarget(device);
+  render_target_.ClearRenderTarget(device);
 
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
@@ -258,7 +256,7 @@ void ModelView::Draw() {
   index_buffer_.SetGraphicsCommandList(device);
   index_buffer_.Draw(device);
 
-  render_target_.EndDraw(device);
+  render_target_.DrawEnd(device);
   device.SetBackBuffer();
 
   root_signature_->SetGraphicsCommandList(device);
@@ -273,8 +271,7 @@ void ModelView::Draw() {
   transform_cb_2_.SetToHeap(device);
   world_cb_.SetToHeap(device);
 
-  device.GetHeapManager().SetHandleToLocalHeap(
-      0, directx::ResourceType::Srv, render_target_.srv_handle_.cpu_handle_);
+  render_target_.SetToGlobalHeap(device);
 
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 

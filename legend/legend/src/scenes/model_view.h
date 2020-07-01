@@ -3,7 +3,7 @@
 
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
-#include "src/directx/buffer/render_target.h"
+#include "src/directx/buffer/render_target_texture.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
@@ -67,7 +67,7 @@ class ModelView : public Scene {
   directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   directx::buffer::Texture2D texture_;
 
-  directx::buffer::RenderTarget render_target_;
+  directx::buffer::RenderTargetTexture render_target_;
   ComPtr<ID3D12DescriptorHeap> rtv_heap_;
 };
 

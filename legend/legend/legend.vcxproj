@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
+    <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
@@ -128,6 +129,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\util\byte_reader.cpp" />
+    <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
@@ -138,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\directx\buffer\render_target.h" />
+    <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\game\game_device.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\util\byte_reader.h" />
+    <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
     <ClInclude Include="src\util\imgui_manager.h" />

@@ -55,6 +55,19 @@ constexpr u32 AlignPow2(u32 num, u32 alignment) {
 }
 
 /**
+ * @brief 範囲内に値を抑える
+ * @param t クランプする値
+ * @param min 最小値
+ * @param max 最大値
+ * @return クランプされた値
+ */
+constexpr float Clamp(float t, float min, float max) {
+  if (t < min) t = min;
+  if (t > max) t = max;
+  return t;
+}
+
+/**
  * @brief 桁数を指定して四捨五入する
  * @param value 四捨五入する値
  * @param digit 指定する桁

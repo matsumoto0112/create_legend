@@ -61,24 +61,15 @@ bool DirectX12Device::Prepare() {
   command_list_->RSSetViewports(1, &viewport);
   command_list_->RSSetScissorRects(1, &scissor_rect);
 
-  constexpr D3D12_RESOURCE_STATES next_resource_state =
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
-  render_targets_[frame_index_].Transition(*this, next_resource_state);
+  render_targets_[frame_index_].SetRenderTarget(*this);
+  render_targets_[frame_index_].ClearRenderTarget(*this);
 
-  SetBackBuffer();
-
-  const std::array<float, 4> CLEAR_COLOR = {0.0f, 0.2f, 0.4f, 1.0f};
-  command_list_->ClearRenderTargetView(
-      render_targets_[frame_index_].rtv_handle_.cpu_handle_, CLEAR_COLOR.data(),
-      0, nullptr);
   heap_manager_.BeginFrame();
   return true;
 }
 
 bool DirectX12Device::Present() {
-  constexpr D3D12_RESOURCE_STATES next_resource_state =
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT;
-  render_targets_[frame_index_].Transition(*this, next_resource_state);
+  render_targets_[frame_index_].DrawEnd(*this);
 
   if (FAILED(command_list_->Close())) {
     return false;
@@ -97,9 +88,7 @@ bool DirectX12Device::Present() {
 }
 
 void DirectX12Device::SetBackBuffer() {
-  command_list_->OMSetRenderTargets(
-      1, &render_targets_[frame_index_].rtv_handle_.cpu_handle_, false,
-      nullptr);
+  render_targets_[frame_index_].SetRenderTarget(*this);
 }
 
 void DirectX12Device::WaitForGPU() noexcept {
@@ -211,13 +200,14 @@ bool DirectX12Device::CreateDevice() {
 
   if (!heap_manager_.Init(*this)) return false;
 
+  const util::Color4 clear_color(0.2f, 0.3f, 0.5f, 1.0f);
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
     ComPtr<ID3D12Resource> buffer;
     if (FAILED(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&buffer)))) {
       MY_LOG(L"GetBuffer buffer number %d isfailed", i);
       return false;
     }
-    if (!render_targets_[i].InitFromBuffer(*this, buffer)) {
+    if (!render_targets_[i].InitFromBuffer(*this, buffer, clear_color)) {
       return false;
     }
   }

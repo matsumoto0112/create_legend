@@ -137,6 +137,8 @@
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
+    <ClInclude Include="src\input\input_code.h" />
+    <ClInclude Include="src\input\input_command.h" />
     <ClInclude Include="src\input\joy_code.h" />
     <ClInclude Include="src\input\mouse.h" />
     <ClInclude Include="src\input\keyboard.h" />

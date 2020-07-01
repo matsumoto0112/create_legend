@@ -93,6 +93,12 @@ legend::math::Vector2 GamePad::GetCrossKey(u32 index) const {
   }
   return result;
 }
+// ゲームパッドの左スティックの移動値
+math::Vector2 GamePad::GetStickLeft() const { return GetStickLeft(0); }
+// ゲームパッドの右スティックの移動値
+math::Vector2 GamePad::GetStickRight() const { return GetStickRight(0); }
+// ゲームパッドの十字キーの移動値
+math::Vector2 GamePad::GetCrossKey() const { return GetCrossKey(0); }
 // キーを押しているか
 bool GamePad::GetButton(JoyCode joyCode, u32 index) const {
   if (NoError(index)) {
@@ -120,11 +126,11 @@ bool GamePad::GetButtonUp(JoyCode joyCode, u32 index) const {
 bool GamePad::GetButton(JoyCode joyCode) const { return GetButton(joyCode, 0); }
 // キーを押したか（トリガー）
 bool GamePad::GetButtonDown(JoyCode joyCode) const {
-  return GetButton(joyCode, 0);
+  return GetButtonDown(joyCode, 0);
 }
 // キーを離したか（トリガー）
 bool GamePad::GetButtonUp(JoyCode joyCode) const {
-  return GetButton(joyCode, 0);
+  return GetButtonUp(joyCode, 0);
 }
 // ゲームパッドの状態更新
 void GamePad::SetState() {

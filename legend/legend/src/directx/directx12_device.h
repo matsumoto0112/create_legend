@@ -62,6 +62,8 @@ class DirectX12Device : public IDirectXAccessor {
   void WaitForGPU() noexcept;
 
   virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
+  virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
+                               const DescriptorHandle& handle) override;
 
  public:
   virtual ID3D12Device* GetDevice() const override { return device_.Get(); }

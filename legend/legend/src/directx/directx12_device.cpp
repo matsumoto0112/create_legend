@@ -129,6 +129,13 @@ DescriptorHandle DirectX12Device::GetHandle(DescriptorHeapType heap_type) {
   return DescriptorHandle{};
 }
 
+void DirectX12Device::SetToGlobalHeap(u32 register_num,
+                                      ResourceType resource_type,
+                                      const DescriptorHandle& handle) {
+  heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
+                                     handle.cpu_handle_);
+}
+
 bool DirectX12Device::CreateDevice() {
   unsigned int dxgi_flags = 0;
 

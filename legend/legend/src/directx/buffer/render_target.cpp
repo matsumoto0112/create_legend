@@ -44,9 +44,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
 
 bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
                                   ComPtr<ID3D12Resource> buffer) {
-  if (!resource_.InitFromBuffer(
-          accessor, buffer,
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON)) {
+  if (!resource_.InitFromBuffer(accessor, buffer)) {
     return false;
   }
 

@@ -82,7 +82,10 @@ void Texture2D::SetToHeap(DirectX12Device& device, u32 overwrite_register_num) {
 bool Texture2D::InitTexBuffer(DirectX12Device& device, u32 register_num,
                               DXGI_FORMAT format, u32 width, u32 height,
                               const std::wstring& name) {
-  if (!texture_.InitAsTex2D(device, format, width, height, name)) {
+  CommittedResource::TextureBufferDesc desc =
+      CommittedResource::TextureBufferDesc(name, format, width, height);
+
+  if (!texture_.InitAsTex2D(device, desc)) {
     return false;
   }
 
@@ -113,7 +116,7 @@ bool Texture2D::InitTexBuffer(DirectX12Device& device, u32 register_num,
       texture_.GetResource(), &this->srv_view_, this->cpu_handle_);
 
   return true;
-}
+}  // namespace buffer
 
 }  // namespace buffer
 }  // namespace directx

@@ -19,36 +19,37 @@ HeapManager::~HeapManager() {}
 
 //初期化
 bool HeapManager::Init(IDirectXAccessor& device) {
-  DescriptorHeap::Desc global_desc = {};
-  global_desc.descriptor_num = GLOBAL_HEAP_DESCRIPTOR_NUM;
-  global_desc.type = HeapType::CBV_SRV_UAV;
-  global_desc.flag = HeapFlag::ShaderVisible;
+  DescriptorHeap::Desc global_desc(L"GlobalHeap", GLOBAL_HEAP_DESCRIPTOR_NUM,
+                                   HeapType::CBV_SRV_UAV,
+                                   HeapFlag::ShaderVisible);
 
-  if (!global_heap_.Init(device, global_desc, L"GlobalHeap")) {
+  if (!global_heap_.Init(device, global_desc)) {
     return false;
   }
 
-  DescriptorHeap::Desc local_desc = {};
-  local_desc.descriptor_num = LOCAL_HEAP_DESCRIPTOR_NUM;
-  local_desc.type = HeapType::CBV_SRV_UAV;
-  local_desc.flag = HeapFlag::
-      None;  //ローカルは実際にGPUに転送するわけではないのでフラグは必要なし
-  if (!local_heap_.Init(device, local_desc, L"LocalHeap")) {
+  DescriptorHeap::Desc local_desc(L"LocalHeap", LOCAL_HEAP_DESCRIPTOR_NUM,
+                                  HeapType::CBV_SRV_UAV, HeapFlag::None);
+  if (!cbv_srv_uav_heap_.Init(device, local_desc)) {
     return false;
   }
 
-  this->local_heap_allocated_count_ = 0;
+  DescriptorHeap::Desc rtv_desc(L"RTVHeap", 100, HeapType::RTV, HeapFlag::None);
+  if (!rtv_heap_.Init(device, rtv_desc)) {
+    return false;
+  }
+
+  DescriptorHeap::Desc dsv_desc(L"DSVHeap", 5, HeapType::DSV, HeapFlag::None);
+  if (!dsv_heap_.Init(device, dsv_desc)) {
+    return false;
+  }
+
   this->global_heap_allocated_count_ = 0;
   return true;
 }
 
 //ローカルのヒープハンドルを取得する
 DescriptorHandle HeapManager::GetLocalHandle() {
-  const DescriptorHandle res{
-      local_heap_.GetCPUHandle(local_heap_allocated_count_),
-      local_heap_.GetGPUHandle(local_heap_allocated_count_)};
-  local_heap_allocated_count_++;
-  return res;
+  return cbv_srv_uav_heap_.GetHandle();
 }
 
 //フレーム開始時イベント
@@ -91,21 +92,24 @@ void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
 //ヒープをコピーしコマンドリストにセットする
 void HeapManager::CopyHeapAndSetToGraphicsCommandList(
     IDirectXAccessor& device) {
-  auto next = [&](u32 index,
-                  const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
+  auto SetTo = [&](u32 index,
+                   const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
+    //必要な数だけローカルからグローバルにコピーする
     u32 count = static_cast<u32>(handles.size());
-    D3D12_CPU_DESCRIPTOR_HANDLE dst_handle =
-        global_heap_.GetCPUHandle(global_heap_allocated_count_);
+    DescriptorHandle global_handle =
+        global_heap_.GetHandle(global_heap_allocated_count_);
+    D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = global_handle.cpu_handle_;
     device.GetDevice()->CopyDescriptors(
         1, &dst_handle, &count, count, handles.data(), nullptr,
         D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
     device.GetCommandList()->SetGraphicsRootDescriptorTable(
-        index, global_heap_.GetGPUHandle(global_heap_allocated_count_));
+        index, global_handle.gpu_handle_);
     global_heap_allocated_count_ += count;
   };
 
-  next(0, cbv_handles_);
-  next(1, srv_handles_);
+  SetTo(0, cbv_handles_);
+  SetTo(1, srv_handles_);
 }
 
 }  // namespace directx

@@ -6,6 +6,9 @@
  * @brief DirectX系のアクセサ関数インターフェース定義
  */
 
+#include "src/directx/descriptor_handle.h"
+#include "src/directx/descriptor_heap_type.h"
+
 namespace legend {
 namespace directx {
 
@@ -26,6 +29,8 @@ class IDirectXAccessor {
    * @brief コマンドリストの取得
    */
   virtual ID3D12GraphicsCommandList4* GetCommandList() const = 0;
+
+  virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) = 0;
 };
 }  // namespace directx
 }  // namespace legend

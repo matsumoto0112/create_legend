@@ -17,21 +17,20 @@ class RenderTarget {
  public:
   RenderTarget();
   ~RenderTarget();
-  bool Init(IDirectXAccessor& accessor, u32 width, u32 height,
-            DXGI_FORMAT format, ID3D12DescriptorHeap* heap, u32 index,
-            const std::wstring& name);
-
-  void CreateShaderResourceView(IDirectXAccessor& accessor,
-                                HeapManager& heap_manager);
+  bool Init(IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width,
+            u32 height, const std::wstring& name);
+  bool InitFromBuffer(IDirectXAccessor& accessor,
+                      ComPtr<ID3D12Resource> buffer);
+  void CreateShaderResourceView(IDirectXAccessor& accessor);
   void SetGraphicsCommandList(IDirectXAccessor& accessor) const;
 
+  void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
   void EndDraw(IDirectXAccessor& accessor);
-  ID3D12Resource* GetResource() const { return resource_.Get(); }
+  ID3D12Resource* GetResource() const { return resource_.GetResource(); }
 
  public:
-  ComPtr<ID3D12Resource> resource_;
-  D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle_;
-  D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle_;
+  CommittedResource resource_;
+  DescriptorHandle rtv_handle_;
   DescriptorHandle srv_handle_;
 };
 

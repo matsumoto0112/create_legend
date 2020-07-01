@@ -16,6 +16,29 @@ namespace buffer {
  */
 class CommittedResource {
  public:
+  struct TextureBufferDesc {
+    std::wstring name;
+    DXGI_FORMAT format;
+    u32 width;
+    u32 height;
+    D3D12_RESOURCE_FLAGS flags;
+    D3D12_CLEAR_VALUE clear_value;
+
+    TextureBufferDesc(const std::wstring& name = L"",
+                      DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN,
+                      u32 width = 0, u32 height = 0,
+                      D3D12_RESOURCE_FLAGS flags =
+                          D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_NONE,
+                      D3D12_CLEAR_VALUE clear_value = CD3DX12_CLEAR_VALUE())
+        : name(name),
+          format(format),
+          width(width),
+          height(height),
+          flags(flags),
+          clear_value(clear_value){};
+  };
+
+ public:
   /**
    * @brief コンストラクタ
    */
@@ -33,18 +56,9 @@ class CommittedResource {
    */
   bool InitAsBuffer(IDirectXAccessor& accessor, u64 buffer_size,
                     const std::wstring& name);
-  /**
-   * @brief 2Dテクスチャとして初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param format テクスチャのフォーマット
-   * @param width テクスチャの幅
-   * @param height テクスチャの高さ
-   * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool InitAsTex2D(IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width,
-                   u32 height, const std::wstring& name);
-
+  bool InitAsTex2D(IDirectXAccessor& accessor, const TextureBufferDesc& desc);
+  bool InitFromBuffer(IDirectXAccessor& accessor, ComPtr<ID3D12Resource> buffer,
+                      D3D12_RESOURCE_STATES first_state);
   /**
    * @brief 状態を遷移させる
    * @param accessor DirectX12デバイスアクセサ
@@ -89,7 +103,7 @@ class CommittedResource {
   u64 buffer_size_;
   //! リソースの状態
   D3D12_RESOURCE_STATES current_state_;
-};
+};  // namespace buffer
 
 }  // namespace buffer
 }  // namespace directx

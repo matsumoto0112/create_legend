@@ -220,18 +220,17 @@ void ModelView::Initialize() {
     return;
   }
 
-  if (!render_target_.Init(device, 1280, 720,
-                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                           rtv_heap_.Get(), 0, L"RTV")) {
+  if (!render_target_.Init(device, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                           1280, 720, L"RTV")) {
     return;
   }
-  render_target_.CreateShaderResourceView(device, device.GetHeapManager());
+  render_target_.CreateShaderResourceView(device);
 }
 
 //XV
 void ModelView::Update() {
-  // rotation_.y += 0.01f;
-  // rotation_.z += 0.005f;
+  rotation_.y += 0.01f;
+  rotation_.z += 0.005f;
   transform_cb_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale_) *
       math::Matrix4x4::CreateRotation(rotation_);
@@ -260,7 +259,7 @@ void ModelView::Draw() {
   index_buffer_.Draw(device);
 
   render_target_.EndDraw(device);
-  device.SetBackBuffer(render_target_.GetResource());
+  device.SetBackBuffer();
 
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
@@ -268,7 +267,7 @@ void ModelView::Draw() {
   math::Vector3 new_position = math::Vector3(3, 3, 0);
   transform_cb_2_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale_) *
-      math::Matrix4x4::CreateRotation(rotation_) *
+      math::Matrix4x4::CreateRotation(math::Vector3(0, 0, 0)) *
       math::Matrix4x4::CreateTranslate(new_position);
   transform_cb_2_.UpdateStaging();
   transform_cb_2_.SetToHeap(device);

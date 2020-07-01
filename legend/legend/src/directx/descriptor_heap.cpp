@@ -36,9 +36,7 @@ DescriptorHeap::DescriptorHeap() : heap_(nullptr), heap_size_(0) {}
 // デストラクタ
 DescriptorHeap::~DescriptorHeap() {}
 
-// 初期化
-bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc,
-                          const std::wstring& name) {
+bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc) {
   this->heap_.Reset();
   this->heap_size_ = 0;
 
@@ -54,12 +52,12 @@ bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc,
   heap_desc.NodeMask = 0;
   if (FAILED(device.GetDevice()->CreateDescriptorHeap(&heap_desc,
                                                       IID_PPV_ARGS(&heap_)))) {
-    MY_LOG(L"CreateDescriptorHeap %s failed.", name.c_str());
+    MY_LOG(L"CreateDescriptorHeap %s failed.", desc.name.c_str());
     return false;
   }
 
   //デバッグ用の名前を付ける
-  if (FAILED(heap_->SetName(name.c_str()))) {
+  if (FAILED(heap_->SetName(desc.name.c_str()))) {
     return false;
   }
 
@@ -68,16 +66,14 @@ bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc,
   return true;
 }
 
-// CPUハンドル
-D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCPUHandle(u32 index) {
-  return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-      heap_->GetCPUDescriptorHandleForHeapStart(), index, heap_size_);
+//ハンドルを返す
+DescriptorHandle DescriptorHeap::GetHandle(u32 index) const {
+  return DescriptorHandle{
+      CD3DX12_CPU_DESCRIPTOR_HANDLE(heap_->GetCPUDescriptorHandleForHeapStart(),
+                                    index, heap_size_),
+      CD3DX12_GPU_DESCRIPTOR_HANDLE(heap_->GetGPUDescriptorHandleForHeapStart(),
+                                    index, heap_size_)};
 }
 
-// GPUハンドル
-D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUHandle(u32 index) {
-  return CD3DX12_GPU_DESCRIPTOR_HANDLE(
-      heap_->GetGPUDescriptorHandleForHeapStart(), index, heap_size_);
-}
 }  // namespace directx
 }  // namespace legend

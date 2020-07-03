@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\gamePad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\main_hiraoka.cpp" />
     <ClCompile Include="src\main_matsumoto.cpp" />
+    <ClCompile Include="src\main_murayama.cpp" />
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\matrix_4x4.cpp" />
     <ClCompile Include="src\math\vector_2.cpp" />
@@ -132,6 +134,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\audio\audio_manager.h" />
+    <ClInclude Include="src\audio\xaudio2_callback.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\gamePad.h" />
     <ClInclude Include="src\input\joyCode.h" />
@@ -230,6 +234,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audios\free_3.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

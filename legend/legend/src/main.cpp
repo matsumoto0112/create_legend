@@ -1,78 +1,72 @@
 #include "src/game/application.h"
 #include "src/scenes/scene_manager.h"
-#include "src/scenes/scene_names.h"
 #include "src/window/window.h"
 
+#include "src/audio/audio_manager.h"
+
 namespace legend {
-class MyApp final : public device::Application {
- public:
-  MyApp() : Application(), scene_manager_() {}
-  ~MyApp() {}
-  bool Init() override {
-    if (!Application::Init()) {
-      return false;
-    }
+    class MyApp final : public device::Application {
+    public:
+        MyApp() : Application(), scene_manager_() {}
+        ~MyApp() {}
+        bool Init() override {
+            if (!Application::Init()) {
+                return false;
+            }
+            audio_manager_.Init();
+            //audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
+            //audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
 
-    scene_manager_.Initialize();
-    return true;
-  }
-  bool Update() override {
-    if (!Application::Update()) {
-      return false;
-    }
-    scene_manager_.Update();
+            scene_manager_.Initialize();
+            return true;
+        }
+        bool Update() override {
+            if (!Application::Update()) {
+                return false;
+            }
+            audio_manager_.Update();
+            scene_manager_.Update();
+            return true;
+        }
 
-    if (ImGui::Begin("Scenes")) {
-      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
-                                          scene_manager_.GetCurrentSceneType()))
-                      .c_str());
+        bool Draw() override {
+            if (!Application::Draw()) {
+                return false;
+            }
 
-      if (ImGui::Button("Title")) {
-        scene_manager_.ChangeScene(scenes::SceneType::TITLE);
-      }
-      if (ImGui::Button("GameOver")) {
-        scene_manager_.ChangeScene(scenes::SceneType::GAMEOVER);
-      }
-      if (ImGui::Button("ModelView")) {
-        scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
-      }
+            scene_manager_.Draw();
+            return true;
+        }
+        void Finalize() override {
+            Application::Finalize();
+            scene_manager_.Finalize();
+        }
 
-      ImGui::End();
-    }
-    return true;
-  }
-
-  bool Draw() override {
-    if (!Application::Draw()) {
-      return false;
-    }
-
-    scene_manager_.Draw();
-    return true;
-  }
-  void Finalize() override {
-    Application::Finalize();
-    scene_manager_.Finalize();
-  }
-
- private:
-  scenes::SceneManager scene_manager_;
-};
+    private:
+        scenes::SceneManager scene_manager_;
+        audio::AudioManager audio_manager_;
+    };
 }  // namespace legend
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-  std::shared_ptr<legend::window::Window> window =
-      std::make_shared<legend::window::Window>();
-  window->SetScreenSize(legend::math::IntVector2(1280, 720));
-  window->SetWindowPosition(legend::math::IntVector2(0, 0));
-  window->SetWindowTitle(L"Legend");
+    std::shared_ptr<legend::window::Window> window =
+        std::make_shared<legend::window::Window>();
+    window->SetScreenSize(legend::math::IntVector2(1280, 720));
+    window->SetWindowPosition(legend::math::IntVector2(0, 0));
+    window->SetWindowTitle(L"Legend");
 
-  legend::MyApp app;
-  app.RegisterWindow(window);
+    legend::MyApp app;
+    app.RegisterWindow(window);
 
-  app.Run();
+    app.Run();
 
-  return 0;
+    return 0;
 }

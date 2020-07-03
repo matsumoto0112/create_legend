@@ -47,6 +47,10 @@ class AudioSource {
    */
   void Update();
   /**
+   * @brief 再生中かどうか
+   */
+  bool IsPlaying();
+  /**
    * @brief コピー
    */
   bool Copy(const AudioSource& other_audiosource);
@@ -74,7 +78,7 @@ class AudioSource {
   //! 波形データフォーマット
   WAVEFORMATEX wav_format_;
   //! 波形データバッファー
-  //BYTE** buffer_;
+  // BYTE** buffer_;
   unsigned char* buffer_;
   unsigned char* ptr_;
   LONG read_len_;

@@ -14,8 +14,14 @@
 //                return false;
 //            }
 //            audio_manager_.Init();
-//            audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
+//            //audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
+//            //audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
 //            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+//            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+//            audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+//            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+//            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+//            audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
 //
 //            scene_manager_.Initialize();
 //            return true;

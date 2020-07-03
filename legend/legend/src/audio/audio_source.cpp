@@ -168,6 +168,11 @@ void AudioSource::Update() {
   //}
 }
 
+bool AudioSource::IsPlaying()
+{
+    return is_playing_;
+}
+
 // ÉRÉsÅ[
 bool AudioSource::Copy(const AudioSource& other) {
   is_playing_ = false;
@@ -179,7 +184,7 @@ bool AudioSource::Copy(const AudioSource& other) {
   ptr_ = other.ptr_;
   read_len_ = read_len_;
   buffer_len_ = other.buffer_len_;
-  buffer_count_;
+  buffer_count_ = 0;
   file_path_ = other.file_path_;
 
   return true;

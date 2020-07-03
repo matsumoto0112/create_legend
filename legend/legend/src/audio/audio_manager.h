@@ -35,7 +35,7 @@ class AudioManager {
    * @brief wav“Ç‚İ‚İ
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool LoadWav(std::wstring filename);
+  //bool LoadWav(std::wstring filename);
   /**
    * @brief Ä¶ˆ—
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·

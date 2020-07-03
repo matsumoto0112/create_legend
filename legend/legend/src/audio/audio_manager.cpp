@@ -41,38 +41,35 @@ bool AudioManager::Init() {
   return true;
 }
 
-bool AudioManager::LoadWav(std::wstring filename) {
-  //既に読み込み済みかチェック
-  if (base_audiosources_.find(filename) != base_audiosources_.end()) {
-    MY_LOG(L"既に読み込み済みです。");
-    return false;
-  }
-
-  base_audiosources_[filename] = std::make_unique<AudioSource>();
-
-  // wavの読み込み
-  if (!base_audiosources_[filename]->Init(p_xaudio2_, filename)) {
-    MY_LOG(L"wavの読み込みに失敗しました。\n");
-    base_audiosources_.erase(filename);
-    return false;
-  }
-
-  return true;
-}
+//bool AudioManager::LoadWav(std::wstring filename) {
+//  //既に読み込み済みかチェック
+//  if (base_audiosources_.find(filename) != base_audiosources_.end()) {
+//    MY_LOG(L"既に読み込み済みです。");
+//    return false;
+//  }
+//
+//  base_audiosources_[filename] = std::make_unique<AudioSource>();
+//
+//  // wavの読み込み
+//  if (!base_audiosources_[filename]->Init(p_xaudio2_, filename)) {
+//    MY_LOG(L"wavの読み込みに失敗しました。\n");
+//    base_audiosources_.erase(filename);
+//    return false;
+//  }
+//
+//  return true;
+//}
 
 bool AudioManager::Play(std::wstring filename) {
-  //指定したファイルが読み込まれているかチェック
-  if (base_audiosources_.find(filename) == base_audiosources_.end()) {
-    MY_LOG(L"読み込まれていないファイルを再生しようとしました。\n");
-    return false;
-  }
-
-  //デバックで鳴らした
-  // base_audiosources_[filename]->Play();
+  ////指定したファイルが読み込まれているかチェック
+  //if (base_audiosources_.find(filename) == base_audiosources_.end()) {
+  //  MY_LOG(L"読み込まれていないファイルを再生しようとしました。\n");
+  //  return false;
+  //}
 
   audiosources_.push_back(std::make_unique<AudioSource>());
-  audiosources_[audiosources_.size() - 1]->Copy(*base_audiosources_[filename]);
-  //audiosources_[audiosources_.size() - 1]->Init(p_xaudio2_, filename);
+  //audiosources_[audiosources_.size() - 1]->Copy(*base_audiosources_[filename]);
+  audiosources_[audiosources_.size() - 1]->Init(p_xaudio2_, filename);
   audiosources_[audiosources_.size() - 1]->Play();
 
   return true;
@@ -83,6 +80,10 @@ void AudioManager::Update() {
 
    for (int i = 0; i < audiosources_.size(); i++) {
     audiosources_[i]->Update();
+    //if (!audiosources_[i]->IsPlaying()) {
+    //    audiosources_.erase(audiosources_.begin() + i);
+    //    i--;
+    //}
   }
 }
 

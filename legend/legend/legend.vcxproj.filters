@@ -155,5 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />
+    <Media Include="assets\audios\free_2.wav" />
   </ItemGroup>
 </Project>

@@ -65,8 +65,8 @@ bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
                                     const TextureBufferDesc& desc) {
   Reset();
 
-  CD3DX12_RESOURCE_DESC resource_desc = CD3DX12_RESOURCE_DESC::Tex2D(
-      desc.format, desc.width, desc.height);
+  CD3DX12_RESOURCE_DESC resource_desc =
+      CD3DX12_RESOURCE_DESC::Tex2D(desc.format, desc.width, desc.height);
   resource_desc.Flags |= desc.flags;
   const D3D12_CLEAR_VALUE* clear_value_ptr =
       NeedClearValue(resource_desc.Flags) ? &desc.clear_value : nullptr;
@@ -93,10 +93,15 @@ bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
 
 //バッファをコピーする
 bool CommittedResource::InitFromBuffer(IDirectXAccessor& accessor,
-                                       ComPtr<ID3D12Resource> buffer) {
+                                       ComPtr<ID3D12Resource> buffer,
+                                       const std::wstring& name) {
   resource_ = buffer;
   this->current_state_ = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
   this->buffer_size_ = 0;
+
+  if (FAILED(resource_->SetName(name.c_str()))) {
+    return false;
+  }
 
   return true;
 }

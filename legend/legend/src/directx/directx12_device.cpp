@@ -207,7 +207,16 @@ bool DirectX12Device::CreateDevice() {
       MY_LOG(L"GetBuffer buffer number %d isfailed", i);
       return false;
     }
-    if (!render_targets_[i].InitFromBuffer(*this, buffer, clear_color)) {
+    if (!render_targets_[i].InitFromBuffer(
+            *this, buffer, clear_color,
+            util::string_util::Format(L"Back Buffer [%d]", i))) {
+      return false;
+    }
+    if (!render_targets_[i].CreateDepthStencil(
+            *this, DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT,
+            render_target_screen_size_.x, render_target_screen_size_.y,
+            buffer::DepthStencil::ClearValue{1.0f, 0},
+            util::string_util::Format(L"Depth Stencil [%d]", i))) {
       return false;
     }
   }

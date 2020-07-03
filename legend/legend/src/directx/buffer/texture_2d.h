@@ -69,7 +69,7 @@ class Texture2D {
    */
   void SetToHeap(DirectX12Device& device);
   /**
-   * @brief レジスター番号を指定してヒープに自信を追加する
+   * @brief レジスター番号を指定してヒープに自身を追加する
    * @param device DirectX12デバイス
    * @param overwrite_register_num 上書きするレジスター番号
    */
@@ -103,12 +103,8 @@ class Texture2D {
   u32 width_;
   //! テクスチャの高さ
   u32 height_;
-  //! シェーダーリソースビューデスク
-  D3D12_SHADER_RESOURCE_VIEW_DESC srv_view_;
-  //! CPUハンドル
-  D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle_;
-  //! GPUハンドル
-  D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle_;
+  //! ハンドル
+  DescriptorHandle handle_;
 };
 
 }  // namespace buffer

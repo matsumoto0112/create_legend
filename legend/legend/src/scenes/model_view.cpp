@@ -94,7 +94,7 @@ void ModelView::Initialize() {
     }
   }
 
-  constexpr u32 OBJ_NUM = 1;
+  constexpr u32 OBJ_NUM = 100;
   for (u32 i = 0; i < OBJ_NUM; i++) {
     Object obj;
     //頂点バッファ作成
@@ -118,25 +118,25 @@ void ModelView::Initialize() {
     }
 
     math::Vector3 position = math::Vector3(i * 1.0f, 0.0f, i * 1.0f);
-    math::Vector3 scale = math::Vector3::kUnitVector * 10.0f;
+    math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
     obj.transform_cb_.GetStagingRef().world =
         math::Matrix4x4::CreateScale(scale) *
         math::Matrix4x4::CreateTranslate(position);
     obj.transform_cb_.UpdateStaging();
-
-    if (!obj.world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
-      return;
-    }
-
-    obj.world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-        math::Vector3(0, 10, -10), math::Vector3(0, 0, 0),
-        math::Vector3::kUpVector);
-    const float aspect = 1280.0f / 720.0f;
-    obj.world_cb_.GetStagingRef().projection =
-        math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
-    obj.world_cb_.UpdateStaging();
     objects_.push_back(obj);
   }
+
+  if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
+    return;
+  }
+
+  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
+      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
+      math::Vector3::kUpVector);
+  const float aspect = 1280.0f / 720.0f;
+  world_cb_.GetStagingRef().projection =
+      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
+  world_cb_.UpdateStaging();
 
   //メインテクスチャの書き込み
   const std::vector<u8> albedo = loader.GetAlbedo();
@@ -222,10 +222,10 @@ void ModelView::Draw() {
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
   texture_.SetToHeap(device);
+  world_cb_.SetToHeap(device);
 
   for (auto&& obj : objects_) {
     obj.transform_cb_.SetToHeap(device);
-    obj.world_cb_.SetToHeap(device);
     device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
     obj.vertex_buffer_.SetGraphicsCommandList(device);

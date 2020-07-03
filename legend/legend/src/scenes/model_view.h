@@ -59,10 +59,10 @@ class ModelView : public Scene {
     directx::buffer::VertexBuffer vertex_buffer_;
     directx::buffer::IndexBuffer index_buffer_;
     directx::buffer::ConstantBuffer<Transform> transform_cb_;
-    directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   };
   std::vector<Object> objects_;
 
+  directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   directx::buffer::Texture2D texture_;
   std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;

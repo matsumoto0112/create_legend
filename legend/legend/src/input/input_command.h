@@ -17,13 +17,30 @@
 namespace legend {
 namespace input {
 
+/**
+ * @class InputCommand
+ * @brief 入力コマンド
+ */
 class InputCommand {
-  using InputCode = input_code::Enum;
+  using InputCode = input_code::Enum; //!< 入力コード
 
  public:
+  /**
+   * @brief コンストラクタ
+   */
   InputCommand() {}
+  /**
+   * @brief デスクトラクタ
+   */
   ~InputCommand() {}
 
+  /**
+   * @brief コンストラクタ
+   * @param code            入力コード
+   * @param input_keyboard_ 入力キーボード
+   * @param input_mouse_    入力マウス
+   * @param input_game_pad_ 入力ゲームパッド
+   */
   bool GetCommand(InputCode code, Keyboard* input_keyboard_,
                   Mouse* input_mouse_, GamePad* input_game_pad_) const {
     if (input_command_.count(code)) {
@@ -36,14 +53,14 @@ class InputCommand {
  private:
   std::unordered_map<i32, std::function<bool(Keyboard*, Mouse*, GamePad*)>>
       input_command_ = {
-          {InputCode::End,
+          {InputCode::End,//!< 終了コマンド(keyboard_Escape_単押し || (GamePad_Start_長押し && GamePad_Select_長押し))
            [&](Keyboard* input_keyboard_, Mouse* input_mouse_,
                GamePad* input_game_pad_) {
              return (input_keyboard_->GetKeyDown(key_code::Escape) ||
                      (input_game_pad_->GetButton(joy_code::START) &&
                       input_game_pad_->GetButton(joy_code::SELECT)));
            }},
-          {InputCode::Decide,
+          {InputCode::Decide,//!< 決定コマンド(keyboard_Enter_単押し || GamePad_A_単押し)
            [&](Keyboard* input_keyboard_, Mouse* input_mouse_,
                GamePad* input_game_pad_) {
              return (input_keyboard_->GetKeyDown(key_code::Enter) ||

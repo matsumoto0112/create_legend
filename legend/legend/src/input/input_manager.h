@@ -21,7 +21,7 @@ namespace input {
  * @brief “ü—Í‚ğŠÇ—‚·‚é
  */
 class InputManager {
-  using InputCode = input_code::Enum;
+  using InputCode = input_code::Enum; //!< “ü—ÍƒR[ƒh
 
  public:
   /**

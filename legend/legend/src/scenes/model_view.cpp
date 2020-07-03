@@ -19,7 +19,7 @@ void ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  const std::wstring name = L"maru_UV_TexUmekomi";
+  const std::wstring name = L"1000cmObject";
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / (name + L".glb");
   util::loader::GLBLoader loader;
@@ -94,7 +94,7 @@ void ModelView::Initialize() {
     }
   }
 
-  constexpr u32 OBJ_NUM = 50;
+  constexpr u32 OBJ_NUM = 1;
   for (u32 i = 0; i < OBJ_NUM; i++) {
     Object obj;
     //頂点バッファ作成

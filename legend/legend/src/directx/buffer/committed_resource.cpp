@@ -28,6 +28,7 @@ CommittedResource::CommittedResource()
 //デストラクタ
 CommittedResource::~CommittedResource() { Reset(); }
 
+//リセットする
 void CommittedResource::Reset() {
   resource_.Reset();
   buffer_size_ = 0;

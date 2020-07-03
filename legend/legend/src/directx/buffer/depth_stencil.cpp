@@ -19,7 +19,7 @@ bool DepthStencil::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   dsv_clear_value.DepthStencil.Depth = clear_value.depth;
   dsv_clear_value.DepthStencil.Stencil = clear_value.stencil;
 
-  CommittedResource::TextureBufferDesc dsv_desc(
+  const CommittedResource::TextureBufferDesc dsv_desc(
       name, format, width, height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
       dsv_clear_value);
@@ -34,8 +34,8 @@ bool DepthStencil::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   dsv_view.ViewDimension = D3D12_DSV_DIMENSION::D3D12_DSV_DIMENSION_TEXTURE2D;
 
   this->handle_ = accessor.GetHandle(DescriptorHeapType::DSV);
-  accessor.GetDevice()->CreateDepthStencilView(
-      resource_.GetResource(), &dsv_view, handle_.cpu_handle_);
+  accessor.GetDevice()->CreateDepthStencilView(resource_.GetResource(),
+                                               &dsv_view, handle_.cpu_handle_);
 
   this->clear_value_ = clear_value;
   return true;
@@ -52,9 +52,10 @@ void DepthStencil::ClearDepthStencil(IDirectXAccessor& accessor) const {
       clear_value_.stencil, 0, nullptr);
 }
 
+//コマンドリストにセットする準備をする
 void DepthStencil::PrepareToSetCommandList(IDirectXAccessor& accessor) {
-  resource_.Transition(
-      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
+  resource_.Transition(accessor,
+                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
 }  // namespace buffer

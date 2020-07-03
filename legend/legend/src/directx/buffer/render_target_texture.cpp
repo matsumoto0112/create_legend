@@ -21,7 +21,7 @@ bool RenderTargetTexture::Init(IDirectXAccessor& accessor, u32 register_num,
   }
 
   this->register_num_ = register_num;
-  srv_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
+  this->srv_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
 
   D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
   srv_desc.Texture2D.MipLevels = 1;

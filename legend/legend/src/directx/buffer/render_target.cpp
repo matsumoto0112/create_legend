@@ -18,7 +18,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   clear_value.Format = format;
   memcpy(clear_value.Color, clear_color.Get().data(), sizeof(float) * 4);
 
-  CommittedResource::TextureBufferDesc desc(
+  const CommittedResource::TextureBufferDesc desc(
       name, format, width, height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
       clear_value);
@@ -41,6 +41,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   return true;
 }
 
+//バッファから初期化する
 bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
                                   ComPtr<ID3D12Resource> buffer,
                                   const util::Color4& clear_color,

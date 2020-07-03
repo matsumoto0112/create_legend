@@ -30,6 +30,27 @@ LoadedTextureData Load(const std::filesystem::path& filename) {
   return res;
 }
 
+//ƒƒ‚ƒŠ‚©‚ç“Ç‚İ‚Ş
+LoadedTextureData LoadFromMemory(const std::vector<u8>& pixel_data) {
+  int w, h, comp;
+  const u32 size = static_cast<u32>(pixel_data.size());
+  u8* begin = stbi_load_from_memory(pixel_data.data(), size, &w, &h, &comp, 4);
+  if (!begin) {
+    MY_LOG(L"ƒƒ‚ƒŠ‚©‚ç•œŒ³‚·‚é‚±‚Æ‚É¸”s‚µ‚Ü‚µ‚½");
+    return LoadedTextureData{};
+  }
+
+  LoadedTextureData res = {};
+  res.width = w;
+  res.height = h;
+  res.pixels = std::vector<u8>(begin, begin + w * h * 4);
+  res.name = L"";
+
+  stbi_image_free(begin);
+
+  return res;
+}
+
 }  // namespace texture_loader
 }  // namespace loader
 }  // namespace util

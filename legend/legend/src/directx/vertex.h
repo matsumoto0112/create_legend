@@ -19,6 +19,11 @@ struct Vertex {
   math::Vector4 tangent;
 };
 
+struct Sprite {
+    math::Vector3 position;
+    math::Vector2 uv;
+};
+
 struct OnlyPosition {
   math::Vector3 position;
 };

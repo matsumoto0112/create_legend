@@ -16,12 +16,12 @@ AudioSource::AudioSource()
 //デストラクタ
 AudioSource::~AudioSource() {
   if (buffer_ != NULL) delete[] buffer_;
-  // if (p_source_voice != NULL) p_source_voice->DestroyVoice();
+  if (p_source_voice != NULL) p_source_voice->DestroyVoice();
   if (mmio_ != NULL) mmioClose(mmio_, MMIO_FHOPEN);
 }
 
 bool AudioSource::Init(IXAudio2* p_xaudio2, std::wstring filename) {
-  //CoInitializeEx(NULL, COINIT_MULTITHREADED);
+  // CoInitializeEx(NULL, COINIT_MULTITHREADED);
   buffer_ = NULL;
   buffer_count_ = 0;
 
@@ -98,7 +98,7 @@ bool AudioSource::Init(IXAudio2* p_xaudio2, std::wstring filename) {
   xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
 
-  //if (FAILED(p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_, NULL))) {
+  // if (FAILED(p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_, NULL))) {
   //  return false;
   //}
 
@@ -143,8 +143,8 @@ void AudioSource::Update() {
   // while (WaitForSingleObject(callback_.event, INFINITE) == WAIT_OBJECT_0) {
   p_source_voice->GetState(&state_);
   if (state_.BuffersQueued == 0) {
-      is_playing_ = false;
-      return;
+    is_playing_ = false;
+    return;
   }
   while (state_.BuffersQueued < 4 && mmio_ != NULL) {
     ptr_ = buffer_ + buffer_len_ * buffer_count_;
@@ -168,10 +168,7 @@ void AudioSource::Update() {
   //}
 }
 
-bool AudioSource::IsPlaying()
-{
-    return is_playing_;
-}
+bool AudioSource::IsPlaying() { return is_playing_; }
 
 // コピー
 bool AudioSource::Copy(const AudioSource& other) {

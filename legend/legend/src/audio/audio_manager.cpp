@@ -6,6 +6,9 @@ namespace audio {
 legend::audio::AudioManager::AudioManager() {}
 
 legend::audio::AudioManager::~AudioManager() {
+  //配列に入っているAudioSourceを削除
+  audiosources_.clear();
+
   // MasterungVoiceの破棄
   if (p_xaudio2_mastering_voice_ != nullptr) {
     p_xaudio2_mastering_voice_->DestroyVoice();
@@ -41,7 +44,7 @@ bool AudioManager::Init() {
   return true;
 }
 
-//bool AudioManager::LoadWav(std::wstring filename) {
+// bool AudioManager::LoadWav(std::wstring filename) {
 //  //既に読み込み済みかチェック
 //  if (base_audiosources_.find(filename) != base_audiosources_.end()) {
 //    MY_LOG(L"既に読み込み済みです。");
@@ -62,13 +65,14 @@ bool AudioManager::Init() {
 
 bool AudioManager::Play(std::wstring filename) {
   ////指定したファイルが読み込まれているかチェック
-  //if (base_audiosources_.find(filename) == base_audiosources_.end()) {
+  // if (base_audiosources_.find(filename) == base_audiosources_.end()) {
   //  MY_LOG(L"読み込まれていないファイルを再生しようとしました。\n");
   //  return false;
   //}
 
   audiosources_.push_back(std::make_unique<AudioSource>());
-  //audiosources_[audiosources_.size() - 1]->Copy(*base_audiosources_[filename]);
+  // audiosources_[audiosources_.size() -
+  // 1]->Copy(*base_audiosources_[filename]);
   audiosources_[audiosources_.size() - 1]->Init(p_xaudio2_, filename);
   audiosources_[audiosources_.size() - 1]->Play();
 
@@ -78,12 +82,12 @@ bool AudioManager::Play(std::wstring filename) {
 void AudioManager::Update() {
   // base_audiosources_[L"../legend/assets/audios/free_3.wav"]->Update();
 
-   for (int i = 0; i < audiosources_.size(); i++) {
+  for (int i = 0; i < audiosources_.size(); i++) {
     audiosources_[i]->Update();
-    //if (!audiosources_[i]->IsPlaying()) {
-    //    audiosources_.erase(audiosources_.begin() + i);
-    //    i--;
-    //}
+    if (!audiosources_[i]->IsPlaying()) {
+      audiosources_.erase(audiosources_.begin() + i);
+      i--;
+    }
   }
 }
 

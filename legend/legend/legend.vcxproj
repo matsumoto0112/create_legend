@@ -138,7 +138,9 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="assets\shaders\defines\global.h" />
+    <None Include="assets\shaders\defines\global.hlsli">
+      <FileType>Document</FileType>
+    </None>
     <ClInclude Include="src\directx\buffer\render_target.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />

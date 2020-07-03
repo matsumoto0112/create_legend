@@ -1,7 +1,7 @@
 #ifndef LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_HLSLI_
 #define LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_HLSLI_
 
-#include "../defines/global.h"
+#include "../defines/global.hlsli"
 
 struct VSInput{
     float3 pos : POSITION;

@@ -1,6 +1,11 @@
 #ifndef LEGEND_ASSETS_SHADERS_DEFINES_GLOBAL_H_
 #define LEGEND_ASSETS_SHADERS_DEFINES_GLOBAL_H_
 
+/**
+* @file global.hlsli
+* @brief シェーダーのグローバル情報定義
+*/
+
 struct Transform
 {
     float4x4 world;

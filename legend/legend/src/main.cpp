@@ -36,9 +36,8 @@ class MyApp final : public device::Application {
       if (ImGui::Button("ModelView")) {
         scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
       }
-
-      ImGui::End();
     }
+    ImGui::End();
     return true;
   }
 

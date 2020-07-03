@@ -55,6 +55,7 @@
     <ClCompile Include="src\directx\descriptor_heap\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
+    <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -132,6 +133,8 @@
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\util\color_4.h" />
+    <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\directx\buffer\depth_stencil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

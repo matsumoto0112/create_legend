@@ -65,8 +65,8 @@ bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
                                     const TextureBufferDesc& desc) {
   Reset();
 
-  CD3DX12_RESOURCE_DESC resource_desc =
-      CD3DX12_RESOURCE_DESC::Tex2D(desc.format, desc.width, desc.height);
+  CD3DX12_RESOURCE_DESC resource_desc = CD3DX12_RESOURCE_DESC::Tex2D(
+      desc.format, desc.width, desc.height);
   resource_desc.Flags |= desc.flags;
   const D3D12_CLEAR_VALUE* clear_value_ptr =
       NeedClearValue(resource_desc.Flags) ? &desc.clear_value : nullptr;

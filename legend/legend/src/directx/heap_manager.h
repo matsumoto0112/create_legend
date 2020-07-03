@@ -67,8 +67,17 @@ class HeapManager {
   void CopyHeapAndSetToGraphicsCommandList(IDirectXAccessor& accessor);
 
  public:
+  /**
+   * @brief レンダーターゲットヒープを取得する
+   */
   CountingDescriptorHeap& GetRtvHeap() { return rtv_heap_; }
+  /**
+   * @brief シェーダーリソースヒープを取得する
+   */
   CountingDescriptorHeap& GetCbvSrvUavHeap() { return cbv_srv_uav_heap_; }
+  /**
+   * @brief デプス・ステンシルヒープを取得する
+   */
   CountingDescriptorHeap& GetDsvHeap() { return dsv_heap_; }
 
  private:
@@ -80,8 +89,11 @@ class HeapManager {
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles_;
   //! シェーダーリソースのハンドル
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles_;
+  //! シェーダーリソースヒープ
   CountingDescriptorHeap cbv_srv_uav_heap_;
+  //! レンダーターゲットヒープ
   CountingDescriptorHeap rtv_heap_;
+  //! デプス・ステンシルヒープ
   CountingDescriptorHeap dsv_heap_;
 };
 

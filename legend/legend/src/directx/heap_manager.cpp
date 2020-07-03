@@ -6,6 +6,10 @@ namespace {
 constexpr legend::u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 10000;
 //! ローカルヒープの作成するディスクリプタ数
 constexpr legend::u32 LOCAL_HEAP_DESCRIPTOR_NUM = 10000;
+//! レンダーターゲットヒープの作成するディスクリプタ数
+constexpr legend::u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
+//! デプス・ステンシルヒープの作成するディスクリプタ数
+constexpr legend::u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
 }  // namespace
 
 namespace legend {
@@ -34,13 +38,15 @@ bool HeapManager::Init(IDirectXAccessor& device) {
     return false;
   }
 
-  DescriptorHeap::Desc rtv_desc(L"RTVHeap", 100, DescriptorHeapType::RTV,
+  DescriptorHeap::Desc rtv_desc(L"RTVHeap", RTV_HEAP_DESCRIPTOR_NUM,
+                                DescriptorHeapType::RTV,
                                 DescriptorHeapFlag::NONE);
   if (!rtv_heap_.Init(device, rtv_desc)) {
     return false;
   }
 
-  DescriptorHeap::Desc dsv_desc(L"DSVHeap", 5, DescriptorHeapType::DSV,
+  DescriptorHeap::Desc dsv_desc(L"DSVHeap", DSV_HEAP_DESCRIPTOR_NUM,
+                                DescriptorHeapType::DSV,
                                 DescriptorHeapFlag::NONE);
   if (!dsv_heap_.Init(device, dsv_desc)) {
     return false;

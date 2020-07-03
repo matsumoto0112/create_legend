@@ -17,9 +17,8 @@ GraphicsPipelineState::~GraphicsPipelineState() {}
 //èâä˙âª
 bool GraphicsPipelineState::Init(DirectX12Device& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-  pipeline_state_desc_.DepthStencilState.DepthEnable = FALSE;
-  pipeline_state_desc_.DepthStencilState.StencilEnable = FALSE;
-
+  pipeline_state_desc_.DepthStencilState= CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+  pipeline_state_desc_.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
   pipeline_state_desc_.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 
   return true;

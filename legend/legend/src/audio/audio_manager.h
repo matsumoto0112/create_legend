@@ -1,0 +1,67 @@
+#ifndef LEGEND_AUDIO_AUDIO_MANAGER_H_
+#define LEGEND_AUDIO_AUDIO_MANAGER_H_
+
+/**
+ * @file audio_manager.h
+ * @brief 音響管理クラス
+ */
+
+#include <vector>
+//#include <dsound.h>
+#include <xaudio2.h>
+
+#include "src/audio/audio_source.h"
+
+#pragma comment(lib, "dsound.lib")
+
+namespace legend {
+namespace audio {
+
+class AudioManager {
+ public:
+  /**
+   * @brief コンストラクタ
+   */
+  AudioManager();
+  /**
+   * @brief デストラクタ
+   */
+  ~AudioManager();
+  /**
+   * @brief 初期化処理
+   * @return 処理が正しく終了したらtrueを返す
+   */
+  bool Init(/*HWND* window*/);
+  /**
+   * @brief wav読み込み
+   * @return 処理が正しく終了したらtrueを返す
+   */
+  bool LoadWav(std::wstring filename);
+  /**
+   * @brief 再生処理
+   * @return 処理が正しく終了したらtrueを返す
+   */
+  bool Play(std::wstring filename);
+  /**
+   * @brief 更新処理
+   */
+  void Update();
+
+
+ private:
+  //! サウンドデバイス
+  // IDirectSound8* directsound_;
+  IXAudio2* p_xaudio2_;
+  //! 最終到達地点
+  IXAudio2MasteringVoice* p_xaudio2_mastering_voice_;
+  //読み込んだAudioSourceを保存
+  std::unordered_map<std::wstring, std::unique_ptr<AudioSource>>
+      base_audiosources_;
+  // AudioSource配列
+  std::vector<std::unique_ptr<AudioSource>> audiosources_;
+};
+
+}  // namespace audio
+}  // namespace legend
+
+#endif  //! LEGEND_AUDIO_AUDIO_MANAGER_H_

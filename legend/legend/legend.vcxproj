@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -112,6 +113,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\main_hiraoka.cpp" />
     <ClCompile Include="src\main_matsumoto.cpp" />
+    <ClCompile Include="src\main_murayama.cpp" />
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\matrix_4x4.cpp" />
     <ClCompile Include="src\math\vector_2.cpp" />
@@ -138,6 +140,9 @@
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\audio\audio_manager.h" />
+    <ClInclude Include="src\audio\xaudio2_callback.h" />
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
@@ -249,6 +254,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audios\free_3.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

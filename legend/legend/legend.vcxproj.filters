@@ -43,6 +43,8 @@
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
+    <ClCompile Include="src\audio\audio_manager.cpp" />
+    <ClCompile Include="src\main_murayama.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
     <ClCompile Include="src\scenes\model_view.cpp" />
@@ -112,6 +114,8 @@
     <ClInclude Include="src\util\loader\texture_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\game\game_device.h" />
+    <ClInclude Include="src\audio\audio_manager.h" />
+    <ClInclude Include="src\audio\xaudio2_callback.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_manager.h" />
     <ClInclude Include="src\input\joy_code.h" />
@@ -142,5 +146,8 @@
     <FxCompile Include="assets\shaders\TextureTest.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audios\free_3.wav" />
   </ItemGroup>
 </Project>

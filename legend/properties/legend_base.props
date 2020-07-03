@@ -25,7 +25,8 @@
     </Link>
     <CopyFileToFolders />
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\assets $(OutDir)\assets /I /Y /D /S /EXCLUDE:$(SolutionDir)\properties\xcopy-excludelist.txt</Command>
+      <Command>xcopy $(ProjectDir)\assets $(OutDir)\assets /I /Y /D /S /EXCLUDE:$(SolutionDir)\properties\xcopy-excludelist.txt
+xcopy $(ProjectDir)\config $(OutDir)\config /I /Y /D /S</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(OutDir)%(RelativeDir)%(Filename).cso</ObjectFileOutput>

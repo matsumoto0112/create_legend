@@ -106,6 +106,10 @@ void Application::Finalize() {}
 //XV
 bool Application::Update() {
   game::GameDevice::GetInstance()->Update();
+  if (game::GameDevice::GetInstance()->GetInput().GetCommand(
+          input::input_code::End)) {
+    return false;
+  }
   return true;
 }
 

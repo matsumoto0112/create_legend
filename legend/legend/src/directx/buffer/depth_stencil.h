@@ -72,6 +72,13 @@ class DepthStencil {
    */
   void PrepareToSetCommandList(IDirectXAccessor& accessor);
   /**
+   * @brief パイプラインステートデスクにRTV情報を書き込む
+   * @param pipeline_state_desc 書き込む対象
+   */
+  void WriteInfoToPipelineStateDesc(
+      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc) const;
+
+  /**
    * @brief CPUハンドルを取得する
    * @details RTVのセット時に同時にDSVもセットするため、RTV向けに公開
    */
@@ -84,6 +91,8 @@ class DepthStencil {
   legend::directx::buffer::CommittedResource resource_;
   //! ハンドル
   legend::directx::DescriptorHandle handle_;
+  //! フォーマット
+  DXGI_FORMAT format_;
   //! クリア値
   ClearValue clear_value_;
 };

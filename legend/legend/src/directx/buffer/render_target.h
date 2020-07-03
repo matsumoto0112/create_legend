@@ -84,6 +84,19 @@ class RenderTarget {
    * @param accessor DirextX12アクセサ
    */
   void DrawEnd(IDirectXAccessor& accessor);
+  /**
+   * @brief 状態を遷移させる
+   * @param accessor DirextX12アクセサ
+   * @param next_state 次の状態
+   */
+  void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
+  /**
+   * @brief パイプラインステートデスクにRTV情報を書き込む
+   * @param pipeline_state_desc 書き込む対象
+   */
+  void WriteInfoToPipelineStateDesc(
+      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc,
+      bool write_with_depth_stencil) const;
 
  public:
   /**
@@ -91,13 +104,15 @@ class RenderTarget {
    */
   ID3D12Resource* GetResource() const { return resource_.GetResource(); }
 
- public:
+ private:
   //! リソース
   CommittedResource resource_;
   //! レンダーターゲットハンドル
   DescriptorHandle rtv_handle_;
   //! バッファのクリア色
   util::Color4 clear_color_;
+  //! レンダーターゲットのフォーマット
+  DXGI_FORMAT format_;
   //! デプス・ステンシル
   std::unique_ptr<DepthStencil> depth_stencil_;
 };

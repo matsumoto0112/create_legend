@@ -36,7 +36,7 @@ bool DepthStencil::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   this->handle_ = accessor.GetHandle(DescriptorHeapType::DSV);
   accessor.GetDevice()->CreateDepthStencilView(resource_.GetResource(),
                                                &dsv_view, handle_.cpu_handle_);
-
+  this->format_ = format;
   this->clear_value_ = clear_value;
   return true;
 }
@@ -56,6 +56,14 @@ void DepthStencil::ClearDepthStencil(IDirectXAccessor& accessor) const {
 void DepthStencil::PrepareToSetCommandList(IDirectXAccessor& accessor) {
   resource_.Transition(accessor,
                        D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
+//パイプラインステートデスクに情報を書き込む
+void DepthStencil::WriteInfoToPipelineStateDesc(
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc) const {
+  pipeline_state_desc->DSVFormat = format_;
+  pipeline_state_desc->DepthStencilState =
+      CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
 }
 
 }  // namespace buffer

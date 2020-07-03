@@ -48,7 +48,7 @@ void RenderTargetTexture::ClearRenderTarget(IDirectXAccessor& accessor) const {
 //ï`âÊèIóπ
 void RenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
   render_target_.DrawEnd(accessor);
-  render_target_.resource_.Transition(
+  render_target_.Transition(
       accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 

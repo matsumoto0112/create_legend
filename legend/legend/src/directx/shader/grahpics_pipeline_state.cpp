@@ -17,7 +17,8 @@ GraphicsPipelineState::~GraphicsPipelineState() {}
 //初期化
 bool GraphicsPipelineState::Init(DirectX12Device& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-  pipeline_state_desc_.DepthStencilState= CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+  pipeline_state_desc_.DepthStencilState =
+      CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
   pipeline_state_desc_.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
   pipeline_state_desc_.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 
@@ -55,13 +56,18 @@ void GraphicsPipelineState::SetPixelShader(
   }
 }
 
+//レンダーターゲットの情報をセットする
+void GraphicsPipelineState::SetRenderTargetInfo(
+    const buffer::RenderTarget& render_target, bool write_with_depth_stencil) {
+  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_,
+                                             write_with_depth_stencil);
+}
+
 //パイプラインステートをセットする
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-  pipeline_state_desc_.NumRenderTargets = 1;
-  pipeline_state_desc_.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
   pipeline_state_desc_.SampleDesc.Count = 1;
 
   if (FAILED(device.GetDevice()->CreateGraphicsPipelineState(

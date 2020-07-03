@@ -199,6 +199,7 @@ void ModelView::Initialize() {
   pipeline_state_.SetRootSignature(root_signature_);
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
+  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {

@@ -26,11 +26,12 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
     return false;
   }
 
-  resource_.Transition(accessor,
-                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON);
+  this->Transition(accessor,
+                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON);
 
   this->clear_color_ = clear_color;
   this->rtv_handle_ = accessor.GetHandle(DescriptorHeapType::RTV);
+  this->format_ = format;
 
   D3D12_RENDER_TARGET_VIEW_DESC rtv_desc = {};
   rtv_desc.ViewDimension = D3D12_RTV_DIMENSION::D3D12_RTV_DIMENSION_TEXTURE2D;
@@ -50,13 +51,14 @@ bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
     return false;
   }
 
-  this->clear_color_ = clear_color;
-  this->rtv_handle_ = accessor.GetHandle(DescriptorHeapType::RTV);
-
   const D3D12_RESOURCE_DESC desc = resource_.GetResource()->GetDesc();
   D3D12_RENDER_TARGET_VIEW_DESC rtv_desc = {};
   rtv_desc.ViewDimension = D3D12_RTV_DIMENSION::D3D12_RTV_DIMENSION_TEXTURE2D;
   rtv_desc.Format = desc.Format;
+
+  this->clear_color_ = clear_color;
+  this->rtv_handle_ = accessor.GetHandle(DescriptorHeapType::RTV);
+  this->format_ = desc.Format;
 
   accessor.GetDevice()->CreateRenderTargetView(
       resource_.GetResource(), &rtv_desc, rtv_handle_.cpu_handle_);
@@ -79,8 +81,9 @@ bool RenderTarget::CreateDepthStencil(
 
 //レンダーターゲットをセットする
 void RenderTarget::SetRenderTarget(IDirectXAccessor& accessor) {
-  resource_.Transition(
-      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
+  this->Transition(accessor,
+                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
+
   if (depth_stencil_) {
     depth_stencil_->PrepareToSetCommandList(accessor);
     accessor.GetCommandList()->OMSetRenderTargets(
@@ -103,8 +106,30 @@ void RenderTarget::ClearRenderTarget(IDirectXAccessor& accessor) const {
 
 //描画終了
 void RenderTarget::DrawEnd(IDirectXAccessor& accessor) {
-  resource_.Transition(accessor,
-                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT);
+  this->Transition(accessor,
+                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT);
+}
+
+//状態遷移
+void RenderTarget::Transition(IDirectXAccessor& accessor,
+                              D3D12_RESOURCE_STATES next_state) {
+  resource_.Transition(accessor, next_state);
+}
+
+//パイプラインステートデスクに情報を書き込む
+void RenderTarget::WriteInfoToPipelineStateDesc(
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc,
+    bool write_with_depth_stencil) const {
+  pipeline_state_desc->NumRenderTargets = 1;
+  pipeline_state_desc->RTVFormats[0] = format_;
+
+  if (write_with_depth_stencil) {
+    if (depth_stencil_) {
+      depth_stencil_->WriteInfoToPipelineStateDesc(pipeline_state_desc);
+    } else {
+      MY_LOG(L"書き込むデプス・ステンシルの情報が存在しません。");
+    }
+  }
 }
 
 }  // namespace buffer

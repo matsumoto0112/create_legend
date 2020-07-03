@@ -70,6 +70,9 @@ class DirectX12Device : public IDirectXAccessor {
   virtual ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_list_.Get();
   }
+  const buffer::RenderTarget& GetRenderTarget() const {
+    return render_targets_[frame_index_];
+  }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */

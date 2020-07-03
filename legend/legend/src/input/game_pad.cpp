@@ -2,26 +2,6 @@
 #include "src/math/math_util.h"
 
 namespace {
-/**
- * @brief 小数点以下の桁修正
- * @param value 変更する数値
- * @param digit 桁数
- * @return 修正値
- */
-float Digit(float value, long digit = 1) {
-  digit = (digit < 0) ? 0 : (7 <= digit) ? 7 : digit;
-
-  if (digit == 0) {
-    return static_cast<float>(static_cast<int>(value));
-  }
-
-  float d = 1.0f;
-  for (int i = 0; i < digit; i++) {
-    d *= 10.0f;
-  }
-
-  return static_cast<float>(static_cast<int>(value * d)) / d;
-}
 
 const unsigned long GAMEPAD_STICK_VALUE_MAX =
     65535;  // !< スティック入力の最大値
@@ -33,7 +13,7 @@ const unsigned long GAMEPAD_STICK_VALUE_MAX =
 const float Clamp_GamePadStick_ValueMax(unsigned long value) {
   float result =
       (value / static_cast<float>(GAMEPAD_STICK_VALUE_MAX) - 0.5f) * 2.0f;
-  return Digit(result, 3);
+  return legend::math::util::Round(result, 3);
 }
 }  // namespace
 
@@ -196,7 +176,7 @@ float GamePad::GetCrossHorizontal(u32 index) const {
     }
 
     crossKey *= legend::math::util::DEG_2_RAD;
-    return Digit(legend::math::util::Sin(crossKey), 3);
+    return math::util::Round(legend::math::util::Sin(crossKey), 3);
   }
   return 0.0f;
 }
@@ -209,7 +189,7 @@ float GamePad::GetCrossVertical(u32 index) const {
     }
 
     crossKey *= legend::math::util::DEG_2_RAD;
-    return Digit(legend::math::util::Cos(crossKey), 3);
+    return math::util::Round(legend::math::util::Cos(crossKey), 3);
   }
   return 0.0f;
 }

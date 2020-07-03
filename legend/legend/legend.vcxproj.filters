@@ -117,6 +117,7 @@
     <None Include="src\.clang-format" />
     <None Include="packages.config" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
+    <None Include="assets\shaders\draw2d\sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
@@ -125,5 +126,7 @@
     <FxCompile Include="assets\shaders\TextureTest.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
+    <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl" />
+    <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl" />
   </ItemGroup>
 </Project>

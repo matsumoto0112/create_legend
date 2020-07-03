@@ -17,6 +17,11 @@ struct Vertex {
   math::Vector2 uv;
 };
 
+struct Sprite {
+    math::Vector3 position;
+    math::Vector2 uv;
+};
+
 struct OnlyPosition {
   math::Vector3 position;
 };

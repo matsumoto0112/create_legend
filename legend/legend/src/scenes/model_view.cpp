@@ -94,10 +94,9 @@ void ModelView::Initialize() {
     }
   }
 
-  constexpr u32 OBJ_NUM = 5;
-  objects.resize(OBJ_NUM);
+  constexpr u32 OBJ_NUM = 50;
   for (u32 i = 0; i < OBJ_NUM; i++) {
-    Object& obj = objects[i];
+    Object obj;
     //頂点バッファ作成
     if (!obj.vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
                                  name + L"_VertexBuffer")) {
@@ -136,6 +135,7 @@ void ModelView::Initialize() {
     obj.world_cb_.GetStagingRef().projection =
         math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
     obj.world_cb_.UpdateStaging();
+    objects_.push_back(obj);
   }
 
   //メインテクスチャの書き込み
@@ -223,7 +223,7 @@ void ModelView::Draw() {
   device.GetHeapManager().SetGraphicsCommandList(device);
   texture_.SetToHeap(device);
 
-  for (auto&& obj : objects) {
+  for (auto&& obj : objects_) {
     obj.transform_cb_.SetToHeap(device);
     obj.world_cb_.SetToHeap(device);
     device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);

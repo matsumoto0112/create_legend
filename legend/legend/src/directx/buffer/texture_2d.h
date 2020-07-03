@@ -44,8 +44,18 @@ class Texture2D {
    * @param filename ファイル名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 register_num,
-            const std::filesystem::path& filename);
+  bool InitAndWrite(DirectX12Device& device, u32 register_num,
+                    const std::filesystem::path& filename);
+  /**
+   * @brief テクスチャを書き込みつつ初期化する
+   * @param device DirectX12デバイス
+   * @param register_num シェーダーのレジスター番号
+   * @param data テクスチャデータ
+   * @param filename ファイル名
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool InitAndWrite(DirectX12Device& device, u32 register_num,
+                    const std::vector<u8>& data, const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
    * @param device DirectX12デバイス

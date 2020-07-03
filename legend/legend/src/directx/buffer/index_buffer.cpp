@@ -2,7 +2,11 @@
 
 namespace {
 
-//自作EnumからD3D12Enumに変換する
+/**
+ * @brief PrimitiveTopologyからD3D12_PRIMITIVE_TOPOLOGYに変換する
+ * @param topology 変換元
+ * @return 変換先
+ */
 D3D12_PRIMITIVE_TOPOLOGY Convert(legend::directx::PrimitiveTopology topology) {
   using legend::directx::PrimitiveTopology;
 
@@ -48,6 +52,17 @@ bool IndexBuffer::Init(IDirectXAccessor& accessor, u32 index_num,
   index_buffer_view_.SizeInBytes = index_buffer_size;
 
   return true;
+}
+
+//初期化と書き込み
+bool IndexBuffer::InitAndWrite(IDirectXAccessor& accessor,
+                               const std::vector<Index>& indices,
+                               PrimitiveTopology topology,
+                               const std::wstring& name) {
+  if (!Init(accessor, static_cast<u32>(indices.size()), topology, name))
+    return false;
+
+  return WriteBufferResource(indices);
 }
 
 //バッファにリソース書き込み

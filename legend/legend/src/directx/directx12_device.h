@@ -8,6 +8,7 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
+#include "src/directx/buffer/render_target.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
 #include "src/libs/d3dx12.h"
@@ -52,6 +53,17 @@ class DirectX12Device : public IDirectXAccessor {
    * @return 成功したらtrueを返す
    */
   bool Present();
+
+  void SetBackBuffer();
+
+  /**
+   * @brief GPUの処理を待機する
+   */
+  void WaitForGPU() noexcept;
+
+  virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
+  virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
+                               const DescriptorHandle& handle) override;
 
  public:
   virtual ID3D12Device* GetDevice() const override { return device_.Get(); }
@@ -99,9 +111,9 @@ class DirectX12Device : public IDirectXAccessor {
   //! バッファインデックス
   i32 frame_index_;
   //! レンダーターゲットのディスクリプタヒープ
-  ComPtr<ID3D12DescriptorHeap> rtv_heap_;
+  // ComPtr<ID3D12DescriptorHeap> rtv_heap_;
   //! レンダーターゲットのリソース
-  std::array<ComPtr<ID3D12Resource>, FRAME_COUNT> render_targets_;
+  std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
   //! レンダーターゲットのヒープサイズ
   i32 rtv_heap_size_;
   //! コマンドアロケータ

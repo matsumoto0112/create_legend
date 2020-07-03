@@ -20,6 +20,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <Windows.h>
+#include <functional>
 
 #include <d3d12.h>
 #include <d3dcompiler.h>

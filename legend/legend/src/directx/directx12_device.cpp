@@ -1,22 +1,5 @@
 #include "src/directx/directx12_device.h"
 
-#include <d3dcompiler.h>
-
-#include <filesystem>
-#include <iostream>
-#include <random>
-
-#include "src/directx/buffer/index_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
-#include "src/directx/shader/pixel_shader.h"
-#include "src/directx/shader/vertex_shader.h"
-#include "src/directx/vertex.h"
-#include "src/math/vector_3.h"
-#include "src/util/debug.h"
-#include "src/util/typedef.h"
-
-namespace {}  // namespace
-
 namespace legend {
 namespace directx {
 //コンストラクタ
@@ -28,7 +11,7 @@ DirectX12Device::DirectX12Device()
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON) {}
 
 //デストラクタ
-DirectX12Device::~DirectX12Device() {}
+DirectX12Device::~DirectX12Device() { WaitForGPU(); }
 
 //初期化
 bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
@@ -42,7 +25,6 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   if (!CreateDevice()) return false;
-  if (!heap_manager_.Init(*this)) return false;
 
   MY_LOG(L"Create Device finished");
   return true;
@@ -79,38 +61,15 @@ bool DirectX12Device::Prepare() {
   command_list_->RSSetViewports(1, &viewport);
   command_list_->RSSetScissorRects(1, &scissor_rect);
 
-  constexpr D3D12_RESOURCE_STATES next_resource_state =
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET;
-  if (current_resource_state_ != next_resource_state) {
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), current_resource_state_,
-        next_resource_state);
-    command_list_->ResourceBarrier(1, &barrier);
-    current_resource_state_ = next_resource_state;
-  }
+  render_targets_[frame_index_].SetRenderTarget(*this);
+  render_targets_[frame_index_].ClearRenderTarget(*this);
 
-  CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
-      rtv_heap_->GetCPUDescriptorHandleForHeapStart(), frame_index_,
-      rtv_heap_size_);
-  command_list_->OMSetRenderTargets(1, &rtv_handle, false, nullptr);
-
-  const std::array<float, 4> CLEAR_COLOR = {0.0f, 0.2f, 0.4f, 1.0f};
-  command_list_->ClearRenderTargetView(rtv_handle, CLEAR_COLOR.data(), 0,
-                                       nullptr);
   heap_manager_.BeginFrame();
   return true;
 }
 
 bool DirectX12Device::Present() {
-  constexpr D3D12_RESOURCE_STATES next_resource_state =
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT;
-  if (current_resource_state_ != next_resource_state) {
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), current_resource_state_,
-        next_resource_state);
-    command_list_->ResourceBarrier(1, &barrier);
-    current_resource_state_ = next_resource_state;
-  }
+  render_targets_[frame_index_].DrawEnd(*this);
 
   if (FAILED(command_list_->Close())) {
     return false;
@@ -126,6 +85,44 @@ bool DirectX12Device::Present() {
   MoveToNextFrame();
 
   return true;
+}
+
+void DirectX12Device::SetBackBuffer() {
+  render_targets_[frame_index_].SetRenderTarget(*this);
+}
+
+void DirectX12Device::WaitForGPU() noexcept {
+  if (command_queue_ && fence_ && fence_event_.IsValid()) {
+    u64 value = fence_values_[frame_index_];
+    if (SUCCEEDED(command_queue_->Signal(fence_.Get(), value))) {
+      if (SUCCEEDED(fence_->SetEventOnCompletion(value, fence_event_.Get()))) {
+        WaitForSingleObjectEx(fence_event_.Get(), INFINITE, FALSE);
+        fence_values_[frame_index_]++;
+      }
+    }
+  }
+}
+
+DescriptorHandle DirectX12Device::GetHandle(DescriptorHeapType heap_type) {
+  switch (heap_type) {
+    case legend::directx::DescriptorHeapType::CBV_SRV_UAV:
+      return heap_manager_.GetCbvSrvUavHeap().GetHandle();
+    case legend::directx::DescriptorHeapType::RTV:
+      return heap_manager_.GetRtvHeap().GetHandle();
+    case legend::directx::DescriptorHeapType::DSV:
+      return heap_manager_.GetDsvHeap().GetHandle();
+    default:
+      MY_ASSERTION(false, L"未定義のheap_typeが選択されました。");
+      break;
+  }
+  return DescriptorHandle{};
+}
+
+void DirectX12Device::SetToGlobalHeap(u32 register_num,
+                                      ResourceType resource_type,
+                                      const DescriptorHandle& handle) {
+  heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
+                                     handle.cpu_handle_);
 }
 
 bool DirectX12Device::CreateDevice() {
@@ -201,31 +198,18 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  D3D12_DESCRIPTOR_HEAP_DESC rtv_heap_desc = {};
-  rtv_heap_desc.NumDescriptors = FRAME_COUNT;
-  rtv_heap_desc.Type =
-      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-  rtv_heap_desc.Flags =
-      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-  if (FAILED(device_->CreateDescriptorHeap(&rtv_heap_desc,
-                                           IID_PPV_ARGS(&rtv_heap_)))) {
-    MY_LOG(L"CreateDescriptorHeap failed");
-    return false;
-  }
+  if (!heap_manager_.Init(*this)) return false;
 
-  rtv_heap_size_ = device_->GetDescriptorHandleIncrementSize(
-      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
+  const util::Color4 clear_color(0.2f, 0.3f, 0.5f, 1.0f);
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
-    if (FAILED(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&render_targets_[i])))) {
+    ComPtr<ID3D12Resource> buffer;
+    if (FAILED(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&buffer)))) {
       MY_LOG(L"GetBuffer buffer number %d isfailed", i);
       return false;
     }
-
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
-        rtv_heap_->GetCPUDescriptorHandleForHeapStart(), i, rtv_heap_size_);
-    device_->CreateRenderTargetView(render_targets_[i].Get(), nullptr,
-                                    rtv_handle);
+    if (!render_targets_[i].InitFromBuffer(*this, buffer, clear_color)) {
+      return false;
+    }
   }
 
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {

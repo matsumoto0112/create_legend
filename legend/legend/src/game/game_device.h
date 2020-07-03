@@ -8,7 +8,7 @@
  */
 
 #include "src/directx/directx12_device.h"
-#include "src/input/inputManager.h"
+#include "src/input/input_manager.h"
 #include "src/util/singleton.h"
 
 namespace legend {

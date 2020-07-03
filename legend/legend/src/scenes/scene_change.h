@@ -26,6 +26,10 @@ class ISceneChange {
    * @brief 次のシーンに切り替える
    */
   virtual void ChangeScene(SceneType next_scene) = 0;
+  /**
+   * @brief 現在のシーンの取得
+   */
+  virtual SceneType GetCurrentSceneType() const = 0;
 };
 }  // namespace scenes
 }  // namespace legend

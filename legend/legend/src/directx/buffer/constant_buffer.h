@@ -7,8 +7,8 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/directx12_device.h"
-#include "src/directx/heap_manager.h"
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/directx_accessor.h"
 #include "src/math/math_util.h"
 
 namespace legend {
@@ -16,6 +16,7 @@ namespace directx {
 namespace buffer {
 
 /**
+ * @class ConstantBuffer
  * @brief コンスタントバッファクラス
  * @tparam T コンスタントバッファとして使用する構造体
  */
@@ -31,13 +32,17 @@ class ConstantBuffer {
    */
   ~ConstantBuffer();
   /**
+   * @brief 状態を全てリセットする
+   */
+  void Reset();
+  /**
    * @brief 初期化
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param register_num シェーダーのレジスター番号
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 register_num,
+  bool Init(IDirectXAccessor& accessor, u32 register_num,
             const std::wstring& name);
 
   /**
@@ -52,7 +57,7 @@ class ConstantBuffer {
    * @brief ヒープに自身を追加する
    * @param accessor DirectX12デバイスアクセサ
    */
-  void SetToHeap(DirectX12Device& device);
+  void SetToHeap(IDirectXAccessor& accessor) const;
 
  private:
   /**
@@ -65,53 +70,68 @@ class ConstantBuffer {
   void WriteEnd();
 
  private:
-  //! コンスタントバッファ構造体
-  T staging_;
-  //! アライメントされたバッファサイズ
-  u32 buffer_aligned_size_;
-  //! シェーダーのレジスター番号
-  u32 register_num_;
   //! リソース
   CommittedResource resource_;
-  //! コンスタントバッファビュー
-  D3D12_CONSTANT_BUFFER_VIEW_DESC view_;
-  //! CPUハンドル
-  D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle_;
-  //! GPUハンドル
-  D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle_;
+  //! ハンドル
+  DescriptorHandle resource_handle_;
+  //! コンスタントバッファ構造体
+  T staging_;
   //! CPU上のリソースの書き込み領域
   void* resource_begin_;
+  //! シェーダーのレジスター番号
+  u32 register_num_;
+  //! アライメントされたバッファサイズ
+  u32 buffer_aligned_size_;
 };
 
 //コンストラクタ
 template <class T>
-inline ConstantBuffer<T>::ConstantBuffer() {}
+inline ConstantBuffer<T>::ConstantBuffer()
+    : resource_{},
+      resource_handle_{},
+      staging_{},
+      resource_begin_{nullptr},
+      register_num_{0},
+      buffer_aligned_size_{0} {}
 
 //デストラクタ
 template <class T>
 inline ConstantBuffer<T>::~ConstantBuffer() {
+  Reset();
+}
+
+template <class T>
+inline void ConstantBuffer<T>::Reset() {
   WriteEnd();
+
+  resource_.Reset();
+  resource_handle_ = DescriptorHandle{};
+  staging_ = T{};
+  u32 buffer_aligned_size_ = 0;
+  register_num_ = 0;
 }
 
 //初期化
 template <class T>
-inline bool ConstantBuffer<T>::Init(DirectX12Device& device, u32 register_num,
+inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
+                                    u32 register_num,
                                     const std::wstring& name) {
-  WriteEnd();
+  Reset();
 
   buffer_aligned_size_ = math::util::AlignPow2(
       sizeof(T), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
-  if (!resource_.InitAsBuffer(device, buffer_aligned_size_, name)) {
+  if (!resource_.InitAsBuffer(accessor, buffer_aligned_size_, name)) {
     return false;
   }
 
-  DescriptorHandle handle = device.GetHeapManager().GetLocalHandle();
-  this->cpu_handle_ = handle.cpu_handle_;
-  this->gpu_handle_ = handle.gpu_handle_;
   this->register_num_ = register_num;
-  this->view_.BufferLocation = resource_.GetResource()->GetGPUVirtualAddress();
-  this->view_.SizeInBytes = buffer_aligned_size_;
-  device.GetDevice()->CreateConstantBufferView(&view_, this->cpu_handle_);
+  this->resource_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
+
+  D3D12_CONSTANT_BUFFER_VIEW_DESC cbv_desc = {};
+  cbv_desc.BufferLocation = resource_.GetResource()->GetGPUVirtualAddress();
+  cbv_desc.SizeInBytes = buffer_aligned_size_;
+  accessor.GetDevice()->CreateConstantBufferView(
+      &cbv_desc, this->resource_handle_.cpu_handle_);
 
   return WriteStart();
 }
@@ -145,9 +165,9 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 
 //ヒープにセットする
 template <class T>
-inline void ConstantBuffer<T>::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager().SetHandleToLocalHeap(
-      this->register_num_, ResourceType::Cbv, this->cpu_handle_);
+inline void ConstantBuffer<T>::SetToHeap(IDirectXAccessor& accessor) const {
+  accessor.SetToGlobalHeap(this->register_num_, ResourceType::Cbv,
+                           this->resource_handle_);
 }
 
 }  // namespace buffer

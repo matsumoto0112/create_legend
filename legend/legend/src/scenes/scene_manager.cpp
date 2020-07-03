@@ -1,6 +1,7 @@
 #include "src/scenes/scene_manager.h"
 
 #include "src/scenes/game_over.h"
+#include "src/scenes/model_view.h"
 #include "src/scenes/title.h"
 
 namespace legend {
@@ -10,6 +11,7 @@ namespace scenes {
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
   //シーン遷移は現状、この方法でしか分からない
   current_scene_ = std::make_unique<Title>(this);
+  current_scene_type_ = SceneType::TITLE;
 }
 
 //初期化
@@ -47,11 +49,15 @@ void SceneManager::Update() {
       case SceneType::GAMEOVER:
         current_scene_ = std::make_unique<GameOver>(this);
         break;
+      case SceneType::MODEL_VIEW:
+        current_scene_ = std::make_unique<ModelView>(this);
+        break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");
         break;
     }
 
+    current_scene_type_ = next_scene_;
     next_scene_ = SceneType::NONE;
     current_scene_->Initialize();
   }
@@ -71,6 +77,11 @@ void SceneManager::Draw() {
 //シーン遷移
 void SceneManager::ChangeScene(SceneType next_scene) {
   next_scene_ = next_scene;
+}
+
+//現在のシーンの取得
+SceneType SceneManager::GetCurrentSceneType() const {
+  return current_scene_type_;
 }
 }  // namespace scenes
 }  // namespace legend

@@ -4,10 +4,13 @@ namespace legend {
 namespace directx {
 namespace buffer {
 
+//コンストラクタ
 RenderTargetTexture::RenderTargetTexture() {}
 
+//デストラクタ
 RenderTargetTexture::~RenderTargetTexture() {}
 
+//初期化
 bool RenderTargetTexture::Init(IDirectXAccessor& accessor, u32 register_num,
                                DXGI_FORMAT format, u32 width, u32 height,
                                const util::Color4& clear_color,
@@ -32,21 +35,24 @@ bool RenderTargetTexture::Init(IDirectXAccessor& accessor, u32 register_num,
   return true;
 }
 
+//レンダーターゲットをセットする
 void RenderTargetTexture::SetRenderTarget(IDirectXAccessor& accessor) {
   render_target_.SetRenderTarget(accessor);
 }
 
+//レンダーターゲットをクリアする
 void RenderTargetTexture::ClearRenderTarget(IDirectXAccessor& accessor) const {
   render_target_.ClearRenderTarget(accessor);
 }
 
+//描画終了
 void RenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
   render_target_.DrawEnd(accessor);
   render_target_.resource_.Transition(
-      accessor,
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
+//グローバルヒープにセットする
 void RenderTargetTexture::SetToGlobalHeap(IDirectXAccessor& accessor) const {
   accessor.SetToGlobalHeap(register_num_, ResourceType::Srv, srv_handle_);
 }

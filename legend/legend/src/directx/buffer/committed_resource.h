@@ -90,10 +90,11 @@ class CommittedResource {
    * @brief バッファをコピーして初期化する
    * @param accessor DirectX12デバイスアクセサ
    * @param buffer コピー元のバッファ
+   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitFromBuffer(IDirectXAccessor& accessor,
-                      ComPtr<ID3D12Resource> buffer);
+  bool InitFromBuffer(IDirectXAccessor& accessor, ComPtr<ID3D12Resource> buffer,
+                      const std::wstring& name);
   /**
    * @brief 状態を遷移させる
    * @param accessor DirectX12デバイスアクセサ

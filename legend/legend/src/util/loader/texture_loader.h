@@ -32,9 +32,15 @@ struct LoadedTextureData {
 /**
  * @brief テクスチャを読み込む
  * @param filename 読み込むファイル名
- * @return 読み込んだ　テクスチャデータ
+ * @return 読み込んだテクスチャデータ
  */
 LoadedTextureData Load(const std::filesystem::path& filename);
+/**
+ * @brief メモリからテクスチャを読み込む
+ * @param pixel_data テクスチャ元のピクセルデータ
+ * @return 読み込んだテクスチャデータ
+ */
+LoadedTextureData LoadFromMemory(const std::vector<u8>& pixel_data);
 
 }  // namespace texture_loader
 

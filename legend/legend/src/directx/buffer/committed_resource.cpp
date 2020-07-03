@@ -28,6 +28,7 @@ CommittedResource::CommittedResource()
 //デストラクタ
 CommittedResource::~CommittedResource() { Reset(); }
 
+//リセットする
 void CommittedResource::Reset() {
   resource_.Reset();
   buffer_size_ = 0;
@@ -93,10 +94,15 @@ bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
 
 //バッファをコピーする
 bool CommittedResource::InitFromBuffer(IDirectXAccessor& accessor,
-                                       ComPtr<ID3D12Resource> buffer) {
+                                       ComPtr<ID3D12Resource> buffer,
+                                       const std::wstring& name) {
   resource_ = buffer;
   this->current_state_ = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
   this->buffer_size_ = 0;
+
+  if (FAILED(resource_->SetName(name.c_str()))) {
+    return false;
+  }
 
   return true;
 }

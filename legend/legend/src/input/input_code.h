@@ -14,8 +14,8 @@ namespace input_code {
  * @brief キー番号
  */
 enum Enum : i32 {
-  End = -1,
-  Decide = 0,
+  End = -1,      //!< 終了コマンド
+  Decide = 0,    //!< 決定コマンド
 };
 }  // namespace input_code
 }  // namespace input

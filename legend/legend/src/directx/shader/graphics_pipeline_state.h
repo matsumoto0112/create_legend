@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/render_target.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
@@ -47,6 +48,12 @@ class GraphicsPipelineState {
    * @brief ピクセルシェーダーをセットする
    */
   void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader);
+  /**
+   * @brief レンダーターゲットの情報をセットする
+   * @param render_target 対象となるレンダーターゲット
+   */
+  void SetRenderTargetInfo(const buffer::RenderTarget& render_target,
+                           bool write_with_depth_stencil);
   /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス

@@ -55,20 +55,17 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  math::Vector3 rotation_;
-  math::Vector3 scale_;
+  struct Object {
+    directx::buffer::VertexBuffer vertex_buffer_;
+    directx::buffer::IndexBuffer index_buffer_;
+    directx::buffer::ConstantBuffer<Transform> transform_cb_;
+  };
+  std::vector<Object> objects_;
 
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
-  directx::buffer::ConstantBuffer<Transform> transform_cb_;
-  directx::buffer::ConstantBuffer<Transform> transform_cb_2_;
   directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   directx::buffer::Texture2D texture_;
-
-  directx::buffer::RenderTargetTexture render_target_;
-  ComPtr<ID3D12DescriptorHeap> rtv_heap_;
+  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  directx::shader::GraphicsPipelineState pipeline_state_;
 };
 
 }  // namespace scenes

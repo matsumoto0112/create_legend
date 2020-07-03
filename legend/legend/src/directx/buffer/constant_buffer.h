@@ -32,6 +32,19 @@ class ConstantBuffer {
    */
   ~ConstantBuffer();
   /**
+   * @brief コピーコンストラクタ
+   */
+  ConstantBuffer(const ConstantBuffer& other);
+  ConstantBuffer& operator=(const ConstantBuffer& other);
+  /**
+   * @brief ムーブコンストラクタ
+   */
+  ConstantBuffer(ConstantBuffer&& other) noexcept;
+  /**
+   * @brief ムーブ代入演算子
+   */
+  ConstantBuffer& operator=(ConstantBuffer&& other) noexcept;
+  /**
    * @brief 状態を全てリセットする
    */
   void Reset();
@@ -98,6 +111,52 @@ inline ConstantBuffer<T>::ConstantBuffer()
 template <class T>
 inline ConstantBuffer<T>::~ConstantBuffer() {
   Reset();
+}
+
+template <class T>
+inline ConstantBuffer<T>::ConstantBuffer(const ConstantBuffer& other) {
+  *this = other;
+}
+
+template <class T>
+inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
+    const ConstantBuffer& other) {
+  if (this != &other) {
+    this->resource_ = other.resource_;
+    this->resource_handle_ = other.resource_handle_;
+    this->staging_ = other.staging_;
+    this->resource_begin_ = nullptr;
+    this->register_num_ = other.register_num_;
+    this->buffer_aligned_size_ = other.buffer_aligned_size_;
+
+    if (this->resource_.GetResource()) {
+      this->WriteStart();
+    }
+  }
+  return *this;
+}
+
+template <class T>
+inline ConstantBuffer<T>::ConstantBuffer(ConstantBuffer&& other) noexcept {
+  *this = std::move(other);
+}
+
+template <class T>
+inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
+    ConstantBuffer&& other) noexcept {
+  if (this != &other) {
+    this->resource_ = other.resource_;
+    this->resource_handle_ = other.resource_handle_;
+    this->staging_ = other.staging_;
+    this->resource_begin_ = nullptr;
+    this->register_num_ = other.register_num_;
+    this->buffer_aligned_size_ = other.buffer_aligned_size_;
+
+    if (this->resource_.GetResource()) {
+      this->WriteStart();
+    }
+  }
+  return *this;
 }
 
 template <class T>

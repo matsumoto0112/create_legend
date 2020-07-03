@@ -19,7 +19,7 @@ void ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  const std::wstring name = L"maru_UV_TexUmekomi";
+  const std::wstring name = L"1000cmObject";
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / (name + L".glb");
   util::loader::GLBLoader loader;
@@ -94,22 +94,49 @@ void ModelView::Initialize() {
     }
   }
 
-  //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
-                           name + L"_VertexBuffer")) {
-    return;
+  constexpr u32 OBJ_NUM = 100;
+  for (u32 i = 0; i < OBJ_NUM; i++) {
+    Object obj;
+    //頂点バッファ作成
+    if (!obj.vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
+                                 name + L"_VertexBuffer")) {
+      return;
+    }
+    if (!obj.vertex_buffer_.WriteBufferResource(vertices)) {
+      return;
+    }
+
+    const std::vector<u16> index = loader.GetIndex();
+    //インデックスバッファ作成
+    if (!obj.index_buffer_.InitAndWrite(
+            device, index, directx::PrimitiveTopology::TriangleList,
+            name + L"_IndexBuffer")) {
+      return;
+    }
+    if (!obj.transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
+      return;
+    }
+
+    math::Vector3 position = math::Vector3(i * 1.0f, 0.0f, i * 1.0f);
+    math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
+    obj.transform_cb_.GetStagingRef().world =
+        math::Matrix4x4::CreateScale(scale) *
+        math::Matrix4x4::CreateTranslate(position);
+    obj.transform_cb_.UpdateStaging();
+    objects_.push_back(obj);
   }
-  if (!vertex_buffer_.WriteBufferResource(vertices)) {
+
+  if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
     return;
   }
 
-  const std::vector<u16> index = loader.GetIndex();
-  //インデックスバッファ作成
-  if (!index_buffer_.InitAndWrite(device, index,
-                                  directx::PrimitiveTopology::TriangleList,
-                                  name + L"_IndexBuffer")) {
-    return;
-  }
+  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
+      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
+      math::Vector3::kUpVector);
+  const float aspect = 1280.0f / 720.0f;
+  world_cb_.GetStagingRef().projection =
+      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
+  world_cb_.UpdateStaging();
 
   //メインテクスチャの書き込み
   const std::vector<u8> albedo = loader.GetAlbedo();
@@ -172,67 +199,18 @@ void ModelView::Initialize() {
   pipeline_state_.SetRootSignature(root_signature_);
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
+  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {
     return;
   }
 
-  if (!transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
-    return;
-  }
-
-  if (!transform_cb_2_.Init(device, 0, L"Transform 2 ConstantBuffer")) {
-    return;
-  }
-
-  rotation_ = math::Vector3::kZeroVector;
-  scale_ = math::Vector3::kUnitVector * 15.0f;
-  transform_cb_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale_) *
-      math::Matrix4x4::CreateRotation(rotation_);
-  transform_cb_.UpdateStaging();
-
-  if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
-    return;
-  }
-
-  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      math::Vector3(0, 10, -10), math::Vector3(0, 0, 0),
-      math::Vector3::kUpVector);
-  const float aspect = 1280.0f / 720.0f;
-  world_cb_.GetStagingRef().projection =
-      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
-  world_cb_.UpdateStaging();
-
-  D3D12_DESCRIPTOR_HEAP_DESC rtv_heap_desc = {};
-  rtv_heap_desc.NumDescriptors = 1;
-  rtv_heap_desc.Type =
-      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-  rtv_heap_desc.Flags =
-      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-  if (FAILED(device.GetDevice()->CreateDescriptorHeap(
-          &rtv_heap_desc, IID_PPV_ARGS(&rtv_heap_)))) {
-    MY_LOG(L"CreateDescriptorHeap failed");
-    return;
-  }
-
-  util::Color4 clear_color(0.0f, 1.0f, 0.0f, 1.0f);
-  if (!render_target_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                           1280, 720, clear_color, L"RTV")) {
-    return;
-  }
-}
+  return;
+}  // namespace scenes
 
 //更新
-void ModelView::Update() {
-  rotation_.y += 0.01f;
-  rotation_.z += 0.005f;
-  transform_cb_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale_) *
-      math::Matrix4x4::CreateRotation(rotation_);
-  transform_cb_.UpdateStaging();
-}
+void ModelView::Update() {}
 
 //描画
 void ModelView::Draw() {
@@ -241,43 +219,20 @@ void ModelView::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  render_target_.SetRenderTarget(device);
-  render_target_.ClearRenderTarget(device);
-
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
-  transform_cb_.SetToHeap(device);
-  world_cb_.SetToHeap(device);
   texture_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
-
-  render_target_.DrawEnd(device);
-  device.SetBackBuffer();
-
-  root_signature_->SetGraphicsCommandList(device);
-  pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
-  math::Vector3 new_position = math::Vector3(3, 3, 0);
-  transform_cb_2_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale_) *
-      math::Matrix4x4::CreateRotation(math::Vector3(0, 0, 0)) *
-      math::Matrix4x4::CreateTranslate(new_position);
-  transform_cb_2_.UpdateStaging();
-  transform_cb_2_.SetToHeap(device);
   world_cb_.SetToHeap(device);
 
-  render_target_.SetToGlobalHeap(device);
+  for (auto&& obj : objects_) {
+    obj.transform_cb_.SetToHeap(device);
+    device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
+    obj.vertex_buffer_.SetGraphicsCommandList(device);
+    obj.index_buffer_.SetGraphicsCommandList(device);
+    obj.index_buffer_.Draw(device);
+  }
 }
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();

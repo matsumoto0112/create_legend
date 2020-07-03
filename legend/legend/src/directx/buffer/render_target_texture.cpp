@@ -21,7 +21,7 @@ bool RenderTargetTexture::Init(IDirectXAccessor& accessor, u32 register_num,
   }
 
   this->register_num_ = register_num;
-  srv_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
+  this->srv_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
 
   D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
   srv_desc.Texture2D.MipLevels = 1;
@@ -48,7 +48,7 @@ void RenderTargetTexture::ClearRenderTarget(IDirectXAccessor& accessor) const {
 //ï`âÊèIóπ
 void RenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
   render_target_.DrawEnd(accessor);
-  render_target_.resource_.Transition(
+  render_target_.Transition(
       accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 

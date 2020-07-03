@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audio\audio_manager.cpp" />
+    <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -146,6 +147,7 @@
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
+    <ClInclude Include="src\directx\buffer\depth_stencil.h" />
     <ClInclude Include="src\directx\buffer\render_target.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
@@ -265,6 +267,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Media Include="assets\audios\free_2.wav" />
     <Media Include="assets\audios\free_3.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

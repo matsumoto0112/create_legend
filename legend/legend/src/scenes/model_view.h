@@ -3,6 +3,7 @@
 
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/render_target_texture.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
@@ -50,19 +51,24 @@ class ModelView : public Scene {
 
   /**
    * @brief èIóπèàóù
-  */
+   */
   void Finalize() override;
 
  private:
   math::Vector3 rotation_;
   math::Vector3 scale_;
+
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
   std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
   directx::buffer::ConstantBuffer<Transform> transform_cb_;
+  directx::buffer::ConstantBuffer<Transform> transform_cb_2_;
   directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   directx::buffer::Texture2D texture_;
+
+  directx::buffer::RenderTargetTexture render_target_;
+  ComPtr<ID3D12DescriptorHeap> rtv_heap_;
 };
 
 }  // namespace scenes

@@ -105,12 +105,9 @@ void ModelView::Initialize() {
 
   const std::vector<u16> index = loader.GetIndex();
   //インデックスバッファ作成
-  if (!index_buffer_.Init(device, static_cast<u32>(index.size()),
-                          directx::PrimitiveTopology::TriangleList,
-                          name + L"_IndexBuffer")) {
-    return;
-  }
-  if (!index_buffer_.WriteBufferResource(index)) {
+  if (!index_buffer_.InitAndWrite(device, index,
+                                  directx::PrimitiveTopology::TriangleList,
+                                  name + L"_IndexBuffer")) {
     return;
   }
 
@@ -185,6 +182,10 @@ void ModelView::Initialize() {
     return;
   }
 
+  if (!transform_cb_2_.Init(device, 0, L"Transform 2 ConstantBuffer")) {
+    return;
+  }
+
   rotation_ = math::Vector3::kZeroVector;
   scale_ = math::Vector3::kUnitVector * 15.0f;
   transform_cb_.GetStagingRef().world =
@@ -203,12 +204,30 @@ void ModelView::Initialize() {
   world_cb_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_cb_.UpdateStaging();
+
+  D3D12_DESCRIPTOR_HEAP_DESC rtv_heap_desc = {};
+  rtv_heap_desc.NumDescriptors = 1;
+  rtv_heap_desc.Type =
+      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+  rtv_heap_desc.Flags =
+      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+  if (FAILED(device.GetDevice()->CreateDescriptorHeap(
+          &rtv_heap_desc, IID_PPV_ARGS(&rtv_heap_)))) {
+    MY_LOG(L"CreateDescriptorHeap failed");
+    return;
+  }
+
+  util::Color4 clear_color(0.0f, 1.0f, 0.0f, 1.0f);
+  if (!render_target_.Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                           1280, 720, clear_color, L"RTV")) {
+    return;
+  }
 }
 
 //更新
 void ModelView::Update() {
-  // rotation_.y += 0.01f;
-  // rotation_.z += 0.005f;
+  rotation_.y += 0.01f;
+  rotation_.z += 0.005f;
   transform_cb_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale_) *
       math::Matrix4x4::CreateRotation(rotation_);
@@ -221,12 +240,39 @@ void ModelView::Draw() {
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
+
+  render_target_.SetRenderTarget(device);
+  render_target_.ClearRenderTarget(device);
+
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
   transform_cb_.SetToHeap(device);
   world_cb_.SetToHeap(device);
   texture_.SetToHeap(device);
+  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+
+  vertex_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.Draw(device);
+
+  render_target_.DrawEnd(device);
+  device.SetBackBuffer();
+
+  root_signature_->SetGraphicsCommandList(device);
+  pipeline_state_.SetGraphicsCommandList(device);
+  device.GetHeapManager().SetGraphicsCommandList(device);
+  math::Vector3 new_position = math::Vector3(3, 3, 0);
+  transform_cb_2_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale_) *
+      math::Matrix4x4::CreateRotation(math::Vector3(0, 0, 0)) *
+      math::Matrix4x4::CreateTranslate(new_position);
+  transform_cb_2_.UpdateStaging();
+  transform_cb_2_.SetToHeap(device);
+  world_cb_.SetToHeap(device);
+
+  render_target_.SetToGlobalHeap(device);
+
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
   vertex_buffer_.SetGraphicsCommandList(device);

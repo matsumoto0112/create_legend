@@ -8,7 +8,7 @@
 
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/texture_2d.h"
-#include "src/directx/descriptor_heap.h"
+#include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"

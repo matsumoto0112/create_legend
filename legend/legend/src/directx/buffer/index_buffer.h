@@ -15,6 +15,7 @@ namespace directx {
 namespace buffer {
 
 /**
+ * @class IndexBuffer
  * @brief インデックスバッファクラス
  */
 class IndexBuffer {
@@ -39,6 +40,17 @@ class IndexBuffer {
    */
   bool Init(IDirectXAccessor& accessor, u32 index_num,
             PrimitiveTopology topology, const std::wstring& name);
+  /**
+   * @brief 初期化と書き込みを同時にする
+   * @param accessor DirectX12デバイスアクセサ
+   * @param indices インデックス配列
+   * @param topology プリミティブの形状
+   * @param name リソース名
+   * @return 初期化、書き込みに成功したらtrueを返す
+   */
+  bool InitAndWrite(IDirectXAccessor& accessor,
+                    const std::vector<Index>& indices,
+                    PrimitiveTopology topology, const std::wstring& name);
   /**
    * @brief バッファにリソースを書き込む
    * @param indices インデックス配列

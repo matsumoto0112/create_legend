@@ -2,21 +2,43 @@
 
 #include "src/directx/directx_helper.h"
 
+namespace {
+/**
+ * @brief バッファの初期化値が必要かどうか判定する
+ * @param flags リソースの用途
+ * @return 用途に対して初期化値が必要ならtrueを返す
+ */
+bool NeedClearValue(D3D12_RESOURCE_FLAGS flags) {
+  return (
+      flags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET ||
+      flags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+}
+}  // namespace
+
 namespace legend {
 namespace directx {
 namespace buffer {
 
 //コンストラクタ
-CommittedResource::CommittedResource() {}
+CommittedResource::CommittedResource()
+    : resource_(nullptr),
+      buffer_size_(0),
+      current_state_(D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON) {}
 
 //デストラクタ
-CommittedResource::~CommittedResource() {}
+CommittedResource::~CommittedResource() { Reset(); }
+
+void CommittedResource::Reset() {
+  resource_.Reset();
+  buffer_size_ = 0;
+  current_state_ = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
+}
 
 //バッファとして初期化する
 bool CommittedResource::InitAsBuffer(IDirectXAccessor& accessor,
                                      u64 buffer_size,
                                      const std::wstring& name) {
-  this->buffer_size_ = 0;
+  Reset();
 
   if (FAILED(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
@@ -38,27 +60,44 @@ bool CommittedResource::InitAsBuffer(IDirectXAccessor& accessor,
   return true;
 }
 
-// 2Dテクスチャとしてバッファを初期化
+// 2Dテクスチャとして初期化する
 bool CommittedResource::InitAsTex2D(IDirectXAccessor& accessor,
-                                    DXGI_FORMAT format, u32 width, u32 height,
-                                    const std::wstring& name) {
+                                    const TextureBufferDesc& desc) {
+  Reset();
+
+  CD3DX12_RESOURCE_DESC resource_desc =
+      CD3DX12_RESOURCE_DESC::Tex2D(desc.format, desc.width, desc.height);
+  resource_desc.Flags |= desc.flags;
+  const D3D12_CLEAR_VALUE* clear_value_ptr =
+      NeedClearValue(resource_desc.Flags) ? &desc.clear_value : nullptr;
+
   if (FAILED(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
-          D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
-          &CD3DX12_RESOURCE_DESC::Tex2D(format, width, height),
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-          IID_PPV_ARGS(&resource_)))) {
-    MY_LOG(L"CreateCommittedResource %s failed.", name.c_str());
+          D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE, &resource_desc,
+          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+          clear_value_ptr, IID_PPV_ARGS(&resource_)))) {
+    MY_LOG(L"CreateCommittedResource %s failed.", desc.name.c_str());
     return false;
   }
 
-  if (FAILED(resource_->SetName(name.c_str()))) {
+  if (FAILED(resource_->SetName(desc.name.c_str()))) {
     return false;
   }
 
-  this->buffer_size_ = width * height * directx_helper::CalcPixelSizeFromFormat(format);
+  this->buffer_size_ = desc.width * desc.height *
+                       directx_helper::CalcPixelSizeFromFormat(desc.format);
   this->current_state_ =
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ;
+  return true;
+}
+
+//バッファをコピーする
+bool CommittedResource::InitFromBuffer(IDirectXAccessor& accessor,
+                                       ComPtr<ID3D12Resource> buffer) {
+  resource_ = buffer;
+  this->current_state_ = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
+  this->buffer_size_ = 0;
+
   return true;
 }
 

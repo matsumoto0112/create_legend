@@ -38,7 +38,7 @@ bool GLBLoader::Load(const std::filesystem::path& filename) {
     //.json形式で取得できるのでデシリアライズしてデータを取得する
     std::string manifest = glb_resource_reader_->GetJson();
     document_ = Deserialize(manifest);
-  } catch (const std::exception& e) {
+  } catch ([[maybe_unused]] const std::exception& e) {
     MY_LOG(string_util::String_2_WString(e.what()));
     return false;
   }

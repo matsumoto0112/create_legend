@@ -132,6 +132,7 @@
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\util\color_4.h" />
+    <ClInclude Include="assets\shaders\defines\global.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -152,5 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />
+    <Media Include="assets\audios\free_2.wav" />
   </ItemGroup>
 </Project>

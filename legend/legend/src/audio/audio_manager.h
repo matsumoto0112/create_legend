@@ -7,7 +7,6 @@
  */
 
 #include <vector>
-//#include <dsound.h>
 #include <xaudio2.h>
 
 #include "src/audio/audio_source.h"
@@ -50,7 +49,6 @@ class AudioManager {
 
  private:
   //! サウンドデバイス
-  // IDirectSound8* directsound_;
   IXAudio2* p_xaudio2_;
   //! 最終到達地点
   IXAudio2MasteringVoice* p_xaudio2_mastering_voice_;

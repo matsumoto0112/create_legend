@@ -6,12 +6,6 @@ namespace audio {
 legend::audio::AudioManager::AudioManager() {}
 
 legend::audio::AudioManager::~AudioManager() {
-  // directsound_の解放
-  // if (directsound_) {
-  //  directsound_->Release();
-  //  directsound_ = NULL;
-  //}
-
   // MasterungVoiceの破棄
   if (p_xaudio2_mastering_voice_ != nullptr) {
     p_xaudio2_mastering_voice_->DestroyVoice();
@@ -28,18 +22,13 @@ legend::audio::AudioManager::~AudioManager() {
   CoUninitialize();
 }
 
-bool AudioManager::Init(/*HWND* window*/) {
+bool AudioManager::Init() {
   // COMの初期化
-  // CoInitialize(NULL);
   if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {
     return false;
   }
 
   //サウンドデバイス作成
-  // if (DirectSoundCreate8(NULL, &directsound_, NULL) != S_OK) {
-  //  MY_LOG(L"サウンドデバイスの作成に失敗しました\n");
-  //  return false;
-  //}
   if (FAILED(XAudio2Create(&p_xaudio2_, 0))) {
     return false;
   }
@@ -49,19 +38,13 @@ bool AudioManager::Init(/*HWND* window*/) {
     return false;
   }
 
-  //強調レベルを設定
-  // if (FAILED(directsound_->SetCooperativeLevel(*window, DSSCL_NORMAL))) {
-  //  MY_LOG(L"強調レベルの設定に失敗しました\n");
-  //  return false;
-  //}
-
   return true;
 }
 
 bool AudioManager::LoadWav(std::wstring filename) {
   //既に読み込み済みかチェック
   if (base_audiosources_.find(filename) != base_audiosources_.end()) {
-    MY_LOG(L"既に読み込み済み");
+    MY_LOG(L"既に読み込み済みです。");
     return false;
   }
 
@@ -85,25 +68,22 @@ bool AudioManager::Play(std::wstring filename) {
   }
 
   //デバックで鳴らした
-  base_audiosources_[filename]->Play();
+  // base_audiosources_[filename]->Play();
 
-  //AudioSource audiosource_;
-  //audiosource_ = std::make_unique<AudioSource>();
-  //audiosource_.Copy(*base_audiosources_[filename]);
-  //audiosource_.Play();
-  //audiosources_.push_back(audiosource_);
+  audiosources_.push_back(std::make_unique<AudioSource>());
+  audiosources_[audiosources_.size() - 1]->Copy(*base_audiosources_[filename]);
+  //audiosources_[audiosources_.size() - 1]->Init(p_xaudio2_, filename);
+  audiosources_[audiosources_.size() - 1]->Play();
 
   return true;
 }
 
-void AudioManager::Update()
-{
+void AudioManager::Update() {
+  // base_audiosources_[L"../legend/assets/audios/free_3.wav"]->Update();
 
-    base_audiosources_[L"../legend/assets/audios/free_3.wav"]->Update();
-
-    for (int i = 0; i < audiosources_.size(); i++) {
-        audiosources_[i]->Update();
-    }
+   for (int i = 0; i < audiosources_.size(); i++) {
+    audiosources_[i]->Update();
+  }
 }
 
 }  // namespace audio

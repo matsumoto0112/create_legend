@@ -265,6 +265,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Media Include="assets\audios\free_2.wav" />
     <Media Include="assets\audios\free_3.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

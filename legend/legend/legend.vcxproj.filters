@@ -135,6 +135,7 @@
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\directx\buffer\depth_stencil.h" />
+    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

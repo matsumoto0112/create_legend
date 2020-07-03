@@ -55,6 +55,10 @@ class GraphicsPipelineState {
   void SetRenderTargetInfo(const buffer::RenderTarget& render_target,
                            bool write_with_depth_stencil);
   /**
+   * @brief アルファブレンドデスクを設定する
+   */
+  void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc, u32 rtv_index);
+  /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス
    */

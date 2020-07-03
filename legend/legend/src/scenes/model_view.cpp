@@ -1,5 +1,6 @@
 #include "src/scenes/model_view.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/libs/stb_image.h"
@@ -200,6 +201,8 @@ void ModelView::Initialize() {
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
   pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  pipeline_state_.SetBlendDesc(
+      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {

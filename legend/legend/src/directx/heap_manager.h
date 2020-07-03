@@ -11,8 +11,9 @@
  そのため、SRVを作るときにはローカルヒープのハンドルを使用し、それを必要になり次第グローバルにコピーして使う戦略を今回は選択した。
  */
 
-#include "src/directx/descriptor_handle.h"
-#include "src/directx/descriptor_heap.h"
+#include "src/directx/descriptor_heap/counting_descriptor_heap.h"
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/resource_type.h"
 
@@ -65,19 +66,23 @@ class HeapManager {
    */
   void CopyHeapAndSetToGraphicsCommandList(IDirectXAccessor& accessor);
 
+ public:
+  CountingDescriptorHeap& GetRtvHeap() { return rtv_heap_; }
+  CountingDescriptorHeap& GetCbvSrvUavHeap() { return cbv_srv_uav_heap_; }
+  CountingDescriptorHeap& GetDsvHeap() { return dsv_heap_; }
+
  private:
   //! グローバルヒープ
   DescriptorHeap global_heap_;
-  //! ローカルヒープ
-  DescriptorHeap local_heap_;
-  //! ローカルヒープの現在の割り当て数
-  u32 local_heap_allocated_count_;
   //! グローバルヒープの現在フレームにおける割り当て数
   u32 global_heap_allocated_count_;
   //! コンスタントバッファのハンドル
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles_;
   //! シェーダーリソースのハンドル
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles_;
+  CountingDescriptorHeap cbv_srv_uav_heap_;
+  CountingDescriptorHeap rtv_heap_;
+  CountingDescriptorHeap dsv_heap_;
 };
 
 }  // namespace directx

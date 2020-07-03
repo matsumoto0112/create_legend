@@ -1,5 +1,6 @@
 #include "src/game/application.h"
 #include "src/scenes/scene_manager.h"
+#include "src/scenes/scene_names.h"
 #include "src/window/window.h"
 
 namespace legend {
@@ -20,6 +21,24 @@ class MyApp final : public device::Application {
       return false;
     }
     scene_manager_.Update();
+
+    if (ImGui::Begin("Scenes")) {
+      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
+                                          scene_manager_.GetCurrentSceneType()))
+                      .c_str());
+
+      if (ImGui::Button("Title")) {
+        scene_manager_.ChangeScene(scenes::SceneType::TITLE);
+      }
+      if (ImGui::Button("GameOver")) {
+        scene_manager_.ChangeScene(scenes::SceneType::GAMEOVER);
+      }
+      if (ImGui::Button("ModelView")) {
+        scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
+      }
+
+      ImGui::End();
+    }
     return true;
   }
 

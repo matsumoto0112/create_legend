@@ -1,12 +1,13 @@
 #ifndef LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_HLSLI_
 #define LEGEND_ASSETS_SHADERS_MODELVIEW_MODEL_VIEW_HLSLI_
 
-#include "../defines/global.h"
+#include "../defines/global.hlsli"
 
 struct VSInput{
     float3 pos : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float4 tangent : TANGENT;
 };
 
 struct VSOutput{
@@ -31,8 +32,8 @@ VSOutput VSMain(const VSInput v){
 }
 
 float4 PSMain(const PSInput i){
-    //float3 color = i.normal * 0.5 + 0.5;
-    float4 color = float4(i.uv,0.0,0.0);
+    //float4 color = float4(i.normal * 0.5 + 0.5,1.0);
+    float4 color = g_albedo.Sample(g_sampler_linear,i.uv);
     return color;
 }
 

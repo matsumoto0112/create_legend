@@ -2,6 +2,7 @@
 
 #include "src/directx/directx_helper.h"
 #include "src/directx/heap_manager.h"
+#include "src/libs/stb_image.h"
 #include "src/util/loader/texture_loader.h"
 
 namespace legend {
@@ -22,8 +23,8 @@ bool Texture2D::Init(DirectX12Device& device, u32 register_num,
 }
 
 //èâä˙âª
-bool Texture2D::Init(DirectX12Device& device, u32 register_num,
-                     const std::filesystem::path& filename) {
+bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
+                             const std::filesystem::path& filename) {
   util::loader::texture_loader::LoadedTextureData data =
       util::loader::texture_loader::Load(filename);
 
@@ -34,6 +35,21 @@ bool Texture2D::Init(DirectX12Device& device, u32 register_num,
   }
 
   WriteResource(device, data.pixels.data());
+  return true;
+}
+
+bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
+                             const std::vector<u8>& data,
+                             const std::wstring& name) {
+  int w, h, comp;
+  const u32 size = static_cast<u32>(data.size());
+  u8* begin = stbi_load_from_memory(data.data(), size, &w, &h, &comp, 4);
+  if (!Init(device, 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h, name)) {
+    return false;
+  }
+  WriteResource(device, begin);
+  stbi_image_free(begin);
+
   return true;
 }
 
@@ -66,7 +82,10 @@ void Texture2D::SetToHeap(DirectX12Device& device, u32 overwrite_register_num) {
 bool Texture2D::InitTexBuffer(DirectX12Device& device, u32 register_num,
                               DXGI_FORMAT format, u32 width, u32 height,
                               const std::wstring& name) {
-  if (!texture_.InitAsTex2D(device, format, width, height, name)) {
+  CommittedResource::TextureBufferDesc desc =
+      CommittedResource::TextureBufferDesc(name, format, width, height);
+
+  if (!texture_.InitAsTex2D(device, desc)) {
     return false;
   }
 
@@ -97,7 +116,7 @@ bool Texture2D::InitTexBuffer(DirectX12Device& device, u32 register_num,
       texture_.GetResource(), &this->srv_view_, this->cpu_handle_);
 
   return true;
-}
+}  // namespace buffer
 
 }  // namespace buffer
 }  // namespace directx

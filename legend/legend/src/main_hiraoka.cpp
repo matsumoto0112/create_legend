@@ -34,13 +34,9 @@
 //    }
 //
 //    MY_LOG(L"init_myapp");
-//    constexpr u16 NUM = 5;
-//    sprites_.resize(NUM);
-//    for (u16 i = 0; i < NUM; i++) {
-//      if (!sprites_[i].Init(game::GameDevice::GetInstance()->GetDevice(),
-//                            math::Vector3(0, 0, 0)))
-//        return false;
-//    }
+//    if (!sprite_.Init(game::GameDevice::GetInstance()->GetDevice(),
+//                      math::Vector3(0, 0, 0)))
+//      return false;
 //
 //    const math::IntVector2 screen_size = main_window_->GetScreenSize();
 //    projection_ = math::Matrix4x4::CreateProjection(
@@ -55,7 +51,8 @@
 //    }
 //
 //    std::filesystem::path p = util::Path::GetInstance()->texture() / L"tex.png";
-//    if (!texture_.Init(game::GameDevice::GetInstance()->GetDevice(), 0, p)) {
+//    if (!texture_.InitAndWrite(game::GameDevice::GetInstance()->GetDevice(), 0,
+//                               p)) {
 //      return false;
 //    }
 //
@@ -150,7 +147,7 @@
 //    world_constant_buffer_.SetToHeap(
 //        game::GameDevice::GetInstance()->GetDevice());
 //
-//    // sprite_.Draw(game::GameDevice::GetInstance()->GetDevice());
+//    sprite_.Draw(game::GameDevice::GetInstance()->GetDevice());
 //
 //    return true;
 //  }
@@ -167,18 +164,15 @@
 //      util::loader::texture_loader::LoadedTextureData data =
 //          util::loader::texture_loader::Load(texture_path);
 //
-//      std::vector<directx::Sprite> sprites(5);
-//      for (u32 i = 0; i < sprites.size(); i++) {
-//        sprites[i].position.x = 0.0f;
-//        sprites[i].position.y = 1.0f;
-//        sprites[i].position.z = 2.0f;
-//        sprites[i].uv.x = 0.0f;
-//        sprites[i].uv.y = 0.0f;
-//      }
+//      std::vector<directx::Sprite> sprites = {
+//          {math::Vector3(-1, 1, 0), math::Vector2(0, 0)},
+//          {math::Vector3(1, 1, 0), math::Vector2(1, 0)},
+//          {math::Vector3(1, -1, 0), math::Vector2(1, 1)},
+//          {math::Vector3(-1, -1, 0), math::Vector2(0, 1)}};
 //
-//      const u32 sprite_size = sizeof(directx::Sprite);
-//      const u32 sprite_num = static_cast<u32>(sprites.size());
-//      if (!vertex_buffer_.Init(device, sprite_size, 1,
+//      const u32 vertex_size = sizeof(directx::Sprite);
+//      const u32 vertex_num = static_cast<u32>(sprites.size());
+//      if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
 //                               L"Sprite_VertexBuffer")) {
 //        return false;
 //      }
@@ -186,11 +180,15 @@
 //        return false;
 //      }
 //
-//      if (!index_buffer_.Init(device, 1,
+//      const u32 index_num = sizeof(data.pixels.size());
+//       if (!index_buffer_.Init(device, index_num,
 //                              directx::PrimitiveTopology::TriangleList,
 //                              L"Sprite_IndexBuffer")) {
 //        return false;
 //      }
+//      // if (!index_buffer_.WriteBufferResource() {
+//      //  return false;
+//      //}
 //
 //      if (!transform_constant_buffer_.Init(device, 0,
 //                                           L"Matrix ConstantBuffer")) {
@@ -233,7 +231,7 @@
 //    math::Vector3 scale_;
 //  };
 //
-//  std::vector<Sprite> sprites_;
+//  Sprite sprite_;
 //  scenes::SceneManager scene_manager_;
 //  math::Vector3 camera_position_;
 //  math::Vector3 camera_at_;

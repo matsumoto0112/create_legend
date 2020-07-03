@@ -23,6 +23,7 @@ VS_Output VS_Main(const VS_Input input) {
 
 float4 PS_Main(const PS_Input input) {
     //float4 color = float4(input.uv, 0.0f, 0.0f);
+    //return color;
     return float4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 

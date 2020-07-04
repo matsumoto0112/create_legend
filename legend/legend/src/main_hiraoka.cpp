@@ -181,14 +181,16 @@
 //      }
 //
 //      const u32 index_num = sizeof(data.pixels.size());
-//       if (!index_buffer_.Init(device, index_num,
+//      if (!index_buffer_.Init(device, index_num,
 //                              directx::PrimitiveTopology::TriangleList,
 //                              L"Sprite_IndexBuffer")) {
 //        return false;
 //      }
-//      // if (!index_buffer_.WriteBufferResource() {
-//      //  return false;
-//      //}
+//
+//      std::vector<u16> indexes = {0, 1, 3, 1, 2, 3};
+//      if (!index_buffer_.WriteBufferResource(indexes)) {
+//        return false;
+//      }
 //
 //      if (!transform_constant_buffer_.Init(device, 0,
 //                                           L"Matrix ConstantBuffer")) {

@@ -1,6 +1,9 @@
 #ifndef LEGEND_ASSETS_SHADERS_DRAW2D_SPRITE_HLSLI_
 #define LEGEND_ASSETS_SHADERS_DRAW2D_SPRITE_HLSLI_
 
+Texture2D<float4> tex0 : register(t0);
+SamplerState samp0 : register(s0);
+
 struct VS_Input {
     float3 position : POSITION;
     float2 uv : TEXCOORD0;
@@ -24,7 +27,8 @@ VS_Output VS_Main(const VS_Input input) {
 float4 PS_Main(const PS_Input input) {
     //float4 color = float4(input.uv, 0.0f, 0.0f);
     //return color;
-    return float4(1.0f, 0.0f, 0.0f, 1.0f);
+    //return float4(1.0f, 0.0f, 0.0f, 1.0f);
+    return tex0.Sample(samp0, input.uv);
 }
 
 #endif //! LEGEND_ASSETS_SHADERS_DRAW2D_SPRITE_HLSLI_

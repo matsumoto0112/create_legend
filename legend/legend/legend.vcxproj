@@ -86,6 +86,7 @@
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
+    <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
+    <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />

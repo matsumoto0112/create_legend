@@ -154,6 +154,7 @@
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
+    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />

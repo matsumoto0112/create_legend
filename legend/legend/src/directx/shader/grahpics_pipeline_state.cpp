@@ -1,3 +1,4 @@
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 
 namespace legend {
@@ -17,9 +18,6 @@ GraphicsPipelineState::~GraphicsPipelineState() {}
 //初期化
 bool GraphicsPipelineState::Init(DirectX12Device& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-  pipeline_state_desc_.DepthStencilState =
-      CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-  pipeline_state_desc_.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
   pipeline_state_desc_.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 
   return true;
@@ -61,6 +59,12 @@ void GraphicsPipelineState::SetRenderTargetInfo(
     const buffer::RenderTarget& render_target, bool write_with_depth_stencil) {
   render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_,
                                              write_with_depth_stencil);
+}
+
+//アルファブレンドデスクをセットする
+void GraphicsPipelineState::SetBlendDesc(
+    const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc, u32 rtv_index) {
+  pipeline_state_desc_.BlendState.RenderTarget[rtv_index] = blend_desc;
 }
 
 //パイプラインステートをセットする

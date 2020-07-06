@@ -19,8 +19,8 @@ void InputManager::Update() {
   if (GetCommand(InputCode::Decide)) {
     MY_LOG(L"入力（決定）\n");
   }
-  if (GetCommand(InputCode::End)) {
-    MY_LOG(L"入力（終了）\n");
+  if (GetCommand(InputCode::Pause)) {
+    MY_LOG(L"入力（待機）\n");
   }
 }
 bool InputManager::GetCommand(InputCode code) const {

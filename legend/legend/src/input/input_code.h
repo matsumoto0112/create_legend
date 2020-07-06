@@ -16,6 +16,7 @@ namespace input_code {
 enum Enum : i32 {
   End = -1,      //!< 終了コマンド
   Decide = 0,    //!< 決定コマンド
+  Pause = 1,     //!< 待機コマンド
 };
 }  // namespace input_code
 }  // namespace input

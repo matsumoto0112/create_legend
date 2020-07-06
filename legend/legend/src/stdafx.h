@@ -27,6 +27,10 @@
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
 
+#ifdef _DEBUG
+#include <dxgidebug.h>
+#endif
+
 #include "src/util/typedef.h"
 #include "src/libs/d3dx12.h"
 #include "src/libs/imgui/imgui.h"

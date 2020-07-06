@@ -14,7 +14,9 @@ ImguiManager::ImguiManager() : heap_(nullptr), enable_gui_(false) {}
 ImguiManager::~ImguiManager() {
   ImGui_ImplDX12_Shutdown();
   ImGui_ImplWin32_Shutdown();
-  ImGui::DestroyContext();
+  if (ImGui::GetCurrentContext()) {
+    ImGui::DestroyContext();
+  }
 }
 
 //‰Šú‰»

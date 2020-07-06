@@ -9,6 +9,7 @@
 #include <wrl/wrappers/corewrappers.h>
 
 #include "src/directx/buffer/render_target.h"
+#include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
 #include "src/libs/d3dx12.h"
@@ -85,10 +86,6 @@ class DirectX12Device : public IDirectXAccessor {
    */
   bool CreateDevice();
   /**
-   * @brief 適切なハードウェアアダプターを取得する
-   */
-  ComPtr<IDXGIAdapter1> GetHardwareAdapter();
-  /**
    * @brief 次のフレームに遷移させる
    * @return
    */
@@ -99,22 +96,18 @@ class DirectX12Device : public IDirectXAccessor {
   static constexpr u32 FRAME_COUNT = 3;
 
  private:
+  ComPtr<ID3D12Device> device_;
+  device::DXGIAdapter adapter_;
   //! レンダーターゲットとなるウィンドウ
   std::weak_ptr<window::Window> target_window_;
   //! レンダーターゲットとなるスクリーンの大きさ
   math::IntVector2 render_target_screen_size_;
-  //! DXGIファクトリ
-  ComPtr<IDXGIFactory4> factory_;
-  //! D3D12デバイス
-  ComPtr<ID3D12Device> device_;
   //! コマンドキュー
   ComPtr<ID3D12CommandQueue> command_queue_;
   //! スワップチェイン
   ComPtr<IDXGISwapChain4> swap_chain_;
   //! バッファインデックス
   i32 frame_index_;
-  //! レンダーターゲットのディスクリプタヒープ
-  // ComPtr<ID3D12DescriptorHeap> rtv_heap_;
   //! レンダーターゲットのリソース
   std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
   //! レンダーターゲットのヒープサイズ

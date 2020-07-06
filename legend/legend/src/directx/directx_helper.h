@@ -27,6 +27,43 @@ constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
   }
 }
 
+/**
+ * @brief HRESULTを文字列に変換する
+ */
+inline std::wstring HrToWString(HRESULT hr) {
+  wchar_t buf[64] = {};
+  swprintf_s(buf, 64, L"HRESULT of 0x%08X", static_cast<u32>(hr));
+  return std::wstring(buf);
+}
+
+/**
+ * @brief DXRをサポートしているか
+ * @param adapter 現在有効なアダプター
+ * @return サポートしていればtrueを返す
+ */
+inline bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter) {
+  ComPtr<ID3D12Device> test_device;
+  D3D12_FEATURE_DATA_D3D12_OPTIONS5 feature_support_data = {};
+
+  //デバイスが作れるなら作る
+  //ここで作れなければそもそもここに来る前に終了しているだろうが念のため判定する
+  const bool succeeded_create_device = SUCCEEDED(
+      D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0,
+                        IID_PPV_ARGS(&test_device)));
+  if (!succeeded_create_device) return false;
+
+  // GPUのサポート状態を取得する
+  const bool succeed_check_feature_support =
+      SUCCEEDED(test_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5,
+                                                 &feature_support_data,
+                                                 sizeof(feature_support_data)));
+  if (!succeed_check_feature_support) return false;
+
+  //レイトレーシングをサポートしているかどうか判定
+  return feature_support_data.RaytracingTier !=
+         D3D12_RAYTRACING_TIER::D3D12_RAYTRACING_TIER_NOT_SUPPORTED;
+}
+
 }  // namespace directx_helper
 }  // namespace directx
 }  // namespace legend

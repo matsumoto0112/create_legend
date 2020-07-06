@@ -1,12 +1,13 @@
 #include "src/directx/directx12_device.h"
 
+#include "src/directx/device/device_parameters.h"
+
 namespace legend {
 namespace directx {
 //コンストラクタ
 DirectX12Device::DirectX12Device()
     : target_window_(),
       render_target_screen_size_(math::IntVector2::kZeroVector),
-      device_(nullptr),
       current_resource_state_(
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON) {}
 
@@ -24,6 +25,9 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
     render_target_screen_size_ = win->GetScreenSize();
   }
 
+  if (!adapter_.Init()) {
+    return false;
+  }
   if (!CreateDevice()) return false;
 
   MY_LOG(L"Create Device finished");
@@ -126,39 +130,17 @@ void DirectX12Device::SetToGlobalHeap(u32 register_num,
 }
 
 bool DirectX12Device::CreateDevice() {
-  unsigned int dxgi_flags = 0;
-
-  //デバッグ時のみデバッグ情報を取得できるような設定をする
-#if defined(_DEBUG)
-  ComPtr<ID3D12Debug> debug_controller;
-  if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug_controller)))) {
-    debug_controller->EnableDebugLayer();
-    dxgi_flags |= DXGI_CREATE_FACTORY_DEBUG;
-  }
-#endif
-
-  if (FAILED(CreateDXGIFactory2(dxgi_flags, IID_PPV_ARGS(&factory_)))) {
-    MY_LOG(L"CreateDXGIFactory2 failed");
-    return false;
-  }
-
-  ComPtr<IDXGIAdapter1> hardware_adapter = GetHardwareAdapter();
-  if (!hardware_adapter) {
-    MY_LOG(L"GetHardwareAdapter failed");
-    return false;
-  }
-
-  if (FAILED(D3D12CreateDevice(hardware_adapter.Get(), D3D_FEATURE_LEVEL_11_0,
+  if (FAILED(D3D12CreateDevice(adapter_.GetAdapter(),
+                               device::parameters::MIN_FEATURE_LEVEL,
                                IID_PPV_ARGS(&device_)))) {
-    MY_LOG(L"D3D12CreateDevice failed");
     return false;
   }
 
   D3D12_COMMAND_QUEUE_DESC queue_desc = {};
   queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
   queue_desc.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
-  if (FAILED(device_->CreateCommandQueue(&queue_desc,
-                                         IID_PPV_ARGS(&command_queue_)))) {
+  if (FAILED(device_->CreateCommandQueue(
+          &queue_desc, IID_PPV_ARGS(&command_queue_)))) {
     MY_LOG(L"CreateCommandQueue failed");
     return false;
   }
@@ -178,7 +160,7 @@ bool DirectX12Device::CreateDevice() {
   }
 
   ComPtr<IDXGISwapChain1> swap_chain;
-  if (FAILED(factory_->CreateSwapChainForHwnd(
+  if (FAILED(adapter_.GetFactory()->CreateSwapChainForHwnd(
           command_queue_.Get(), target_window_.lock()->GetHWND(),
           &swap_chain_desc, nullptr, nullptr, &swap_chain))) {
     MY_LOG(L"CreateSwapChainForHwnd failed");
@@ -192,8 +174,8 @@ bool DirectX12Device::CreateDevice() {
 
   frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
 
-  if (FAILED(factory_->MakeWindowAssociation(target_window_.lock()->GetHWND(),
-                                             DXGI_MWA_NO_ALT_ENTER))) {
+  if (FAILED(adapter_.GetFactory()->MakeWindowAssociation(
+          target_window_.lock()->GetHWND(), DXGI_MWA_NO_ALT_ENTER))) {
     MY_LOG(L"MakeWindowAssociation failed");
     return false;
   }
@@ -237,9 +219,9 @@ bool DirectX12Device::CreateDevice() {
     MY_LOG(L"CreateCommandList failed");
     return false;
   }
-  if (FAILED(device_->CreateFence(fence_values_[frame_index_],
-                                  D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
-                                  IID_PPV_ARGS(&fence_)))) {
+  if (FAILED(device_->CreateFence(
+          fence_values_[frame_index_], D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
+          IID_PPV_ARGS(&fence_)))) {
     MY_LOG(L"CreateFence failed");
     return false;
   }
@@ -254,22 +236,6 @@ bool DirectX12Device::CreateDevice() {
   return true;
 }  // namespace legend
 
-//ハードウェアアダプターを取得する
-ComPtr<IDXGIAdapter1> DirectX12Device::GetHardwareAdapter() {
-  ComPtr<IDXGIAdapter1> adapter;
-  for (unsigned int adapter_index = 0;
-       factory_->EnumAdapters1(adapter_index, &adapter); adapter_index++) {
-    DXGI_ADAPTER_DESC1 desc;
-    adapter->GetDesc1(&desc);
-    if (desc.Flags & DXGI_ADAPTER_FLAG::DXGI_ADAPTER_FLAG_SOFTWARE) continue;
-    if (SUCCEEDED(D3D12CreateDevice(adapter.Get(),
-                                    D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0,
-                                    _uuidof(ID3D12Device), nullptr))) {
-      break;
-    }
-  }
-  return adapter;
-}
 
 bool DirectX12Device::MoveToNextFrame() {
   const u64 fence_value = fence_values_[frame_index_];

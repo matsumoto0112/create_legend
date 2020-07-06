@@ -86,6 +86,7 @@
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
@@ -102,7 +103,6 @@
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\directx12_device.cpp" />
-    <ClCompile Include="src\directx\directx_helper.cpp" />
     <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
     <ClCompile Include="src\directx\shader\pixel_shader.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
@@ -153,6 +153,8 @@
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
+    <ClInclude Include="src\directx\device\device_parameters.h" />
+    <ClInclude Include="src\directx\device\dxgi_adapter.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\game\game_device.h" />

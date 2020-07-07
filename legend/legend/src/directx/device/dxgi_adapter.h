@@ -21,6 +21,7 @@ class DXGIAdapter {
  public:
   IDXGIFactory4* GetFactory() const { return factory_.Get(); }
   IDXGIAdapter1* GetAdapter() const { return adapter_.Get(); }
+  DeviceOptionFlags GetOptions() const { return options_; }
 
  private:
   bool InitializeAdapter(IDXGIAdapter1** adapter, u32 adapter_id_override_);

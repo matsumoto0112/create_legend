@@ -57,6 +57,7 @@
     <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
+    <ClCompile Include="src\directx\device\swap_chain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -139,8 +140,8 @@
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
-    <ClInclude Include="src\directx\device\device_parameters.h" />
     <ClInclude Include="src\directx\device\device_option.h" />
+    <ClInclude Include="src\directx\device\swap_chain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -1,7 +1,5 @@
 #include "src/directx/directx12_device.h"
 
-#include "src/directx/device/device_parameters.h"
-
 namespace legend {
 namespace directx {
 //コンストラクタ
@@ -65,15 +63,14 @@ bool DirectX12Device::Prepare() {
   command_list_->RSSetViewports(1, &viewport);
   command_list_->RSSetScissorRects(1, &scissor_rect);
 
-  render_targets_[frame_index_].SetRenderTarget(*this);
-  render_targets_[frame_index_].ClearRenderTarget(*this);
+  swap_chain_.SetBackBuffer(*this);
 
   heap_manager_.BeginFrame();
   return true;
 }
 
 bool DirectX12Device::Present() {
-  render_targets_[frame_index_].DrawEnd(*this);
+  swap_chain_.DrawEnd(*this);
 
   if (FAILED(command_list_->Close())) {
     return false;
@@ -82,18 +79,14 @@ bool DirectX12Device::Present() {
   ID3D12CommandList* command_lists[] = {command_list_.Get()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
-  if (FAILED(swap_chain_->Present(1, 0))) {
-    return false;
-  }
+  swap_chain_.Present();
 
   MoveToNextFrame();
 
   return true;
 }
 
-void DirectX12Device::SetBackBuffer() {
-  render_targets_[frame_index_].SetRenderTarget(*this);
-}
+void DirectX12Device::SetBackBuffer() { swap_chain_.SetBackBuffer(*this); }
 
 void DirectX12Device::WaitForGPU() noexcept {
   if (command_queue_ && fence_ && fence_event_.IsValid()) {
@@ -131,7 +124,7 @@ void DirectX12Device::SetToGlobalHeap(u32 register_num,
 
 bool DirectX12Device::CreateDevice() {
   if (FAILED(D3D12CreateDevice(adapter_.GetAdapter(),
-                               device::parameters::MIN_FEATURE_LEVEL,
+                               device::defines::MIN_FEATURE_LEVEL,
                                IID_PPV_ARGS(&device_)))) {
     return false;
   }
@@ -145,62 +138,14 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
-  swap_chain_desc.BufferCount = FRAME_COUNT;
-  swap_chain_desc.Width = render_target_screen_size_.x;
-  swap_chain_desc.Height = render_target_screen_size_.y;
-  swap_chain_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
-  swap_chain_desc.SampleDesc.Count = 1;
-
-  if (target_window_.expired()) {
-    MY_LOG(L"target_window_ not found.");
-    return false;
-  }
-
-  ComPtr<IDXGISwapChain1> swap_chain;
-  if (FAILED(adapter_.GetFactory()->CreateSwapChainForHwnd(
-          command_queue_.Get(), target_window_.lock()->GetHWND(),
-          &swap_chain_desc, nullptr, nullptr, &swap_chain))) {
-    MY_LOG(L"CreateSwapChainForHwnd failed");
-    return false;
-  }
-
-  if (FAILED(swap_chain.As(&swap_chain_))) {
-    MY_LOG(L"Cast to IDXGISwapChain4 failed");
-    return false;
-  }
-
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
-
-  if (FAILED(adapter_.GetFactory()->MakeWindowAssociation(
-          target_window_.lock()->GetHWND(), DXGI_MWA_NO_ALT_ENTER))) {
-    MY_LOG(L"MakeWindowAssociation failed");
-    return false;
-  }
-
   if (!heap_manager_.Init(*this)) return false;
 
-  const util::Color4 clear_color(0.2f, 0.3f, 0.5f, 1.0f);
-  for (unsigned int i = 0; i < FRAME_COUNT; i++) {
-    ComPtr<ID3D12Resource> buffer;
-    if (FAILED(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&buffer)))) {
-      MY_LOG(L"GetBuffer buffer number %d isfailed", i);
-      return false;
-    }
-    if (!render_targets_[i].InitFromBuffer(
-            *this, buffer, clear_color,
-            util::string_util::Format(L"Back Buffer [%d]", i))) {
-      return false;
-    }
-    if (!render_targets_[i].CreateDepthStencil(
-            *this, DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT,
-            render_target_screen_size_.x, render_target_screen_size_.y,
-            buffer::DepthStencil::ClearValue{1.0f, 0},
-            util::string_util::Format(L"Depth Stencil [%d]", i))) {
-      return false;
-    }
+  if (!swap_chain_.Init(adapter_, *target_window_.lock(), command_queue_.Get(),
+                        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)) {
+    return false;
+  }
+  if (!swap_chain_.CreateRenderTarget(*this)) {
+    return false;
   }
 
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
@@ -242,7 +187,8 @@ bool DirectX12Device::MoveToNextFrame() {
     return false;
   }
 
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+  swap_chain_.UpdateCurrentFrameIndex();
+  frame_index_ = swap_chain_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
     if (FAILED(fence_->SetEventOnCompletion(fence_values_[frame_index_],

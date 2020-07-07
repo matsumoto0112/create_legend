@@ -1,6 +1,5 @@
 #include "src/directx/device/dxgi_adapter.h"
 
-#include "src/directx/device/device_parameters.h"
 #include "src/directx/directx_helper.h"
 
 namespace legend {
@@ -100,7 +99,7 @@ bool DXGIAdapter::InitializeAdapter(IDXGIAdapter1** adapter,
 
     //アダプターでデバイスを作成できればそのアダプターが有効である証となる
     if (SUCCEEDED(D3D12CreateDevice(test_adapter.Get(),
-                                    parameters::MIN_FEATURE_LEVEL,
+                                    defines::MIN_FEATURE_LEVEL,
                                     __uuidof(ID3D12Device), nullptr))) {
       this->adapter_id_ = adapter_id;
       this->adapter_description_ = desc.Description;

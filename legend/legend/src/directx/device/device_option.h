@@ -14,6 +14,13 @@ enum class DeviceOptionFlags {
   TEARING,  //! テアリングサポート
 };
 
+namespace defines {
+//要求する最小機能レベル
+//今回のプロジェクトで要求する最小レベル
+constexpr D3D_FEATURE_LEVEL MIN_FEATURE_LEVEL =
+    D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0;
+}  // namespace defines
+
 }  // namespace device
 }  // namespace directx
 }  // namespace legend

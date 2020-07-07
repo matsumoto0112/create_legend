@@ -8,8 +8,8 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
-#include "src/directx/buffer/render_target.h"
 #include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
 #include "src/libs/d3dx12.h"
@@ -72,7 +72,7 @@ class DirectX12Device : public IDirectXAccessor {
     return command_list_.Get();
   }
   const buffer::RenderTarget& GetRenderTarget() const {
-    return render_targets_[frame_index_];
+      return swap_chain_.GetRenderTarget();
   }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
@@ -98,20 +98,16 @@ class DirectX12Device : public IDirectXAccessor {
  private:
   ComPtr<ID3D12Device> device_;
   device::DXGIAdapter adapter_;
+  //! スワップチェイン
+  device::SwapChain swap_chain_;
   //! レンダーターゲットとなるウィンドウ
   std::weak_ptr<window::Window> target_window_;
   //! レンダーターゲットとなるスクリーンの大きさ
   math::IntVector2 render_target_screen_size_;
   //! コマンドキュー
   ComPtr<ID3D12CommandQueue> command_queue_;
-  //! スワップチェイン
-  ComPtr<IDXGISwapChain4> swap_chain_;
   //! バッファインデックス
   i32 frame_index_;
-  //! レンダーターゲットのリソース
-  std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
-  //! レンダーターゲットのヒープサイズ
-  i32 rtv_heap_size_;
   //! コマンドアロケータ
   std::array<ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> command_allocator_;
   //! コマンドフェンス

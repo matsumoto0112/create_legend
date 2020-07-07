@@ -64,6 +64,7 @@ bool DirectX12Device::Prepare() {
   command_list_->RSSetScissorRects(1, &scissor_rect);
 
   swap_chain_.SetBackBuffer(*this);
+  swap_chain_.ClearBackBuffer(*this);
 
   heap_manager_.BeginFrame();
   return true;
@@ -140,11 +141,9 @@ bool DirectX12Device::CreateDevice() {
 
   if (!heap_manager_.Init(*this)) return false;
 
-  if (!swap_chain_.Init(adapter_, *target_window_.lock(), command_queue_.Get(),
+  if (!swap_chain_.Init(*this, adapter_, *target_window_.lock(),
+                        command_queue_.Get(),
                         DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)) {
-    return false;
-  }
-  if (!swap_chain_.CreateRenderTarget(*this)) {
     return false;
   }
 

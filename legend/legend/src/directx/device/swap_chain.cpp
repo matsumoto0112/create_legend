@@ -6,13 +6,19 @@ namespace legend {
 namespace directx {
 namespace device {
 
+//コンストラクタ
 SwapChain::SwapChain() {}
-SwapChain::~SwapChain() {}
-bool SwapChain::Init(DXGIAdapter& adapter, window::Window& target_window,
-                     ID3D12CommandQueue* command_queue, DXGI_FORMAT format) {
-  allow_tearing_ = util::enum_util::is_bitpop(adapter.GetOptions() &
-                                              DeviceOptionFlags::TEARING);
 
+//デストラクタ
+SwapChain::~SwapChain() {}
+
+//初期化
+bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
+                     window::Window& target_window,
+                     ID3D12CommandQueue* command_queue, DXGI_FORMAT format) {
+  this->allow_tearing_ = util::enum_util::IsBitpop(adapter.GetOptions() &
+                                                   DeviceOptionFlags::TEARING);
+  //スワップチェインを作成する
   DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
   swap_chain_desc.BufferCount = FRAME_COUNT;
   swap_chain_desc.Width = target_window.GetScreenSize().x;
@@ -45,9 +51,8 @@ bool SwapChain::Init(DXGIAdapter& adapter, window::Window& target_window,
     adapter.GetFactory()->MakeWindowAssociation(target_window.GetHWND(),
                                                 DXGI_MWA_NO_ALT_ENTER);
   }
-  return true;
-}
-bool SwapChain::CreateRenderTarget(IDirectXAccessor& accessor) {
+
+  //レンダーターゲットを作成する
   for (u32 n = 0; n < FRAME_COUNT; n++) {
     ComPtr<ID3D12Resource> buffer;
     if (HRESULT hr = swap_chain_->GetBuffer(n, IID_PPV_ARGS(&buffer));
@@ -63,18 +68,26 @@ bool SwapChain::CreateRenderTarget(IDirectXAccessor& accessor) {
     }
   }
 
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+  this->frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
   return true;
 }
+
+//バックバッファにセットする
 void SwapChain::SetBackBuffer(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].SetRenderTarget(accessor);
+}
+
+//バックバッファをクリアする
+void SwapChain::ClearBackBuffer(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].ClearRenderTarget(accessor);
 }
 
+//描画を終了する
 void SwapChain::DrawEnd(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].DrawEnd(accessor);
 }
 
+//バックバッファを表示する
 bool SwapChain::Present() {
   HRESULT hr;
   if (allow_tearing_) {
@@ -89,6 +102,7 @@ bool SwapChain::Present() {
   return true;
 }
 
+//現在のフレームインデックスを更新する
 void SwapChain::UpdateCurrentFrameIndex() {
   frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
 }

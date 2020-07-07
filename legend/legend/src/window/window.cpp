@@ -84,13 +84,13 @@ void Window::SetWindowPosition(const math::IntVector2& window_position) {
 
 //ウィンドウの設定を更新する
 void Window::UpdateSettings(UpdateWindowSettingFlags flags) const {
-  if (util::enum_util::is_bitpop(flags &
+  if (util::enum_util::IsBitpop(flags &
                                  UpdateWindowSettingFlags::WindowTitle)) {
     UpdateWindowTitle();
   }
-  if (util::enum_util::is_bitpop(flags &
+  if (util::enum_util::IsBitpop(flags &
                                  UpdateWindowSettingFlags::ScreenSize) ||
-      util::enum_util::is_bitpop(flags &
+      util::enum_util::IsBitpop(flags &
                                  UpdateWindowSettingFlags::WindowPosition)) {
     UpdateScreenSizeAndPosition();
   }

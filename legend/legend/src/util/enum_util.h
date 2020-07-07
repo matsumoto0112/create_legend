@@ -108,7 +108,7 @@ inline constexpr result_t<T1, T2, true>& operator^=(T1& flags1, T2 flags2) {
  * @brief ƒrƒbƒg‚ª—§‚Á‚Ä‚¢‚é‚©
  */
 template <typename T>
-inline constexpr bool is_bitpop(T flags) {
+inline constexpr bool IsBitpop(T flags) {
   return provides_bitwise_operators_detail::Peel(flags) > 0;
 }
 

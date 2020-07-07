@@ -56,7 +56,7 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
   }
 
   //ティアリング設定
-  if (util::enum_util::is_bitpop(this->options_ & DeviceOptionFlags::TEARING)) {
+  if (util::enum_util::IsBitpop(this->options_ & DeviceOptionFlags::TEARING)) {
     BOOL allow_tearing = false;
     ComPtr<IDXGIFactory5> factory_5;
     HRESULT hr = factory_.As(&factory_5);

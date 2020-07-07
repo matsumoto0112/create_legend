@@ -5,8 +5,14 @@
 namespace legend {
 namespace directx {
 namespace device {
+
+//コンストラクタ
 DXGIAdapter::DXGIAdapter() {}
+
+//デストラクタ
 DXGIAdapter::~DXGIAdapter() {}
+
+//初期化
 bool DXGIAdapter::Init(DeviceOptionFlags required_option,
                        u32 adapter_id_override) {
   this->options_ = required_option;
@@ -70,15 +76,16 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
       this->options_ &= ~DeviceOptionFlags::TEARING;
     }
   }
-  if (!InitializeAdapter(&adapter_, adapter_id_override)) {
+  if (!InitializeAdapter(adapter_id_override, &adapter_)) {
     return false;
   }
-  this->options_ &= ~DeviceOptionFlags::TEARING;
 
   return true;
 }
-bool DXGIAdapter::InitializeAdapter(IDXGIAdapter1** adapter,
-                                    u32 adapter_id_override) {
+
+//アダプターの初期化
+bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
+                                    IDXGIAdapter1** adapter) {
   *adapter = nullptr;
   ComPtr<IDXGIAdapter1> test_adapter;
   for (u32 adapter_id = 0; DXGI_ERROR_NOT_FOUND !=
@@ -102,14 +109,14 @@ bool DXGIAdapter::InitializeAdapter(IDXGIAdapter1** adapter,
                                     defines::MIN_FEATURE_LEVEL,
                                     __uuidof(ID3D12Device), nullptr))) {
       this->adapter_id_ = adapter_id;
-      this->adapter_description_ = desc.Description;
       MY_LOG(L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls", adapter_id,
              desc.VendorId, desc.DeviceId, desc.Description);
       break;
     }
   }
 
-#ifdef _DEBUG
+  //ラップデバイスの設定
+#if !defined(NDEBUG)
   if (!test_adapter && adapter_id_override == UINT_MAX) {
     if (FAILED(factory_->EnumWarpAdapter(IID_PPV_ARGS(&test_adapter)))) {
       MY_LOG(

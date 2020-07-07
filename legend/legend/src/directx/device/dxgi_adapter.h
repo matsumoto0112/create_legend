@@ -11,27 +11,60 @@
 namespace legend {
 namespace directx {
 namespace device {
+/**
+ * @brief DXGIアダプタークラス
+ */
 class DXGIAdapter {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   DXGIAdapter();
+  /**
+   * @brief デストラクタ
+   */
   ~DXGIAdapter();
+  /**
+   * @brief 初期化
+   * @param required_option 要求するオプション
+   * @param adapter_id_override 上書きするアダプターID
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init(DeviceOptionFlags required_option = DeviceOptionFlags::NONE,
             u32 adapter_id_override = UINT_MAX);
 
  public:
+  /**
+   * @brief ファクトリの取得
+   */
   IDXGIFactory4* GetFactory() const { return factory_.Get(); }
+  /**
+   * @brief アダプターの取得k
+   */
   IDXGIAdapter1* GetAdapter() const { return adapter_.Get(); }
+  /**
+   * @brief 現在有効なオプションの取得
+   */
   DeviceOptionFlags GetOptions() const { return options_; }
 
  private:
-  bool InitializeAdapter(IDXGIAdapter1** adapter, u32 adapter_id_override_);
+  /**
+   * @brief アダプターの初期化
+   * @param adapter_id_override 上書きするアダプターID
+   * @param adapter アダプター（戻り値）
+   * @return 取得に成功したらtrueを返す
+   */
+  bool InitializeAdapter(u32 adapter_id_override, IDXGIAdapter1** adapter);
 
  private:
+  //! ファクトリ
   ComPtr<IDXGIFactory4> factory_;
+  //! アダプター
   ComPtr<IDXGIAdapter1> adapter_;
+  //! デバイスオプション
   DeviceOptionFlags options_;
+  //! アダプターID
   u32 adapter_id_;
-  std::wstring adapter_description_;
 };
 
 }  // namespace device

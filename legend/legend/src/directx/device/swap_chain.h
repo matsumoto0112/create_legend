@@ -36,6 +36,7 @@ class SwapChain {
   ComPtr<IDXGISwapChain3> swap_chain_;
   std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
   u32 frame_index_;
+  bool allow_tearing_;
 };
 
 }  // namespace device

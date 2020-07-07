@@ -10,10 +10,8 @@ SwapChain::SwapChain() {}
 SwapChain::~SwapChain() {}
 bool SwapChain::Init(DXGIAdapter& adapter, window::Window& target_window,
                      ID3D12CommandQueue* command_queue, DXGI_FORMAT format) {
-  auto IsTearingSupport = [](DXGIAdapter& adapter) {
-    return util::enum_util::is_bitpop(adapter.GetOptions() &
-                                      DeviceOptionFlags::TEARING);
-  };
+  allow_tearing_ = util::enum_util::is_bitpop(adapter.GetOptions() &
+                                              DeviceOptionFlags::TEARING);
 
   DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
   swap_chain_desc.BufferCount = FRAME_COUNT;
@@ -24,9 +22,8 @@ bool SwapChain::Init(DXGIAdapter& adapter, window::Window& target_window,
   swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
   swap_chain_desc.SampleDesc.Count = 1;
   swap_chain_desc.Flags =
-      IsTearingSupport(adapter)
-          ? DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING
-          : 0;
+      allow_tearing_ ? DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING
+                     : 0;
 
   ComPtr<IDXGISwapChain1> swap_chain_1;
   if (HRESULT hr = adapter.GetFactory()->CreateSwapChainForHwnd(
@@ -44,7 +41,7 @@ bool SwapChain::Init(DXGIAdapter& adapter, window::Window& target_window,
     return false;
   }
 
-  if (IsTearingSupport(adapter)) {
+  if (allow_tearing_) {
     adapter.GetFactory()->MakeWindowAssociation(target_window.GetHWND(),
                                                 DXGI_MWA_NO_ALT_ENTER);
   }
@@ -79,7 +76,13 @@ void SwapChain::DrawEnd(IDirectXAccessor& accessor) {
 }
 
 bool SwapChain::Present() {
-  if (HRESULT hr = swap_chain_->Present(1, 0); FAILED(hr)) {
+  HRESULT hr;
+  if (allow_tearing_) {
+    hr = swap_chain_->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+  } else {
+    hr = swap_chain_->Present(1, 0);
+  }
+  if (FAILED(hr)) {
     return false;
   }
 

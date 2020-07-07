@@ -8,12 +8,9 @@ namespace directx {
 namespace device {
 DXGIAdapter::DXGIAdapter() {}
 DXGIAdapter::~DXGIAdapter() {}
-bool DXGIAdapter::Init(u32 options, u32 adapter_id_override) {
-  this->options_ = options;
-
-  if (this->options_ & parameters::REQUIRE_TEARING_SUPPORT) {
-    this->options_ |= parameters::ALLOW_TEARING;
-  }
+bool DXGIAdapter::Init(DeviceOptionFlags required_option,
+                       u32 adapter_id_override) {
+  this->options_ = required_option;
 
   //デバッグ用DXGIオブジェクトを作成したかどうか
   bool debug_dxgi = false;
@@ -37,6 +34,7 @@ bool DXGIAdapter::Init(u32 options, u32 adapter_id_override) {
         MY_LOG(L"CreateDXGIFactory2 failed.\n Reason : %s",
                directx_helper::HrToWString(hr));
       }
+      debug_dxgi = true;
       dxgi_info_queue->SetBreakOnSeverity(
           DXGI_DEBUG_ALL,
           DXGI_INFO_QUEUE_MESSAGE_SEVERITY::
@@ -59,9 +57,8 @@ bool DXGIAdapter::Init(u32 options, u32 adapter_id_override) {
   }
 
   //ティアリング設定
-  if (options_ &
-      (parameters::ALLOW_TEARING | parameters::REQUIRE_TEARING_SUPPORT)) {
-    bool allow_tearing = false;
+  if (util::enum_util::is_bitpop(this->options_ & DeviceOptionFlags::TEARING)) {
+    BOOL allow_tearing = false;
     ComPtr<IDXGIFactory5> factory_5;
     HRESULT hr = factory_.As(&factory_5);
     if (SUCCEEDED(hr)) {
@@ -71,12 +68,14 @@ bool DXGIAdapter::Init(u32 options, u32 adapter_id_override) {
     }
     if (FAILED(hr) || !allow_tearing) {
       MY_LOG(L"WARNING: Variable refresh rate displays are not supported.\n");
-      options_ &= ~parameters::ALLOW_TEARING;
+      this->options_ &= ~DeviceOptionFlags::TEARING;
     }
   }
   if (!InitializeAdapter(&adapter_, adapter_id_override)) {
     return false;
   }
+  this->options_ &= ~DeviceOptionFlags::TEARING;
+
   return true;
 }
 bool DXGIAdapter::InitializeAdapter(IDXGIAdapter1** adapter,

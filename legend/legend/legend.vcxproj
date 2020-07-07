@@ -155,6 +155,7 @@
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\device\device_parameters.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
+    <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\game\game_device.h" />

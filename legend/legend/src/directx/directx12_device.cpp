@@ -25,7 +25,7 @@ bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
     render_target_screen_size_ = win->GetScreenSize();
   }
 
-  if (!adapter_.Init()) {
+  if (!adapter_.Init(device::DeviceOptionFlags::TEARING)) {
     return false;
   }
   if (!CreateDevice()) return false;
@@ -139,8 +139,8 @@ bool DirectX12Device::CreateDevice() {
   D3D12_COMMAND_QUEUE_DESC queue_desc = {};
   queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
   queue_desc.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
-  if (FAILED(device_->CreateCommandQueue(
-          &queue_desc, IID_PPV_ARGS(&command_queue_)))) {
+  if (FAILED(device_->CreateCommandQueue(&queue_desc,
+                                         IID_PPV_ARGS(&command_queue_)))) {
     MY_LOG(L"CreateCommandQueue failed");
     return false;
   }
@@ -219,9 +219,9 @@ bool DirectX12Device::CreateDevice() {
     MY_LOG(L"CreateCommandList failed");
     return false;
   }
-  if (FAILED(device_->CreateFence(
-          fence_values_[frame_index_], D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
-          IID_PPV_ARGS(&fence_)))) {
+  if (FAILED(device_->CreateFence(fence_values_[frame_index_],
+                                  D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
+                                  IID_PPV_ARGS(&fence_)))) {
     MY_LOG(L"CreateFence failed");
     return false;
   }
@@ -235,7 +235,6 @@ bool DirectX12Device::CreateDevice() {
 
   return true;
 }  // namespace legend
-
 
 bool DirectX12Device::MoveToNextFrame() {
   const u64 fence_value = fence_values_[frame_index_];

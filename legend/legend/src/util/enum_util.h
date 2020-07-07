@@ -51,7 +51,7 @@ inline constexpr safe_underlying_t<T> Peel(T flags) {
  */
 template <typename T>
 inline constexpr result_t<T, T> operator~(T flag) {
-  return result_t<T>(~Peel(flag));
+  return result_t<T, T>(~Peel(flag));
 }
 
 /**

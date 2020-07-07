@@ -6,6 +6,8 @@
  * @brief DXGIアダプター管理クラス定義
  */
 
+#include "src/directx/device/device_option.h"
+
 namespace legend {
 namespace directx {
 namespace device {
@@ -13,7 +15,8 @@ class DXGIAdapter {
  public:
   DXGIAdapter();
   ~DXGIAdapter();
-  bool Init(u32 options = 0, u32 adapter_id_override = UINT_MAX);
+  bool Init(DeviceOptionFlags required_option = DeviceOptionFlags::NONE,
+            u32 adapter_id_override = UINT_MAX);
 
  public:
   IDXGIFactory4* GetFactory() const { return factory_.Get(); }
@@ -25,7 +28,7 @@ class DXGIAdapter {
  private:
   ComPtr<IDXGIFactory4> factory_;
   ComPtr<IDXGIAdapter1> adapter_;
-  u32 options_;
+  DeviceOptionFlags options_;
   u32 adapter_id_;
   std::wstring adapter_description_;
 };

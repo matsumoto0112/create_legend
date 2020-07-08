@@ -51,6 +51,10 @@ class AudioSource {
    */
   bool IsEnd() const;
   /**
+   * @brief 音量の設定
+   */
+  void SetVolume(float volume);
+  /**
    * @brief ロープ回数を設定
    * @brief -1を入れた場合無限ループ
    */

@@ -65,7 +65,7 @@ bool AudioManager::Init() {
 //  return true;
 //}
 
-i64 AudioManager::Play(std::wstring filename, i32 loop_count) {
+i32 AudioManager::Play(std::wstring filename, float volume, i32 loop_count) {
   ////指定したファイルが読み込まれているかチェック
   // if (base_audiosources_.find(filename) == base_audiosources_.end()) {
   //  MY_LOG(L"読み込まれていないファイルを再生しようとしました。\n");
@@ -76,6 +76,7 @@ i64 AudioManager::Play(std::wstring filename, i32 loop_count) {
   // audiosources_[play_count_]->Copy(*base_audiosources_[filename]);
   audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
   audiosources_[play_count_]->SetLoopCount(loop_count);
+  audiosources_[play_count_]->SetVolume(volume);
   audiosources_[play_count_]->Play();
 
   //カウントを更新
@@ -84,7 +85,7 @@ i64 AudioManager::Play(std::wstring filename, i32 loop_count) {
   return play_count_ - 1;
 }
 
-void AudioManager::Play(i64 key) {
+void AudioManager::Play(i32 key) {
   //エラーチェック
   if (audiosources_.count(key) == 0) {
     MY_LOG(L"存在しないキーが指定されました。\n");
@@ -94,7 +95,7 @@ void AudioManager::Play(i64 key) {
   audiosources_[key]->Play();
 }
 
-void AudioManager::Pause(i64 key) {
+void AudioManager::Pause(i32 key) {
   //エラーチェック
   if (audiosources_.count(key) == 0) {
     MY_LOG(L"存在しないキーが指定されました。\n");

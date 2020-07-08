@@ -179,6 +179,11 @@ void AudioSource::Update() {
 
 bool AudioSource::IsEnd() const { return (!is_playing_ && !is_pause_); }
 
+void AudioSource::SetVolume(float volume)
+{
+    p_source_voice->SetVolume(volume);
+}
+
 void AudioSource::SetLoopCount(i32 loop_count) {
   //マイナスだった場合無限ループ
   if (loop_count < 0) {

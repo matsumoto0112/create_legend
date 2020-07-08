@@ -28,7 +28,7 @@ class AudioSource {
    * @brief 初期化処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool Init(IXAudio2* p_xaudio2, std::wstring filename);
+  bool LoadWav(IXAudio2* p_xaudio2, std::wstring filename);
   /**
    * @brief 再生
    * @return 再生に成功したらtrueを返す
@@ -37,7 +37,7 @@ class AudioSource {
   /**
    * @brief 一時停止
    */
-  // void Pause();
+   void Pause();
   /**
    * @brief 停止
    */
@@ -49,7 +49,12 @@ class AudioSource {
   /**
    * @brief 再生中かどうか
    */
-  bool IsPlaying();
+  bool IsEnd() const;
+  /**
+   * @brief ロープ回数を設定
+   * @brief -1を入れた場合無限ループ
+   */
+  void SetLoopCount(i32 loop_count);
   /**
    * @brief コピー
    */
@@ -89,6 +94,8 @@ class AudioSource {
 
   //! 再生中かどうか
   bool is_playing_;
+  //! 一時停止中かどうか
+  bool is_pause_;
   //! 再生時間
 
   //! 読み込んだファイルパス

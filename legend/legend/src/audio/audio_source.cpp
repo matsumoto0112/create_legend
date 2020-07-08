@@ -5,12 +5,13 @@ namespace audio {
 
 //コンストラクタ
 AudioSource::AudioSource()
-    : is_playing_(false) /*,
-       // is_loop_(false),
-       // mute_(false),
-       // volume_(1.0f),
-       file_path_(),
-       p_source_voice(NULL)*/
+    : is_playing_(false),
+      is_pause_(false) /*,
+        // is_loop_(false),
+        // mute_(false),
+        // volume_(1.0f),
+        file_path_(),
+        p_source_voice(NULL)*/
 {}
 
 //デストラクタ
@@ -20,8 +21,7 @@ AudioSource::~AudioSource() {
   if (mmio_ != NULL) mmioClose(mmio_, MMIO_FHOPEN);
 }
 
-bool AudioSource::Init(IXAudio2* p_xaudio2, std::wstring filename) {
-  // CoInitializeEx(NULL, COINIT_MULTITHREADED);
+bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename) {
   buffer_ = NULL;
   buffer_count_ = 0;
 
@@ -90,19 +90,15 @@ bool AudioSource::Init(IXAudio2* p_xaudio2, std::wstring filename) {
 
   //初期読み込み
   memset(&xaudio2_buffer_, 0x00, sizeof(xaudio2_buffer_));
-  // xaudio2_buffer_.Flags =
-  //    ((UINT32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
-  xaudio2_buffer_.Flags = 0;
+  xaudio2_buffer_.Flags =
+      ((i32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
+  // xaudio2_buffer_.Flags = 0;
   xaudio2_buffer_.AudioBytes = read_len_;
   xaudio2_buffer_.pAudioData = ptr_;
   xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
 
   // if (FAILED(p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_, NULL))) {
-  //  return false;
-  //}
-
-  // if (FAILED(p_source_voice->Start(0, XAUDIO2_COMMIT_NOW))) {
   //  return false;
   //}
 
@@ -114,25 +110,38 @@ bool AudioSource::Init(IXAudio2* p_xaudio2, std::wstring filename) {
 //再生処理
 bool AudioSource::Play() {
   if (file_path_.empty()) {
-    MY_LOG(L"ファイルを読み込む前に再生しようとしました\n");
+    MY_LOG(L"ファイルが読み込まれていません。\n");
     return false;
   }
-  // 再生位置を設定
-  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+
+   //p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
 
   //再生を開始
   p_source_voice->Start();
 
+  //各フラグを変更
   is_playing_ = true;
+  is_pause_ = false;
   return true;
 }
 
-// void legend::audio::AudioSource::Pause() {}
+void legend::audio::AudioSource::Pause() {
+  //停止させる
+  p_source_voice->Stop();
+
+  //各フラグを変更
+  is_playing_ = false;
+  is_pause_ = true;
+}
 
 // 停止処理
 void AudioSource::Stop() {
+  //停止させる
   p_source_voice->Stop();
+
+  //各フラグを変更
   is_playing_ = false;
+  is_pause_ = false;
 }
 
 //更新処理
@@ -140,20 +149,21 @@ void AudioSource::Update() {
   //再生中でないなら何も行わない
   if (!is_playing_) return;
 
-  // while (WaitForSingleObject(callback_.event, INFINITE) == WAIT_OBJECT_0) {
   p_source_voice->GetState(&state_);
   if (state_.BuffersQueued == 0) {
-    is_playing_ = false;
+    Stop();
     return;
+     //buffer_count_ = 0;
+     //xaudio2_buffer_.PlayBegin = 0;
+     //p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
   }
   while (state_.BuffersQueued < 4 && mmio_ != NULL) {
     ptr_ = buffer_ + buffer_len_ * buffer_count_;
     buffer_count_ = (buffer_count_ + 1) % 5;
     read_len_ = mmioRead(mmio_, (HPSTR)ptr_, buffer_len_);
     if (read_len_ <= 0) break;
-    // xaudio2_buffer_.Flags =
-    //    ((UINT32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
-    xaudio2_buffer_.Flags = 0;
+    xaudio2_buffer_.Flags =
+        ((i32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
     xaudio2_buffer_.AudioBytes = read_len_;
     xaudio2_buffer_.pAudioData = ptr_;
     xaudio2_buffer_.PlayBegin = 0;
@@ -165,10 +175,25 @@ void AudioSource::Update() {
       mmio_ = NULL;
     }
   }
-  //}
 }
 
-bool AudioSource::IsPlaying() { return is_playing_; }
+bool AudioSource::IsEnd() const { return (!is_playing_ && !is_pause_); }
+
+void AudioSource::SetLoopCount(i32 loop_count) {
+  //マイナスだった場合無限ループ
+  if (loop_count < 0) {
+    xaudio2_buffer_.LoopCount = XAUDIO2_LOOP_INFINITE;
+    p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+    return;
+  }
+  //最大数はより多いいなら最大数と同数にする
+  else if (loop_count > XAUDIO2_MAX_LOOP_COUNT) {
+    loop_count = XAUDIO2_MAX_LOOP_COUNT;
+  }
+
+  xaudio2_buffer_.LoopCount = loop_count;
+  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+}
 
 // コピー
 bool AudioSource::Copy(const AudioSource& other) {

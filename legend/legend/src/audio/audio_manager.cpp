@@ -26,6 +26,8 @@ legend::audio::AudioManager::~AudioManager() {
 }
 
 bool AudioManager::Init() {
+  play_count_ = 0;
+
   // COMの初期化
   if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {
     return false;
@@ -63,30 +65,55 @@ bool AudioManager::Init() {
 //  return true;
 //}
 
-bool AudioManager::Play(std::wstring filename) {
+i64 AudioManager::Play(std::wstring filename, i32 loop_count) {
   ////指定したファイルが読み込まれているかチェック
   // if (base_audiosources_.find(filename) == base_audiosources_.end()) {
   //  MY_LOG(L"読み込まれていないファイルを再生しようとしました。\n");
   //  return false;
   //}
 
-  audiosources_.push_back(std::make_unique<AudioSource>());
-  // audiosources_[audiosources_.size() -
-  // 1]->Copy(*base_audiosources_[filename]);
-  audiosources_[audiosources_.size() - 1]->Init(p_xaudio2_, filename);
-  audiosources_[audiosources_.size() - 1]->Play();
+  audiosources_[play_count_] = std::make_unique<AudioSource>();
+  // audiosources_[play_count_]->Copy(*base_audiosources_[filename]);
+  audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
+  audiosources_[play_count_]->SetLoopCount(loop_count);
+  audiosources_[play_count_]->Play();
 
-  return true;
+  //カウントを更新
+  play_count_++;
+
+  return play_count_ - 1;
+}
+
+void AudioManager::Play(i64 key) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+
+  audiosources_[key]->Play();
+}
+
+void AudioManager::Pause(i64 key) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+  audiosources_[key]->Pause();
 }
 
 void AudioManager::Update() {
-  // base_audiosources_[L"../legend/assets/audios/free_3.wav"]->Update();
+  //空なら何もしない
+  if (audiosources_.empty()) return;
 
-  for (int i = 0; i < audiosources_.size(); i++) {
-    audiosources_[i]->Update();
-    if (!audiosources_[i]->IsPlaying()) {
-      audiosources_.erase(audiosources_.begin() + i);
-      i--;
+  for (auto itr = audiosources_.begin(); itr != audiosources_.end();) {
+    itr->second->Update();
+    //再生し終わっていたら削除
+    if (itr->second->IsEnd()) {
+      itr = audiosources_.erase(itr);
+    } else {
+      ++itr;
     }
   }
 }

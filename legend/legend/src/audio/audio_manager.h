@@ -38,9 +38,18 @@ class AudioManager {
   //bool LoadWav(std::wstring filename);
   /**
    * @brief 再生処理
-   * @return 処理が正しく終了したらtrueを返す
+   * @return 処理が正しく終了したらkeyを返す
+   * @return 処理に失敗したら-1を返す
    */
-  bool Play(std::wstring filename);
+  i64 Play(std::wstring filename, i32 loop_count = 0);
+  /**
+   * @brief 再生処理
+   */
+  void Play(i64 key);
+  /**
+   * @brief ポーズさせる処理
+   */
+  void Pause(i64 key);
   /**
    * @brief 更新処理
    */
@@ -52,11 +61,13 @@ class AudioManager {
   IXAudio2* p_xaudio2_;
   //! 最終到達地点
   IXAudio2MasteringVoice* p_xaudio2_mastering_voice_;
-  //読み込んだAudioSourceを保存
+  //! 読み込んだAudioSourceを保存
   std::unordered_map<std::wstring, std::unique_ptr<AudioSource>>
       base_audiosources_;
-  // AudioSource配列
-  std::vector<std::unique_ptr<AudioSource>> audiosources_;
+  //! AudioSource配列
+  std::unordered_map<i64, std::unique_ptr<AudioSource>> audiosources_;
+  //! 再生したサウンド数
+  i64 play_count_;
 };
 
 }  // namespace audio

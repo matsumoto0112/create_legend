@@ -2,7 +2,6 @@
 #define LEGEND_AUDIO_XAUDIO2_CALLBACK_H_
 
 #include <xaudio2.h>
-//#include
 
 #pragma comment(lib, "xaudio2.lib")
 

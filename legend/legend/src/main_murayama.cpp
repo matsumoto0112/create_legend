@@ -15,10 +15,15 @@
 //    audio_manager_.Init();
 //    // audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
 //    // audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
-//    audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
-//    audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
-//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
-//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+//    i64 se1 = audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
+//    // audio_manager_.Play(L"../legend/assets/audios/free_3.wav", -1);
+//    i64 se2 = audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
+//    // audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1);
+//    // audio_manager_.Play(L"../legend/assets/audios/free_2.wav", -1);
+//    // audio_manager_.Pause(se1);
+//    // audio_manager_.Pause(se2);
+//    // audio_manager_.Play(se1);
+//    // audio_manager_.Play(se2);
 //
 //    scene_manager_.Initialize();
 //    return true;

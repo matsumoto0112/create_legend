@@ -41,15 +41,15 @@ class AudioManager {
    * @return 処理が正しく終了したらkeyを返す
    * @return 処理に失敗したら-1を返す
    */
-  i64 Play(std::wstring filename, i32 loop_count = 0);
+  i32 Play(std::wstring filename, float volume, i32 loop_count = 0);
   /**
    * @brief 再生処理
    */
-  void Play(i64 key);
+  void Play(i32 key);
   /**
    * @brief ポーズさせる処理
    */
-  void Pause(i64 key);
+  void Pause(i32 key);
   /**
    * @brief 更新処理
    */
@@ -67,7 +67,7 @@ class AudioManager {
   //! AudioSource配列
   std::unordered_map<i64, std::unique_ptr<AudioSource>> audiosources_;
   //! 再生したサウンド数
-  i64 play_count_;
+  i32 play_count_;
 };
 
 }  // namespace audio

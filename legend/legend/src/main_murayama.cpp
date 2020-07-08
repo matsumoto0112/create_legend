@@ -13,17 +13,26 @@
 //      return false;
 //    }
 //    audio_manager_.Init();
+//
+//    //データの読み込み
 //    // audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
 //    // audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
-//    i64 se1 = audio_manager_.Play(L"../legend/assets/audios/free_3.wav");
-//    // audio_manager_.Play(L"../legend/assets/audios/free_3.wav", -1);
-//    i64 se2 = audio_manager_.Play(L"../legend/assets/audios/free_2.wav");
-//    // audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1);
-//    // audio_manager_.Play(L"../legend/assets/audios/free_2.wav", -1);
-//    // audio_manager_.Pause(se1);
-//    // audio_manager_.Pause(se2);
-//    // audio_manager_.Play(se1);
-//    // audio_manager_.Play(se2);
+//    //再生(キー取得)
+//    i32 se1 = audio_manager_.Play(L"../legend/assets/audios/free_3.wav", 1.0f);
+//    //再生(キー取得無し、無限ループ)
+//    audio_manager_.Play(L"../legend/assets/audios/free_3.wav", 1.0f, -1);
+//    //再生(キー取得)
+//    i32 se2 = audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f);
+//    //再生(1回ループ)
+//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f, 1);
+//    //再生(無限ループ)
+//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f, -1);
+//    //一時停止
+//    audio_manager_.Pause(se1);
+//    audio_manager_.Pause(se2);
+//    //再生
+//    audio_manager_.Play(se1);
+//    audio_manager_.Play(se2);
 //
 //    scene_manager_.Initialize();
 //    return true;

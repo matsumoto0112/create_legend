@@ -46,7 +46,6 @@
     <ClCompile Include="src\main_murayama.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
-    <ClCompile Include="src\scenes\model_view.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
@@ -59,6 +58,8 @@
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
+    <ClCompile Include="src\scenes\debug\model_view.cpp" />
+    <ClCompile Include="src\scenes\debug\sound_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -124,7 +125,6 @@
     <ClInclude Include="src\input\input_manager.h" />
     <ClInclude Include="src\input\joy_code.h" />
     <ClInclude Include="src\input\key_code.h" />
-    <ClInclude Include="src\scenes\model_view.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -144,6 +144,8 @@
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\util\fps_counter.h" />
+    <ClInclude Include="src\scenes\debug\model_view.h" />
+    <ClInclude Include="src\scenes\debug\sound_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

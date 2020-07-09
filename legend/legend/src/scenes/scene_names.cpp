@@ -17,8 +17,11 @@ std::string Get(SceneType type) {
       CREATE_PAIR(SceneType::TITLE),
       CREATE_PAIR(SceneType::GAMEOVER),
       CREATE_PAIR(SceneType::MODEL_VIEW),
+      CREATE_PAIR(SceneType::SOUND_TEST),
   };
 
+  MY_ASSERTION(NAMES.find(type) != NAMES.end(),
+               L"ñ¢ìoò^ÇÃSceneTypeÇ™ëIëÇ≥ÇÍÇ‹ÇµÇΩÅB");
   return NAMES.at(type);
 }
 }  // namespace scene_names

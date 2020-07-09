@@ -14,12 +14,17 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   input_manager_ =
       std::make_unique<input::InputManager>(target_window->GetHWND());
 
+  audio_manager = std::make_unique<audio::AudioManager>();
+  if (!audio_manager->Init()) {
+    return false;
+  }
   return true;
 }
 
 void GameDevice::Update() {
   fps_counter_.Update();
   input_manager_->Update();
+  audio_manager->Update();
 }
 
 }  // namespace game

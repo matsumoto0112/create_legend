@@ -1,7 +1,8 @@
 #include "src/scenes/scene_manager.h"
 
+#include "src/scenes/debug/model_view.h"
+#include "src/scenes/debug/sound_test.h"
 #include "src/scenes/game_over.h"
-#include "src/scenes/model_view.h"
 #include "src/scenes/title.h"
 
 namespace legend {
@@ -50,7 +51,10 @@ void SceneManager::Update() {
         current_scene_ = std::make_unique<GameOver>(this);
         break;
       case SceneType::MODEL_VIEW:
-        current_scene_ = std::make_unique<ModelView>(this);
+        current_scene_ = std::make_unique<debug::ModelView>(this);
+        break;
+      case SceneType::SOUND_TEST:
+        current_scene_ = std::make_unique<debug::SoundTest>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

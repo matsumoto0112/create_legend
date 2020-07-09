@@ -12,8 +12,8 @@ enum class SceneType {
   GAMEOVER,
 
   MODEL_VIEW = 100,
-  INPUT_TEST,
   SOUND_TEST,
+  INPUT_TEST,
 };
 
 class ISceneChange {

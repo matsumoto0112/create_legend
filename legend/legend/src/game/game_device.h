@@ -7,6 +7,7 @@
  * @brief ゲーム機器管理クラス定義
  */
 
+#include "src/audio/audio_manager.h"
 #include "src/directx/directx12_device.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
@@ -46,6 +47,10 @@ class GameDevice : public util::Singleton<GameDevice> {
    * @brief 入力デバイスを取得する
    */
   input::InputManager& GetInput() const { return *input_manager_; }
+  /**
+   * @brief 音響管理デバイスを取得する
+  */
+  audio::AudioManager& GetAudioManager() const { return *audio_manager; }
 
  protected:
   /**
@@ -61,7 +66,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   //! 入力管理
   std::unique_ptr<input::InputManager> input_manager_;
   //! 音響管理
-  // AudioManager
+  std::unique_ptr<audio::AudioManager> audio_manager;
 };
 
 }  // namespace game

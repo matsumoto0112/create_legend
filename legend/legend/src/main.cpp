@@ -29,14 +29,16 @@ class MyApp final : public device::Application {
                                           scene_manager_.GetCurrentSceneType()))
                       .c_str());
 
-      if (ImGui::Button("Title")) {
-        scene_manager_.ChangeScene(scenes::SceneType::TITLE);
-      }
-      if (ImGui::Button("GameOver")) {
-        scene_manager_.ChangeScene(scenes::SceneType::GAMEOVER);
-      }
-      if (ImGui::Button("ModelView")) {
-        scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
+      constexpr scenes::SceneType SCENES[] = {
+          scenes::SceneType::TITLE,
+          scenes::SceneType::GAMEOVER,
+          scenes::SceneType::MODEL_VIEW,
+          scenes::SceneType::SOUND_TEST,
+      };
+      for (auto&& scene : SCENES) {
+        if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
+          scene_manager_.ChangeScene(scene);
+        }
       }
     }
     ImGui::End();

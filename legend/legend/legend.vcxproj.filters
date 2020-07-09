@@ -58,8 +58,8 @@
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
-    <ClCompile Include="src\scenes\debug\model_view.cpp" />
-    <ClCompile Include="src\scenes\debug\sound_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -144,8 +144,8 @@
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\util\fps_counter.h" />
-    <ClInclude Include="src\scenes\debug\model_view.h" />
-    <ClInclude Include="src\scenes\debug\sound_test.h" />
+    <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\debugscene\sound_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

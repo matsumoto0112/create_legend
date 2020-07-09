@@ -6,8 +6,9 @@
  * @brief 音響管理クラス
  */
 
-#include <vector>
 #include <xaudio2.h>
+
+#include <vector>
 
 #include "src/audio/audio_source.h"
 
@@ -35,13 +36,13 @@ class AudioManager {
    * @brief wav読み込み
    * @return 処理が正しく終了したらtrueを返す
    */
-  //bool LoadWav(std::wstring filename);
+  bool LoadWav(std::wstring filename);
   /**
    * @brief 再生処理
    * @return 処理が正しく終了したらkeyを返す
    * @return 処理に失敗したら-1を返す
    */
-  i32 Play(std::wstring filename, float volume, i32 loop_count = 0);
+  i32 Start(std::wstring filename, float volume, bool loop = false);
   /**
    * @brief 再生処理
    */
@@ -55,7 +56,6 @@ class AudioManager {
    */
   void Update();
 
-
  private:
   //! サウンドデバイス
   IXAudio2* p_xaudio2_;
@@ -68,6 +68,12 @@ class AudioManager {
   std::unordered_map<i64, std::unique_ptr<AudioSource>> audiosources_;
   //! 再生したサウンド数
   i32 play_count_;
+
+  //! ファイルパス
+  std::wstring file_path_;
+
+  //! 全体の音量
+  float master_volume_;
 };
 
 }  // namespace audio

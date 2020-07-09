@@ -10,6 +10,15 @@
 
 namespace legend {
 namespace audio {
+
+/**
+ * @brief 音の種類の列挙
+ */
+enum class AudioType {
+  BGM = 0,
+  SE,
+};
+
 /**
  * @file audio_source.h
  * @brief オーディオ再生クラス
@@ -37,7 +46,7 @@ class AudioSource {
   /**
    * @brief 一時停止
    */
-   void Pause();
+  void Pause();
   /**
    * @brief 停止
    */
@@ -53,24 +62,21 @@ class AudioSource {
   /**
    * @brief 音量の設定
    */
-  void SetVolume(float volume);
+  void SetVolume(float volume, float master_volume);
   /**
-   * @brief ロープ回数を設定
-   * @brief -1を入れた場合無限ループ
+   * @brief ロープフラグの設定
    */
-  void SetLoopCount(i32 loop_count);
+  void SetLoopFlag(bool loop);
   /**
    * @brief コピー
    */
-  bool Copy(const AudioSource& other_audiosource);
+  bool Copy(IXAudio2* p_xaudio2, const AudioSource& other_audiosource);
 
  public:
   //! ループ再生するかどうか
-  // bool is_loop_;
+  bool is_loop_;
   //! ミュートかどうか
   // bool mute_;
-  // !音量
-  // float volume_;
 
  private:
   //! 読み込んだ音源(XAudio2)
@@ -87,20 +93,23 @@ class AudioSource {
   //! 波形データフォーマット
   WAVEFORMATEX wav_format_;
   //! 波形データバッファー
-  // BYTE** buffer_;
   unsigned char* buffer_;
   unsigned char* ptr_;
   LONG read_len_;
   //! 波形データの長さ?
   i32 buffer_len_;
-  //! 読み込みカウント
+  //! 読み込みカウンタ―
   i32 buffer_count_;
 
   //! 再生中かどうか
   bool is_playing_;
   //! 一時停止中かどうか
   bool is_pause_;
-  //! 再生時間
+  //! 音量
+  float volume_;
+
+  //! 音の種類
+  AudioType audio_type_;
 
   //! 読み込んだファイルパス
   std::wstring file_path_;

@@ -1,4 +1,5 @@
 #include "src/game/application.h"
+#include "src/game/game_device.h"
 #include "src/scenes/scene_manager.h"
 #include "src/scenes/scene_names.h"
 #include "src/window/window.h"
@@ -21,6 +22,7 @@ class MyApp final : public device::Application {
       return false;
     }
     scene_manager_.Update();
+    timer_.Update();
 
     if (ImGui::Begin("Scenes")) {
       ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
@@ -36,6 +38,14 @@ class MyApp final : public device::Application {
       if (ImGui::Button("ModelView")) {
         scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
       }
+    }
+    ImGui::End();
+    if (ImGui::Begin("Debug")) {
+      ImGui::Text(
+          "TotalTime: %f",
+          game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
+      ImGui::Text("FrameRate: %.1f",
+                  game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
     }
     ImGui::End();
     return true;
@@ -56,6 +66,7 @@ class MyApp final : public device::Application {
 
  private:
   scenes::SceneManager scene_manager_;
+  util::FPSCounter timer_;
 };
 }  // namespace legend
 

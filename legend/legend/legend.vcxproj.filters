@@ -58,6 +58,7 @@
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
+    <ClCompile Include="src\util\fps_counter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
+    <ClInclude Include="src\util\fps_counter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

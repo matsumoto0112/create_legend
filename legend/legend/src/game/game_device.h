@@ -9,6 +9,7 @@
 
 #include "src/directx/directx12_device.h"
 #include "src/input/input_manager.h"
+#include "src/util/fps_counter.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -34,6 +35,9 @@ class GameDevice : public util::Singleton<GameDevice> {
    * @brief フレーム更新処理
    */
   void Update();
+
+ public:
+  const util::FPSCounter& GetFPSCounter() const { return fps_counter_; }
   /**
    * @brief DirectX12デバイスを取得する
    */
@@ -50,6 +54,8 @@ class GameDevice : public util::Singleton<GameDevice> {
   GameDevice();
 
  private:
+  //! FPS計測
+  util::FPSCounter fps_counter_;
   //! DX12デバイス
   std::unique_ptr<directx::DirectX12Device> device_;
   //! 入力管理

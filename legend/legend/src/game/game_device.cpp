@@ -2,7 +2,8 @@
 
 namespace legend {
 namespace game {
-GameDevice::GameDevice() {}
+GameDevice::GameDevice()
+    : fps_counter_{}, device_(nullptr), input_manager_(nullptr) {}
 GameDevice::~GameDevice() {}
 bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   device_ = std::make_unique<directx::DirectX12Device>();
@@ -16,7 +17,10 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   return true;
 }
 
-void GameDevice::Update() { input_manager_->Update(); }
+void GameDevice::Update() {
+  fps_counter_.Update();
+  input_manager_->Update();
+}
 
 }  // namespace game
 }  // namespace  legend

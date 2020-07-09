@@ -92,15 +92,10 @@ bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename) {
   memset(&xaudio2_buffer_, 0x00, sizeof(xaudio2_buffer_));
   xaudio2_buffer_.Flags =
       ((i32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
-  // xaudio2_buffer_.Flags = 0;
   xaudio2_buffer_.AudioBytes = read_len_;
   xaudio2_buffer_.pAudioData = ptr_;
   xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
-
-  // if (FAILED(p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_, NULL))) {
-  //  return false;
-  //}
 
   file_path_ = filename;
 
@@ -114,7 +109,7 @@ bool AudioSource::Play() {
     return false;
   }
 
-   //p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
 
   //再生を開始
   p_source_voice->Start();
@@ -153,9 +148,6 @@ void AudioSource::Update() {
   if (state_.BuffersQueued == 0) {
     Stop();
     return;
-     //buffer_count_ = 0;
-     //xaudio2_buffer_.PlayBegin = 0;
-     //p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
   }
   while (state_.BuffersQueued < 4 && mmio_ != NULL) {
     ptr_ = buffer_ + buffer_len_ * buffer_count_;
@@ -179,40 +171,55 @@ void AudioSource::Update() {
 
 bool AudioSource::IsEnd() const { return (!is_playing_ && !is_pause_); }
 
-void AudioSource::SetVolume(float volume)
-{
-    p_source_voice->SetVolume(volume);
+void AudioSource::SetVolume(float volume, float master_volume) {
+  p_source_voice->SetVolume(volume * master_volume);
+  volume_ = volume * master_volume;
 }
 
-void AudioSource::SetLoopCount(i32 loop_count) {
-  //マイナスだった場合無限ループ
-  if (loop_count < 0) {
-    xaudio2_buffer_.LoopCount = XAUDIO2_LOOP_INFINITE;
-    p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
-    return;
-  }
-  //最大数はより多いいなら最大数と同数にする
-  else if (loop_count > XAUDIO2_MAX_LOOP_COUNT) {
-    loop_count = XAUDIO2_MAX_LOOP_COUNT;
-  }
-
-  xaudio2_buffer_.LoopCount = loop_count;
-  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
-}
+void AudioSource::SetLoopFlag(bool loop) { is_loop_ = loop; }
 
 // コピー
-bool AudioSource::Copy(const AudioSource& other) {
-  is_playing_ = false;
-  mmio_ = other.mmio_;
-  p_source_voice = other.p_source_voice;
-  wav_format_ = other.wav_format_;
-  xaudio2_buffer_ = other.xaudio2_buffer_;
-  buffer_ = other.buffer_;
-  ptr_ = other.ptr_;
-  read_len_ = read_len_;
-  buffer_len_ = other.buffer_len_;
+bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
+  buffer_ = NULL;
   buffer_count_ = 0;
+  is_playing_ = false;
+  is_loop_ = other.is_loop_;
+  wav_format_ = other.wav_format_;
   file_path_ = other.file_path_;
+
+  mmio_ = NULL;
+  MMIOINFO info_ = {0};
+  mmio_ = mmioOpen((LPWSTR)file_path_.c_str(), &info_, MMIO_READ);
+
+  MMRESULT mmresult_;
+  // 波形フォーマットを元にSourceVoiceの生成
+  mmresult_ = p_xaudio2->CreateSourceVoice(
+      &p_source_voice, &wav_format_, XAUDIO2_VOICE_NOPITCH,
+      XAUDIO2_DEFAULT_FREQ_RATIO, &callback_);
+
+  if (FAILED(mmresult_)) {
+    MY_LOG(L"SourceVoiceの生成に失敗しました。\n");
+    return false;
+  }
+
+  buffer_len_ = wav_format_.nAvgBytesPerSec / 4;
+  buffer_ = new unsigned char[buffer_len_ * 5];
+  ptr_ = buffer_;
+  buffer_count_ = (buffer_count_ + 1) % 5;
+  read_len_ = mmioRead(mmio_, (HPSTR)ptr_, buffer_len_);
+  if (read_len_ <= 0) {
+    MY_LOG(L"データがありません。");
+    return false;
+  }
+
+  //初期読み込み
+  memset(&xaudio2_buffer_, 0x00, sizeof(xaudio2_buffer_));
+  xaudio2_buffer_.Flags =
+      ((i32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
+  xaudio2_buffer_.AudioBytes = read_len_;
+  xaudio2_buffer_.pAudioData = ptr_;
+  xaudio2_buffer_.PlayBegin = 0;
+  xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
 
   return true;
 }

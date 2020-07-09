@@ -1,6 +1,7 @@
 //#include "src/audio/audio_manager.h"
 //#include "src/game/application.h"
 //#include "src/scenes/scene_manager.h"
+//#include "src/scenes/scene_names.h"
 //#include "src/window/window.h"
 //
 //namespace legend {
@@ -12,37 +13,62 @@
 //    if (!Application::Init()) {
 //      return false;
 //    }
+//
+//    scene_manager_.Initialize();
 //    audio_manager_.Init();
 //
 //    //データの読み込み
-//    // audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
-//    // audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
-//    //再生(キー取得)
-//    i32 se1 = audio_manager_.Play(L"../legend/assets/audios/free_3.wav", 1.0f);
-//    //再生(キー取得無し、無限ループ)
-//    audio_manager_.Play(L"../legend/assets/audios/free_3.wav", 1.0f, -1);
-//    //再生(キー取得)
-//    i32 se2 = audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f);
-//    //再生(1回ループ)
-//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f, 1);
-//    //再生(無限ループ)
-//    audio_manager_.Play(L"../legend/assets/audios/free_2.wav", 1.0f, -1);
-//    //一時停止
-//    audio_manager_.Pause(se1);
-//    audio_manager_.Pause(se2);
-//    //再生
-//    audio_manager_.Play(se1);
-//    audio_manager_.Play(se2);
+//    audio_manager_.LoadWav(L"../legend/assets/audios/free_3.wav");
+//    audio_manager_.LoadWav(L"../legend/assets/audios/free_2.wav");
+//    //再生開始(キー取得)
+//    i32 se1 = audio_manager_.Start(L"../legend/assets/audios/free_3.wav", 1.0f);
+//    //再生開始(キー取得無し、無限ループ)
+//    // audio_manager_.Start(L"../legend/assets/audios/free_3.wav", 1.0f, true);
+//    //再生開始(キー取得)
+//    i32 se2 = audio_manager_.Start(L"../legend/assets/audios/free_2.wav", 1.0f);
+//    //再生開始(無限ループ)
+//    // audio_manager_.Start(L"../legend/assets/audios/free_2.wav", 1.0f, true);
+//    ////一時停止
+//    // audio_manager_.Pause(se1);
+//    // audio_manager_.Pause(se2);
+//    ////再生
+//    // audio_manager_.Play(se1);
+//    // audio_manager_.Play(se2);
 //
-//    scene_manager_.Initialize();
+//    // count = 0;
+//
 //    return true;
 //  }
 //  bool Update() override {
 //    if (!Application::Update()) {
 //      return false;
 //    }
-//    audio_manager_.Update();
 //    scene_manager_.Update();
+//    audio_manager_.Update();
+//
+//    // if (count > 300) {
+//    //  audio_manager_.Start(L"../legend/assets/audios/free_2.wav", 1.0f);
+//    //  count = 0;
+//    //} else {
+//    //  count++;
+//    //}
+//
+//    if (ImGui::Begin("Scenes")) {
+//      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
+//                                          scene_manager_.GetCurrentSceneType()))
+//                      .c_str());
+//
+//      if (ImGui::Button("Title")) {
+//        scene_manager_.ChangeScene(scenes::SceneType::TITLE);
+//      }
+//      if (ImGui::Button("GameOver")) {
+//        scene_manager_.ChangeScene(scenes::SceneType::GAMEOVER);
+//      }
+//      if (ImGui::Button("ModelView")) {
+//        scene_manager_.ChangeScene(scenes::SceneType::MODEL_VIEW);
+//      }
+//    }
+//    ImGui::End();
 //    return true;
 //  }
 //
@@ -62,6 +88,7 @@
 // private:
 //  scenes::SceneManager scene_manager_;
 //  audio::AudioManager audio_manager_;
+//  // i32 count;
 //};
 //}  // namespace legend
 //

@@ -81,6 +81,7 @@ i32 AudioManager::Start(std::wstring filename, float volume, bool loop) {
   // audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
   audiosources_[play_count_]->SetLoopFlag(loop);
   audiosources_[play_count_]->SetVolume(volume, master_volume_);
+  audiosources_[play_count_]->SetPitch(1.0f);
   audiosources_[play_count_]->Play();
 
   //カウントを更新
@@ -108,12 +109,56 @@ void AudioManager::Pause(i32 key) {
   audiosources_[key]->Pause();
 }
 
+void AudioManager::Stop(i32 key) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+  audiosources_[key]->Stop();
+}
+
+void AudioManager::SetMasterVolume(float volume) { master_volume_ = volume; }
+
+float AudioManager::GetMasterVolume() { return master_volume_; }
+
+void AudioManager::SetVolume(i32 key, float volume) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+  audiosources_[key]->SetVolume(volume, master_volume_);
+}
+
+void AudioManager::SetLoopFlag(i32 key, bool loop) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+  audiosources_[key]->SetLoopFlag(loop);
+}
+
+void AudioManager::SetPitch(i32 key, float pitch) {
+  //エラーチェック
+  if (audiosources_.count(key) == 0) {
+    MY_LOG(L"存在しないキーが指定されました。\n");
+    return;
+  }
+  audiosources_[key]->SetPitch(pitch);
+}
+
 void AudioManager::Update() {
   //空なら何もしない
   if (audiosources_.empty()) return;
 
+  for (auto&& audio : audiosources_) {
+    audio.second->Update();
+  }
+
   for (auto itr = audiosources_.begin(); itr != audiosources_.end();) {
-    itr->second->Update();
+    // itr->second->Update();
     //再生し終わっていたら削除
     if (itr->second->IsEnd() && !itr->second->is_loop_) {
       itr = audiosources_.erase(itr);

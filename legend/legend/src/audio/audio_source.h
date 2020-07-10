@@ -64,13 +64,29 @@ class AudioSource {
    */
   void SetVolume(float volume, float master_volume);
   /**
+   * @brief 音量の取得
+   */
+  float GetVolume();
+  /**
    * @brief ロープフラグの設定
    */
   void SetLoopFlag(bool loop);
   /**
+   * @brief ピッチを設定
+   */
+  void SetPitch(float pitch);
+  /**
+   * @brief ピッチを取得
+   */
+  float GetPitch();
+  /**
    * @brief コピー
    */
   bool Copy(IXAudio2* p_xaudio2, const AudioSource& other_audiosource);
+  /**
+   * @brief ファイルパスを取得
+   */
+  std::wstring GetFilePath();
 
  public:
   //! ループ再生するかどうか
@@ -107,6 +123,8 @@ class AudioSource {
   bool is_pause_;
   //! 音量
   float volume_;
+  //! ピッチ
+  float pitch_;
 
   //! 音の種類
   AudioType audio_type_;

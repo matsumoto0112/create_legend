@@ -52,9 +52,37 @@ class AudioManager {
    */
   void Pause(i32 key);
   /**
+   * @brief 停止させる処理
+   */
+  void Stop(i32 key);
+  /**
+   * @brief マスター音量の設定
+   */
+  void SetMasterVolume(float volume);
+  /**
+   * @brief マスター音量の取得
+   */
+  float GetMasterVolume();
+  /**
+   * @brief 音量の設定
+   */
+  void SetVolume(i32 key, float volume);
+  /**
+   * @brief 音量の設定
+   */
+  void SetLoopFlag(i32 key, bool loop);
+  /**
+   * @brief ピッチの指定
+   */
+  void SetPitch(i32 key, float pitch);
+  /**
    * @brief 更新処理
    */
   void Update();
+
+ public:
+  //! AudioSource配列
+  std::unordered_map<i32, std::unique_ptr<AudioSource>> audiosources_;
 
  private:
   //! サウンドデバイス
@@ -64,8 +92,6 @@ class AudioManager {
   //! 読み込んだAudioSourceを保存
   std::unordered_map<std::wstring, std::unique_ptr<AudioSource>>
       base_audiosources_;
-  //! AudioSource配列
-  std::unordered_map<i64, std::unique_ptr<AudioSource>> audiosources_;
   //! 再生したサウンド数
   i32 play_count_;
 

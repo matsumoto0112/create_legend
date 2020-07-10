@@ -109,7 +109,7 @@ bool AudioSource::Play() {
     return false;
   }
 
-  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+  if (is_playing_) return false;
 
   //再生を開始
   p_source_voice->Start();
@@ -172,20 +172,44 @@ void AudioSource::Update() {
 bool AudioSource::IsEnd() const { return (!is_playing_ && !is_pause_); }
 
 void AudioSource::SetVolume(float volume, float master_volume) {
+  //音量を設定
   p_source_voice->SetVolume(volume * master_volume);
-  volume_ = volume * master_volume;
+  //音量を記録
+  volume_ = volume;
 }
 
+float AudioSource::GetVolume() { return volume_; }
+
 void AudioSource::SetLoopFlag(bool loop) { is_loop_ = loop; }
+
+void AudioSource::SetPitch(float pitch) {
+  if (pitch < XAUDIO2_MIN_FREQ_RATIO) {
+    pitch = XAUDIO2_MIN_FREQ_RATIO;
+  } else if (pitch > XAUDIO2_MAX_FREQ_RATIO) {
+    pitch = XAUDIO2_MAX_FREQ_RATIO;
+  }
+
+  //ピッチを設定
+  p_source_voice->SetFrequencyRatio(pitch);
+  //ピッチを記録
+  pitch_ = pitch;
+}
+
+float AudioSource::GetPitch() { return pitch_; }
 
 // コピー
 bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
   buffer_ = NULL;
   buffer_count_ = 0;
   is_playing_ = false;
+
+  xaudio2_buffer_;
+
   is_loop_ = other.is_loop_;
-  wav_format_ = other.wav_format_;
   file_path_ = other.file_path_;
+  wav_format_ = other.wav_format_;
+  buffer_len_ = other.buffer_len_;
+  // buffer_ = other.buffer_;
 
   mmio_ = NULL;
   MMIOINFO info_ = {0};
@@ -194,7 +218,7 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
   MMRESULT mmresult_;
   // 波形フォーマットを元にSourceVoiceの生成
   mmresult_ = p_xaudio2->CreateSourceVoice(
-      &p_source_voice, &wav_format_, XAUDIO2_VOICE_NOPITCH,
+      &p_source_voice, &wav_format_, XAUDIO2_VOICE_USEFILTER,
       XAUDIO2_DEFAULT_FREQ_RATIO, &callback_);
 
   if (FAILED(mmresult_)) {
@@ -202,7 +226,7 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
     return false;
   }
 
-  buffer_len_ = wav_format_.nAvgBytesPerSec / 4;
+  // buffer_len_ = wav_format_.nAvgBytesPerSec / 4;
   buffer_ = new unsigned char[buffer_len_ * 5];
   ptr_ = buffer_;
   buffer_count_ = (buffer_count_ + 1) % 5;
@@ -221,8 +245,13 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
   xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
 
+  p_source_voice->FlushSourceBuffers();
+  p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
+
   return true;
 }
+
+std::wstring AudioSource::GetFilePath() { return file_path_; }
 
 }  // namespace audio
 }  // namespace legend

@@ -17,7 +17,8 @@ Sprite2D::~Sprite2D() {}
 
 //初期化
 bool Sprite2D::Initialize(const std::wstring file_name,
-                          const math::IntVector2 screen_size) {
+                          const math::IntVector2 screen_size,
+                          const math::Vector2 position, const float scale) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -26,12 +27,24 @@ bool Sprite2D::Initialize(const std::wstring file_name,
   util::loader::texture_loader::LoadedTextureData data =
       util::loader::texture_loader::Load(texture_path);
 
+  //画像サイズ
+  float texture_width = static_cast<float>(data.width);
+  float texture_height = static_cast<float>(data.height);
+  //ウィンドウサイズ
+  float window_width = static_cast<float>(screen_size.x);
+  float window_height = static_cast<float>(screen_size.y);
+
   //スクリーン座標の設定
   std::vector<directx::Sprite> vertices = {
-      {math::Vector3(0, 0, 0), math::Vector2(0, 0)},       // 0
-      {math::Vector3(100, 0, 0), math::Vector2(1, 0)},     // 1
-      {math::Vector3(0, 100, 0), math::Vector2(0, 1)},     // 2
-      {math::Vector3(100, 100, 0), math::Vector2(1, 1)}};  // 3
+      {math::Vector3(position.x, position.y, 0), math::Vector2(0, 0)},  // 0
+      {math::Vector3(position.x + texture_width, position.y, 0) * scale,
+       math::Vector2(1, 0)},  // 1
+      {math::Vector3(position.x, position.y + texture_height, 0) * scale,
+       math::Vector2(0, 1)},  // 2
+      {math::Vector3(position.x + texture_width, position.y + texture_height,
+                     0) *
+           scale,
+       math::Vector2(1, 1)}};  // 3
 
   const u32 vertex_size = sizeof(directx::Sprite);
   const u32 vertex_num = static_cast<u32>(vertices.size());
@@ -63,11 +76,9 @@ bool Sprite2D::Initialize(const std::wstring file_name,
     return false;
   }
 
-  //ウィンドウサイズ
-  float width = static_cast<float>(screen_size.x);
-  float height = static_cast<float>(screen_size.y);
   world_constant_buffer_.GetStagingRef().projection =
-      math::Matrix4x4::CreateOrthographic(math::Vector2(width, height));
+      math::Matrix4x4::CreateOrthographic(
+          math::Vector2(window_width, window_height));
   world_constant_buffer_.UpdateStaging();
 
   if (!texture_.InitAndWrite(device, 0, texture_path)) {

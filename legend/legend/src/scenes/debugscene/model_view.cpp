@@ -208,14 +208,17 @@ void ModelView::Initialize() {
   return;
 }  // namespace scenes
 
-static float angle = 0.0f;
 //çXêV
 void ModelView::Update() {
-  rotation_ = math::Quaternion::FromEular(angle, angle * 2, 0);
-  angle +=
-      math::util::PI *
-      static_cast<float>(
-          game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds());
+  if (ImGui::Begin("Transform")) {
+    static std::array<float, 3> rotation;
+    ImGui::SliderFloat3("Rotation", rotation.data(), -180.0f, 180.0f);
+    rotation_ =
+        math::Quaternion::FromEular(rotation[0] * math::util::DEG_2_RAD,
+                                    rotation[1] * math::util::DEG_2_RAD,
+                                    rotation[2] * math::util::DEG_2_RAD);
+  }
+  ImGui::End();
 }
 
 //ï`âÊ

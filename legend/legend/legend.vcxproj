@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\audio\audio_manager.cpp" />
+    <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
@@ -153,9 +154,11 @@
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
+    <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\depth_stencil.h" />
     <ClInclude Include="src\directx\buffer\render_target.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
+    <ClInclude Include="src\directx\constant_buffer_structure.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />

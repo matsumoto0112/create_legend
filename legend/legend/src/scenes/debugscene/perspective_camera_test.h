@@ -6,6 +6,7 @@
  * @brief パースペクティブカメラ挙動確認シーン定義
  */
 
+#include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/texture_2d.h"
@@ -38,6 +39,8 @@ class PerspectiveCameraTest : public Scene {
   directx::buffer::ConstantBuffer<Transform> transform_cb_;
   std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
+
+  camera::PerspectiveCamera camera_;
 };
 
 }  // namespace debugscene

@@ -166,6 +166,13 @@ void PerspectiveCameraTest::Initialize() {
   world_cb_.GetStagingRef().proj = math::Matrix4x4::CreateProjection(
       45.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f, 1000.0f);
   world_cb_.UpdateStaging();
+
+  if (!camera_.Init(L"MainCamera", math::Vector3(1, 1, 1),
+                    math::Quaternion::IDENTITY, math::Vector3::kUpVector,
+                    45.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
+                    300.0f)) {
+    return;
+  }
 }
 
 //XV
@@ -176,14 +183,13 @@ void PerspectiveCameraTest::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  camera_.RenderStart();
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
 
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
-  world_cb_.UpdateStaging();
-  world_cb_.SetToHeap(device);
   texture_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 

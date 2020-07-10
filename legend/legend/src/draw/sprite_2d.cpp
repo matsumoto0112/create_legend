@@ -1,5 +1,6 @@
 #include "src/draw/sprite_2d.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/util/loader/texture_loader.h"
@@ -7,13 +8,16 @@
 
 namespace legend {
 namespace draw {
+
 //コンストラクタ
 Sprite2D::Sprite2D() {}
+
 //デストラクタ
 Sprite2D::~Sprite2D() {}
+
 //初期化
 bool Sprite2D::Initialize(const std::wstring file_name,
-                          const math::IntVector2 window_size) {
+                          const math::IntVector2 screen_size) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -22,30 +26,30 @@ bool Sprite2D::Initialize(const std::wstring file_name,
   util::loader::texture_loader::LoadedTextureData data =
       util::loader::texture_loader::Load(texture_path);
 
-  std::vector<directx::Sprite> sprites = {
-      {math::Vector3(-1, 1, 0), math::Vector2(0, 0)},
-      {math::Vector3(1, 1, 0), math::Vector2(1, 0)},
-      {math::Vector3(1, -1, 0), math::Vector2(1, 1)},
-      {math::Vector3(-1, -1, 0), math::Vector2(0, 1)}};
+  //スクリーン座標の設定
+  std::vector<directx::Sprite> vertices = {
+      {math::Vector3(0, 0, 0), math::Vector2(0, 0)},       // 0
+      {math::Vector3(100, 0, 0), math::Vector2(1, 0)},     // 1
+      {math::Vector3(0, 100, 0), math::Vector2(0, 1)},     // 2
+      {math::Vector3(100, 100, 0), math::Vector2(1, 1)}};  // 3
 
   const u32 vertex_size = sizeof(directx::Sprite);
-  const u32 vertex_num = static_cast<u32>(sprites.size());
+  const u32 vertex_num = static_cast<u32>(vertices.size());
   if (!sprite_.vertex_buffer_.Init(device, vertex_size, vertex_num,
                                    L"Sprite_VertexBuffer")) {
     return false;
   }
-  if (!sprite_.vertex_buffer_.WriteBufferResource(sprites)) {
+  if (!sprite_.vertex_buffer_.WriteBufferResource(vertices)) {
     return false;
   }
 
   const u32 index_num = sizeof(data.pixels.size());
+  std::vector<u16> indexes = {0, 1, 2, 1, 3, 2};
   if (!sprite_.index_buffer_.Init(device, index_num,
                                   directx::PrimitiveTopology::TriangleList,
                                   L"Sprite_IndexBuffer")) {
     return false;
   }
-
-  std::vector<u16> indexes = {0, 1, 3, 1, 2, 3};
   if (!sprite_.index_buffer_.WriteBufferResource(indexes)) {
     return false;
   }
@@ -60,19 +64,13 @@ bool Sprite2D::Initialize(const std::wstring file_name,
   }
 
   //ウィンドウサイズ
-  math::Vector2 size;
-  size.x = static_cast<float>(window_size.x);
-  size.y = static_cast<float>(window_size.y);
-
-  world_constant_buffer_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
-      math::Vector3::kUpVector);
+  float width = static_cast<float>(screen_size.x);
+  float height = static_cast<float>(screen_size.y);
   world_constant_buffer_.GetStagingRef().projection =
-      math::Matrix4x4::CreateOrthographic(size);
+      math::Matrix4x4::CreateOrthographic(math::Vector2(width, height));
   world_constant_buffer_.UpdateStaging();
 
-  std::filesystem::path p = util::Path::GetInstance()->texture() / L"tex.png";
-  if (!texture_.InitAndWrite(device, 0, p)) {
+  if (!texture_.InitAndWrite(device, 0, texture_path)) {
     return false;
   }
 
@@ -80,7 +78,6 @@ bool Sprite2D::Initialize(const std::wstring file_name,
   if (!root_signature_->Init(device, L"Global Root Signature")) {
     return false;
   }
-  pipeline_state_.SetRootSignature(root_signature_);
 
   //頂点シェーダー
   std::filesystem::path path = util::Path::GetInstance()->shader();
@@ -116,6 +113,9 @@ bool Sprite2D::Initialize(const std::wstring file_name,
   pipeline_state_.SetRootSignature(root_signature_);
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
+  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  pipeline_state_.SetBlendDesc(
+      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
 
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;
@@ -123,6 +123,7 @@ bool Sprite2D::Initialize(const std::wstring file_name,
 
   return true;
 }
+
 //描画
 void Sprite2D::Draw() {
   directx::DirectX12Device& device =

@@ -60,6 +60,7 @@
     <ClCompile Include="src\util\fps_counter.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
+    <ClCompile Include="src\math\quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="src\util\fps_counter.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
+    <ClInclude Include="src\math\quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

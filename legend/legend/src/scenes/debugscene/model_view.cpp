@@ -96,37 +96,32 @@ void ModelView::Initialize() {
     }
   }
 
-  constexpr u32 OBJ_NUM = 100;
-  for (u32 i = 0; i < OBJ_NUM; i++) {
-    Object obj;
-    //頂点バッファ作成
-    if (!obj.vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
-                                 name + L"_VertexBuffer")) {
-      return;
-    }
-    if (!obj.vertex_buffer_.WriteBufferResource(vertices)) {
-      return;
-    }
-
-    const std::vector<u16> index = loader.GetIndex();
-    //インデックスバッファ作成
-    if (!obj.index_buffer_.InitAndWrite(
-            device, index, directx::PrimitiveTopology::TriangleList,
-            name + L"_IndexBuffer")) {
-      return;
-    }
-    if (!obj.transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
-      return;
-    }
-
-    math::Vector3 position = math::Vector3(i * 1.0f, 0.0f, i * 1.0f);
-    math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
-    obj.transform_cb_.GetStagingRef().world =
-        math::Matrix4x4::CreateScale(scale) *
-        math::Matrix4x4::CreateTranslate(position);
-    obj.transform_cb_.UpdateStaging();
-    objects_.push_back(obj);
+  //頂点バッファ作成
+  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
+                           name + L"_VertexBuffer")) {
+    return;
   }
+  if (!vertex_buffer_.WriteBufferResource(vertices)) {
+    return;
+  }
+
+  const std::vector<u16> index = loader.GetIndex();
+  //インデックスバッファ作成
+  if (!index_buffer_.InitAndWrite(device, index,
+                                  directx::PrimitiveTopology::TriangleList,
+                                  name + L"_IndexBuffer")) {
+    return;
+  }
+  if (!transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
+    return;
+  }
+
+  math::Vector3 position = math::Vector3(0, 0, 0);
+  math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
+  transform_cb_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale) *
+      math::Matrix4x4::CreateTranslate(position);
+  transform_cb_.UpdateStaging();
 
   if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
     return;
@@ -213,8 +208,15 @@ void ModelView::Initialize() {
   return;
 }  // namespace scenes
 
+static float angle = 0.0f;
 //更新
-void ModelView::Update() {}
+void ModelView::Update() {
+  rotation_ = math::Quaternion::FromEular(angle, angle * 2, 0);
+  angle +=
+      math::util::PI *
+      static_cast<float>(
+          game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds());
+}
 
 //描画
 void ModelView::Draw() {
@@ -229,14 +231,15 @@ void ModelView::Draw() {
   texture_.SetToHeap(device);
   world_cb_.SetToHeap(device);
 
-  for (auto&& obj : objects_) {
-    obj.transform_cb_.SetToHeap(device);
-    device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+  transform_cb_.GetStagingRef().world =
+      math::Matrix4x4::CreateRotation(math::Quaternion::ToEular(rotation_));
+  transform_cb_.UpdateStaging();
+  transform_cb_.SetToHeap(device);
+  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
-    obj.vertex_buffer_.SetGraphicsCommandList(device);
-    obj.index_buffer_.SetGraphicsCommandList(device);
-    obj.index_buffer_.Draw(device);
-  }
+  vertex_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.SetGraphicsCommandList(device);
+  index_buffer_.Draw(device);
 }
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();

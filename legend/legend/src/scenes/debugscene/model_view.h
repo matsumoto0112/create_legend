@@ -13,6 +13,7 @@
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/math/matrix_4x4.h"
+#include "src/math/quaternion.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -60,12 +61,10 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  struct Object {
-    directx::buffer::VertexBuffer vertex_buffer_;
-    directx::buffer::IndexBuffer index_buffer_;
-    directx::buffer::ConstantBuffer<Transform> transform_cb_;
-  };
-  std::vector<Object> objects_;
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
+  directx::buffer::ConstantBuffer<Transform> transform_cb_;
+  math::Quaternion rotation_;
 
   directx::buffer::ConstantBuffer<WorldContext> world_cb_;
   directx::buffer::Texture2D texture_;

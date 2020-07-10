@@ -38,10 +38,28 @@ inline float Cos(float X) { return std::cosf(X); }
  * @param X 単位はラジアン
  */
 inline float Tan(float X) { return std::tanf(X); }
+
+/**
+ * @brief ASin(X)
+*/
+inline float Asin(float X) { return std::asin(X); }
+/**
+ * @brief ACos(X)
+*/
+inline float Acos(float X) { return std::acos(X); }
+/**
+ * @brief atan2(Y,X)
+ */
+inline float Atan2(float Y, float X) { return std::atan2(Y, X); }
 /**
  * @brief Xのルートを求める
  */
 inline float Sqrt(float X) { return std::sqrtf(X); }
+
+/**
+ * @brief 絶対値
+ */
+inline float Abs(float X) { return std::abs(X); }
 
 /**
  * @brief 2の累乗にアライメントする

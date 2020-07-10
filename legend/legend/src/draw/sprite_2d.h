@@ -36,6 +36,8 @@ class Sprite2D {
   ~Sprite2D();
   /**
    * @brief 初期化
+   * @param ファイル名
+   * @param ウィンドウサイズ
    */
   bool Initialize(const std::wstring file_name,
                   const math::IntVector2 window_size);
@@ -54,8 +56,8 @@ class Sprite2D {
   Sprite sprite_;
   math::Vector3 position_;
   math::Vector3 scale_;
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
   directx::buffer::Texture2D texture_;
+  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
   std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
 };

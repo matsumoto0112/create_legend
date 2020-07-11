@@ -4,20 +4,13 @@
 #include <xaudio2.h>
 
 #include "src/audio/xaudio2_callback.h"
+#include "src/audio/audio_type.h"
 
 #pragma comment(lib, "xaudio2.lib")
 #pragma comment(lib, "winmm.lib")
 
 namespace legend {
 namespace audio {
-
-/**
- * @brief ‰¹‚Ìí—Ş‚Ì—ñ‹“
- */
-enum class AudioType {
-  BGM = 0,
-  SE,
-};
 
 /**
  * @file audio_source.h
@@ -37,7 +30,7 @@ class AudioSource {
    * @brief ‰Šú‰»ˆ—
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool LoadWav(IXAudio2* p_xaudio2, std::wstring filename);
+  bool LoadWav(IXAudio2* p_xaudio2, std::wstring filename, AudioType audio_type);
   /**
    * @brief Ä¶
    * @return Ä¶‚É¬Œ÷‚µ‚½‚çtrue‚ğ•Ô‚·

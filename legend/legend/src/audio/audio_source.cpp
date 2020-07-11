@@ -21,7 +21,10 @@ AudioSource::~AudioSource() {
   if (mmio_ != NULL) mmioClose(mmio_, MMIO_FHOPEN);
 }
 
-bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename) {
+bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename,
+                          AudioType audio_type) {
+  audio_type_ = audio_type;
+
   buffer_ = NULL;
   buffer_count_ = 0;
 
@@ -203,6 +206,8 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
   buffer_count_ = 0;
   is_playing_ = false;
 
+  audio_type_ = other.audio_type_;
+
   xaudio2_buffer_;
 
   is_loop_ = other.is_loop_;
@@ -243,7 +248,9 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
   xaudio2_buffer_.AudioBytes = read_len_;
   xaudio2_buffer_.pAudioData = ptr_;
   xaudio2_buffer_.PlayBegin = 0;
-  xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
+  xaudio2_buffer_.PlayBegin = 16;
+  // xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
+  xaudio2_buffer_.PlayLength = 0;
 
   p_source_voice->FlushSourceBuffers();
   p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);

@@ -50,7 +50,7 @@ bool AudioManager::Init() {
   return true;
 }
 
-bool AudioManager::LoadWav(std::wstring filename) {
+bool AudioManager::LoadWav(std::wstring filename, AudioType audio_type) {
   //既に読み込み済みかチェック
   if (base_audiosources_.find(filename) != base_audiosources_.end()) {
     MY_LOG(L"既に読み込み済みです。");
@@ -60,7 +60,7 @@ bool AudioManager::LoadWav(std::wstring filename) {
   base_audiosources_[filename] = std::make_unique<AudioSource>();
 
   // wavの読み込み
-  if (!base_audiosources_[filename]->LoadWav(p_xaudio2_, filename)) {
+  if (!base_audiosources_[filename]->LoadWav(p_xaudio2_, filename, audio_type)) {
     MY_LOG(L"wavの読み込みに失敗しました。\n");
     base_audiosources_.erase(filename);
     return false;
@@ -115,10 +115,16 @@ void AudioManager::Stop(i32 key) {
     MY_LOG(L"存在しないキーが指定されました。\n");
     return;
   }
+  audiosources_[key]->SetLoopFlag(false);
   audiosources_[key]->Stop();
 }
 
-void AudioManager::SetMasterVolume(float volume) { master_volume_ = volume; }
+void AudioManager::SetMasterVolume(float volume) {
+  master_volume_ = volume;
+  for (auto&& audio : audiosources_) {
+    SetVolume(audio.first, audio.second->GetVolume());
+  }
+}
 
 float AudioManager::GetMasterVolume() { return master_volume_; }
 

@@ -45,11 +45,11 @@ class ModelView : public Scene {
   /**
    * @brief ‰Šú‰»
    */
-  void Initialize() override;
+  bool Initialize() override;
   /**
    * @brief XV
    */
-  void Update() override;
+  bool Update() override;
   /**
    * @brief •`‰æ
    */

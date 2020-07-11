@@ -14,14 +14,18 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    scene_manager_.Initialize();
+    if (!scene_manager_.Initialize()) {
+        return false;
+    }
     return true;
   }
   bool Update() override {
     if (!Application::Update()) {
       return false;
     }
-    scene_manager_.Update();
+    if (!scene_manager_.Update()) {
+        return false;
+    }
     timer_.Update();
 
     if (ImGui::Begin("Scenes")) {

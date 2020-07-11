@@ -17,7 +17,7 @@ ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
 ModelView::~ModelView() {}
 
 //初期化
-void ModelView::Initialize() {
+bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -28,7 +28,7 @@ void ModelView::Initialize() {
   if (!loader.Load(model_path)) {
     MY_LOG(L"モデルの読み込みに失敗しました。対象のファイルは%sです。",
            model_path.generic_wstring().c_str());
-    return;
+    return false;
   }
 
   const u32 vertex_num = loader.GetVertexNum();
@@ -99,10 +99,10 @@ void ModelView::Initialize() {
   //頂点バッファ作成
   if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
                            name + L"_VertexBuffer")) {
-    return;
+    return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
-    return;
+    return false;
   }
 
   const std::vector<u16> index = loader.GetIndex();
@@ -110,10 +110,10 @@ void ModelView::Initialize() {
   if (!index_buffer_.InitAndWrite(device, index,
                                   directx::PrimitiveTopology::TriangleList,
                                   name + L"_IndexBuffer")) {
-    return;
+    return false;
   }
   if (!transform_cb_.Init(device, 0, L"Transform ConstantBuffer")) {
-    return;
+    return false;
   }
 
   math::Vector3 position = math::Vector3(0, 0, 0);
@@ -124,7 +124,7 @@ void ModelView::Initialize() {
   transform_cb_.UpdateStaging();
 
   if (!world_cb_.Init(device, 1, L"WorldContext ConstantBuffer")) {
-    return;
+    return false;
   }
 
   world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
@@ -138,14 +138,14 @@ void ModelView::Initialize() {
   //メインテクスチャの書き込み
   const std::vector<u8> albedo = loader.GetAlbedo();
   if (!texture_.InitAndWrite(device, 0, albedo, name + L"_Albedo")) {
-    return;
+    return false;
   }
 
   //ルートシグネチャ作成
   root_signature_ = std::make_shared<directx::shader::RootSignature>();
   if (!root_signature_->Init(game::GameDevice::GetInstance()->GetDevice(),
                              L"Global Root Signature")) {
-    return;
+    return false;
   }
 
   //頂点シェーダー
@@ -177,7 +177,7 @@ void ModelView::Initialize() {
       std::make_shared<directx::shader::VertexShader>();
   if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
                            vertex_shader_path, elements)) {
-    return;
+    return false;
   }
 
   //ピクセルシェーダー
@@ -185,11 +185,11 @@ void ModelView::Initialize() {
       std::make_shared<directx::shader::PixelShader>();
   if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
                           pixel_shader_path)) {
-    return;
+    return false;
   }
 
   if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-    return;
+    return false;
   }
 
   //パイプライン作成開始
@@ -202,14 +202,14 @@ void ModelView::Initialize() {
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {
-    return;
+    return false;
   }
 
-  return;
+  return true;
 }  // namespace scenes
 
 //更新
-void ModelView::Update() {
+bool ModelView::Update() {
   if (ImGui::Begin("Transform")) {
     static std::array<float, 3> rotation;
     ImGui::SliderFloat3("Rotation", rotation.data(), -180.0f, 180.0f);
@@ -219,6 +219,8 @@ void ModelView::Update() {
                                     rotation[2] * math::util::DEG_2_RAD);
   }
   ImGui::End();
+
+  return true;
 }
 
 //描画

@@ -10,15 +10,17 @@ namespace scenes {
 namespace debugscene {
 SoundTest::SoundTest(ISceneChange* scene_change) : Scene(scene_change) {}
 SoundTest::~SoundTest() {}
-void SoundTest::Initialize() {
+bool SoundTest::Initialize() {
   audio::AudioManager& audio_manager =
       game::GameDevice::GetInstance()->GetAudioManager();
 
   std::filesystem::path path =
       util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_3.wav";
   audio_manager.LoadWav(path);
+
+  return true;
 }
-void SoundTest::Update() {
+bool SoundTest::Update() {
   audio::AudioManager& audio_manager =
       game::GameDevice::GetInstance()->GetAudioManager();
 
@@ -79,6 +81,8 @@ void SoundTest::Update() {
     }
   }
   ImGui::End();
+
+  return true;
 }
 void SoundTest::Draw() {}
 void SoundTest::Finalize() {}

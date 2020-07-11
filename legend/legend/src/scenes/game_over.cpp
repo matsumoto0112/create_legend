@@ -9,18 +9,19 @@ namespace scenes {
 GameOver::GameOver(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //‰Šú‰»
-void GameOver::Initialize() {}
+bool GameOver::Initialize() { return true; }
 
 //XV
-void GameOver::Update() {
-  // scene_change_->ChangeScene(SceneType::TITLE);
-  if (ImGui::Begin("Debug Window")) {
-    ImGui::Text("GameOver");
-    if (ImGui::Button("Title")) {
-      scene_change_->ChangeScene(SceneType::TITLE);
-    }
-  }
-  ImGui::End();
+bool GameOver::Update() {
+  //if (ImGui::Begin("Debug Window")) {
+  //  ImGui::Text("GameOver");
+  //  if (ImGui::Button("Title")) {
+  //    scene_change_->ChangeScene(SceneType::TITLE);
+  //  }
+  //}
+  //ImGui::End();
+
+    return true;
 }
 
 //•`‰æ

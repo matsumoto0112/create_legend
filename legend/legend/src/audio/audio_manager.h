@@ -80,6 +80,9 @@ class AudioManager {
    */
   void Update();
 
+private :
+    void LoopStart(i32 key, std::wstring filename, float volume, float pitch);
+
  public:
   //! AudioSource”z—ñ
   std::unordered_map<i32, std::unique_ptr<AudioSource>> audiosources_;

@@ -163,12 +163,24 @@ void AudioManager::Update() {
     if (itr->second->IsEnd() && !itr->second->is_loop_) {
       itr = audiosources_.erase(itr);
     } else if (itr->second->IsEnd() && itr->second->is_loop_) {
-      itr = audiosources_.erase(itr);
-      //++itr;
+      LoopStart(itr->first, itr->second->GetFilePath(),
+                itr->second->GetVolume(), itr->second->GetPitch());
+      ++itr;
     } else {
       ++itr;
     }
   }
+}
+
+void AudioManager::LoopStart(i32 key, std::wstring filename, float volume,
+                             float pitch) {
+  audiosources_[key] = std::make_unique<AudioSource>();
+  audiosources_[key]->Copy(p_xaudio2_, *base_audiosources_[filename]);
+  // audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
+  audiosources_[key]->SetLoopFlag(true);
+  audiosources_[key]->SetVolume(volume, master_volume_);
+  audiosources_[key]->SetPitch(pitch);
+  audiosources_[key]->Play();
 }
 
 }  // namespace audio

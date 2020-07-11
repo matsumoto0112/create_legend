@@ -13,6 +13,7 @@ enum class SceneType {
 
   MODEL_VIEW = 100,
   SOUND_TEST,
+  PERSPECTIVE_CAMERA_TEST,
   INPUT_TEST,
 };
 

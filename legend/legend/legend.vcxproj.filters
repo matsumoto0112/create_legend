@@ -61,6 +61,8 @@
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
+    <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
+    <ClCompile Include="src\camera\perspective_camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -148,6 +150,9 @@
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\math\quaternion.h" />
+    <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
+    <ClInclude Include="src\camera\perspective_camera.h" />
+    <ClInclude Include="src\directx\constant_buffer_structure.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -125,8 +125,8 @@ Matrix4x4 Matrix4x4::CreateScale(const Vector3& s) {
 Matrix4x4 Matrix4x4::CreateView(const Vector3& eye, const Vector3& at,
                                 const Vector3& up) {
   const Vector3 zaxis = (at - eye).Normalized();
-  const Vector3 xaxis = Vector3::Cross(up, zaxis);
-  const Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
+  const Vector3 xaxis = Vector3::Cross(up, zaxis).Normalized();
+  const Vector3 yaxis = Vector3::Cross(zaxis, xaxis).Normalized();
   return Matrix4x4(xaxis.x, yaxis.x, zaxis.x, 0.0f, xaxis.y, yaxis.y, zaxis.y,
                    0.0f, xaxis.z, yaxis.z, zaxis.z, 0.0f,
                    -Vector3::Dot(xaxis, eye), -Vector3::Dot(yaxis, eye),

@@ -6,14 +6,6 @@
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 
-namespace {
-struct WorldContext {
-  legend::math::Matrix4x4 view;
-  legend::math::Matrix4x4 proj;
-};
-legend::directx::buffer::ConstantBuffer<WorldContext> world_cb_;
-}  // namespace
-
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -157,19 +149,9 @@ void PerspectiveCameraTest::Initialize() {
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
   transform_cb_.UpdateStaging();
 
-  if (!world_cb_.Init(device, 1, L"WorldContextConstantBuffer")) {
-    return;
-  }
-  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      math::Vector3(1, 1, -1), math::Vector3(0, 0, 0),
-      math::Vector3::kUpVector);
-  world_cb_.GetStagingRef().proj = math::Matrix4x4::CreateProjection(
-      45.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f, 1000.0f);
-  world_cb_.UpdateStaging();
-
-  if (!camera_.Init(L"MainCamera", math::Vector3(1, 1, 1),
-                    math::Quaternion::IDENTITY, math::Vector3::kUpVector,
-                    45.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
+  if (!camera_.Init(L"MainCamera", math::Vector3(0, 3, -3),
+                    math::Vector3(0, 0, 0), math::Vector3::kUpVector,
+                    60.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
                     300.0f)) {
     return;
   }

@@ -6,6 +6,7 @@
  * @brief  四元数管理クラス定義
  */
 
+#include "src/math/matrix_4x4.h"
 #include "src/math/vector_3.h"
 
 namespace legend {
@@ -69,6 +70,10 @@ class Quaternion {
    * @brief 四元数をオイラー角に変換する
    */
   static Vector3 ToEular(const Quaternion& q);
+  /**
+   * @brief 回転行列に変換する
+   */
+  static Matrix4x4 ToMatrix(const Quaternion& q);
 };
 
 /**

@@ -102,6 +102,22 @@ Vector3 Quaternion::ToEular(const Quaternion& q) {
   return Vector3(tx, ty, tz);
 }
 
+Matrix4x4 Quaternion::ToMatrix(const Quaternion& q) {
+  const float twoXX = 2.0f * q.x * q.x;
+  const float twoYY = 2.0f * q.y * q.y;
+  const float twoZZ = 2.0f * q.z * q.z;
+  const float twoXY = 2.0f * q.x * q.y;
+  const float twoYZ = 2.0f * q.y * q.z;
+  const float twoZX = 2.0f * q.z * q.x;
+  const float twoWX = 2.0f * q.w * q.x;
+  const float twoWY = 2.0f * q.w * q.y;
+  const float twoWZ = 2.0f * q.w * q.z;
+  return Matrix4x4(1.0f - twoYY - twoZZ, twoXY + twoWZ, twoZX - twoWY, 0.0f,
+                   twoXY - twoWZ, 1.0f - twoXX - twoZZ, twoYZ + twoWX, 0.0f,
+                   twoZX + twoWY, twoYZ - twoWX, 1.0f - twoXX - twoYY, 0.0f,
+                   0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Quaternion operator*(const Quaternion& q1, const Quaternion& q2) {
   const float x = q1.w * q2.x - q1.z * q2.y + q1.y * q2.z + q1.x * q2.w;
   const float y = q1.z * q2.x + q1.w * q2.y - q1.x * q2.z + q1.y * q2.w;

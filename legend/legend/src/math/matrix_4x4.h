@@ -142,7 +142,6 @@ class Matrix4x4 {
   float Determinant() const;
   /**
    * @brief ‹ts—ñ‚ğ‹‚ß‚é
-   * @param mat ‹‚ß‚és—ñ
    */
   Matrix4x4 Inverse() const;
   /**

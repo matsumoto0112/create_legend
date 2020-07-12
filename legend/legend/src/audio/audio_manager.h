@@ -89,15 +89,15 @@ private :
  public:
   //! AudioSource配列
   std::unordered_map<i32, std::unique_ptr<AudioSource>> audiosources_;
+  //! 読み込んだAudioSourceを保存
+  std::unordered_map<std::wstring, std::unique_ptr<AudioSource>>
+      base_audiosources_;
 
  private:
   //! サウンドデバイス
   IXAudio2* p_xaudio2_;
   //! 最終到達地点
   IXAudio2MasteringVoice* p_xaudio2_mastering_voice_;
-  //! 読み込んだAudioSourceを保存
-  std::unordered_map<std::wstring, std::unique_ptr<AudioSource>>
-      base_audiosources_;
   //! 再生したサウンド数
   i32 play_count_;
 

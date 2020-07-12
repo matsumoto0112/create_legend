@@ -178,7 +178,7 @@ void AudioManager::Update() {
     if (itr->second->IsEnd() && !itr->second->is_loop_) {
       itr = audiosources_.erase(itr);
     } else if (itr->second->IsEnd() && itr->second->is_loop_) {
-      LoopStart(itr->first, itr->second->GetFilePath(),
+      LoopStart(itr->first, itr->second->GetFileName(),
                 itr->second->GetVolume(), itr->second->GetPitch());
       ++itr;
     } else {

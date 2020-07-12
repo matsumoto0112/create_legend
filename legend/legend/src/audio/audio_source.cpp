@@ -213,6 +213,7 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
 
   is_loop_ = other.is_loop_;
   file_path_ = other.file_path_;
+  file_name_ = other.file_name_;
   wav_format_ = other.wav_format_;
   buffer_len_ = other.buffer_len_;
   // buffer_ = other.buffer_;

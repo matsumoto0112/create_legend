@@ -10,6 +10,8 @@ constexpr legend::u32 LOCAL_HEAP_DESCRIPTOR_NUM = 10000;
 constexpr legend::u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! デプス・ステンシルヒープの作成するディスクリプタ数
 constexpr legend::u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
+
+legend::directx::DescriptorHandle default_cbv_;
 }  // namespace
 
 namespace legend {
@@ -53,6 +55,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   }
 
   this->global_heap_allocated_count_ = 0;
+  default_cbv_ = GetLocalHandle();
   return true;
 }
 
@@ -105,6 +108,7 @@ void HeapManager::CopyHeapAndSetToGraphicsCommandList(
                    const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
     //必要な数だけローカルからグローバルにコピーする
     u32 count = static_cast<u32>(handles.size());
+    if (count == 0) return;
     DescriptorHandle global_handle =
         global_heap_.GetHandle(global_heap_allocated_count_);
     D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = global_handle.cpu_handle_;
@@ -117,6 +121,11 @@ void HeapManager::CopyHeapAndSetToGraphicsCommandList(
     global_heap_allocated_count_ += count;
   };
 
+  for (auto i = 0; i < cbv_handles_.size(); i++) {
+    if (cbv_handles_[i].ptr == 0) {
+      cbv_handles_[i] = default_cbv_.cpu_handle_;
+    }
+  }
   SetTo(0, cbv_handles_);
   SetTo(1, srv_handles_);
 }

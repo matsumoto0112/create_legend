@@ -149,7 +149,7 @@ bool PerspectiveCameraTest::Initialize() {
   transform_cb_.UpdateStaging();
 
   const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
-  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 10.0f, 0.0f),
+  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 1.0f, -1.0f),
                     camera_rotation, 60.0f * math::util::DEG_2_RAD,
                     1280.0f / 720.0f, math::Vector3::kUpVector)) {
     return false;

@@ -63,6 +63,7 @@
     <ClCompile Include="src\math\quaternion.cpp" />
     <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="src\directx\constant_buffer_structure.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
+    <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

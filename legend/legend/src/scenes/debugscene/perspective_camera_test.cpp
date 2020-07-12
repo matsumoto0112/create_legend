@@ -18,12 +18,12 @@ PerspectiveCameraTest::PerspectiveCameraTest(ISceneChange* scene_change)
 PerspectiveCameraTest::~PerspectiveCameraTest() {}
 
 //èâä˙âª
-void PerspectiveCameraTest::Initialize() {
+bool PerspectiveCameraTest::Initialize() {
   std::filesystem::path filepath =
       util::Path::GetInstance()->model() / L"checkXYZ.glb";
   util::loader::GLBLoader loader;
   if (!loader.Load(filepath)) {
-    return;
+    return false;
   }
 
   const u32 vertex_num = loader.GetVertexNum();
@@ -73,31 +73,31 @@ void PerspectiveCameraTest::Initialize() {
       game::GameDevice::GetInstance()->GetDevice();
   if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
                            L"VertexBuffer")) {
-    return;
+    return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
-    return;
+    return false;
   }
 
   const std::vector<u16> indices = loader.GetIndex();
   if (!index_buffer_.InitAndWrite(device, indices,
                                   directx::PrimitiveTopology::TriangleList,
                                   L"IndexBuffer")) {
-    return;
+    return false;
   }
 
   const std::vector<u8> albedo = loader.GetAlbedo();
   if (!texture_.InitAndWrite(device, 0, albedo, L"AlbedoTexture")) {
-    return;
+    return false;
   }
 
   root_signature_ = std::make_unique<directx::shader::RootSignature>();
   if (!root_signature_->Init(device, L"DefaultRootSignature")) {
-    return;
+    return false;
   }
 
   if (!pipeline_state_.Init(device)) {
-    return;
+    return false;
   }
   pipeline_state_.SetRootSignature(root_signature_);
 
@@ -125,14 +125,14 @@ void PerspectiveCameraTest::Initialize() {
   if (!vertex_shader->Init(
           device, shader_root_path / L"modelview" / L"model_view_vs.cso",
           elements)) {
-    return;
+    return false;
   }
   pipeline_state_.SetVertexShader(vertex_shader);
 
   auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
   if (!pixel_shader->Init(
           device, shader_root_path / L"modelview" / L"model_view_ps.cso")) {
-    return;
+    return false;
   }
   pipeline_state_.SetPixelShader(pixel_shader);
 
@@ -140,11 +140,11 @@ void PerspectiveCameraTest::Initialize() {
       directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
   pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
   if (!pipeline_state_.CreatePipelineState(device)) {
-    return;
+    return false;
   }
 
   if (!transform_cb_.Init(device, 0, L"TransformConstantBuffer")) {
-    return;
+    return false;
   }
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
   transform_cb_.UpdateStaging();
@@ -153,12 +153,14 @@ void PerspectiveCameraTest::Initialize() {
                     math::Vector3(0, 0, 0), math::Vector3::kUpVector,
                     60.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
                     300.0f)) {
-    return;
+    return false;
   }
+
+  return true;
 }
 
 //çXêV
-void PerspectiveCameraTest::Update() {}
+bool PerspectiveCameraTest::Update() { return true; }
 
 //ï`âÊ
 void PerspectiveCameraTest::Draw() {

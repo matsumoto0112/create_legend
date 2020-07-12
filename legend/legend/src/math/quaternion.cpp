@@ -59,6 +59,11 @@ Quaternion Quaternion::FromEular(const Vector3& v) {
   return FromEular(v.x, v.y, v.z);
 }
 
+Vector3 Quaternion::ToEular() const
+{
+    return ToEular(*this);
+}
+
 Vector3 Quaternion::ToEular(const Quaternion& q) {
   constexpr float EPSILON = 0.001f;
 

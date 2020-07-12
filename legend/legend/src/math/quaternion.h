@@ -67,6 +67,10 @@ class Quaternion {
    */
   static Quaternion FromEular(const Vector3& v);
   /**
+   * @brief オイラー角を取得する
+   */
+  Vector3 ToEular() const;
+  /**
    * @brief 四元数をオイラー角に変換する
    */
   static Vector3 ToEular(const Quaternion& q);

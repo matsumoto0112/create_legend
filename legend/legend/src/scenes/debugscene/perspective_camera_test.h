@@ -37,7 +37,6 @@ class PerspectiveCameraTest : public Scene {
   directx::buffer::IndexBuffer index_buffer_;
   directx::buffer::Texture2D texture_;
   directx::buffer::ConstantBuffer<Transform> transform_cb_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
 
   camera::PerspectiveCamera camera_;

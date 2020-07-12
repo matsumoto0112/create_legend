@@ -93,15 +93,10 @@ bool PerspectiveCameraTest::Initialize() {
     return false;
   }
 
-  root_signature_ = std::make_unique<directx::shader::RootSignature>();
-  if (!root_signature_->Init(device, L"DefaultRootSignature")) {
-    return false;
-  }
-
   if (!pipeline_state_.Init(device)) {
     return false;
   }
-  pipeline_state_.SetRootSignature(root_signature_);
+  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
 
   const std::filesystem::path shader_root_path =
       util::Path::GetInstance()->shader();
@@ -200,7 +195,6 @@ void PerspectiveCameraTest::Draw() {
       game::GameDevice::GetInstance()->GetDevice();
 
   camera_.RenderStart();
-  root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
 

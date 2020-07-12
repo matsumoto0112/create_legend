@@ -12,6 +12,7 @@
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
 
@@ -72,12 +73,19 @@ class DirectX12Device : public IDirectXAccessor {
     return command_list_.Get();
   }
   const buffer::RenderTarget& GetRenderTarget() const {
-      return swap_chain_.GetRenderTarget();
+    return swap_chain_.GetRenderTarget();
   }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
   HeapManager& GetHeapManager() { return heap_manager_; }
+  /**
+   * @brief デフォルトのルートシグネチャを取得する
+   */
+  inline std::shared_ptr<shader::RootSignature> GetDefaultRootSignature()
+      const {
+    return default_root_signature_;
+  }
 
  private:
   /**
@@ -122,6 +130,8 @@ class DirectX12Device : public IDirectXAccessor {
   Microsoft::WRL::Wrappers::Event fence_event_;
   //! ディスクリプタヒープ管理
   HeapManager heap_manager_;
+  //! デフォルトのルートシグネチャ
+  std::shared_ptr<shader::RootSignature> default_root_signature_;
 };
 }  // namespace directx
 }  // namespace legend

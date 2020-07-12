@@ -19,7 +19,7 @@ RootSignature::RootSignature() {}
 RootSignature::~RootSignature() {}
 
 //初期化
-bool RootSignature::Init(DirectX12Device& device, const std::wstring& name) {
+bool RootSignature::Init(IDirectXAccessor& accessor, const std::wstring& name) {
   //すべてのシェーダーで使いまわせるように最大限の領域を確保する
   std::array<CD3DX12_DESCRIPTOR_RANGE, 3> ranges;
   ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
@@ -61,7 +61,7 @@ bool RootSignature::Init(DirectX12Device& device, const std::wstring& name) {
     return false;
   }
 
-  if (FAILED(device.GetDevice()->CreateRootSignature(
+  if (FAILED(accessor.GetDevice()->CreateRootSignature(
           0, signature->GetBufferPointer(), signature->GetBufferSize(),
           IID_PPV_ARGS(&root_signature_)))) {
     MY_LOG(L"CreateRootSignature failed");
@@ -76,8 +76,8 @@ bool RootSignature::Init(DirectX12Device& device, const std::wstring& name) {
 }
 
 //コマンドリストにセットする
-void RootSignature::SetGraphicsCommandList(DirectX12Device& device) {
-  device.GetCommandList()->SetGraphicsRootSignature(root_signature_.Get());
+void RootSignature::SetGraphicsCommandList(IDirectXAccessor& accessor) {
+  accessor.GetCommandList()->SetGraphicsRootSignature(root_signature_.Get());
 }
 
 }  // namespace shader

@@ -1,6 +1,7 @@
 #include "src/scenes/debugscene/perspective_camera_test.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/util/loader/glb_loader.h"
@@ -18,12 +19,12 @@ PerspectiveCameraTest::PerspectiveCameraTest(ISceneChange* scene_change)
 PerspectiveCameraTest::~PerspectiveCameraTest() {}
 
 //èâä˙âª
-void PerspectiveCameraTest::Initialize() {
+bool PerspectiveCameraTest::Initialize() {
   std::filesystem::path filepath =
       util::Path::GetInstance()->model() / L"checkXYZ.glb";
   util::loader::GLBLoader loader;
   if (!loader.Load(filepath)) {
-    return;
+    return false;
   }
 
   const u32 vertex_num = loader.GetVertexNum();
@@ -73,31 +74,32 @@ void PerspectiveCameraTest::Initialize() {
       game::GameDevice::GetInstance()->GetDevice();
   if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
                            L"VertexBuffer")) {
-    return;
+    return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
-    return;
+    return false;
   }
 
   const std::vector<u16> indices = loader.GetIndex();
   if (!index_buffer_.InitAndWrite(device, indices,
                                   directx::PrimitiveTopology::TriangleList,
                                   L"IndexBuffer")) {
-    return;
+    return false;
   }
 
   const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!texture_.InitAndWrite(device, 0, albedo, L"AlbedoTexture")) {
-    return;
+  if (!texture_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
+                             albedo, L"AlbedoTexture")) {
+    return false;
   }
 
   root_signature_ = std::make_unique<directx::shader::RootSignature>();
   if (!root_signature_->Init(device, L"DefaultRootSignature")) {
-    return;
+    return false;
   }
 
   if (!pipeline_state_.Init(device)) {
-    return;
+    return false;
   }
   pipeline_state_.SetRootSignature(root_signature_);
 
@@ -125,14 +127,14 @@ void PerspectiveCameraTest::Initialize() {
   if (!vertex_shader->Init(
           device, shader_root_path / L"modelview" / L"model_view_vs.cso",
           elements)) {
-    return;
+    return false;
   }
   pipeline_state_.SetVertexShader(vertex_shader);
 
   auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
   if (!pixel_shader->Init(
           device, shader_root_path / L"modelview" / L"model_view_ps.cso")) {
-    return;
+    return false;
   }
   pipeline_state_.SetPixelShader(pixel_shader);
 
@@ -140,25 +142,57 @@ void PerspectiveCameraTest::Initialize() {
       directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
   pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
   if (!pipeline_state_.CreatePipelineState(device)) {
-    return;
+    return false;
   }
 
-  if (!transform_cb_.Init(device, 0, L"TransformConstantBuffer")) {
-    return;
+  if (!transform_cb_.Init(device,
+                          directx::shader::ConstantBufferRegisterID::Transform,
+                          L"TransformConstantBuffer")) {
+    return false;
   }
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
   transform_cb_.UpdateStaging();
 
-  if (!camera_.Init(L"MainCamera", math::Vector3(0, 3, -3),
-                    math::Vector3(0, 0, 0), math::Vector3::kUpVector,
-                    60.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
-                    300.0f)) {
-    return;
+  const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
+  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 10.0f, 0.0f),
+                    camera_rotation, 60.0f * math::util::DEG_2_RAD,
+                    1280.0f / 720.0f, math::Vector3::kUpVector)) {
+    return false;
   }
+
+  return true;
 }
 
 //çXêV
-void PerspectiveCameraTest::Update() {}
+bool PerspectiveCameraTest::Update() {
+  if (ImGui::Begin("Camera")) {
+    //ÉJÉÅÉâç¿ïW
+    math::Vector3 camera_position = camera_.GetPosition();
+    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
+    camera_.SetPosition(camera_position);
+    //ÉJÉÅÉââÒì]äp
+    math::Vector3 camera_rotation =
+        math::Quaternion::ToEular(camera_.GetRotation()) *
+        math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
+    camera_.SetRotation(
+        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
+    if (ImGui::Button("X_UP")) {
+      camera_.SetUpVector(math::Vector3::kRightVector);
+    }
+    if (ImGui::Button("Y_UP")) {
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("Z_UP")) {
+      camera_.SetUpVector(math::Vector3::kForwardVector);
+    }
+    float fov = camera_.GetFov() * math::util::RAD_2_DEG;
+    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
+    camera_.SetFov(fov * math::util::DEG_2_RAD);
+  }
+  ImGui::End();
+  return true;
+}
 
 //ï`âÊ
 void PerspectiveCameraTest::Draw() {

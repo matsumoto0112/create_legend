@@ -159,6 +159,8 @@
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
+    <ClInclude Include="src\audio\audio_type.h" />
+    <ClInclude Include="src\directx\shader\shader_register_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

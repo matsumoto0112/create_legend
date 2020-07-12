@@ -16,6 +16,7 @@ namespace directx {
 enum class PrimitiveTopology : u32 {
   TriangleList,
   PointList,
+  LineList,
 };
 }  // namespace directx
 }  // namespace legend

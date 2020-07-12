@@ -11,10 +11,14 @@ D3D12_PRIMITIVE_TOPOLOGY Convert(legend::directx::PrimitiveTopology topology) {
   using legend::directx::PrimitiveTopology;
 
   static const std::unordered_map<PrimitiveTopology, D3D12_PRIMITIVE_TOPOLOGY>
-      dict{{PrimitiveTopology::TriangleList,
-            D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST},
-           {PrimitiveTopology::PointList,
-            D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST}};
+      dict{
+          {PrimitiveTopology::TriangleList,
+           D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST},
+          {PrimitiveTopology::PointList,
+           D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST},
+          {PrimitiveTopology::LineList,
+           D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST},
+      };
 
   MY_ASSERTION(dict.find(topology) != dict.end(),
                L"未定義のトポロジーが選択されました。");

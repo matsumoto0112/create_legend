@@ -14,12 +14,14 @@ void SoundTest::Initialize() {
   audio::AudioManager& audio_manager =
       game::GameDevice::GetInstance()->GetAudioManager();
 
-  std::filesystem::path path =
-      util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_2.wav";
-  audio_manager.LoadWav(path, AudioType::SE);
-  path =
-      util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_3.wav";
-  audio_manager.LoadWav(path, AudioType::BGM);
+  //std::filesystem::path path =
+  //    util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_2.wav";
+  //audio_manager.LoadWav(path, AudioType::SE);
+  audio_manager.LoadWav(L"free_2.wav", AudioType::SE);
+  //path =
+  //    util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_3.wav";
+  //audio_manager.LoadWav(path, AudioType::BGM);
+  audio_manager.LoadWav(L"free_3.wav", AudioType::BGM);
 }
 void SoundTest::Update() {
   audio::AudioManager& audio_manager =
@@ -34,14 +36,14 @@ void SoundTest::Update() {
     if (ImGui::Button("SE")) {
       std::filesystem::path path = 
           util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_2.wav";
-      audio_manager.Start(path, 1.0f);
+      audio_manager.Start(L"free_2.wav", 1.0f);
     }
 
-    if (ImGui::Button("BGM")) {
-      std::filesystem::path path =
-          util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_3.wav";
-      audio_manager.Start(path, 1.0f);
-    }
+    //if (ImGui::Button("BGM")) {
+    //  std::filesystem::path path =
+    //      util::Path::GetInstance()->exe() / L"assets" / L"audios" / L"free_3.wav";
+    //  audio_manager.Start(path, 1.0f);
+    //}
   }
 
   ImGui::End();

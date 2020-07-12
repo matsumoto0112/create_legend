@@ -21,8 +21,8 @@ AudioSource::~AudioSource() {
   if (mmio_ != NULL) mmioClose(mmio_, MMIO_FHOPEN);
 }
 
-bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename,
-                          AudioType audio_type) {
+bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filepath,
+                          std::wstring filename, AudioType audio_type) {
   audio_type_ = audio_type;
 
   buffer_ = NULL;
@@ -30,7 +30,7 @@ bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename,
 
   mmio_ = NULL;
   MMIOINFO info_ = {0};
-  mmio_ = mmioOpen((LPWSTR)filename.c_str(), &info_, MMIO_READ);
+  mmio_ = mmioOpen((LPWSTR)filepath.c_str(), &info_, MMIO_READ);
 
   if (!mmio_) {
     MY_LOG(L"ファイルの読み込みに失敗しました。\n");
@@ -100,7 +100,8 @@ bool AudioSource::LoadWav(IXAudio2* p_xaudio2, std::wstring filename,
   xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
 
-  file_path_ = filename;
+  file_path_ = filepath;
+  file_name_ = filename;
 
   return true;
 }
@@ -247,10 +248,13 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
       ((i32)read_len_ >= buffer_len_) ? 0 : XAUDIO2_END_OF_STREAM;
   xaudio2_buffer_.AudioBytes = read_len_;
   xaudio2_buffer_.pAudioData = ptr_;
-  xaudio2_buffer_.PlayBegin = 0;
+  // xaudio2_buffer_.PlayBegin = 0;
   xaudio2_buffer_.PlayBegin = 16;
   // xaudio2_buffer_.PlayLength = read_len_ / wav_format_.nBlockAlign;
-  xaudio2_buffer_.PlayLength = 0;
+  // xaudio2_buffer_.PlayLength = 0;
+
+  // xaudio2_buffer_.AudioBytes = sizeof(wav_format_);
+  // xaudio2_buffer_.pAudioData = buffer_;
 
   p_source_voice->FlushSourceBuffers();
   p_source_voice->SubmitSourceBuffer(&xaudio2_buffer_);
@@ -259,6 +263,8 @@ bool AudioSource::Copy(IXAudio2* p_xaudio2, const AudioSource& other) {
 }
 
 std::wstring AudioSource::GetFilePath() { return file_path_; }
+
+std::wstring AudioSource::GetFileName() { return file_name_; }
 
 }  // namespace audio
 }  // namespace legend

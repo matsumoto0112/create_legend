@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "src/audio/audio_source.h"
+#include "src/util/path.h"
 
 #pragma comment(lib, "dsound.lib")
 
@@ -83,6 +84,8 @@ class AudioManager {
 private :
     void LoopStart(i32 key, std::wstring filename, float volume, float pitch);
 
+    bool FindDirectory(std::wstring *filepath, std::wstring filename);
+
  public:
   //! AudioSource配列
   std::unordered_map<i32, std::unique_ptr<AudioSource>> audiosources_;
@@ -99,7 +102,7 @@ private :
   i32 play_count_;
 
   //! ファイルパス
-  std::wstring file_path_;
+  std::filesystem::path path_;
 
   //! 全体の音量
   float master_volume_;

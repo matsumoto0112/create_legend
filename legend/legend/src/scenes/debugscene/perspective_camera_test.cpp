@@ -153,10 +153,10 @@ bool PerspectiveCameraTest::Initialize() {
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
   transform_cb_.UpdateStaging();
 
-  if (!camera_.Init(L"MainCamera", math::Vector3(0, 3, -3),
-                    math::Vector3(0, 0, 0), math::Vector3::kUpVector,
-                    60.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f,
-                    300.0f)) {
+  const math::Quaternion camera_rotation = math::Quaternion::IDENTITY;
+  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 10.0f, 0.0f),
+                    camera_rotation, 60.0f * math::util::DEG_2_RAD,
+                    1280.0f / 720.0f, math::Vector3::kUpVector)) {
     return false;
   }
 
@@ -164,7 +164,35 @@ bool PerspectiveCameraTest::Initialize() {
 }
 
 //çXêV
-bool PerspectiveCameraTest::Update() { return true; }
+bool PerspectiveCameraTest::Update() {
+  if (ImGui::Begin("Camera")) {
+    //ÉJÉÅÉâç¿ïW
+    math::Vector3 camera_position = camera_.GetPosition();
+    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
+    camera_.SetPosition(camera_position);
+    //ÉJÉÅÉââÒì]äp
+    math::Vector3 camera_rotation =
+        math::Quaternion::ToEular(camera_.GetRotation()) *
+        math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
+    camera_.SetRotation(
+        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
+    if (ImGui::Button("X_UP")) {
+      camera_.SetUpVector(math::Vector3::kRightVector);
+    }
+    if (ImGui::Button("Y_UP")) {
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("Z_UP")) {
+      camera_.SetUpVector(math::Vector3::kForwardVector);
+    }
+    float fov = camera_.GetFov() * math::util::RAD_2_DEG;
+    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
+    camera_.SetFov(fov * math::util::DEG_2_RAD);
+  }
+  ImGui::End();
+  return true;
+}
 
 //ï`âÊ
 void PerspectiveCameraTest::Draw() {

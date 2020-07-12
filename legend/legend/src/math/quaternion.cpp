@@ -5,7 +5,7 @@
 namespace legend {
 namespace math {
 
-const Quaternion Quaternion::IDENTITY = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+const Quaternion Quaternion::kIdentity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 //コンストラクタ
 Quaternion::Quaternion() {}
@@ -57,6 +57,11 @@ Quaternion Quaternion::FromEular(float roll, float pitch, float yaw) {
 
 Quaternion Quaternion::FromEular(const Vector3& v) {
   return FromEular(v.x, v.y, v.z);
+}
+
+Vector3 Quaternion::ToEular() const
+{
+    return ToEular(*this);
 }
 
 Vector3 Quaternion::ToEular(const Quaternion& q) {

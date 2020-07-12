@@ -154,6 +154,7 @@
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\constant_buffer_structure.h" />
     <ClInclude Include="src\audio\audio_type.h" />
+    <ClInclude Include="src\directx\shader\shader_register_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

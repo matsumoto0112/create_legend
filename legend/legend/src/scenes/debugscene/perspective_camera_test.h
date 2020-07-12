@@ -27,8 +27,8 @@ class PerspectiveCameraTest : public Scene {
  public:
   PerspectiveCameraTest(ISceneChange* scene_change);
   virtual ~PerspectiveCameraTest();
-  virtual void Initialize() override;
-  virtual void Update() override;
+  virtual bool Initialize() override;
+  virtual bool Update() override;
   virtual void Draw() override;
   virtual void Finalize() override;
 

@@ -19,7 +19,7 @@ namespace math {
 class Quaternion {
  public:
   //! 単位四元数
-  static const Quaternion IDENTITY;
+  static const Quaternion kIdentity;
 
  public:
   //! xベクトル
@@ -66,6 +66,10 @@ class Quaternion {
    * @brief ロール・ピッチ・ヨーから四元数を生成する
    */
   static Quaternion FromEular(const Vector3& v);
+  /**
+   * @brief オイラー角を取得する
+   */
+  Vector3 ToEular() const;
   /**
    * @brief 四元数をオイラー角に変換する
    */

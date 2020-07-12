@@ -17,12 +17,18 @@ SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
 }
 
 //初期化
-void SceneManager::Initialize() {
+bool SceneManager::Initialize() {
   if (current_scene_ == nullptr) {
-    return;
+    MY_LOG(L"シーンが設定されていません");
+    return false;
   }
 
-  current_scene_->Initialize();
+  if (!current_scene_->Initialize()) {
+    MY_LOG(L"初期化に失敗しました");
+    return false;
+  }
+
+  return true;
 }
 
 //終了
@@ -35,9 +41,10 @@ void SceneManager::Finalize() {
 }
 
 //更新
-void SceneManager::Update() {
+bool SceneManager::Update() {
   if (current_scene_ == nullptr) {
-    return;
+    MY_LOG(L"シーンが設定されていません");
+    return false;
   }
 
   if (next_scene_ != SceneType::NONE) {
@@ -68,10 +75,17 @@ void SceneManager::Update() {
 
     current_scene_type_ = next_scene_;
     next_scene_ = SceneType::NONE;
-    current_scene_->Initialize();
+    if (!current_scene_->Initialize()) {
+      return false;
+    }
   }
 
-  current_scene_->Update();
+  if (!current_scene_->Update()) {
+    MY_LOG(L"更新に失敗しました");
+    return false;
+  }
+
+  return true;
 }
 
 //描画

@@ -20,7 +20,7 @@ class SceneManager : public ISceneChange, Task {
   /**
    * @brief ‰Šú‰»
    */
-  void Initialize() override;
+  bool Initialize() override;
   /**
    * @brief I—¹
    */
@@ -28,7 +28,7 @@ class SceneManager : public ISceneChange, Task {
   /**
    * @brief XV
    */
-  void Update() override;
+  bool Update() override;
   /**
    * @brief •`‰æ
    */

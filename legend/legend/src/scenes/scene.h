@@ -27,7 +27,7 @@ class Scene : public Task {
   /**
    * @brief ‰Šú‰»
    */
-  virtual void Initialize() override {}
+  virtual bool Initialize() override { return true; }
   /**
    * @brief I—¹
    */
@@ -35,7 +35,7 @@ class Scene : public Task {
   /**
    * @brief XV
    */
-  virtual void Update() override {}
+  virtual bool Update() override { return true; }
   /**
    * @brief •`‰æ
    */

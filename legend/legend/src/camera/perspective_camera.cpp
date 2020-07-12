@@ -1,5 +1,6 @@
 #include "src/camera/perspective_camera.h"
 
+#include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 
 namespace legend {
@@ -19,7 +20,8 @@ bool PerspectiveCamera::Init(const std::wstring& name,
                              float aspect_ratio, float near_z, float far_z) {
   this->name_ = name;
   if (!world_context_constant_buffer_.Init(
-          game::GameDevice::GetInstance()->GetDevice(), 1,
+          game::GameDevice::GetInstance()->GetDevice(),
+          directx::shader::ConstantBufferRegisterID::WorldContext,
           name_ + L"_WorldContext_ConstantBuffer")) {
     return false;
   }

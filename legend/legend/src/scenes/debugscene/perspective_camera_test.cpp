@@ -1,6 +1,7 @@
 #include "src/scenes/debugscene/perspective_camera_test.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/util/loader/glb_loader.h"
@@ -87,7 +88,8 @@ bool PerspectiveCameraTest::Initialize() {
   }
 
   const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!texture_.InitAndWrite(device, 0, albedo, L"AlbedoTexture")) {
+  if (!texture_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
+                             albedo, L"AlbedoTexture")) {
     return false;
   }
 
@@ -143,7 +145,9 @@ bool PerspectiveCameraTest::Initialize() {
     return false;
   }
 
-  if (!transform_cb_.Init(device, 0, L"TransformConstantBuffer")) {
+  if (!transform_cb_.Init(device,
+                          directx::shader::ConstantBufferRegisterID::Transform,
+                          L"TransformConstantBuffer")) {
     return false;
   }
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;

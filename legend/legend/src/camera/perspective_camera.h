@@ -59,7 +59,7 @@ class PerspectiveCamera {
    */
   inline std::wstring GetName() const { return name_; }
 
- public:
+ protected:
   //! カメラ名
   std::wstring name_;
   //! 描画用コンスタントバッファ

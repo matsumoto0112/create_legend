@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
+    <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\audio\xaudio2_callback.h" />
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>

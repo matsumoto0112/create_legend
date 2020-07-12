@@ -3,6 +3,7 @@
 
 #include <xaudio2.h>
 
+#include "src/audio/audio_type.h"
 #include "src/audio/xaudio2_callback.h"
 
 #pragma comment(lib, "xaudio2.lib")
@@ -10,14 +11,6 @@
 
 namespace legend {
 namespace audio {
-
-/**
- * @brief 音の種類の列挙
- */
-enum class AudioType {
-  BGM = 0,
-  SE,
-};
 
 /**
  * @file audio_source.h
@@ -37,7 +30,8 @@ class AudioSource {
    * @brief 初期化処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool LoadWav(IXAudio2* p_xaudio2, std::wstring filename);
+  bool LoadWav(IXAudio2* p_xaudio2, std::wstring filepath,
+               std::wstring filename, AudioType audio_type);
   /**
    * @brief 再生
    * @return 再生に成功したらtrueを返す
@@ -87,6 +81,10 @@ class AudioSource {
    * @brief ファイルパスを取得
    */
   std::wstring GetFilePath();
+  /**
+   * @brief ファイルネームを取得
+   */
+  std::wstring GetFileName();
 
  public:
   //! ループ再生するかどうか
@@ -131,6 +129,8 @@ class AudioSource {
 
   //! 読み込んだファイルパス
   std::wstring file_path_;
+  //! 読み込んだファイルネーム
+  std::wstring file_name_;
 };
 
 }  // namespace audio

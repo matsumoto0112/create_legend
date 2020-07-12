@@ -5,7 +5,7 @@
 namespace legend {
 namespace math {
 
-const Quaternion Quaternion::IDENTITY = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+const Quaternion Quaternion::kIdentity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 //コンストラクタ
 Quaternion::Quaternion() {}

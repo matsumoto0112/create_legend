@@ -19,7 +19,7 @@ namespace math {
 class Quaternion {
  public:
   //! 単位四元数
-  static const Quaternion IDENTITY;
+  static const Quaternion kIdentity;
 
  public:
   //! xベクトル

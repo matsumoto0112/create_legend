@@ -12,7 +12,8 @@ Sprite2D::Sprite2D() {}
 //デストラクタ
 Sprite2D::~Sprite2D() {}
 
-bool Sprite2D::Initialize(const std::filesystem::path& filepath) {
+//初期化
+bool Sprite2D::Init(const std::filesystem::path& filepath) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
   if (!texture_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
@@ -36,6 +37,7 @@ bool Sprite2D::Initialize(const std::filesystem::path& filepath) {
   return true;
 }
 
+//コマンドリストに積む
 void Sprite2D::SetToCommandList() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -46,7 +48,7 @@ void Sprite2D::SetToCommandList() {
           scale_.x * content_size_.x, scale_.y * content_size_.y, 1.0f)) *
       math::Matrix4x4::CreateRotationZ(rotate_) *
       math::Matrix4x4::CreateTranslate(
-          math::Vector3(position_.x, position_.y, 0.0f));
+          math::Vector3(position_.x, position_.y, z_order_));
   transform_constant_buffer_.UpdateStaging();
   transform_constant_buffer_.SetToHeap(device);
 }

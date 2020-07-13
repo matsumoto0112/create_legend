@@ -28,31 +28,67 @@ class Sprite2D {
   ~Sprite2D();
   /**
    * @brief 初期化
-   * @param ファイル名
+   * @param filepath ファイルへのパス
    */
-  bool Initialize(const std::filesystem::path& filepath);
+  bool Init(const std::filesystem::path& filepath);
 
-  inline math::Vector2 GetPosition() const { return position_; }
+ public:
+  /**
+   * @brief 座標の設定
+   */
   inline void SetPosition(const math::Vector2& position) {
     this->position_ = position;
   }
-  inline math::Vector2 GetScale() const { return scale_; }
+  /**
+   * @brief 座標の取得
+   */
+  inline math::Vector2 GetPosition() const { return position_; }
+  /**
+   * @brief スケーリングの設定
+   */
   inline void SetScale(const math::Vector2& scale) { this->scale_ = scale; }
-  inline float GetZOrder() const { return z_order_; }
+  /**
+   * @brief スケーリングの取得
+   */
+  inline math::Vector2 GetScale() const { return scale_; }
+  /**
+   * @brief Zオーダーを設定する
+   * @param z_order 設定する値(0~1)
+   */
   inline void SetZOrder(float z_order) { this->z_order_ = z_order; }
-  inline float GetRotate() const { return rotate_; }
+  /**
+   * @brief Zオーダーを取得する
+   */
+  inline float GetZOrder() const { return z_order_; }
+  /**
+   * @brief 回転角度を設定する
+   * @param rotate 設定する角度(rad)
+   */
   inline void SetRotate(float rotate) { this->rotate_ = rotate; }
+  /**
+   * @brief 回転角度を取得する
+=  */
+  inline float GetRotate() const { return rotate_; }
+  /**
+   * @brief コマンドリストに積む
+   */
   void SetToCommandList();
 
  private:
+  //! コンテンツのサイズ
   math::Vector2 content_size_;
+  //! スケーリング
   math::Vector2 scale_;
+  //! 座標
   math::Vector2 position_;
+  //! Zオーダー
   float z_order_;
+  //! 回転角度
   float rotate_;
+  //! トランスフォーム行列バッファ
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       transform_constant_buffer_;
-
+  //! テクスチャ
   directx::buffer::Texture2D texture_;
 };
 }  // namespace draw

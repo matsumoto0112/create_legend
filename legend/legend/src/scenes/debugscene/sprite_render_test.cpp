@@ -16,35 +16,25 @@ bool SpriteRenderTest::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  if (!sprite_renderer_.Init(math::Vector2(1280.0f, 720.0f))) {
-    return false;
-  }
-
   const std::filesystem::path texture_path =
       util::Path::GetInstance()->texture() / "tex.png";
-  if (!sprite_.Initialize(texture_path)) {
+  if (!sprite_.Init(texture_path)) {
     return false;
   }
+  sprite_.SetScale(math::Vector2(0.2f, 0.2f));
+  sprite_.SetZOrder(0.5f);
 
   return true;
 }
 
-bool SpriteRenderTest::Update() {
-  // if (ImGui::Begin("Camera")) {
-  //  static float camera_position[3];
-  //  ImGui::SliderFloat3("position", camera_position, -100.0f, 100.0f);
-  //  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateTranslate(
-  //      -1 * math::Vector3(camera_position[0], camera_position[1],
-  //                         camera_position[2]));
-  //  world_cb_.UpdateStaging();
-  //}
-  // ImGui::End();
-  return true;
-}
+bool SpriteRenderTest::Update() { return true; }
 
 void SpriteRenderTest::Draw() {
-  sprite_renderer_.AddDrawItems(&sprite_);
-  sprite_renderer_.DrawItems();
+  legend::draw::SpriteRenderer& sprite_renderer =
+      game::GameDevice::GetInstance()->GetSpriteRenderer();
+
+  sprite_renderer.AddDrawItems(&sprite_);
+  sprite_renderer.DrawItems();
 }
 
 void SpriteRenderTest::Finalize() {}

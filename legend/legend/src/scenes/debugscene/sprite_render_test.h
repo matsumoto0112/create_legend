@@ -22,7 +22,6 @@ class SpriteRenderTest : public Scene {
   virtual void Finalize() override;
 
  private:
-  draw::SpriteRenderer sprite_renderer_;
   draw::Sprite2D sprite_;
 };
 

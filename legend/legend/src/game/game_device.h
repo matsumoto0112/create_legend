@@ -9,6 +9,7 @@
 
 #include "src/audio/audio_manager.h"
 #include "src/directx/directx12_device.h"
+#include "src/draw/sprite_renderer.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
 #include "src/util/singleton.h"
@@ -49,8 +50,12 @@ class GameDevice : public util::Singleton<GameDevice> {
   input::InputManager& GetInput() const { return *input_manager_; }
   /**
    * @brief 音響管理デバイスを取得する
-  */
+   */
   audio::AudioManager& GetAudioManager() const { return *audio_manager; }
+  /**
+   * @brief スプライト描画デバイスを取得する
+   */
+  draw::SpriteRenderer& GetSpriteRenderer() const { return *sprite_renderer_; }
 
  protected:
   /**
@@ -67,6 +72,8 @@ class GameDevice : public util::Singleton<GameDevice> {
   std::unique_ptr<input::InputManager> input_manager_;
   //! 音響管理
   std::unique_ptr<audio::AudioManager> audio_manager;
+  //! スプライト描画デバイス
+  std::unique_ptr<draw::SpriteRenderer> sprite_renderer_;
 };
 
 }  // namespace game

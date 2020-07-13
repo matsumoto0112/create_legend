@@ -90,6 +90,7 @@
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
+    <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
+    <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />

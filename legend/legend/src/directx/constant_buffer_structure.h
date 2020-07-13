@@ -13,6 +13,14 @@ namespace directx {
 namespace constant_buffer_structure {
 
 /**
+ * @brief ワールド行列データ構造体
+ */
+struct Transform {
+  //! ワールド変換行列
+  math::Matrix4x4 world;
+};
+
+/**
  * @brief ワールド描画用データ構造体
  */
 struct WorldContext {

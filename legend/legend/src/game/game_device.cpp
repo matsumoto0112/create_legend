@@ -1,5 +1,15 @@
 #include "src/game/game_device.h"
 
+namespace {
+/**
+ * @brief IntVector2‚©‚çVector2‚É•ÏŠ·‚·‚é
+ */
+legend::math::Vector2 ToVector2(const legend::math::IntVector2& int_vec2) {
+  return legend::math::Vector2(static_cast<float>(int_vec2.x),
+                               static_cast<float>(int_vec2.y));
+}
+}  // namespace
+
 namespace legend {
 namespace game {
 GameDevice::GameDevice()
@@ -16,6 +26,11 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
 
   audio_manager = std::make_unique<audio::AudioManager>();
   if (!audio_manager->Init()) {
+    return false;
+  }
+
+  sprite_renderer_ = std::make_unique<draw::SpriteRenderer>();
+  if (!sprite_renderer_->Init(ToVector2(target_window->GetScreenSize()))) {
     return false;
   }
   return true;

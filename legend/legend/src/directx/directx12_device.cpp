@@ -67,6 +67,7 @@ bool DirectX12Device::Prepare() {
   swap_chain_.ClearBackBuffer(*this);
 
   heap_manager_.BeginFrame();
+  default_root_signature_->SetGraphicsCommandList(*this);
   return true;
 }
 
@@ -130,6 +131,7 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
+  //コマンドキューの作成
   D3D12_COMMAND_QUEUE_DESC queue_desc = {};
   queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
   queue_desc.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -139,14 +141,25 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  if (!heap_manager_.Init(*this)) return false;
+  //ヒープ管理機能の作成
+  if (!heap_manager_.Init(*this)) {
+    return false;
+  }
 
+  //ルートシグネチャの作成
+  default_root_signature_ = std::make_shared<shader::RootSignature>();
+  if (!default_root_signature_->Init(*this, L"DefaultRootSignature")) {
+    return false;
+  }
+
+  //スワップチェインの作成
   if (!swap_chain_.Init(*this, adapter_, *target_window_.lock(),
                         command_queue_.Get(),
                         DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)) {
     return false;
   }
 
+  //フレーム枚数分のアロケータ作成
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
     if (FAILED(device_->CreateCommandAllocator(
             D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -156,6 +169,7 @@ bool DirectX12Device::CreateDevice() {
     }
   }
 
+  //コマンドリストの作成
   if (FAILED(device_->CreateCommandList(
           0, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
           command_allocator_[0].Get(), nullptr,
@@ -163,6 +177,8 @@ bool DirectX12Device::CreateDevice() {
     MY_LOG(L"CreateCommandList failed");
     return false;
   }
+
+  //同期用のフェンス作成
   if (FAILED(device_->CreateFence(fence_values_[frame_index_],
                                   D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
                                   IID_PPV_ARGS(&fence_)))) {

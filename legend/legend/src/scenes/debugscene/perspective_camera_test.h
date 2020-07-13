@@ -19,11 +19,10 @@
 namespace legend {
 namespace scenes {
 namespace debugscene {
+/**
+ * @brief パースペクティブカメラ挙動確認シーン
+ */
 class PerspectiveCameraTest : public Scene {
-  struct Transform {
-    math::Matrix4x4 world;
-  };
-
  public:
   PerspectiveCameraTest(ISceneChange* scene_change);
   virtual ~PerspectiveCameraTest();
@@ -36,10 +35,11 @@ class PerspectiveCameraTest : public Scene {
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
   directx::buffer::Texture2D texture_;
-  directx::buffer::ConstantBuffer<Transform> transform_cb_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
   directx::shader::GraphicsPipelineState pipeline_state_;
 
+  //! カメラ
   camera::PerspectiveCamera camera_;
 };
 

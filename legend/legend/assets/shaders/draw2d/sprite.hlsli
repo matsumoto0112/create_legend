@@ -17,7 +17,9 @@ typedef VS_Output PS_Input;
 
 VS_Output VS_Main(const VS_Input input) {
     VS_Output output = (VS_Output)0;
-    output.position = mul(float4(input.position, 1.0f), g_world_context.projection);
+    output.position = mul(float4(input.position,1.0),g_transform.world);
+    output.position = mul(output.position,g_world_context.view);
+    output.position = mul(output.position,g_world_context.projection);
     output.uv = input.uv;
 
     return output;

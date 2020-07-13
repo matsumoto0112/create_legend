@@ -43,17 +43,9 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
   const std::filesystem::path vertex_shader_path =
       util::Path::GetInstance()->shader() / "draw2d" / "sprite_vs.cso";
-  const std::vector<D3D12_INPUT_ELEMENT_DESC> layouts{
-      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-  };
-  if (!vertex_shader->Init(device, vertex_shader_path, layouts)) {
+  if (!vertex_shader->Init(
+          device, vertex_shader_path,
+          directx::input_element::GetElementDescs<directx::Sprite>())) {
     return false;
   }
 

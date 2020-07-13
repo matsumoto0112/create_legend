@@ -22,20 +22,12 @@ bool SpriteRenderTest::Initialize() {
 
   const std::filesystem::path texture_path =
       util::Path::GetInstance()->texture() / "tex.png";
-  constexpr u32 SPRITE_NUM = 5;
-  for (u32 i = 0; i < SPRITE_NUM; i++) {
-    draw::Sprite2D sprite;
-    if (!sprite.Initialize(texture_path)) {
-      return false;
-    }
-    sprite.SetPosition(math::Vector2(i * 20.0f, i * 20.0f));
-    sprite.SetScale(math::Vector2(0.1f, 0.1f));
-
-    sprite_.emplace_back(sprite);
+  if (!sprite_.Initialize(texture_path)) {
+    return false;
   }
 
   return true;
-}  // namespace debugscene
+}
 
 bool SpriteRenderTest::Update() {
   // if (ImGui::Begin("Camera")) {
@@ -51,9 +43,7 @@ bool SpriteRenderTest::Update() {
 }
 
 void SpriteRenderTest::Draw() {
-  for (auto&& sp : sprite_) {
-    sprite_renderer_.AddDrawItems(&sp);
-  }
+  sprite_renderer_.AddDrawItems(&sprite_);
   sprite_renderer_.DrawItems();
 }
 

@@ -111,6 +111,7 @@ void SpriteRenderer::DrawItems() {
     device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
     index_buffer_.Draw(device);
   }
+  draw_items_.clear();
 }
 
 }  // namespace draw

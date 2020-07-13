@@ -23,7 +23,7 @@ class SpriteRenderTest : public Scene {
 
  private:
   draw::SpriteRenderer sprite_renderer_;
-  std::vector<draw::Sprite2D> sprite_;
+  draw::Sprite2D sprite_;
 };
 
 }  // namespace debugscene

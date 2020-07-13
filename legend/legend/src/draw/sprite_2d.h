@@ -1,6 +1,11 @@
 #ifndef LEGEND_DRAW_SPRITE_2D_H_
 #define LEGEND_DRAW_SPRITE_2D_H_
 
+/**
+ * @file sprite_2d.h
+ * @brief 2Dスプライト描画
+ */
+
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/constant_buffer_structure.h"

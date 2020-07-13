@@ -31,7 +31,7 @@ bool Sprite2D::Initialize(const std::filesystem::path& filepath) {
   this->position_ = math::Vector2::kZeroVector;
   transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
 
-  this->scale_ = math::Vector2(0.5f, 0.5f);
+  this->scale_ = math::Vector2::kUnitVector;
   this->rotate_ = 0.0f;
   return true;
 }

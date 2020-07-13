@@ -13,8 +13,8 @@ DirectX12Device::DirectX12Device()
 DirectX12Device::~DirectX12Device() { WaitForGPU(); }
 
 //èâä˙âª
-bool DirectX12Device::Init(std::shared_ptr<window::Window> target_window) {
-  MY_ASSERTION(target_window != nullptr, L"");
+bool DirectX12Device::Init(std::weak_ptr<window::Window> target_window) {
+  MY_ASSERTION(!target_window.expired(), L"");
 
   this->target_window_ = target_window;
   render_target_screen_size_ = math::IntVector2::kZeroVector;

@@ -15,7 +15,7 @@ namespace game {
 GameDevice::GameDevice()
     : fps_counter_{}, device_(nullptr), input_manager_(nullptr) {}
 GameDevice::~GameDevice() {}
-bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
+bool GameDevice::Init(std::weak_ptr<window::Window> target_window) {
   this->main_window_ = target_window;
   device_ = std::make_unique<directx::DirectX12Device>();
   if (!device_->Init(target_window)) {
@@ -23,7 +23,7 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   input_manager_ =
-      std::make_unique<input::InputManager>(target_window->GetHWND());
+      std::make_unique<input::InputManager>(target_window.lock()->GetHWND());
 
   audio_manager = std::make_unique<audio::AudioManager>();
   if (!audio_manager->Init()) {
@@ -31,7 +31,7 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   }
 
   sprite_renderer_ = std::make_unique<draw::SpriteRenderer>();
-  if (!sprite_renderer_->Init(ToVector2(target_window->GetScreenSize()))) {
+  if (!sprite_renderer_->Init(ToVector2(target_window.lock()->GetScreenSize()))) {
     return false;
   }
 

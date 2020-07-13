@@ -33,7 +33,7 @@ class GameDevice : public util::Singleton<GameDevice> {
    * @param target_window 現在描画対象となっているウィンドウ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(std::shared_ptr<window::Window> target_window);
+  bool Init(std::weak_ptr<window::Window> target_window);
   /**
    * @brief フレーム更新処理
    */
@@ -43,7 +43,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   /**
    * @brief ウィンドウを取得する
    */
-  window::Window& GetWindow() const { return *main_window_; }
+  window::Window& GetWindow() const { return *main_window_.lock(); }
   /**
    * @brief FPSカウンターを取得する
    */
@@ -77,7 +77,7 @@ class GameDevice : public util::Singleton<GameDevice> {
 
  private:
   //! メインウィンドウ
-  std::shared_ptr<window::Window> main_window_;
+  std::weak_ptr<window::Window> main_window_;
   //! FPS計測
   util::FPSCounter fps_counter_;
   //! DX12デバイス

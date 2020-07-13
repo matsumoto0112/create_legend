@@ -33,13 +33,12 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief デストラクタ
    */
   ~DirectX12Device();
-
   /**
    * @brief 初期化
    * @param target_window 描画対象のウィンドウ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(std::shared_ptr<window::Window> target_window);
+  bool Init(std::weak_ptr<window::Window> target_window);
   /**
    * @brief 初期化後の処理
    * @return その処理に成功したらtrueを返す
@@ -62,23 +61,34 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief GPUの処理を待機する
    */
   void WaitForGPU() noexcept;
-
+  /**
+   * @brief ディスクリプタハンドルを取得する
+   * @param heap_type 取得するディスクリプタヒープの種類
+   */
   virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
+  /**
+   * @brief グローバルヒープにディスクリプタハンドルをセットする
+   * @param register_num セットするハンドルのシェーダにおけるレジスター番号
+   * @param resource_type リソースの種類
+   * @param handle セットするハンドル
+   */
   virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
                                const DescriptorHandle& handle) override;
 
  public:
-  virtual ID3D12Device* GetDevice() const override { return device_.Get(); }
-  virtual ID3D12GraphicsCommandList4* GetCommandList() const override {
+  virtual inline ID3D12Device* GetDevice() const override {
+    return device_.Get();
+  }
+  virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_list_.Get();
   }
-  const buffer::RenderTarget& GetRenderTarget() const {
+  const inline buffer::RenderTarget& GetRenderTarget() const {
     return swap_chain_.GetRenderTarget();
   }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
-  HeapManager& GetHeapManager() { return heap_manager_; }
+  inline HeapManager& GetHeapManager() { return heap_manager_; }
   /**
    * @brief デフォルトのルートシグネチャを取得する
    */
@@ -104,7 +114,9 @@ class DirectX12Device : public IDirectXAccessor {
   static constexpr u32 FRAME_COUNT = 3;
 
  private:
+  //! デバイス
   ComPtr<ID3D12Device> device_;
+  //! アダプター
   device::DXGIAdapter adapter_;
   //! スワップチェイン
   device::SwapChain swap_chain_;

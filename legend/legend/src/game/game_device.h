@@ -12,6 +12,7 @@
 #include "src/draw/sprite_renderer.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
+#include "src/util/random.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -39,6 +40,13 @@ class GameDevice : public util::Singleton<GameDevice> {
   void Update();
 
  public:
+  /**
+   * @brief ウィンドウを取得する
+   */
+  window::Window& GetWindow() const { return *main_window_; }
+  /**
+   * @brief FPSカウンターを取得する
+   */
   const util::FPSCounter& GetFPSCounter() const { return fps_counter_; }
   /**
    * @brief DirectX12デバイスを取得する
@@ -56,6 +64,10 @@ class GameDevice : public util::Singleton<GameDevice> {
    * @brief スプライト描画デバイスを取得する
    */
   draw::SpriteRenderer& GetSpriteRenderer() const { return *sprite_renderer_; }
+  /**
+   * @brief 乱数デバイスを取得する
+   */
+  util::Random& GetRandom() const { return *random_; }
 
  protected:
   /**
@@ -64,6 +76,8 @@ class GameDevice : public util::Singleton<GameDevice> {
   GameDevice();
 
  private:
+  //! メインウィンドウ
+  std::shared_ptr<window::Window> main_window_;
   //! FPS計測
   util::FPSCounter fps_counter_;
   //! DX12デバイス
@@ -74,6 +88,8 @@ class GameDevice : public util::Singleton<GameDevice> {
   std::unique_ptr<audio::AudioManager> audio_manager;
   //! スプライト描画デバイス
   std::unique_ptr<draw::SpriteRenderer> sprite_renderer_;
+  //! 乱数デバイス
+  std::unique_ptr<util::Random> random_;
 };
 
 }  // namespace game

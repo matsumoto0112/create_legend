@@ -149,6 +149,7 @@
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
+    <ClCompile Include="src\util\random.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -243,6 +244,7 @@
     <ClInclude Include="src\util\imgui_manager.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
+    <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\fps_counter.h" />
     <ClInclude Include="src\util\string_util.h" />

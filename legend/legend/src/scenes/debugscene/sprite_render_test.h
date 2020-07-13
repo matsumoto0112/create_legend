@@ -22,7 +22,7 @@ class SpriteRenderTest : public Scene {
   virtual void Finalize() override;
 
  private:
-  draw::Sprite2D sprite_;
+  std::vector<draw::Sprite2D> sprites_;
 };
 
 }  // namespace debugscene

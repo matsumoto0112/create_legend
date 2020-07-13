@@ -16,6 +16,7 @@ GameDevice::GameDevice()
     : fps_counter_{}, device_(nullptr), input_manager_(nullptr) {}
 GameDevice::~GameDevice() {}
 bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
+  this->main_window_ = target_window;
   device_ = std::make_unique<directx::DirectX12Device>();
   if (!device_->Init(target_window)) {
     return false;
@@ -33,6 +34,8 @@ bool GameDevice::Init(std::shared_ptr<window::Window> target_window) {
   if (!sprite_renderer_->Init(ToVector2(target_window->GetScreenSize()))) {
     return false;
   }
+
+  random_ = std::make_unique<util::Random>();
   return true;
 }
 

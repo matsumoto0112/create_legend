@@ -81,14 +81,13 @@ class MyApp final : public device::Application {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-  std::shared_ptr<legend::window::Window> window =
-      std::make_shared<legend::window::Window>();
+  auto window = std::make_unique<legend::window::Window>();
   window->SetScreenSize(legend::math::IntVector2(1280, 720));
   window->SetWindowPosition(legend::math::IntVector2(0, 0));
   window->SetWindowTitle(L"Legend");
 
   legend::MyApp app;
-  app.RegisterWindow(window);
+  app.RegisterWindow(std::move(window));
 
   app.Run();
 

@@ -12,28 +12,41 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 
 SpriteRenderTest::~SpriteRenderTest() {}
 
-bool SpriteRenderTest::Initialize() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+bool SpriteRenderTest::Initialize() { return true; }
 
-  const std::filesystem::path texture_path =
-      util::Path::GetInstance()->texture() / "tex.png";
-  if (!sprite_.Init(texture_path)) {
-    return false;
+bool SpriteRenderTest::Update() {
+  if (ImGui::Begin("Sprite")) {
+    ImGui::Text("Sprite Count: %d", sprites_.size());
+    if (ImGui::Button("Add Sprite")) {
+      const std::filesystem::path texture_path =
+          util::Path::GetInstance()->texture() / "tex.png";
+      draw::Sprite2D sprite;
+      if (!sprite.Init(texture_path)) {
+        return false;
+      }
+      const math::IntVector2 window_size =
+          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+      util::Random& random = game::GameDevice::GetInstance()->GetRandom();
+      const float x = random.Range(0.0f, static_cast<float>(window_size.x));
+      const float y = random.Range(0.0f, static_cast<float>(window_size.y));
+      sprite.SetPosition(math::Vector2(x, y));
+      const float sx = random.Range(0.01f, 0.1f);
+      const float sy = random.Range(0.01f, 0.1f);
+      sprite.SetScale(math::Vector2(sx, sy));
+      sprites_.push_back(sprite);
+    }
   }
-  sprite_.SetScale(math::Vector2(0.2f, 0.2f));
-  sprite_.SetZOrder(0.5f);
-
+  ImGui::End();
   return true;
 }
-
-bool SpriteRenderTest::Update() { return true; }
 
 void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
 
-  sprite_renderer.AddDrawItems(&sprite_);
+  for (auto&& sp : sprites_) {
+    sprite_renderer.AddDrawItems(&sp);
+  }
   sprite_renderer.DrawItems();
 }
 

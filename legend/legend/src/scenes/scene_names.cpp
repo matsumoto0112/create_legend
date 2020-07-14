@@ -2,7 +2,7 @@
 
 /**
  * @def CREATE_PAIR
- * @brief ƒV[ƒ“‚Ìí—Ş‚ÆƒV[ƒ“–¼‚ğ‚à‚Æ‚ÉƒyƒA‚ğ\’z‚·‚é
+ * @brief ã‚·ãƒ¼ãƒ³ã®ç¨®é¡ã¨ã‚·ãƒ¼ãƒ³åã‚’ã‚‚ã¨ã«ãƒšã‚¢ã‚’æ§‹ç¯‰ã™ã‚‹
  */
 #define CREATE_PAIR(type) \
   { type, #type }
@@ -11,7 +11,7 @@ namespace legend {
 namespace scenes {
 namespace scene_names {
 
-//ƒV[ƒ“–¼‚ğæ“¾‚·‚é
+//ã‚·ãƒ¼ãƒ³åã‚’å–å¾—ã™ã‚‹
 std::string Get(SceneType type) {
   static std::unordered_map<SceneType, std::string> NAMES{
       CREATE_PAIR(SceneType::TITLE),
@@ -19,11 +19,12 @@ std::string Get(SceneType type) {
       CREATE_PAIR(SceneType::MODEL_VIEW),
       CREATE_PAIR(SceneType::SOUND_TEST),
       CREATE_PAIR(SceneType::PERSPECTIVE_CAMERA_TEST),
+      CREATE_PAIR(SceneType::PHYSICS_TEST),
       CREATE_PAIR(SceneType::SPRITE_TEST),
   };
 
   MY_ASSERTION(NAMES.find(type) != NAMES.end(),
-               L"–¢“o˜^‚ÌSceneType‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
+               L"æœªç™»éŒ²ã®SceneTypeãŒé¸æŠã•ã‚Œã¾ã—ãŸã€‚");
   return NAMES.at(type);
 }
 }  // namespace scene_names

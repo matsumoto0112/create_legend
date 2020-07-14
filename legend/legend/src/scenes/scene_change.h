@@ -15,6 +15,7 @@ enum class SceneType {
   SOUND_TEST,
   PERSPECTIVE_CAMERA_TEST,
   INPUT_TEST,
+  PHYSICS_TEST,
 };
 
 class ISceneChange {

@@ -2,6 +2,7 @@
 
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/perspective_camera_test.h"
+#include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/title.h"
@@ -67,6 +68,9 @@ bool SceneManager::Update() {
       case SceneType::PERSPECTIVE_CAMERA_TEST:
         current_scene_ =
             std::make_unique<debugscene::PerspectiveCameraTest>(this);
+        break;
+      case SceneType::PHYSICS_TEST:
+        current_scene_ = std::make_unique<debugscene::PhysicsTest>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

@@ -12,6 +12,7 @@
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
 
@@ -32,13 +33,12 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief デストラクタ
    */
   ~DirectX12Device();
-
   /**
    * @brief 初期化
    * @param target_window 描画対象のウィンドウ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(std::shared_ptr<window::Window> target_window);
+  bool Init(std::weak_ptr<window::Window> target_window);
   /**
    * @brief 初期化後の処理
    * @return その処理に成功したらtrueを返す
@@ -61,23 +61,41 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief GPUの処理を待機する
    */
   void WaitForGPU() noexcept;
-
+  /**
+   * @brief ディスクリプタハンドルを取得する
+   * @param heap_type 取得するディスクリプタヒープの種類
+   */
   virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
+  /**
+   * @brief グローバルヒープにディスクリプタハンドルをセットする
+   * @param register_num セットするハンドルのシェーダにおけるレジスター番号
+   * @param resource_type リソースの種類
+   * @param handle セットするハンドル
+   */
   virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
                                const DescriptorHandle& handle) override;
 
  public:
-  virtual ID3D12Device* GetDevice() const override { return device_.Get(); }
-  virtual ID3D12GraphicsCommandList4* GetCommandList() const override {
+  virtual inline ID3D12Device* GetDevice() const override {
+    return device_.Get();
+  }
+  virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_list_.Get();
   }
-  const buffer::RenderTarget& GetRenderTarget() const {
-      return swap_chain_.GetRenderTarget();
+  const inline buffer::RenderTarget& GetRenderTarget() const {
+    return swap_chain_.GetRenderTarget();
   }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
-  HeapManager& GetHeapManager() { return heap_manager_; }
+  inline HeapManager& GetHeapManager() { return heap_manager_; }
+  /**
+   * @brief デフォルトのルートシグネチャを取得する
+   */
+  inline std::shared_ptr<shader::RootSignature> GetDefaultRootSignature()
+      const {
+    return default_root_signature_;
+  }
 
  private:
   /**
@@ -96,7 +114,9 @@ class DirectX12Device : public IDirectXAccessor {
   static constexpr u32 FRAME_COUNT = 3;
 
  private:
+  //! デバイス
   ComPtr<ID3D12Device> device_;
+  //! アダプター
   device::DXGIAdapter adapter_;
   //! スワップチェイン
   device::SwapChain swap_chain_;
@@ -122,6 +142,8 @@ class DirectX12Device : public IDirectXAccessor {
   Microsoft::WRL::Wrappers::Event fence_event_;
   //! ディスクリプタヒープ管理
   HeapManager heap_manager_;
+  //! デフォルトのルートシグネチャ
+  std::shared_ptr<shader::RootSignature> default_root_signature_;
 };
 }  // namespace directx
 }  // namespace legend

@@ -66,6 +66,9 @@
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
+    <ClCompile Include="src\draw\sprite_renderer.cpp" />
+    <ClCompile Include="src\util\random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -161,6 +164,9 @@
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
+    <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
+    <ClInclude Include="src\draw\sprite_renderer.h" />
+    <ClInclude Include="src\util\random.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

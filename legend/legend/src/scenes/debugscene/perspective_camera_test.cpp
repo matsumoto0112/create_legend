@@ -93,40 +93,17 @@ bool PerspectiveCameraTest::Initialize() {
     return false;
   }
 
-  root_signature_ = std::make_unique<directx::shader::RootSignature>();
-  if (!root_signature_->Init(device, L"DefaultRootSignature")) {
-    return false;
-  }
-
   if (!pipeline_state_.Init(device)) {
     return false;
   }
-  pipeline_state_.SetRootSignature(root_signature_);
+  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
 
   const std::filesystem::path shader_root_path =
       util::Path::GetInstance()->shader();
-  const std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
-      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0}};
-
   auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
   if (!vertex_shader->Init(
           device, shader_root_path / L"modelview" / L"model_view_vs.cso",
-          elements)) {
+          directx::input_element::GetElementDescs<directx::Vertex>())) {
     return false;
   }
   pipeline_state_.SetVertexShader(vertex_shader);
@@ -154,9 +131,12 @@ bool PerspectiveCameraTest::Initialize() {
   transform_cb_.UpdateStaging();
 
   const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
-  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 10.0f, 0.0f),
+  const math::IntVector2 screen_size =
+      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+  const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
+  if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 1.0f, -1.0f),
                     camera_rotation, 60.0f * math::util::DEG_2_RAD,
-                    1280.0f / 720.0f, math::Vector3::kUpVector)) {
+                    aspect_ratio, math::Vector3::kUpVector)) {
     return false;
   }
 
@@ -200,7 +180,6 @@ void PerspectiveCameraTest::Draw() {
       game::GameDevice::GetInstance()->GetDevice();
 
   camera_.RenderStart();
-  root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
 

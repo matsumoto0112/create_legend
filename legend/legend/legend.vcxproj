@@ -90,6 +90,7 @@
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
+    <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
@@ -147,6 +149,7 @@
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
+    <ClCompile Include="src\util\random.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -171,6 +174,7 @@
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
+    <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -223,6 +227,7 @@
     <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
+    <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\scene.h" />
@@ -239,6 +244,7 @@
     <ClInclude Include="src\util\imgui_manager.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
+    <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\fps_counter.h" />
     <ClInclude Include="src\util\string_util.h" />

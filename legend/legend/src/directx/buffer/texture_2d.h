@@ -75,6 +75,12 @@ class Texture2D {
    */
   void SetToHeap(DirectX12Device& device, u32 overwrite_register_num);
 
+ public:
+  inline void SetWidth(u32 width) { this->width_ = width; }
+  inline u32 GetWidth() const { return width_; }
+  inline void SetHeight(u32 height) { this->height_ = height; }
+  inline u32 GetHeight() const { return height_; }
+
  private:
   /**
    * @brief テクスチャバッファを初期化する

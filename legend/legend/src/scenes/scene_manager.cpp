@@ -4,35 +4,36 @@
 #include "src/scenes/debugscene/perspective_camera_test.h"
 #include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/sound_test.h"
+#include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/title.h"
 
 namespace legend {
 namespace scenes {
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
-  //ƒV[ƒ“‘JˆÚ‚ÍŒ»óA‚±‚Ì•û–@‚Å‚µ‚©•ª‚©‚ç‚È‚¢
+  //ã‚·ãƒ¼ãƒ³é·ç§»ã¯ç¾çŠ¶ã€ã“ã®æ–¹æ³•ã§ã—ã‹åˆ†ã‹ã‚‰ãªã„
   current_scene_ = std::make_unique<Title>(this);
   current_scene_type_ = SceneType::TITLE;
 }
 
-//‰Šú‰»
+//åˆæœŸåŒ–
 bool SceneManager::Initialize() {
   if (current_scene_ == nullptr) {
-    MY_LOG(L"ƒV[ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+    MY_LOG(L"ã‚·ãƒ¼ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
     return false;
   }
 
   if (!current_scene_->Initialize()) {
-    MY_LOG(L"‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½");
+    MY_LOG(L"åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ");
     return false;
   }
 
   return true;
 }
 
-//I—¹
+//çµ‚äº†
 void SceneManager::Finalize() {
   if (current_scene_ == nullptr) {
     return;
@@ -41,17 +42,17 @@ void SceneManager::Finalize() {
   current_scene_->Finalize();
 }
 
-//XV
+//æ›´æ–°
 bool SceneManager::Update() {
   if (current_scene_ == nullptr) {
-    MY_LOG(L"ƒV[ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+    MY_LOG(L"ã‚·ãƒ¼ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
     return false;
   }
 
   if (next_scene_ != SceneType::NONE) {
     current_scene_->Finalize();
 
-    //ƒV[ƒ“‘JˆÚ‚ÍŒ»óA‚±‚Ì•û–@‚Å‚µ‚©•ª‚©‚ç‚È‚¢
+    //ã‚·ãƒ¼ãƒ³é·ç§»ã¯ç¾çŠ¶ã€ã“ã®æ–¹æ³•ã§ã—ã‹åˆ†ã‹ã‚‰ãªã„
     switch (next_scene_) {
       case SceneType::TITLE:
         current_scene_ = std::make_unique<Title>(this);
@@ -72,8 +73,11 @@ bool SceneManager::Update() {
       case SceneType::PHYSICS_TEST:
         current_scene_ = std::make_unique<debugscene::PhysicsTest>(this);
         break;
+      case SceneType::SPRITE_TEST:
+        current_scene_ = std::make_unique<debugscene::SpriteRenderTest>(this);
+        break;
       default:
-        MY_ASSERTION(false, L"‘¶İ‚µ‚È‚¢ƒV[ƒ“‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
+        MY_ASSERTION(false, L"å­˜åœ¨ã—ãªã„ã‚·ãƒ¼ãƒ³ãŒé¸æŠã•ã‚Œã¾ã—ãŸã€‚");
         break;
     }
 
@@ -85,14 +89,14 @@ bool SceneManager::Update() {
   }
 
   if (!current_scene_->Update()) {
-    MY_LOG(L"XV‚É¸”s‚µ‚Ü‚µ‚½");
+    MY_LOG(L"æ›´æ–°ã«å¤±æ•—ã—ã¾ã—ãŸ");
     return false;
   }
 
   return true;
 }
 
-//•`‰æ
+//æç”»
 void SceneManager::Draw() {
   if (current_scene_ == nullptr) {
     return;
@@ -101,12 +105,12 @@ void SceneManager::Draw() {
   current_scene_->Draw();
 }
 
-//ƒV[ƒ“‘JˆÚ
+//ã‚·ãƒ¼ãƒ³é·ç§»
 void SceneManager::ChangeScene(SceneType next_scene) {
   next_scene_ = next_scene;
 }
 
-//Œ»İ‚ÌƒV[ƒ“‚Ìæ“¾
+//ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³ã®å–å¾—
 SceneType SceneManager::GetCurrentSceneType() const {
   return current_scene_type_;
 }

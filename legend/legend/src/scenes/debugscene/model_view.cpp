@@ -220,6 +220,8 @@ bool ModelView::Update() {
   }
   ImGui::End();
 
+  // rotation_ = rotation_ * math::Quaternion::FromEular(1.0f, 0.0f, 0.0f);
+
   return true;
 }
 
@@ -236,8 +238,7 @@ void ModelView::Draw() {
   texture_.SetToHeap(device);
   world_cb_.SetToHeap(device);
 
-  transform_cb_.GetStagingRef().world =
-      math::Matrix4x4::CreateRotation(math::Quaternion::ToEular(rotation_));
+  transform_cb_.GetStagingRef().world = math::Quaternion::ToMatrix(rotation_);
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);

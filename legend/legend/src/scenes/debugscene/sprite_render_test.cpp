@@ -66,6 +66,9 @@ bool SpriteRenderTest::Update() {
       }
       ZeroMemory(buf, _countof(buf));
     }
+    if (ImGui::Button("Clear")) {
+      string_.Clear();
+    }
   }
   ImGui::End();
   return true;

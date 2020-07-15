@@ -65,5 +65,10 @@ bool TextureString::Append(const std::wstring& str) {
   return true;
 }
 
+void TextureString::Clear() {
+  chars_.clear();
+  str_.clear();
+}
+
 }  // namespace draw
 }  // namespace legend

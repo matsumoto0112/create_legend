@@ -25,6 +25,7 @@ class TextureString {
   inline math::Vector2 GetScale() const { return scale_; }
   void Draw(SpriteRenderer& sprite_renderer);
   bool Append(const std::wstring& str);
+  void Clear();
 
  private:
   std::wstring str_;

@@ -11,29 +11,29 @@
 namespace legend {
 namespace scenes {
 
-//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
-  //ã‚·ãƒ¼ãƒ³é·ç§»ã¯ç¾çŠ¶ã€ã“ã®æ–¹æ³•ã§ã—ã‹åˆ†ã‹ã‚‰ãªã„
+  //ƒV[ƒ“‘JˆÚ‚ÍŒ»óA‚±‚Ì•û–@‚Å‚µ‚©•ª‚©‚ç‚È‚¢
   current_scene_ = std::make_unique<Title>(this);
   current_scene_type_ = SceneType::TITLE;
 }
 
-//åˆæœŸåŒ–
+//‰Šú‰»
 bool SceneManager::Initialize() {
   if (current_scene_ == nullptr) {
-    MY_LOG(L"ã‚·ãƒ¼ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
+    MY_LOG(L"ƒV[ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
     return false;
   }
 
   if (!current_scene_->Initialize()) {
-    MY_LOG(L"åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ");
+    MY_LOG(L"‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½");
     return false;
   }
 
   return true;
 }
 
-//çµ‚äº†
+//I—¹
 void SceneManager::Finalize() {
   if (current_scene_ == nullptr) {
     return;
@@ -42,17 +42,17 @@ void SceneManager::Finalize() {
   current_scene_->Finalize();
 }
 
-//æ›´æ–°
+//XV
 bool SceneManager::Update() {
   if (current_scene_ == nullptr) {
-    MY_LOG(L"ã‚·ãƒ¼ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
+    MY_LOG(L"ƒV[ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
     return false;
   }
 
   if (next_scene_ != SceneType::NONE) {
     current_scene_->Finalize();
 
-    //ã‚·ãƒ¼ãƒ³é·ç§»ã¯ç¾çŠ¶ã€ã“ã®æ–¹æ³•ã§ã—ã‹åˆ†ã‹ã‚‰ãªã„
+    //ƒV[ƒ“‘JˆÚ‚ÍŒ»óA‚±‚Ì•û–@‚Å‚µ‚©•ª‚©‚ç‚È‚¢
     switch (next_scene_) {
       case SceneType::TITLE:
         current_scene_ = std::make_unique<Title>(this);
@@ -77,7 +77,7 @@ bool SceneManager::Update() {
         current_scene_ = std::make_unique<debugscene::SpriteRenderTest>(this);
         break;
       default:
-        MY_ASSERTION(false, L"å­˜åœ¨ã—ãªã„ã‚·ãƒ¼ãƒ³ãŒé¸æŠã•ã‚Œã¾ã—ãŸã€‚");
+        MY_ASSERTION(false, L"‘¶İ‚µ‚È‚¢ƒV[ƒ“‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
         break;
     }
 
@@ -89,14 +89,14 @@ bool SceneManager::Update() {
   }
 
   if (!current_scene_->Update()) {
-    MY_LOG(L"æ›´æ–°ã«å¤±æ•—ã—ã¾ã—ãŸ");
+    MY_LOG(L"XV‚É¸”s‚µ‚Ü‚µ‚½");
     return false;
   }
 
   return true;
 }
 
-//æç”»
+//•`‰æ
 void SceneManager::Draw() {
   if (current_scene_ == nullptr) {
     return;
@@ -105,12 +105,12 @@ void SceneManager::Draw() {
   current_scene_->Draw();
 }
 
-//ã‚·ãƒ¼ãƒ³é·ç§»
+//ƒV[ƒ“‘JˆÚ
 void SceneManager::ChangeScene(SceneType next_scene) {
   next_scene_ = next_scene;
 }
 
-//ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³ã®å–å¾—
+//Œ»İ‚ÌƒV[ƒ“‚Ìæ“¾
 SceneType SceneManager::GetCurrentSceneType() const {
   return current_scene_type_;
 }

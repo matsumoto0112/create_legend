@@ -2,7 +2,7 @@
 
 /**
  * @def CREATE_PAIR
- * @brief ã‚·ãƒ¼ãƒ³ã®ç¨®é¡ã¨ã‚·ãƒ¼ãƒ³åã‚’ã‚‚ã¨ã«ãƒšã‚¢ã‚’æ§‹ç¯‰ã™ã‚‹
+ * @brief ƒV[ƒ“‚Ìí—Ş‚ÆƒV[ƒ“–¼‚ğ‚à‚Æ‚ÉƒyƒA‚ğ\’z‚·‚é
  */
 #define CREATE_PAIR(type) \
   { type, #type }
@@ -11,7 +11,7 @@ namespace legend {
 namespace scenes {
 namespace scene_names {
 
-//ã‚·ãƒ¼ãƒ³åã‚’å–å¾—ã™ã‚‹
+//ƒV[ƒ“–¼‚ğæ“¾‚·‚é
 std::string Get(SceneType type) {
   static std::unordered_map<SceneType, std::string> NAMES{
       CREATE_PAIR(SceneType::TITLE),
@@ -24,7 +24,7 @@ std::string Get(SceneType type) {
   };
 
   MY_ASSERTION(NAMES.find(type) != NAMES.end(),
-               L"æœªç™»éŒ²ã®SceneTypeãŒé¸æŠã•ã‚Œã¾ã—ãŸã€‚");
+               L"–¢“o˜^‚ÌSceneType‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
   return NAMES.at(type);
 }
 }  // namespace scene_names

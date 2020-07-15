@@ -57,7 +57,12 @@ class GraphicsPipelineState {
   /**
    * @brief アルファブレンドデスクを設定する
    */
-  void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc, u32 rtv_index);
+  void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc,
+                    u32 rtv_index);
+  /**
+   * @brief 描画対象のプリミティブ形状を設定する
+   */
+  void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology_type);
   /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス

@@ -19,6 +19,8 @@ GraphicsPipelineState::~GraphicsPipelineState() {}
 bool GraphicsPipelineState::Init(DirectX12Device& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
   pipeline_state_desc_.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+  pipeline_state_desc_.PrimitiveTopologyType =
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
   return true;
 }
@@ -67,11 +69,15 @@ void GraphicsPipelineState::SetBlendDesc(
   pipeline_state_desc_.BlendState.RenderTarget[rtv_index] = blend_desc;
 }
 
+//プリミティブ形状の設定
+void GraphicsPipelineState::SetPrimitiveTopology(
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE topology_type) {
+  pipeline_state_desc_.PrimitiveTopologyType = topology_type;
+}
+
 //パイプラインステートをセットする
 bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
   pipeline_state_desc_.SampleMask = UINT_MAX;
-  pipeline_state_desc_.PrimitiveTopologyType =
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
   pipeline_state_desc_.SampleDesc.Count = 1;
 
   if (FAILED(device.GetDevice()->CreateGraphicsPipelineState(

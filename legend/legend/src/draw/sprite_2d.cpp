@@ -16,8 +16,10 @@ Sprite2D::~Sprite2D() {}
 bool Sprite2D::Init(const std::filesystem::path& filepath) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
-  if (!texture_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
-                             filepath)) {
+
+  texture_ = std::make_shared<directx::buffer::Texture2D>();
+  if (!texture_->InitAndWrite(
+          device, directx::shader::TextureRegisterID::Albedo, filepath)) {
     return false;
   }
   if (!transform_constant_buffer_.Init(
@@ -26,8 +28,34 @@ bool Sprite2D::Init(const std::filesystem::path& filepath) {
     return false;
   }
 
-  this->content_size_ = math::Vector2(static_cast<float>(texture_.GetWidth()),
-                                      static_cast<float>(texture_.GetHeight()));
+  this->content_size_ =
+      math::Vector2(static_cast<float>(texture_->GetWidth()),
+                    static_cast<float>(texture_->GetHeight()));
+  this->scale_ = math::Vector2::kUnitVector;
+  this->position_ = math::Vector2::kZeroVector;
+  transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
+
+  this->scale_ = math::Vector2::kUnitVector;
+  this->rotate_ = 0.0f;
+  return true;
+}
+
+//èâä˙âª
+bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
+  this->texture_ = texture;
+
+  directx::DirectX12Device& device =
+      game::GameDevice::GetInstance()->GetDevice();
+
+  if (!transform_constant_buffer_.Init(
+          device, directx::shader::ConstantBufferRegisterID::Transform,
+          L"Sprite_TransformConstantBuffer")) {
+    return false;
+  }
+
+  this->content_size_ =
+      math::Vector2(static_cast<float>(texture_->GetWidth()),
+                    static_cast<float>(texture_->GetHeight()));
   this->scale_ = math::Vector2::kUnitVector;
   this->position_ = math::Vector2::kZeroVector;
   transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
@@ -41,7 +69,7 @@ bool Sprite2D::Init(const std::filesystem::path& filepath) {
 void Sprite2D::SetToCommandList() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
-  texture_.SetToHeap(device);
+  texture_->SetToHeap(device);
 
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(math::Vector3(

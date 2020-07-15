@@ -31,8 +31,17 @@ class Sprite2D {
    * @param filepath ファイルへのパス
    */
   bool Init(const std::filesystem::path& filepath);
+  /**
+   * @brief テクスチャから初期化
+   * @param texture 設定するテクスチャ
+   */
+  bool Init(std::shared_ptr<directx::buffer::Texture2D> texture);
 
  public:
+  /**
+   * @brief テクスチャの大きさを取得する
+   */
+  inline math::Vector2 GetContentSize() const { return content_size_; }
   /**
    * @brief 座標の設定
    */
@@ -74,7 +83,7 @@ class Sprite2D {
    */
   void SetToCommandList();
 
- private:
+ protected:
   //! コンテンツのサイズ
   math::Vector2 content_size_;
   //! スケーリング
@@ -89,7 +98,7 @@ class Sprite2D {
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       transform_constant_buffer_;
   //! テクスチャ
-  directx::buffer::Texture2D texture_;
+  std::shared_ptr<directx::buffer::Texture2D> texture_;
 };
 }  // namespace draw
 }  // namespace legend

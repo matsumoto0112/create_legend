@@ -69,6 +69,7 @@
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\util\random.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

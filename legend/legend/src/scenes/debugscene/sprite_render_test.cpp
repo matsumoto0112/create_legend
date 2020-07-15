@@ -1,7 +1,17 @@
-#include "src/scenes/debugscene/sprite_render_test.h"
+﻿#include "src/scenes/debugscene/sprite_render_test.h"
 
+#include "src/draw/texture_char.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
+
+namespace {
+std::vector<legend::draw::TextureChar> chars_;
+const std::wstring text =
+    L"寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末喰う寝る処に住"
+    L"む処藪ら柑子の藪柑子パイポ・パイポ・パイポのシューリンガンシューリンガン"
+    L"のグーリンダイグーリンダイのポンポコピーのポンポコナの長久命の長助";
+
+}  // namespace
 
 namespace legend {
 namespace scenes {
@@ -12,7 +22,21 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 
 SpriteRenderTest::~SpriteRenderTest() {}
 
-bool SpriteRenderTest::Initialize() { return true; }
+bool SpriteRenderTest::Initialize() {
+  math::Vector2 position = math::Vector2::kZeroVector;
+  for (auto&& c : text) {
+    draw::TextureChar ch;
+    if (!ch.Init(c)) {
+      return false;
+    }
+    ch.SetPosition(position);
+    position.x += ch.GetContentSize().x;
+    chars_.emplace_back(ch);
+  }
+  return true;
+}
+
+static int a = 0;
 
 bool SpriteRenderTest::Update() {
   if (ImGui::Begin("Sprite")) {
@@ -38,12 +62,15 @@ bool SpriteRenderTest::Update() {
   }
   ImGui::End();
   return true;
-}
+}  // namespace debugscene
 
 void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
 
+  for (auto&& ch : chars_) {
+    sprite_renderer.AddDrawItems(&ch);
+  }
   for (auto&& sp : sprites_) {
     sprite_renderer.AddDrawItems(&sp);
   }

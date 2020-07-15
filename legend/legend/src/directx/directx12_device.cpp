@@ -83,7 +83,9 @@ bool DirectX12Device::Present() {
 
   swap_chain_.Present();
 
-  MoveToNextFrame();
+  if (!MoveToNextFrame()) {
+    return false;
+  }
 
   return true;
 }
@@ -194,8 +196,7 @@ bool DirectX12Device::CreateDevice() {
   }
 
   return true;
-}  // namespace legend
-
+}
 bool DirectX12Device::MoveToNextFrame() {
   const u64 fence_value = fence_values_[frame_index_];
   if (FAILED(command_queue_->Signal(fence_.Get(), fence_value))) {

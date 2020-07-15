@@ -16,6 +16,7 @@ enum class SceneType {
   PERSPECTIVE_CAMERA_TEST,
   SPRITE_TEST,
   INPUT_TEST,
+  PHYSICS_TEST,
 };
 
 class ISceneChange {

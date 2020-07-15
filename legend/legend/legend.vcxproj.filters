@@ -176,6 +176,7 @@
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli" />
+    <None Include="assets\shaders\physics\obb.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
@@ -186,6 +187,8 @@
     <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl" />
+    <FxCompile Include="assets\shaders\physics\obb_ps.hlsl" />
+    <FxCompile Include="assets\shaders\physics\obb_vs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

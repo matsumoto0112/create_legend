@@ -39,6 +39,7 @@ class MyApp final : public device::Application {
           scenes::SceneType::MODEL_VIEW,
           scenes::SceneType::SOUND_TEST,
           scenes::SceneType::PERSPECTIVE_CAMERA_TEST,
+          scenes::SceneType::PHYSICS_TEST,
           scenes::SceneType::SPRITE_TEST,
       };
       for (auto&& scene : SCENES) {

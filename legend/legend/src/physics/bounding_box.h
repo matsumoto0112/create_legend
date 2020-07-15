@@ -1,10 +1,19 @@
 #ifndef LEGEND_PHYSICS_BOUNDING_BOX_H_
 #define LEGEND_PHYSICS_BOUNDING_BOX_H_
 
-#include "src/math/vector_3.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
+#include "src/game/game_device.h"
+#include "src/math/matrix_4x4.h"
+#include "src/util/loader/glb_loader.h"
 
 namespace legend {
 namespace physics {
+
+struct Transform {
+  math::Matrix4x4 world;
+};
 
 /**
  * @class BoundingBox
@@ -17,6 +26,23 @@ class BoundingBox {
    * @brief コンストラクタ
    */
   BoundingBox();
+  /**
+   * @brief 初期化
+   * @param デバイス
+   * @param オブジェクトネーム
+   * @param GLBLoader
+   */
+  bool Initialize(directx::DirectX12Device& device, const std::wstring name,
+                  util::loader::GLBLoader& loader);
+  /**
+   * @brief 更新
+   */
+  void Update();
+  /**
+   * @brief 描画
+   * @param デバイス
+   */
+  void Draw(directx::DirectX12Device& device);
   /*
    * @brief 方向ベクトルを取得
    * @param 軸番号
@@ -46,6 +72,11 @@ class BoundingBox {
    * @param Z方向の長さ
    */
   void SetLength(float length_x, float length_y, float length_z);
+  /**
+   * @brief 中心座標の更新
+   * @param 座標
+   */
+  void SetPosition(math::Vector3 position);
 
  private:
   //!中心座標
@@ -54,6 +85,10 @@ class BoundingBox {
   std::vector<math::Vector3> directions_;
   //!各軸方向の長さ
   std::vector<float> lengthes_;
+
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
+  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
 };
 
 }  // namespace physics

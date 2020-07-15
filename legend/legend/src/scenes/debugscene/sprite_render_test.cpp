@@ -6,10 +6,6 @@
 
 namespace {
 legend::draw::TextureString string_;
-// const std::wstring text =
-//    L"寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末喰う寝る処に住"
-//    L"む処藪ら柑子の藪柑子パイポ・パイポ・パイポのシューリンガンシューリンガン"
-//    L"のグーリンダイグーリンダイのポンポコピーのポンポコナの長久命の長助";
 }  // namespace
 
 namespace legend {
@@ -22,9 +18,16 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
-  if (!string_.Init(L"", L"HGP教科書体", 128)) {
+  auto fon =
+      util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
+  DESIGNVECTOR design;
+  int ret =
+      AddFontResourceExW(fon.generic_wstring().c_str(), FR_PRIVATE, &design);
+  if (!string_.Init(L"", L"みかちゃん", 128)) {
     return false;
   }
+
+  // RemoveFontResourceExW(fon.c_str(), FR_NOT_ENUM, &design);
   return true;
 }
 

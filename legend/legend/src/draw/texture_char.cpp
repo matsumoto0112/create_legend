@@ -50,6 +50,7 @@ bool TextureChar::CreateChar(wchar_t c, const std::wstring& font, i32 font_size,
                 PROOF_QUALITY,
                 FIXED_PITCH || FF_MODERN};
   wcscpy_s(lf.lfFaceName, font.c_str());
+
   HFONT fn = CreateFontIndirectW(&lf);
   if (!fn) {
     return false;

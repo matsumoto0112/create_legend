@@ -6,10 +6,10 @@
 
 namespace {
 legend::draw::TextureString string_;
-const std::wstring text =
-    L"寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末喰う寝る処に住"
-    L"む処藪ら柑子の藪柑子パイポ・パイポ・パイポのシューリンガンシューリンガン"
-    L"のグーリンダイグーリンダイのポンポコピーのポンポコナの長久命の長助";
+// const std::wstring text =
+//    L"寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末喰う寝る処に住"
+//    L"む処藪ら柑子の藪柑子パイポ・パイポ・パイポのシューリンガンシューリンガン"
+//    L"のグーリンダイグーリンダイのポンポコピーのポンポコナの長久命の長助";
 }  // namespace
 
 namespace legend {
@@ -22,9 +22,9 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
-  if (!string_.Init(text)) {
-    return false;
-  }
+  // if (!string_.Init(text)) {
+  //  return false;
+  //}
   return true;
 }
 
@@ -51,6 +51,21 @@ bool SpriteRenderTest::Update() {
       sprite.SetScale(math::Vector2(sx, sy));
       sprites_.push_back(sprite);
     }
+    static float pos[2] = {0.0f, 0.0f};
+    ImGui::SliderFloat2("String Position", pos, -2000.0f, 2000.0f);
+    string_.SetPosition(math::Vector2(pos[0], pos[1]));
+    static float scale[2] = {1.0f, 1.0f};
+    ImGui::SliderFloat2("String Scale", scale, 0.0f, 20.0f);
+    string_.SetScale(math::Vector2(scale[0], scale[1]));
+
+    static char buf[16];
+    ImGui::InputText("Append String", buf, _countof(buf));
+    if (ImGui::Button("Append")) {
+      if (!string_.Append(util::string_util::String_2_WString(buf))) {
+        return false;
+      }
+      ZeroMemory(buf, _countof(buf));
+    }
   }
   ImGui::End();
   return true;
@@ -60,9 +75,7 @@ void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
 
-  for (auto&& ch : string_) {
-    sprite_renderer.AddDrawItems(&ch);
-  }
+  string_.Draw(sprite_renderer);
   for (auto&& sp : sprites_) {
     sprite_renderer.AddDrawItems(&sp);
   }

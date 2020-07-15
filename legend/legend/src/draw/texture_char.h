@@ -15,11 +15,12 @@ class TextureChar : public Sprite2D {
  public:
   TextureChar();
   ~TextureChar();
-  bool Init(wchar_t c);
+  bool Init(wchar_t c, const std::wstring& font, i32 font_size);
   bool ChangeChar(wchar_t c);
 
  private:
-  bool CreateChar(wchar_t c, std::vector<u8>* data, u32* width, u32* height);
+  bool CreateChar(wchar_t c, const std::wstring& font, i32 font_size,
+                  std::vector<u8>* data, u32* width, u32* height);
 };
 
 }  // namespace draw

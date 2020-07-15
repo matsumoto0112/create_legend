@@ -22,9 +22,9 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
-  // if (!string_.Init(text)) {
-  //  return false;
-  //}
+  if (!string_.Init(L"", L"HGP教科書体", 128)) {
+    return false;
+  }
   return true;
 }
 
@@ -58,10 +58,10 @@ bool SpriteRenderTest::Update() {
     ImGui::SliderFloat2("String Scale", scale, 0.0f, 20.0f);
     string_.SetScale(math::Vector2(scale[0], scale[1]));
 
-    static char buf[16];
+    static char buf[1024] = u8"友情・努力・勝利";
     ImGui::InputText("Append String", buf, _countof(buf));
     if (ImGui::Button("Append")) {
-      if (!string_.Append(util::string_util::String_2_WString(buf))) {
+      if (!string_.Append(util::string_util::UTF_8_2_WString(buf))) {
         return false;
       }
       ZeroMemory(buf, _countof(buf));

@@ -179,6 +179,7 @@
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
+    <None Include="assets\fonts\HGRPP1.TTC" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />

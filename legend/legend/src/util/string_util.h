@@ -65,6 +65,15 @@ static inline std::wstring String_2_WString(const std::string& s) {
 }
 
 /**
+ * @brief UTF_8‚Ì•¶Žš—ñ‚ðWString‚É•ÏŠ·‚·‚é
+ * @param s Œ³•¶Žš—ñ
+ * @return •ÏŠ·‚³‚ê‚½•¶Žš—ñ
+ */
+static inline std::wstring UTF_8_2_WString(const std::string& s) {
+  return CP_2_Wide(s, CP_UTF8);
+}
+
+/**
  * @brief string‚ðwstring‚É•ÏŠ·‚·‚é
  * @param s Œ³•¶Žš—ñ
  * @return •ÏŠ·‚³‚ê‚½•¶Žš—ñ

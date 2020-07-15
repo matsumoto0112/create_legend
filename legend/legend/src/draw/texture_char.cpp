@@ -10,10 +10,10 @@ TextureChar::TextureChar() {}
 
 //デストラクタ
 TextureChar::~TextureChar() {}
-bool TextureChar::Init(wchar_t c) {
+bool TextureChar::Init(wchar_t c, const std::wstring& font, i32 font_size) {
   std::vector<u8> data;
   u32 width, height;
-  if (!CreateChar(c, &data, &width, &height)) {
+  if (!CreateChar(c, font, font_size, &data, &width, &height)) {
     return false;
   }
 
@@ -34,10 +34,9 @@ bool TextureChar::Init(wchar_t c) {
 
 bool TextureChar::ChangeChar(wchar_t c) { return true; }
 
-bool TextureChar::CreateChar(wchar_t c, std::vector<u8>* data, u32* width,
-                             u32* height) {
-  const u32 font_size = 32;
-  LOGFONT lf = {32,
+bool TextureChar::CreateChar(wchar_t c, const std::wstring& font, i32 font_size,
+                             std::vector<u8>* data, u32* width, u32* height) {
+  LOGFONT lf = {font_size,
                 0,
                 0,
                 0,
@@ -49,15 +48,15 @@ bool TextureChar::CreateChar(wchar_t c, std::vector<u8>* data, u32* width,
                 OUT_TT_ONLY_PRECIS,
                 CLIP_DEFAULT_PRECIS,
                 PROOF_QUALITY,
-                FIXED_PITCH || FF_MODERN,
-                L"メイリオ"};
-  HFONT font = CreateFontIndirectW(&lf);
-  if (!font) {
+                FIXED_PITCH || FF_MODERN};
+  wcscpy_s(lf.lfFaceName, font.c_str());
+  HFONT fn = CreateFontIndirectW(&lf);
+  if (!fn) {
     return false;
   }
 
   HDC hdc = GetDC(nullptr);
-  HFONT old_font = static_cast<HFONT>(SelectObject(hdc, font));
+  HFONT old_font = static_cast<HFONT>(SelectObject(hdc, fn));
   TEXTMETRIC tm;
   GetTextMetricsW(hdc, &tm);
   GLYPHMETRICS gm;
@@ -68,7 +67,7 @@ bool TextureChar::CreateChar(wchar_t c, std::vector<u8>* data, u32* width,
   DWORD ret = GetGlyphOutlineW(hdc, c, GGO_GRAY4_BITMAP, &gm, size, ptr, &mat);
 
   SelectObject(hdc, old_font);
-  DeleteObject(font);
+  DeleteObject(fn);
   ReleaseDC(nullptr, hdc);
 
   u32 tex_width = gm.gmCellIncX;

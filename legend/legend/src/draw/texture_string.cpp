@@ -6,11 +6,12 @@ namespace draw {
 TextureString::TextureString() {}
 TextureString::~TextureString() {}
 
-bool TextureString::Init(const std::wstring& str) {
+bool TextureString::Init(const std::wstring& str, const std::wstring& font,
+                         i32 font_size) {
   math::Vector2 position = math::Vector2::kZeroVector;
   for (auto&& c : str) {
     TextureChar& ch = chars_.emplace_back(TextureChar());
-    if (!ch.Init(c)) {
+    if (!ch.Init(c, font, font_size)) {
       return false;
     }
     ch.SetPosition(position);
@@ -20,6 +21,8 @@ bool TextureString::Init(const std::wstring& str) {
   this->str_ = str;
   this->position_ = math::Vector2::kZeroVector;
   this->scale_ = math::Vector2::kUnitVector;
+  this->font_ = font;
+  this->font_size_ = font_size;
   return true;
 }
 void TextureString::SetPosition(const math::Vector2& position) {
@@ -54,7 +57,7 @@ bool TextureString::Append(const std::wstring& str) {
 
   for (auto&& c : str) {
     TextureChar& ch = chars_.emplace_back(TextureChar());
-    if (!ch.Init(c)) {
+    if (!ch.Init(c, font_, font_size_)) {
       return false;
     }
     ch.SetPosition(position);

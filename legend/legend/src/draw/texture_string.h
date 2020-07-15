@@ -18,7 +18,8 @@ class TextureString {
   TextureString();
   ~TextureString();
 
-  bool Init(const std::wstring& str);
+  bool Init(const std::wstring& str, const std::wstring& font = L"ÉÅÉCÉäÉI",
+            i32 font_size = 32);
   void SetPosition(const math::Vector2& position);
   inline math::Vector2 GetPosition() const { return position_; }
   void SetScale(const math::Vector2& scale);
@@ -32,6 +33,8 @@ class TextureString {
   Chars chars_;
   math::Vector2 position_;
   math::Vector2 scale_;
+  std::wstring font_;
+  i32 font_size_;
 };
 
 }  // namespace draw

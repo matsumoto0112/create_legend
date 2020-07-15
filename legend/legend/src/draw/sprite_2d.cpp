@@ -62,6 +62,7 @@ bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
 
   this->scale_ = math::Vector2::kUnitVector;
   this->rotate_ = 0.0f;
+  this->z_order_ = 0.0f;
   return true;
 }
 

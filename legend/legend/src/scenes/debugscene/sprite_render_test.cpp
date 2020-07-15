@@ -1,16 +1,15 @@
 ﻿#include "src/scenes/debugscene/sprite_render_test.h"
 
-#include "src/draw/texture_char.h"
+#include "src/draw/texture_string.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 
 namespace {
-std::vector<legend::draw::TextureChar> chars_;
+legend::draw::TextureString string_;
 const std::wstring text =
     L"寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末喰う寝る処に住"
     L"む処藪ら柑子の藪柑子パイポ・パイポ・パイポのシューリンガンシューリンガン"
     L"のグーリンダイグーリンダイのポンポコピーのポンポコナの長久命の長助";
-
 }  // namespace
 
 namespace legend {
@@ -23,15 +22,8 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
-  math::Vector2 position = math::Vector2::kZeroVector;
-  for (auto&& c : text) {
-    draw::TextureChar ch;
-    if (!ch.Init(c)) {
-      return false;
-    }
-    ch.SetPosition(position);
-    position.x += ch.GetContentSize().x;
-    chars_.emplace_back(ch);
+  if (!string_.Init(text)) {
+    return false;
   }
   return true;
 }
@@ -68,7 +60,7 @@ void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
 
-  for (auto&& ch : chars_) {
+  for (auto&& ch : string_) {
     sprite_renderer.AddDrawItems(&ch);
   }
   for (auto&& sp : sprites_) {

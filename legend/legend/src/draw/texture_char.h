@@ -20,7 +20,6 @@ class TextureChar : public Sprite2D {
 
  private:
   bool CreateChar(wchar_t c, std::vector<u8>* data, u32* width, u32* height);
-  Sprite2D sprite_;
 };
 
 }  // namespace draw

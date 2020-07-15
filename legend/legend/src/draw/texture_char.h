@@ -16,8 +16,10 @@ class TextureChar : public Sprite2D {
   TextureChar();
   ~TextureChar();
   bool Init(wchar_t c);
+  bool ChangeChar(wchar_t c);
 
  private:
+  bool CreateChar(wchar_t c, std::vector<u8>* data, u32* width, u32* height);
   Sprite2D sprite_;
 };
 

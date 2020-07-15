@@ -62,7 +62,7 @@ bool SpriteRenderTest::Update() {
   }
   ImGui::End();
   return true;
-}  // namespace debugscene
+}
 
 void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =

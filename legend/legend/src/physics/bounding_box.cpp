@@ -7,7 +7,11 @@ namespace physics {
 
 //コンストラクタ
 BoundingBox::BoundingBox()
-    : position_(math::Vector3::kZeroVector), directions_(3), lengthes_(3) {
+    : position_(math::Vector3::kZeroVector),
+      rotation_(math::Vector3::kZeroVector),
+      scale_(math::Vector3::kUnitVector),
+      directions_(3),
+      lengthes_(3) {
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
   directions_[2] = math::Vector3::kForwardVector;
@@ -17,58 +21,38 @@ BoundingBox::BoundingBox()
   lengthes_[2] = 1.0f;
 }
 
-bool BoundingBox::Initialize(directx::DirectX12Device& device,
-                             const std::wstring name,
-                             util::loader::GLBLoader& loader) {
-  const u32 vertex_num = loader.GetVertexNum();
-  std::vector<directx::Vertex> vertices(vertex_num);
-
-  //頂点座標
-  {
-    const std::vector<float> position_list = loader.GetPosition();
-    const u32 position_component_size = loader.GetPositionComponentSize();
-
-    if (position_component_size == 3) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].position.x = position_list[i * position_component_size + 0];
-        vertices[i].position.y = position_list[i * position_component_size + 1];
-        vertices[i].position.z = position_list[i * position_component_size + 2];
-      }
-    } else {
-      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです",
-             name.c_str());
-    }
-  }
-
-  //法線
-  {
-    const std::vector<float> normal_list = loader.GetNormal();
-    const u32 normal_component_size = loader.GetNormalComponentSize();
-    if (normal_component_size == 3) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].normal.x = normal_list[i * normal_component_size + 0];
-        vertices[i].normal.y = normal_list[i * normal_component_size + 1];
-        vertices[i].normal.z = normal_list[i * normal_component_size + 2];
-      }
-    } else {
-      MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", name.c_str());
-    }
-  }
+bool BoundingBox::Initialize(directx::DirectX12Device& device) {
+  //適当な頂点を作っての描画
+  const std::vector<directx::BoundingBox> vertices{
+      {{-1.0f, -1.0f, 1.0f}},   // 0
+      {{-1.0f, -1.0f, -1.0f}},  // 1
+      {{1.0f, -1.0f, -1.0f}},   // 2
+      {{1.0f, -1.0f, 1.0f}},    // 3
+      {{-1.0f, 1.0f, 1.0f}},    // 4
+      {{-1.0f, 1.0f, -1.0f}},   // 5
+      {{1.0f, 1.0f, -1.0f}},    // 6
+      {{1.0f, 1.0f, 1.0f}}      // 7
+  };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
-                           name + L"_VertexBuffer")) {
+  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+                           static_cast<u32>(vertices.size()),
+                           L"BoundingBox_VertexBuffer")) {
     return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
     return false;
   }
 
-  const std::vector<u16> index = loader.GetIndex();
+  const std::vector<u16> indices{0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 7, 7, 3,
+
+                                 4, 5, 5, 6, 6, 7,
+
+                                 5, 1, 6, 2};
   //インデックスバッファ作成
-  if (!index_buffer_.InitAndWrite(device, index,
+  if (!index_buffer_.InitAndWrite(device, indices,
                                   directx::PrimitiveTopology::LineList,
-                                  name + L"_IndexBuffer")) {
+                                  L"Bounding_IndexBuffer")) {
     return false;
   }
 
@@ -78,9 +62,11 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device,
   }
 
   math::Vector3 position = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
+  math::Vector3 rotate = math::Vector3::kZeroVector;
+  math::Vector3 scale = math::Vector3::kUnitVector * 0.5f;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
+      math::Matrix4x4::CreateRotation(rotate) *
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
 
@@ -89,9 +75,12 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device,
 
 void BoundingBox::Update() {
   math::Vector3 position = this->GetPosition();
-  math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
+  math::Vector3 rotate = this->GetRotation();
+  math::Vector3 scale = this->GetScale();
+  ;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
+      math::Matrix4x4::CreateRotation(rotate) *
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
 }
@@ -115,6 +104,10 @@ float BoundingBox::GetLength(i32 length_num) { return lengthes_[length_num]; }
 //現在の位置を取得
 math::Vector3 BoundingBox::GetPosition() { return position_; }
 
+math::Vector3 BoundingBox::GetRotation() { return rotation_; }
+
+math::Vector3 BoundingBox::GetScale() { return scale_; }
+
 //各方向ベクトルの設定
 void BoundingBox::SetDirection(math::Vector3 direction_x,
                                math::Vector3 direction_y,
@@ -133,6 +126,10 @@ void BoundingBox::SetLength(float length_x, float length_y, float length_z) {
 
 //中心座標の更新
 void BoundingBox::SetPosition(math::Vector3 position) { position_ = position; }
+
+void BoundingBox::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
+
+void BoundingBox::SetScale(math::Vector3 scale) { scale_ = scale; }
 
 }  // namespace physics
 }  // namespace legend

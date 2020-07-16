@@ -45,9 +45,9 @@ class PhysicsTest : public Scene {
 
  private:
   //! ’¼•û‘Ì
-  std::vector<physics::BoundingBox> obbs;
+  std::vector<physics::BoundingBox> obbs_;
   //! ¶¬”
-  i32 obb_num = 2;
+  i32 obb_num_ = 2;
 
   directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
   directx::buffer::Texture2D texture_;

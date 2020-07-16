@@ -30,6 +30,10 @@ struct Sprite {
   math::Vector2 uv;
 };
 
+struct BoundingBox {
+    math::Vector3 position;
+};
+
 namespace input_element {
 
 /**

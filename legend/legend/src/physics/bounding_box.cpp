@@ -9,7 +9,7 @@ namespace physics {
 BoundingBox::BoundingBox()
     : position_(math::Vector3::kZeroVector),
       rotation_(math::Vector3::kZeroVector),
-      scale_(math::Vector3::kUnitVector),
+      scale_(math::Vector3(0.1f, 0.1f, 0.1f)),
       directions_(3),
       lengthes_(3) {
   directions_[0] = math::Vector3::kRightVector;
@@ -22,16 +22,23 @@ BoundingBox::BoundingBox()
 }
 
 bool BoundingBox::Initialize(directx::DirectX12Device& device) {
-  //適当な頂点を作っての描画
+  //中心座標と各軸の長さから頂点座標を設定
+  float left = GetPosition().x + -GetLength(0);
+  float right = GetPosition().x + GetLength(0);
+  float down = GetPosition().y + -GetLength(1);
+  float up = GetPosition().y + GetLength(1);
+  float front = GetPosition().z + -GetLength(2);
+  float back = GetPosition().z + GetLength(2);
+
   const std::vector<directx::BoundingBox> vertices{
-      {{-1.0f, -1.0f, 1.0f}},   // 0
-      {{-1.0f, -1.0f, -1.0f}},  // 1
-      {{1.0f, -1.0f, -1.0f}},   // 2
-      {{1.0f, -1.0f, 1.0f}},    // 3
-      {{-1.0f, 1.0f, 1.0f}},    // 4
-      {{-1.0f, 1.0f, -1.0f}},   // 5
-      {{1.0f, 1.0f, -1.0f}},    // 6
-      {{1.0f, 1.0f, 1.0f}}      // 7
+      {{left, down, front}},   // 0
+      {{left, down, back}},    // 1
+      {{right, down, back}},   // 2
+      {{right, down, front}},  // 3
+      {{left, up, front}},     // 4
+      {{left, up, back}},      // 5
+      {{right, up, back}},     // 6
+      {{right, up, front}}     // 7
   };
 
   //頂点バッファ作成

@@ -7,18 +7,18 @@ namespace physics {
 bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   //各方向ベクトルの確保
   math::Vector3 n_ae1 = obb1.GetDirection(0);
-  math::Vector3 ae1 = n_ae1 * obb1.GetLength(0);
+  math::Vector3 ae1 = n_ae1 * obb1.GetLength(0) * obb1.GetScale().x;
   math::Vector3 n_ae2 = obb1.GetDirection(1);
-  math::Vector3 ae2 = n_ae2 * obb1.GetLength(1);
+  math::Vector3 ae2 = n_ae2 * obb1.GetLength(1) * obb1.GetScale().y;
   math::Vector3 n_ae3 = obb1.GetDirection(2);
-  math::Vector3 ae3 = n_ae3 * obb1.GetLength(2);
+  math::Vector3 ae3 = n_ae3 * obb1.GetLength(2) * obb1.GetScale().z;
 
   math::Vector3 n_be1 = obb2.GetDirection(0);
-  math::Vector3 be1 = n_be1 * obb2.GetLength(0);
+  math::Vector3 be1 = n_be1 * obb2.GetLength(0) * obb2.GetScale().x;
   math::Vector3 n_be2 = obb2.GetDirection(1);
-  math::Vector3 be2 = n_be2 * obb2.GetLength(1);
+  math::Vector3 be2 = n_be2 * obb2.GetLength(1) * obb2.GetScale().y;
   math::Vector3 n_be3 = obb2.GetDirection(2);
-  math::Vector3 be3 = n_be3 * obb2.GetLength(2);
+  math::Vector3 be3 = n_be3 * obb2.GetLength(2) * obb2.GetScale().z;
 
   math::Vector3 distance = obb1.GetPosition() - obb2.GetPosition();
 
@@ -31,8 +31,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_ae1, be1, be2, be3);
   length = fabs(math::Vector3::Dot(distance, n_ae1));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // ae2
@@ -40,8 +40,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_ae2, be1, be2, be3);
   length = fabs(math::Vector3::Dot(distance, n_ae2));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // ae3
@@ -49,8 +49,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_ae3, be1, be2, be3);
   length = fabs(math::Vector3::Dot(distance, n_ae3));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // be1
@@ -58,8 +58,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_be1, ae1, ae2, ae3);
   length = fabs(math::Vector3::Dot(distance, n_be1));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // be2
@@ -67,8 +67,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_be2, ae1, ae2, ae3);
   length = fabs(math::Vector3::Dot(distance, n_be2));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // be3
@@ -76,8 +76,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(n_be3, ae1, ae2, ae3);
   length = fabs(math::Vector3::Dot(distance, n_be3));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c11
@@ -86,8 +86,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be2, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c12
@@ -96,8 +96,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c13
@@ -106,8 +106,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be2);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c21
@@ -116,8 +116,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be2, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c22
@@ -126,8 +126,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c23
@@ -136,8 +136,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be2);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c31
@@ -146,8 +146,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be2, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c32
@@ -156,8 +156,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be3);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
-      return false;
+    MY_LOG(L"衝突しませんでした");
+    return false;
   }
 
   // c33
@@ -166,7 +166,7 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   projection_line_b = GetSeparateAxis(cross, be1, be2);
   length = fabs(math::Vector3::Dot(distance, cross));
   if (length > projection_line_a + projection_line_b) {
-      MY_LOG(L"衝突しませんでした");
+    MY_LOG(L"衝突しませんでした");
     return false;
   }
 

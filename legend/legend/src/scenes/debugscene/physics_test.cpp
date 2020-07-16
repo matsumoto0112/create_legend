@@ -16,25 +16,14 @@ PhysicsTest::~PhysicsTest() {}
 
 //初期化
 bool PhysicsTest::Initialize() {
-  obbs.resize(obb_num);
-  obbs[0].SetPosition(math::Vector3(0, 0, 0));
-  obbs[1].SetPosition(math::Vector3(0, 20, 0));
+  obbs_.resize(obb_num_);
+  obbs_[1].SetPosition(math::Vector3(0, 20, 0));
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  const std::wstring name = L"1000cmObject";
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / (name + L".glb");
-  util::loader::GLBLoader loader;
-  if (!loader.Load(model_path)) {
-    MY_LOG(L"モデルの読み込みに失敗しました。対象のファイルは%sです。",
-           model_path.generic_wstring().c_str());
-    return false;
-  }
-
-  for (i32 i = 0; i < obb_num; i++) {
-    if (!obbs[i].Initialize(device, name, loader)) {
+  for (i32 i = 0; i < obb_num_; i++) {
+    if (!obbs_[i].Initialize(device)) {
       continue;
     }
   }
@@ -52,8 +41,9 @@ bool PhysicsTest::Initialize() {
   world_constant_buffer_.UpdateStaging();
 
   //メインテクスチャの書き込み
-  const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!texture_.InitAndWrite(device, 0, albedo, name + L"_Albedo")) {
+  std::filesystem::path texture_path =
+      util::Path::GetInstance()->texture() / L"tex.png";
+  if (!texture_.InitAndWrite(device, 0, texture_path)) {
     return false;
   }
 
@@ -104,6 +94,8 @@ bool PhysicsTest::Initialize() {
   pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
+  pipeline_state_.SetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {
@@ -115,24 +107,41 @@ bool PhysicsTest::Initialize() {
 
 //更新
 bool PhysicsTest::Update() {
-  if (ImGui::Begin("Position")) {
+  if (ImGui::Begin("Transform")) {
     //直方体1
-    math::Vector3 obb1_position = obbs[0].GetPosition();
+    math::Vector3 obb1_position = obbs_[0].GetPosition();
     ImGui::SliderFloat3("OBB1_Position", &obb1_position.x, -100.0f, 100.0f);
-    obbs[0].SetPosition(obb1_position);
+    obbs_[0].SetPosition(obb1_position);
+
+    math::Vector3 obb1_rotation = obbs_[0].GetRotation();
+    ImGui::SliderFloat3("OBB1_Rotation", &obb1_rotation.x, -180.0f, 180.0f);
+    obbs_[0].SetRotation(obb1_rotation);
+
+    math::Vector3 obb1_scale = obbs_[0].GetScale();
+    ImGui::SliderFloat3("OBB1_Scale", &obb1_scale.x, 0.1f, 2.0f);
+    obbs_[0].SetScale(obb1_scale);
 
     //直方体2
-    math::Vector3 obb2_position = obbs[1].GetPosition();
+    math::Vector3 obb2_position = obbs_[1].GetPosition();
     ImGui::SliderFloat3("OBB2_Position", &obb2_position.x, -100.0f, 100.0f);
-    obbs[1].SetPosition(obb2_position);
+    obbs_[1].SetPosition(obb2_position);
 
-    for (i32 i = 0; i < obb_num; i++) {
-      obbs[i].Update();
+    math::Vector3 obb2_rotation = obbs_[1].GetRotation();
+    ImGui::SliderFloat3("OBB2_Rotation", &obb2_rotation.x, -180.0f, 180.0f);
+    obbs_[1].SetRotation(obb2_rotation);
+
+    math::Vector3 obb2_scale = obbs_[1].GetScale();
+    ImGui::SliderFloat3("OBB2_Scale", &obb2_scale.x, 0.1f, 2.0f);
+    obbs_[1].SetScale(obb2_scale);
+
+    for (i32 i = 0; i < obb_num_; i++) {
+      obbs_[i].Update();
     }
   }
   ImGui::End();
 
-  if (!physics::Collision::GetInstance()->Collision_OBB_OBB(obbs[0], obbs[1])) {
+  if (!physics::Collision::GetInstance()->Collision_OBB_OBB(obbs_[0],
+                                                            obbs_[1])) {
   }
 
   return true;
@@ -151,8 +160,8 @@ void PhysicsTest::Draw() {
   texture_.SetToHeap(device);
   world_constant_buffer_.SetToHeap(device);
 
-  for (i32 i = 0; i < obb_num; i++) {
-    obbs[i].Draw(device);
+  for (i32 i = 0; i < obb_num_; i++) {
+    obbs_[i].Draw(device);
   }
 }
 

@@ -32,8 +32,7 @@ class BoundingBox {
    * @param オブジェクトネーム
    * @param GLBLoader
    */
-  bool Initialize(directx::DirectX12Device& device, const std::wstring name,
-                  util::loader::GLBLoader& loader);
+  bool Initialize(directx::DirectX12Device& device);
   /**
    * @brief 更新
    */
@@ -58,6 +57,14 @@ class BoundingBox {
    */
   math::Vector3 GetPosition();
   /**
+   * @brief 現在の角度を取得
+   */
+  math::Vector3 GetRotation();
+  /**
+   * @brief 現在のスケールを取得
+   */
+  math::Vector3 GetScale();
+  /**
    * @brief 各方向ベクトルの設定
    * @param X方向
    * @param Y方向
@@ -77,10 +84,24 @@ class BoundingBox {
    * @param 座標
    */
   void SetPosition(math::Vector3 position);
+  /**
+   * @brief 回転角度の更新
+   * @param 角度
+   */
+  void SetRotation(math::Vector3 rotate);
+  /**
+   * @brief 拡大縮小の更新
+   * @param スケール
+   */
+  void SetScale(math::Vector3 scale);
 
  private:
   //!中心座標
   math::Vector3 position_;
+  //!角度
+  math::Vector3 rotation_;
+  //!スケール
+  math::Vector3 scale_;
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
   //!各軸方向の長さ

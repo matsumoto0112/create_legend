@@ -17,7 +17,8 @@ PhysicsTest::~PhysicsTest() {}
 //‰Šú‰»
 bool PhysicsTest::Initialize() {
   obbs_.resize(obb_num_);
-  obbs_[1].SetPosition(math::Vector3(0, 20, 0));
+  obbs_[0].SetLength(2, 1, 2);
+  obbs_[1].SetLength(1, 2, 1);
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -110,7 +111,7 @@ bool PhysicsTest::Update() {
   if (ImGui::Begin("Transform")) {
     //’¼•û‘Ì1
     math::Vector3 obb1_position = obbs_[0].GetPosition();
-    ImGui::SliderFloat3("OBB1_Position", &obb1_position.x, -100.0f, 100.0f);
+    ImGui::SliderFloat3("OBB1_Position", &obb1_position.x, -180.0f, 180.0f);
     obbs_[0].SetPosition(obb1_position);
 
     math::Vector3 obb1_rotation = obbs_[0].GetRotation();
@@ -123,7 +124,7 @@ bool PhysicsTest::Update() {
 
     //’¼•û‘Ì2
     math::Vector3 obb2_position = obbs_[1].GetPosition();
-    ImGui::SliderFloat3("OBB2_Position", &obb2_position.x, -100.0f, 100.0f);
+    ImGui::SliderFloat3("OBB2_Position", &obb2_position.x, -180.0f, 180.0f);
     obbs_[1].SetPosition(obb2_position);
 
     math::Vector3 obb2_rotation = obbs_[1].GetRotation();

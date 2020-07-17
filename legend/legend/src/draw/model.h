@@ -40,6 +40,18 @@ class Model {
    */
   void Draw();
 
+ public:
+  inline void SetPosition(const math::Vector3& position) {
+    this->position_ = position;
+  }
+  inline math::Vector3 GetPosition() const { return position_; }
+  inline void SetRotation(const math::Quaternion& rotation) {
+    this->rotation_ = rotation;
+  }
+  inline math::Quaternion GetRotation() const { return rotation_; }
+  inline void SetScale(const math::Vector3& scale) { this->scale_ = scale; }
+  inline math::Vector3 GetScale() const { return scale_; }
+
  private:
   //! ƒ‚ƒfƒ‹–¼
   std::wstring model_name_;

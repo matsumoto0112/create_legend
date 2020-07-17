@@ -59,10 +59,7 @@ Quaternion Quaternion::FromEular(const Vector3& v) {
   return FromEular(v.x, v.y, v.z);
 }
 
-Vector3 Quaternion::ToEular() const
-{
-    return ToEular(*this);
-}
+Vector3 Quaternion::ToEular() const { return ToEular(*this); }
 
 Vector3 Quaternion::ToEular(const Quaternion& q) {
   constexpr float EPSILON = 0.001f;
@@ -122,6 +119,8 @@ Matrix4x4 Quaternion::ToMatrix(const Quaternion& q) {
                    twoZX + twoWY, twoYZ - twoWX, 1.0f - twoXX - twoYY, 0.0f,
                    0.0f, 0.0f, 0.0f, 1.0f);
 }
+
+Matrix4x4 Quaternion::ToMatrix() const { return Quaternion::ToMatrix(*this); }
 
 Quaternion operator*(const Quaternion& q1, const Quaternion& q2) {
   const float x = q1.w * q2.x - q1.z * q2.y + q1.y * q2.z + q1.x * q2.w;

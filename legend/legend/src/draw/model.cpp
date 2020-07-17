@@ -111,6 +111,9 @@ void Model::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  transform_constant_buffer_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale_) * rotation_.ToMatrix() *
+      math::Matrix4x4::CreateTranslate(position_);
   transform_constant_buffer_.UpdateStaging();
   transform_constant_buffer_.SetToHeap(device);
   albedo_.SetToHeap(device);

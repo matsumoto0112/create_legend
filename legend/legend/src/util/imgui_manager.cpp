@@ -3,6 +3,7 @@
 #include "src/libs/imgui/imgui.h"
 #include "src/libs/imgui/imgui_impl_dx12.h"
 #include "src/libs/imgui/imgui_impl_win32.h"
+#include "src/util/path.h"
 
 namespace legend {
 namespace util {
@@ -26,7 +27,11 @@ bool ImguiManager::Init(HWND__* window_handle, ID3D12Device* device,
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
-  (void)io;
+
+  //const std::filesystem::path font_path =
+  //    Path::GetInstance()->exe() / "assets" / "fonts" / "APJapanesefontF.ttf";
+  //io.Fonts->AddFontFromFileTTF(font_path.generic_string().c_str(), 14.0f,
+  //                             nullptr, io.Fonts->GetGlyphRangesJapanese());
   ImGui::StyleColorsDark();
   ImGui_ImplWin32_Init(window_handle);
 

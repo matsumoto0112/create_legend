@@ -91,6 +91,8 @@
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
+    <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -145,6 +147,7 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
+    <ClCompile Include="src\util\loader\font_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
@@ -175,6 +178,8 @@
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
+    <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -242,6 +247,7 @@
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
+    <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\random.h" />

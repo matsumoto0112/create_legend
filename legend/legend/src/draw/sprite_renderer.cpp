@@ -88,6 +88,9 @@ void SpriteRenderer::AddDrawItems(Sprite2D* sprite) {
 }
 
 void SpriteRenderer::DrawItems() {
+  if (draw_items_.empty()) {
+    return;
+  }
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 

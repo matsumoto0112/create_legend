@@ -2,6 +2,7 @@
 
 #include "src/draw/texture_string.h"
 #include "src/game/game_device.h"
+#include "src/util/loader/font_loader.h"
 #include "src/util/path.h"
 
 namespace {
@@ -18,16 +19,12 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
 SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
-  auto fon =
+  const auto fon =
       util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
-  DESIGNVECTOR design;
-  int ret =
-      AddFontResourceExW(fon.generic_wstring().c_str(), FR_PRIVATE, &design);
-  if (!string_.Init(L"", L"みかちゃん", 128)) {
+  const std::wstring name = util::loader::FontLoader::GetInstance()->Load(fon);
+  if (!string_.Init(L"", name, 128)) {
     return false;
   }
-
-  // RemoveFontResourceExW(fon.c_str(), FR_NOT_ENUM, &design);
   return true;
 }
 

@@ -81,9 +81,9 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
 }
 
 void BoundingBox::Update() {
-  math::Vector3 position = this->GetPosition();
-  math::Vector3 rotate = this->GetRotation();
-  math::Vector3 scale = this->GetScale();
+  math::Vector3 position = GetPosition();
+  math::Vector3 rotate = GetRotation();
+  math::Vector3 scale = GetScale();
   ;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *

@@ -69,6 +69,7 @@
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
     <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\util\loader\font_loader.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\util\random.h" />
+    <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\draw\texture_char.h" />
     <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\util\loader\font_loader.h" />

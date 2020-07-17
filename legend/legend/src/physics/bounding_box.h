@@ -6,7 +6,6 @@
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/game/game_device.h"
 #include "src/math/matrix_4x4.h"
-#include "src/util/loader/glb_loader.h"
 
 namespace legend {
 namespace physics {

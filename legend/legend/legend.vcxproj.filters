@@ -70,6 +70,11 @@
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\util\random.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
+    <ClCompile Include="src\draw\texture_string.cpp" />
+    <ClCompile Include="src\util\loader\font_loader.cpp" />
+    <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
+    <ClCompile Include="src\draw\model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -169,6 +174,11 @@
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\physics\plane.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
+    <ClInclude Include="src\draw\texture_string.h" />
+    <ClInclude Include="src\util\loader\font_loader.h" />
+    <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
+    <ClInclude Include="src\draw\model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -177,6 +187,7 @@
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
+    <None Include="assets\shaders\postprocess\gray_scale.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
@@ -189,6 +200,8 @@
     <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl" />
     <FxCompile Include="assets\shaders\physics\obb_ps.hlsl" />
     <FxCompile Include="assets\shaders\physics\obb_vs.hlsl" />
+    <FxCompile Include="assets\shaders\postprocess\gray_scale_vs.hlsl" />
+    <FxCompile Include="assets\shaders\postprocess\gray_scale_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

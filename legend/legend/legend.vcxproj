@@ -89,8 +89,11 @@
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
+    <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
+    <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -130,6 +133,7 @@
     <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
@@ -146,6 +150,7 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
+    <ClCompile Include="src\util\loader\font_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
@@ -173,9 +178,12 @@
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
+    <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
+    <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -228,6 +236,7 @@
     <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
+    <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\game_over.h" />
@@ -244,6 +253,7 @@
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
+    <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\random.h" />
@@ -260,6 +270,7 @@
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
+    <None Include="assets\shaders\postprocess\gray_scale.hlsli" />
     <None Include="packages.config" />
     <None Include="src\.clang-format" />
   </ItemGroup>
@@ -297,6 +308,14 @@
     <FxCompile Include="assets\shaders\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\postprocess\gray_scale_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\postprocess\gray_scale_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="assets\shaders\TextureTest.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

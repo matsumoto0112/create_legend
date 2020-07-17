@@ -78,6 +78,10 @@ class Quaternion {
    * @brief ‰ñ“]s—ñ‚É•ÏŠ·‚·‚é
    */
   static Matrix4x4 ToMatrix(const Quaternion& q);
+  /**
+   * @brief ‰ñ“]s—ñ‚É•ÏŠ·‚·‚é
+   */
+  Matrix4x4 ToMatrix() const;
 };
 
 /**

@@ -7,6 +7,7 @@
  */
 
 #include "src/draw/sprite_renderer.h"
+#include "src/draw/texture_string.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -23,6 +24,7 @@ class SpriteRenderTest : public Scene {
 
  private:
   std::vector<draw::Sprite2D> sprites_;
+  legend::draw::TextureString string_;
 };
 
 }  // namespace debugscene

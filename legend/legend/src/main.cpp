@@ -41,6 +41,7 @@ class MyApp final : public device::Application {
           scenes::SceneType::PERSPECTIVE_CAMERA_TEST,
           scenes::SceneType::PHYSICS_TEST,
           scenes::SceneType::SPRITE_TEST,
+          scenes::SceneType::POST_PROCES_VIEWER,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

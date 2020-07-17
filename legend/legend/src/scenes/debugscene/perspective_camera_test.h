@@ -13,6 +13,7 @@
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
+#include "src/draw/model.h"
 #include "src/math/matrix_4x4.h"
 #include "src/scenes/scene.h"
 
@@ -32,11 +33,7 @@ class PerspectiveCameraTest : public Scene {
   virtual void Finalize() override;
 
  private:
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::Texture2D texture_;
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
+  draw::Model model_;
   directx::shader::GraphicsPipelineState pipeline_state_;
 
   //! ÉJÉÅÉâ

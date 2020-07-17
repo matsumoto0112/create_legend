@@ -3,9 +3,9 @@
 namespace {
 
 //! グローバルヒープの作成するディスクリプタ数
-constexpr legend::u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 10000;
+constexpr legend::u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 100000;
 //! ローカルヒープの作成するディスクリプタ数
-constexpr legend::u32 LOCAL_HEAP_DESCRIPTOR_NUM = 10000;
+constexpr legend::u32 LOCAL_HEAP_DESCRIPTOR_NUM = 100000;
 //! レンダーターゲットヒープの作成するディスクリプタ数
 constexpr legend::u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! デプス・ステンシルヒープの作成するディスクリプタ数

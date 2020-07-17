@@ -1,13 +1,8 @@
 ﻿#include "src/scenes/debugscene/sprite_render_test.h"
 
-#include "src/draw/texture_string.h"
 #include "src/game/game_device.h"
 #include "src/util/loader/font_loader.h"
 #include "src/util/path.h"
-
-namespace {
-legend::draw::TextureString string_;
-}  // namespace
 
 namespace legend {
 namespace scenes {

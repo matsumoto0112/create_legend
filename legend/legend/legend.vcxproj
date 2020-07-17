@@ -127,6 +127,7 @@
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
+    <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\collision.h" />
+    <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />

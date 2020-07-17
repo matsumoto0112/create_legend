@@ -2,6 +2,7 @@
 #define LEGEND_PHYSICS_COLLISION_H_
 
 #include "src/physics/bounding_box.h"
+#include "src/physics/plane.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -18,6 +19,12 @@ class Collision : public util::Singleton<Collision> {
    * @param ’¼•û‘Ì2
    */
   bool Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2);
+  /**
+   * @brief ’¼•û‘Ì‚Æ•½–Ê‚ÌÕ“Ë”»’è
+   * @param ’¼•û‘Ì
+   * @param •½–Ê
+   */
+  bool Collision_OBB_Plane(BoundingBox& obb, Plane& plane);
   /**
    * @brief •ª—£²‚É“Š‰e‚³‚ê‚½²¬•ª‚©‚ç“Š‰eü•ª’·‚ğZo
    * @param •ª—£²

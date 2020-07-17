@@ -1,5 +1,7 @@
 #include "src/physics/collision.h"
 
+#include "src/math/quaternion.h"
+
 namespace legend {
 namespace physics {
 
@@ -170,8 +172,40 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
     return false;
   }
 
-  //Õ“Ë‚µ‚Ä‚¢‚é
-  MY_LOG(L"Õ“Ë‚µ‚Ü‚µ‚½");
+  return true;
+}
+
+bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
+  //•½–Ê‚Ì–@ü‚É‘Î‚·‚éOBB‚ÌË‰eü‚Ì’·‚³‚ğZo
+  //‹ßÚ‹——£
+  float proximity_distance = 0;
+  std::array<float, 3> scale_size;
+  scale_size[0] = obb.GetScale().x;
+  scale_size[1] = obb.GetScale().y;
+  scale_size[2] = obb.GetScale().z;
+  for (i32 i = 0; i < 3; i++) {
+    proximity_distance += fabs(math::Vector3::Dot(
+        obb.GetDirection(i) * obb.GetLength(i) * scale_size[i],
+        plane.GetNormal()));
+  }
+
+  //•½–Ê‚ÆOBB‚Ì‹——£‚ğZo
+  float distance = math::Vector3::Dot(obb.GetPosition() - plane.GetPosition(),
+                                      plane.GetNormal());
+
+  if (fabs(distance) - proximity_distance >= 0) {
+    MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
+    return false;
+  }
+
+  //–ß‚µ‹——£
+  float return_distance = 0;
+  if (distance > 0) {
+    return_distance = proximity_distance - fabs(distance);
+  } else {
+    return_distance = proximity_distance + fabs(distance);
+  }
+
   return true;
 }
 

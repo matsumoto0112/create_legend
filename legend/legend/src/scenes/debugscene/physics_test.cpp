@@ -25,8 +25,12 @@ bool PhysicsTest::Initialize() {
 
   for (i32 i = 0; i < obb_num_; i++) {
     if (!obbs_[i].Initialize(device)) {
-      continue;
+      return false;
     }
+  }
+
+  if (!plane_.Initialize(device)) {
+    return false;
   }
 
   if (!world_constant_buffer_.Init(device, 1, L"WorldContext ConstantBuffer")) {
@@ -40,13 +44,6 @@ bool PhysicsTest::Initialize() {
   world_constant_buffer_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_constant_buffer_.UpdateStaging();
-
-  //メインテクスチャの書き込み
-  std::filesystem::path texture_path =
-      util::Path::GetInstance()->texture() / L"tex.png";
-  if (!texture_.InitAndWrite(device, 0, texture_path)) {
-    return false;
-  }
 
   //ルートシグネチャ作成
   root_signature_ = std::make_shared<directx::shader::RootSignature>();
@@ -141,8 +138,14 @@ bool PhysicsTest::Update() {
   }
   ImGui::End();
 
-  if (!physics::Collision::GetInstance()->Collision_OBB_OBB(obbs_[0],
-                                                            obbs_[1])) {
+  if (physics::Collision::GetInstance()->Collision_OBB_OBB(obbs_[0],
+                                                           obbs_[1])) {
+    MY_LOG(L"直方体1と直方体2が衝突しました");
+  }
+
+  if (physics::Collision::GetInstance()->Collision_OBB_Plane(obbs_[0],
+                                                             plane_)) {
+    MY_LOG(L"直方体1と平面が衝突しました");
   }
 
   return true;
@@ -158,12 +161,13 @@ void PhysicsTest::Draw() {
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
-  texture_.SetToHeap(device);
   world_constant_buffer_.SetToHeap(device);
 
   for (i32 i = 0; i < obb_num_; i++) {
     obbs_[i].Draw(device);
   }
+
+  plane_.Draw(device);
 }
 
 //終了

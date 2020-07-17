@@ -12,8 +12,16 @@ namespace legend {
 namespace util {
 namespace loader {
 
+/**
+ * @brief フォント読み込み器
+ */
 class FontLoader : public Singleton<FontLoader> {
  public:
+  /**
+   * @brief 読み込む
+   * @param filename 読み込むファイル名
+   * @return 読み込んだフォント名
+   */
   std::wstring Load(const std::filesystem::path& filename);
 
  protected:
@@ -21,8 +29,10 @@ class FontLoader : public Singleton<FontLoader> {
   ~FontLoader();
 
  private:
+  //! 読み込み済みフォント名
   std::vector<std::wstring> loaded_font_filenames_;
 
+  //フォントのファイル名とフォント名のmap
   static const std::unordered_map<std::wstring, std::wstring> PAIRS;
 };
 }  // namespace loader

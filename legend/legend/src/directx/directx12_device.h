@@ -55,6 +55,9 @@ class DirectX12Device : public IDirectXAccessor {
    */
   bool Present();
 
+  /**
+   * @brief バックバッファのレンダーターゲットをセットする
+   */
   void SetBackBuffer();
 
   /**

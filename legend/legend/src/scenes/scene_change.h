@@ -17,6 +17,7 @@ enum class SceneType {
   SPRITE_TEST,
   INPUT_TEST,
   PHYSICS_TEST,
+  POST_PROCES_VIEWER,
 };
 
 class ISceneChange {

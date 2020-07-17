@@ -22,74 +22,10 @@ PerspectiveCameraTest::~PerspectiveCameraTest() {}
 bool PerspectiveCameraTest::Initialize() {
   std::filesystem::path filepath =
       util::Path::GetInstance()->model() / L"checkXYZ.glb";
-  util::loader::GLBLoader loader;
-  if (!loader.Load(filepath)) {
-    return false;
-  }
-
-  const u32 vertex_num = loader.GetVertexNum();
-  std::vector<directx::Vertex> vertices(vertex_num);
-  //頂点座標の読み込み
-  [&]() {
-    if (loader.GetPositionComponentSize() != 3) return;
-    const std::vector<float> position = loader.GetPosition();
-    for (u32 i = 0; i < vertex_num; i++) {
-      vertices[i].position.x = position[i * 3 + 0];
-      vertices[i].position.y = position[i * 3 + 1];
-      vertices[i].position.z = position[i * 3 + 2];
-    }
-  }();
-  //法線情報の読み込み
-  [&]() {
-    if (loader.GetNormalComponentSize() != 3) return;
-    const std::vector<float> normal = loader.GetNormal();
-    for (u32 i = 0; i < vertex_num; i++) {
-      vertices[i].normal.x = normal[i * 3 + 0];
-      vertices[i].normal.y = normal[i * 3 + 1];
-      vertices[i].normal.z = normal[i * 3 + 2];
-    }
-  }();
-  // UV
-  [&]() {
-    if (loader.GetUVComponentSize() != 2) return;
-    const std::vector<float> uv = loader.GetUV();
-    for (u32 i = 0; i < vertex_num; i++) {
-      vertices[i].uv.x = uv[i * 2 + 0];
-      vertices[i].uv.y = uv[i * 2 + 1];
-    }
-  }();
-  //接線
-  [&]() {
-    if (loader.GetTangentComponentSize() != 3) return;
-    const std::vector<float> tangent = loader.GetTangent();
-    for (u32 i = 0; i < vertex_num; i++) {
-      vertices[i].tangent.x = tangent[i * 4 + 0];
-      vertices[i].tangent.y = tangent[i * 4 + 1];
-      vertices[i].tangent.z = tangent[i * 4 + 2];
-      vertices[i].tangent.w = tangent[i * 4 + 3];
-    }
-  }();
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
-  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
-                           L"VertexBuffer")) {
-    return false;
-  }
-  if (!vertex_buffer_.WriteBufferResource(vertices)) {
-    return false;
-  }
-
-  const std::vector<u16> indices = loader.GetIndex();
-  if (!index_buffer_.InitAndWrite(device, indices,
-                                  directx::PrimitiveTopology::TriangleList,
-                                  L"IndexBuffer")) {
-    return false;
-  }
-
-  const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!texture_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
-                             albedo, L"AlbedoTexture")) {
+  if (!model_.Init(filepath)) {
     return false;
   }
 
@@ -121,14 +57,6 @@ bool PerspectiveCameraTest::Initialize() {
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;
   }
-
-  if (!transform_cb_.Init(device,
-                          directx::shader::ConstantBufferRegisterID::Transform,
-                          L"TransformConstantBuffer")) {
-    return false;
-  }
-  transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
-  transform_cb_.UpdateStaging();
 
   const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
   const math::IntVector2 screen_size =
@@ -182,19 +110,12 @@ void PerspectiveCameraTest::Draw() {
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
-
-  transform_cb_.UpdateStaging();
-  transform_cb_.SetToHeap(device);
-  texture_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
+  model_.Draw();
 }
 
 //終了処理
 void PerspectiveCameraTest::Finalize() {}
+
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

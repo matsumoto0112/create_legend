@@ -89,6 +89,7 @@
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
+    <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
+    <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />

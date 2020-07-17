@@ -73,6 +73,7 @@
     <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\util\loader\font_loader.cpp" />
     <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
+    <ClCompile Include="src\draw\model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
+    <ClInclude Include="src\draw\model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

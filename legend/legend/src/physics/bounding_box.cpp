@@ -102,16 +102,30 @@ void BoundingBox::Draw(directx::DirectX12Device& device) {
 
 //方向ベクトルを取得
 math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
+  if (direction_num > directions_.size()) {
+    MY_LOG(L"格納数よりも大きい値です");
+    return math::Vector3::kZeroVector;
+  }
+
   return directions_[direction_num];
 }
 
 //長さを取得
-float BoundingBox::GetLength(i32 length_num) { return lengthes_[length_num]; }
+float BoundingBox::GetLength(i32 length_num) { 
+    if (length_num > lengthes_.size()) {
+        MY_LOG(L"格納数よりも大きい値です");
+        return 1;
+    }
+
+    return lengthes_[length_num]; 
+}
 
 //現在の位置を取得
 math::Vector3 BoundingBox::GetPosition() { return position_; }
 
-math::Vector3 BoundingBox::GetRotation() { return rotation_; }
+math::Vector3 BoundingBox::GetRotation() { 
+    return rotation_; 
+}
 
 math::Vector3 BoundingBox::GetScale() { return scale_; }
 

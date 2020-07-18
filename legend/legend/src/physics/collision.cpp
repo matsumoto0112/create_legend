@@ -7,19 +7,31 @@ namespace physics {
 
 //直方体同士の衝突判定
 bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
+  //回転行列の取得
+  math::Matrix4x4 rotate_matrix1 =
+      math::Matrix4x4::CreateRotation(obb1.GetRotation());
+  math::Matrix4x4 rotate_matrix2 =
+      math::Matrix4x4::CreateRotation(obb2.GetRotation());
+
   //各方向ベクトルの確保
-  math::Vector3 n_ae1 = obb1.GetDirection(0);
+  math::Vector3 n_ae1 =
+      math::Matrix4x4::MultiplyCoord(obb1.GetDirection(0), rotate_matrix1);
   math::Vector3 ae1 = n_ae1 * obb1.GetLength(0) * obb1.GetScale().x;
-  math::Vector3 n_ae2 = obb1.GetDirection(1);
+  math::Vector3 n_ae2 =
+      math::Matrix4x4::MultiplyCoord(obb1.GetDirection(1), rotate_matrix1);
   math::Vector3 ae2 = n_ae2 * obb1.GetLength(1) * obb1.GetScale().y;
-  math::Vector3 n_ae3 = obb1.GetDirection(2);
+  math::Vector3 n_ae3 =
+      math::Matrix4x4::MultiplyCoord(obb1.GetDirection(2), rotate_matrix1);
   math::Vector3 ae3 = n_ae3 * obb1.GetLength(2) * obb1.GetScale().z;
 
-  math::Vector3 n_be1 = obb2.GetDirection(0);
+  math::Vector3 n_be1 =
+      math::Matrix4x4::MultiplyCoord(obb2.GetDirection(0), rotate_matrix2);
   math::Vector3 be1 = n_be1 * obb2.GetLength(0) * obb2.GetScale().x;
-  math::Vector3 n_be2 = obb2.GetDirection(1);
+  math::Vector3 n_be2 =
+      math::Matrix4x4::MultiplyCoord(obb2.GetDirection(1), rotate_matrix2);
   math::Vector3 be2 = n_be2 * obb2.GetLength(1) * obb2.GetScale().y;
-  math::Vector3 n_be3 = obb2.GetDirection(2);
+  math::Vector3 n_be3 =
+      math::Matrix4x4::MultiplyCoord(obb2.GetDirection(2), rotate_matrix2);
   math::Vector3 be3 = n_be3 * obb2.GetLength(2) * obb2.GetScale().z;
 
   math::Vector3 distance = obb1.GetPosition() - obb2.GetPosition();
@@ -183,10 +195,13 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   scale_size[0] = obb.GetScale().x;
   scale_size[1] = obb.GetScale().y;
   scale_size[2] = obb.GetScale().z;
+  math::Matrix4x4 rotate_matrix =
+      math::Matrix4x4::CreateRotation(obb.GetRotation());
   for (i32 i = 0; i < 3; i++) {
-    proximity_distance += fabs(math::Vector3::Dot(
-        obb.GetDirection(i) * obb.GetLength(i) * scale_size[i],
-        plane.GetNormal()));
+    math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i) * scale_size[i];
+    proximity_distance += fabs(
+        math::Vector3::Dot(math::Matrix4x4::MultiplyCoord(axis, rotate_matrix),
+                           plane.GetNormal()));
   }
 
   //平面とOBBの距離を算出

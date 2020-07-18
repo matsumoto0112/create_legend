@@ -109,27 +109,23 @@ bool PhysicsTest::Update() {
     //’¼•û‘Ì1
     math::Vector3 obb1_position = obbs_[0].GetPosition();
     ImGui::SliderFloat3("OBB1_Position", &obb1_position.x, -180.0f, 180.0f);
-    obbs_[0].SetPosition(obb1_position);
-
     math::Vector3 obb1_rotation = obbs_[0].GetRotation();
     ImGui::SliderFloat3("OBB1_Rotation", &obb1_rotation.x, -180.0f, 180.0f);
-    obbs_[0].SetRotation(obb1_rotation);
-
     math::Vector3 obb1_scale = obbs_[0].GetScale();
     ImGui::SliderFloat3("OBB1_Scale", &obb1_scale.x, 0.1f, 2.0f);
+    obbs_[0].SetPosition(obb1_position);
+    obbs_[0].SetRotation(obb1_rotation);
     obbs_[0].SetScale(obb1_scale);
 
     //’¼•û‘Ì2
     math::Vector3 obb2_position = obbs_[1].GetPosition();
     ImGui::SliderFloat3("OBB2_Position", &obb2_position.x, -180.0f, 180.0f);
-    obbs_[1].SetPosition(obb2_position);
-
     math::Vector3 obb2_rotation = obbs_[1].GetRotation();
     ImGui::SliderFloat3("OBB2_Rotation", &obb2_rotation.x, -180.0f, 180.0f);
-    obbs_[1].SetRotation(obb2_rotation);
-
     math::Vector3 obb2_scale = obbs_[1].GetScale();
     ImGui::SliderFloat3("OBB2_Scale", &obb2_scale.x, 0.1f, 2.0f);
+    obbs_[1].SetPosition(obb2_position);
+    obbs_[1].SetRotation(obb2_rotation);
     obbs_[1].SetScale(obb2_scale);
 
     for (i32 i = 0; i < obb_num_; i++) {

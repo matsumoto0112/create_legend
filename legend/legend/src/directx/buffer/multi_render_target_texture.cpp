@@ -102,7 +102,8 @@ void MultiRenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
 
 void MultiRenderTargetTexture::SetToGlobalHeap(
     IDirectXAccessor& accessor) const {
-  accessor.SetToGlobalHeap(0, ResourceType::Srv, srv_handles_[0]);
+    accessor.SetToGlobalHeap(0, ResourceType::Srv, srv_handles_[0]);
+    accessor.SetToGlobalHeap(1, ResourceType::Srv, srv_handles_[1]);
 }
 
 }  // namespace buffer

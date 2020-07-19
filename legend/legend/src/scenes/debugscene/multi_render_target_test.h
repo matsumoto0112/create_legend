@@ -46,6 +46,12 @@ class MultiRenderTargetTest : public Scene {
   directx::buffer::ConstantBuffer<
       directx::constant_buffer_structure::WorldContext>
       post_process_world_cb_;
+  struct MultiRenderTargetTestPPConstantBufferStructure {
+    float border;
+  };
+  directx::buffer::ConstantBuffer<
+      MultiRenderTargetTestPPConstantBufferStructure>
+      post_process_local_cb_;
 
   //! ƒJƒƒ‰
   camera::PerspectiveCamera camera_;

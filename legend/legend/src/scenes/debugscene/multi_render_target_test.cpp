@@ -53,15 +53,18 @@ bool MultiRenderTargetTest::Initialize() {
         util::Path::GetInstance()->shader();
     auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
     if (!vertex_shader->Init(
-            device, shader_root_path / L"multi_render_target_test" / L"multi_render_target_test_vs.cso",
+            device,
+            shader_root_path / L"multi_render_target_test" /
+                L"multi_render_target_test_vs.cso",
             directx::input_element::GetElementDescs<directx::Vertex>())) {
       return false;
     }
     pipeline_state_.SetVertexShader(vertex_shader);
 
     auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(
-            device, shader_root_path / L"multi_render_target_test" / L"multi_render_target_test_ps.cso")) {
+    if (!pixel_shader->Init(device, shader_root_path /
+                                        L"multi_render_target_test" /
+                                        L"multi_render_target_test_ps.cso")) {
       return false;
     }
     pipeline_state_.SetPixelShader(pixel_shader);
@@ -93,15 +96,18 @@ bool MultiRenderTargetTest::Initialize() {
         util::Path::GetInstance()->shader();
     auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
     if (!vertex_shader->Init(
-            device, shader_root_path / L"postprocess" / L"gray_scale_vs.cso",
+            device,
+            shader_root_path / L"multi_render_target_test" /
+                L"multi_render_target_test_pp_vs.cso",
             directx::input_element::GetElementDescs<directx::Sprite>())) {
       return false;
     }
     post_process_pipeline_.SetVertexShader(vertex_shader);
 
     auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(
-            device, shader_root_path / L"postprocess" / L"gray_scale_ps.cso")) {
+    if (!pixel_shader->Init(device,
+                            shader_root_path / L"multi_render_target_test" /
+                                L"multi_render_target_test_pp_ps.cso")) {
       return false;
     }
     post_process_pipeline_.SetPixelShader(pixel_shader);
@@ -158,6 +164,12 @@ bool MultiRenderTargetTest::Initialize() {
             L"PostProcess_IndexBuffer")) {
       return false;
     }
+
+    if (!post_process_local_cb_.Init(device, 2, L"Local")) {
+      return false;
+    }
+    post_process_local_cb_.GetStagingRef().border = 0.5f;
+    post_process_local_cb_.UpdateStaging();
   }
 
   return true;
@@ -188,6 +200,11 @@ bool MultiRenderTargetTest::Update() {
     float fov = camera_.GetFov() * math::util::RAD_2_DEG;
     ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
     camera_.SetFov(fov * math::util::DEG_2_RAD);
+
+    float border = post_process_local_cb_.GetStagingRef().border;
+    ImGui::SliderFloat("Border", &border, 0.0f, 1.0f);
+    post_process_local_cb_.GetStagingRef().border = border;
+    post_process_local_cb_.UpdateStaging();
   }
   ImGui::End();
   return true;
@@ -208,6 +225,7 @@ void MultiRenderTargetTest::Draw() {
   render_target_texture_.SetToGlobalHeap(device);
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
+  post_process_local_cb_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
   post_process_vertex_buffer_.SetGraphicsCommandList(device);

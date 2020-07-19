@@ -193,6 +193,7 @@
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\postprocess\gray_scale.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
+    <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\VertexShader.hlsl" />
@@ -209,6 +210,8 @@
     <FxCompile Include="assets\shaders\postprocess\gray_scale_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

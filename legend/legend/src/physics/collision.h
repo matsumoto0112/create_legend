@@ -26,14 +26,14 @@ class Collision : public util::Singleton<Collision> {
    */
   bool Collision_OBB_Plane(BoundingBox& obb, Plane& plane);
   /**
-   * @brief •ª—£²‚É“Š‰e‚³‚ê‚½²¬•ª‚©‚ç“Š‰eü•ª’·‚ğZo
-   * @param •ª—£²
-   * @param x²
-   * @param y²
-   * @param z²
-   */
-  float GetSeparateAxis(math::Vector3 sep, math::Vector3 x, math::Vector3 y,
-                        math::Vector3 z = math::Vector3::kZeroVector);
+  * @brief OBB‚Ì“Š‰e‹——£”äŠr
+  * @param ’¼•û‘Ì1
+  * @param ’¼•û‘Ì2
+  * @param •ª—£²
+  * @param ‹——£
+  */
+  bool IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
+                          math::Vector3 vSep, math::Vector3 distance);
 };
 }  // namespace physics
 }  // namespace legend

@@ -64,6 +64,18 @@ class BoundingBox {
    */
   math::Vector3 GetScale();
   /**
+   * @brief 分離軸Xの取得
+   */
+  math::Vector3 GetAxisX();
+  /**
+   * @brief 分離軸Yの取得
+   */
+  math::Vector3 GetAxisY();
+  /**
+   * @brief 分離軸Zの取得
+   */
+  math::Vector3 GetAxisZ();
+  /**
    * @brief 各方向ベクトルの設定
    * @param X方向
    * @param Y方向
@@ -93,6 +105,10 @@ class BoundingBox {
    * @param スケール
    */
   void SetScale(math::Vector3 scale);
+  /**
+   * @brief 分離軸の更新
+   */
+  void SetAxis();
 
  private:
   //!中心座標
@@ -103,8 +119,14 @@ class BoundingBox {
   math::Vector3 scale_;
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
-  //!各軸方向の長さ
+  //!各軸方向の長さ(半径)
   std::vector<float> lengthes_;
+  //!分離軸X
+  math::Vector3 axis_x;
+  //!分離軸Y
+  math::Vector3 axis_y;
+  //!分離軸Z
+  math::Vector3 axis_z;
 
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;

@@ -113,6 +113,12 @@ bool PhysicsTest::Update() {
     ImGui::SliderFloat3("OBB1_Rotation", &obb1_rotation.x, -180.0f, 180.0f);
     math::Vector3 obb1_scale = obbs_[0].GetScale();
     ImGui::SliderFloat3("OBB1_Scale", &obb1_scale.x, 0.1f, 2.0f);
+    if (ImGui::Button("Plus_Y")) {
+      obb1_position.y += 0.1f;
+    }
+    if (ImGui::Button("Minus_Y")) {
+      obb1_position.y -= 0.1f;
+    }
     obbs_[0].SetPosition(obb1_position);
     obbs_[0].SetRotation(obb1_rotation);
     obbs_[0].SetScale(obb1_scale);
@@ -127,12 +133,11 @@ bool PhysicsTest::Update() {
     obbs_[1].SetPosition(obb2_position);
     obbs_[1].SetRotation(obb2_rotation);
     obbs_[1].SetScale(obb2_scale);
-
-    for (i32 i = 0; i < obb_num_; i++) {
-      obbs_[i].Update();
-    }
   }
   ImGui::End();
+  for (i32 i = 0; i < obb_num_; i++) {
+    obbs_[i].Update();
+  }
 
   if (physics::Collision::GetInstance()->Collision_OBB_OBB(obbs_[0],
                                                            obbs_[1])) {

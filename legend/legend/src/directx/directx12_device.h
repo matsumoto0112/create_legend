@@ -8,6 +8,7 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
+#include "src/directx/device/CommandList.h"
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
@@ -83,7 +84,7 @@ class DirectX12Device : public IDirectXAccessor {
     return device_.Get();
   }
   virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
-    return command_list_.Get();
+    return command_lists_[frame_index_].GetCommandList();
   }
   const inline buffer::RenderTarget& GetRenderTarget() const {
     return swap_chain_.GetRenderTarget();
@@ -132,11 +133,9 @@ class DirectX12Device : public IDirectXAccessor {
   //! バッファインデックス
   i32 frame_index_;
   //! コマンドアロケータ
-  std::array<ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> command_allocator_;
+  std::array<device::CommandList, FRAME_COUNT> command_lists_;
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
-  //! コマンドリスト
-  ComPtr<ID3D12GraphicsCommandList4> command_list_;
   //!< 現在のレンダーターゲットの状態
   D3D12_RESOURCE_STATES current_resource_state_;
   //! フェンス値

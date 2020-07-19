@@ -33,12 +33,17 @@ bool DirectX12Device::Init(std::weak_ptr<window::Window> target_window) {
 }
 
 bool DirectX12Device::InitAfter() {
-  if (FAILED(command_list_->Close())) {
-    MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
-    return false;
+  std::array<ID3D12CommandList*, FRAME_COUNT> command_lists;
+  for (u32 i = 0; i < FRAME_COUNT; i++) {
+    if (FAILED(command_lists_[i].GetCommandList()->Close())) {
+      MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
+      return false;
+    }
+    command_lists[i] = command_lists_[i].GetCommandList();
   }
-  ID3D12CommandList* command_lists[] = {command_list_.Get()};
-  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
+
+  command_queue_->ExecuteCommandLists(static_cast<u32>(command_lists.size()),
+                                      command_lists.data());
 
   MoveToNextFrame();
 
@@ -46,11 +51,11 @@ bool DirectX12Device::InitAfter() {
 }
 
 bool DirectX12Device::Prepare() {
-  if (FAILED(command_allocator_[frame_index_]->Reset())) {
+  if (FAILED(command_lists_[frame_index_].GetCommandAllocator()->Reset())) {
     return false;
   }
-  if (FAILED(command_list_->Reset(command_allocator_[frame_index_].Get(),
-                                  nullptr))) {
+  if (FAILED(command_lists_[frame_index_].GetCommandList()->Reset(
+          command_lists_[frame_index_].GetCommandAllocator(), nullptr))) {
     return false;
   }
 
@@ -60,8 +65,9 @@ bool DirectX12Device::Prepare() {
   CD3DX12_RECT scissor_rect(0, 0,
                             static_cast<long>(render_target_screen_size_.x),
                             static_cast<long>(render_target_screen_size_.y));
-  command_list_->RSSetViewports(1, &viewport);
-  command_list_->RSSetScissorRects(1, &scissor_rect);
+  command_lists_[frame_index_].GetCommandList()->RSSetViewports(1, &viewport);
+  command_lists_[frame_index_].GetCommandList()->RSSetScissorRects(
+      1, &scissor_rect);
 
   swap_chain_.SetBackBuffer(*this);
   swap_chain_.ClearBackBuffer(*this);
@@ -74,11 +80,12 @@ bool DirectX12Device::Prepare() {
 bool DirectX12Device::Present() {
   swap_chain_.DrawEnd(*this);
 
-  if (FAILED(command_list_->Close())) {
+  if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
     return false;
   }
 
-  ID3D12CommandList* command_lists[] = {command_list_.Get()};
+  ID3D12CommandList* command_lists[] = {
+      command_lists_[frame_index_].GetCommandList()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
   swap_chain_.Present();
@@ -163,21 +170,9 @@ bool DirectX12Device::CreateDevice() {
 
   //フレーム枚数分のアロケータ作成
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
-    if (FAILED(device_->CreateCommandAllocator(
-            D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
-            IID_PPV_ARGS(&command_allocator_[i])))) {
-      MY_LOG(L"CreateCommandAllocator %d failed", i);
+    if (!command_lists_[i].Init(device_.Get(), command_queue_.Get())) {
       return false;
     }
-  }
-
-  //コマンドリストの作成
-  if (FAILED(device_->CreateCommandList(
-          0, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
-          command_allocator_[0].Get(), nullptr,
-          IID_PPV_ARGS(&command_list_)))) {
-    MY_LOG(L"CreateCommandList failed");
-    return false;
   }
 
   //同期用のフェンス作成

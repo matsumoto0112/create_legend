@@ -20,6 +20,15 @@ bool PostProcessViewer::Initialize() {
 
   //通常描画用パラメータ設定
   {
+    const math::IntVector2 screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    //ポストプロセス描画用レンダーターゲット
+    if (!render_target_texture_.Init(
+            device, directx::shader::TextureRegisterID::Albedo,
+            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
+            screen_size.y, util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"RTT")) {
+      return false;
+    }
     const std::filesystem::path filepath =
         util::Path::GetInstance()->model() / L"1000cmObject.glb";
     if (!model_.Init(filepath)) {
@@ -57,8 +66,6 @@ bool PostProcessViewer::Initialize() {
     }
 
     const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
-    const math::IntVector2 screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
     if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 1.0f, -1.0f),
                       camera_rotation, 60.0f * math::util::DEG_2_RAD,
@@ -93,19 +100,12 @@ bool PostProcessViewer::Initialize() {
 
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    post_process_pipeline_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+    post_process_pipeline_.SetRenderTargetInfo(device.GetRenderTarget(), false);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
     }
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    //ポストプロセス描画用レンダーターゲット
-    if (!render_target_texture_.Init(
-            device, directx::shader::TextureRegisterID::Albedo,
-            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
-            screen_size.y, util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"RTT")) {
-      return false;
-    }
 
     const math::Vector2 screen_size_float(static_cast<float>(screen_size.x),
                                           static_cast<float>(screen_size.y));

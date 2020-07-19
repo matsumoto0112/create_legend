@@ -103,6 +103,10 @@ class RenderTarget {
    * @brief リソースを取得する
    */
   ID3D12Resource* GetResource() const { return resource_.GetResource(); }
+  /**
+   * @brief ハンドルを取得する
+   */
+  DescriptorHandle GetHandle() const { return rtv_handle_; }
 
  private:
   //! リソース

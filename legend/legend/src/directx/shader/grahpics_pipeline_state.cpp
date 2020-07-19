@@ -63,6 +63,12 @@ void GraphicsPipelineState::SetRenderTargetInfo(
                                              write_with_depth_stencil);
 }
 
+void GraphicsPipelineState::SetRenderTargetInfo(
+    const buffer::MultiRenderTargetTexture& render_target,
+    bool write_with_depth_stencil) {
+  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_);
+}
+
 //アルファブレンドデスクをセットする
 void GraphicsPipelineState::SetBlendDesc(
     const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc, u32 rtv_index) {

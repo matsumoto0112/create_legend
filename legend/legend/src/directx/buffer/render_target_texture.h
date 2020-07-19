@@ -61,6 +61,9 @@ class RenderTargetTexture {
    */
   void SetToGlobalHeap(IDirectXAccessor& accessor) const;
 
+ public:
+  inline const RenderTarget& GetRenderTarget() const { return render_target_; }
+
  private:
   //! レンダーターゲット
   RenderTarget render_target_;

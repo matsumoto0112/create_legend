@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/multi_render_target_texture.h"
 #include "src/directx/buffer/render_target.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
@@ -54,6 +55,13 @@ class GraphicsPipelineState {
    */
   void SetRenderTargetInfo(const buffer::RenderTarget& render_target,
                            bool write_with_depth_stencil);
+  /**
+   * @brief レンダーターゲットの情報をセットする
+   * @param render_target 対象となるレンダーターゲット
+   */
+  void SetRenderTargetInfo(
+      const buffer::MultiRenderTargetTexture& render_target,
+      bool write_with_depth_stencil);
   /**
    * @brief アルファブレンドデスクを設定する
    */

@@ -1,6 +1,7 @@
 #include "src/scenes/scene_manager.h"
 
 #include "src/scenes/debugscene/model_view.h"
+#include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/perspective_camera_test.h"
 #include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/post_process_viewer.h"
@@ -79,6 +80,10 @@ bool SceneManager::Update() {
         break;
       case SceneType::POST_PROCES_VIEWER:
         current_scene_ = std::make_unique<debugscene::PostProcessViewer>(this);
+        break;
+      case SceneType::MULTI_RENDER_TARGET_TEST:
+        current_scene_ =
+            std::make_unique<debugscene::MultiRenderTargetTest>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

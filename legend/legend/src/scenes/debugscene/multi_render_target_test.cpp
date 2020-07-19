@@ -1,4 +1,4 @@
-#include "src/scenes/debugscene/post_process_viewer.h"
+#include "src/scenes/debugscene/multi_render_target_test.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
@@ -10,11 +10,11 @@
 namespace legend {
 namespace scenes {
 namespace debugscene {
-PostProcessViewer::PostProcessViewer(ISceneChange* scene_change)
+MultiRenderTargetTest::MultiRenderTargetTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-PostProcessViewer::~PostProcessViewer() {}
-bool PostProcessViewer::Initialize() {
+MultiRenderTargetTest::~MultiRenderTargetTest() {}
+bool MultiRenderTargetTest::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -23,6 +23,20 @@ bool PostProcessViewer::Initialize() {
     const std::filesystem::path filepath =
         util::Path::GetInstance()->model() / L"1000cmObject.glb";
     if (!model_.Init(filepath)) {
+      return false;
+    }
+
+    const math::IntVector2 screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+
+    std::vector<
+        directx::buffer::MultiRenderTargetTexture::RenderTargetCreateInfo>
+        infos{{directx::shader::TextureRegisterID::Albedo,
+               util::Color4(1.0f, 0.0f, 0.0f, 1.0f)}};
+    //ポストプロセス描画用レンダーターゲット
+    if (!render_target_texture_.Init(
+            device, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
+            screen_size.y, infos, L"RTT")) {
       return false;
     }
 
@@ -50,15 +64,12 @@ bool PostProcessViewer::Initialize() {
 
     pipeline_state_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    pipeline_state_.SetRenderTargetInfo(
-        render_target_texture_.GetRenderTarget(), true);
+    pipeline_state_.SetRenderTargetInfo(render_target_texture_, true);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
     }
 
     const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
-    const math::IntVector2 screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
     if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 1.0f, -1.0f),
                       camera_rotation, 60.0f * math::util::DEG_2_RAD,
@@ -99,13 +110,6 @@ bool PostProcessViewer::Initialize() {
     }
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    //ポストプロセス描画用レンダーターゲット
-    if (!render_target_texture_.Init(
-            device, directx::shader::TextureRegisterID::Albedo,
-            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
-            screen_size.y, util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"RTT")) {
-      return false;
-    }
 
     const math::Vector2 screen_size_float(static_cast<float>(screen_size.x),
                                           static_cast<float>(screen_size.y));
@@ -155,7 +159,7 @@ bool PostProcessViewer::Initialize() {
   return true;
 }
 
-bool PostProcessViewer::Update() {
+bool MultiRenderTargetTest::Update() {
   if (ImGui::Begin("Camera")) {
     //カメラ座標
     math::Vector3 camera_position = camera_.GetPosition();
@@ -184,7 +188,7 @@ bool PostProcessViewer::Update() {
   ImGui::End();
   return true;
 }
-void PostProcessViewer::Draw() {
+void MultiRenderTargetTest::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -206,7 +210,7 @@ void PostProcessViewer::Draw() {
   post_process_index_buffer_.SetGraphicsCommandList(device);
   post_process_index_buffer_.Draw(device);
 }
-void PostProcessViewer::Finalize() {}
+void MultiRenderTargetTest::Finalize() {}
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

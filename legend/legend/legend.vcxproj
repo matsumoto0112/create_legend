@@ -84,6 +84,7 @@
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\buffer\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
@@ -169,6 +171,7 @@
     </None>
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\depth_stencil.h" />
+    <ClInclude Include="src\directx\buffer\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\buffer\render_target.h" />
     <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />

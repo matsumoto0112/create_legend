@@ -32,7 +32,11 @@ bool MultiRenderTargetTest::Initialize() {
     std::vector<
         directx::buffer::MultiRenderTargetTexture::RenderTargetCreateInfo>
         infos{{directx::shader::TextureRegisterID::Albedo,
-               util::Color4(1.0f, 0.0f, 0.0f, 1.0f)}};
+               util::Color4(1.0f, 0.0f, 0.0f, 1.0f)},
+              {directx::shader::TextureRegisterID::Albedo,
+               util::Color4(0.0f, 1.0f, 0.0f, 1.0f)}
+
+        };
     //ポストプロセス描画用レンダーターゲット
     if (!render_target_texture_.Init(
             device, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
@@ -49,7 +53,7 @@ bool MultiRenderTargetTest::Initialize() {
         util::Path::GetInstance()->shader();
     auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
     if (!vertex_shader->Init(
-            device, shader_root_path / L"modelview" / L"model_view_vs.cso",
+            device, shader_root_path / L"multi_render_target_test" / L"multi_render_target_test_vs.cso",
             directx::input_element::GetElementDescs<directx::Vertex>())) {
       return false;
     }
@@ -57,7 +61,7 @@ bool MultiRenderTargetTest::Initialize() {
 
     auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
     if (!pixel_shader->Init(
-            device, shader_root_path / L"modelview" / L"model_view_ps.cso")) {
+            device, shader_root_path / L"multi_render_target_test" / L"multi_render_target_test_ps.cso")) {
       return false;
     }
     pipeline_state_.SetPixelShader(pixel_shader);

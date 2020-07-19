@@ -11,6 +11,8 @@ bool MultiRenderTargetTexture::Init(
     IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width, u32 height,
     const std::vector<RenderTargetCreateInfo>& infos,
     const std::wstring& name_base) {
+  this->infos_ = infos;
+
   const u32 render_target_num = static_cast<u32>(infos.size());
   render_target_resources_.resize(render_target_num);
   handles_.resize(render_target_num);
@@ -81,10 +83,13 @@ void MultiRenderTargetTexture::SetRenderTarget(IDirectXAccessor& accessor) {
 
 void MultiRenderTargetTexture::ClearRenderTarget(
     IDirectXAccessor& accessor) const {
-  for (auto&& rt_handle : handles_) {
-    float clear_color[4] = {1.0f, 0.0f, 0.0f, 1.0f};
-    accessor.GetCommandList()->ClearRenderTargetView(rt_handle.cpu_handle_,
-                                                     clear_color, 0, nullptr);
+  const u32 render_target_num =
+      static_cast<u32>(render_target_resources_.size());
+
+  for (u32 i = 0; i < render_target_num; i++) {
+    accessor.GetCommandList()->ClearRenderTargetView(
+        handles_[i].cpu_handle_, infos_[i].clear_color.Get().data(), 0,
+        nullptr);
   }
 }
 

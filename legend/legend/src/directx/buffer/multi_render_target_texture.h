@@ -52,6 +52,7 @@ class MultiRenderTargetTexture {
  private:
   //! ƒŠƒ\[ƒX
   std::vector<CommittedResource> render_target_resources_;
+  std::vector<RenderTargetCreateInfo> infos_;
   std::vector<DescriptorHandle> handles_;
   std::vector<DescriptorHandle> srv_handles_;
 };

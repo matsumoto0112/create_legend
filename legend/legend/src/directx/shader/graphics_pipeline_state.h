@@ -7,11 +7,11 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/render_target/multi_render_target_texture.h"
-#include "src/directx/render_target/render_target.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx12_device.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
+#include "src/directx/render_target/render_target.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -53,13 +53,12 @@ class GraphicsPipelineState {
    * @brief レンダーターゲットの情報をセットする
    * @param render_target 対象となるレンダーターゲット
    */
-  void SetRenderTargetInfo(const render_target::RenderTarget& render_target,
-                           bool write_with_depth_stencil);
+  void SetRenderTargetInfo(u32 render_target_id);
   /**
    * @brief レンダーターゲットの情報をセットする
    * @param render_target 対象となるレンダーターゲット
    */
-  //void SetRenderTargetInfo(
+  // void SetRenderTargetInfo(
   //    const render_target::MultiRenderTargetTexture& render_target,
   //    bool write_with_depth_stencil);
   /**

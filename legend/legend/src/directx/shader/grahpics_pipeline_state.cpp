@@ -57,13 +57,9 @@ void GraphicsPipelineState::SetPixelShader(
 }
 
 //レンダーターゲットの情報をセットする
-void GraphicsPipelineState::SetRenderTargetInfo(
-    const render_target::RenderTarget& render_target, bool write_with_depth_stencil) {
-  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_,
-                                             write_with_depth_stencil);
-}
+void GraphicsPipelineState::SetRenderTargetInfo(u32 render_target_id) {}
 
-//void GraphicsPipelineState::SetRenderTargetInfo(
+// void GraphicsPipelineState::SetRenderTargetInfo(
 //    const render_target::MultiRenderTargetTexture& render_target,
 //    bool write_with_depth_stencil) {
 //  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_);

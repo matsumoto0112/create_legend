@@ -93,6 +93,9 @@ class DirectX12Device : public IDirectXAccessor {
   const inline render_target::RenderTarget& GetRenderTarget() const {
     return swap_chain_.GetRenderTarget();
   }
+  inline render_target::RenderResourceManager& GetRenderResourceManager() {
+    return render_resource_manager_;
+  }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */

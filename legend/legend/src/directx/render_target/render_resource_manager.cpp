@@ -23,8 +23,9 @@ bool RenderResourceManager::CreateRenderTarget(
       created_render_targets_.find(unique_id) == created_render_targets_.end(),
       L"unique_id‚ªd•¡‚µ‚Ä‚¢‚Ü‚·B");
 
-  RenderTarget render_target;
-  if (!render_target.Init(accessor, format, width, height, clear_color, name)) {
+  RenderTargetTexture render_target;
+  if (!render_target.Init(accessor, 0, format, width, height, clear_color,
+                          name)) {
     return false;
   }
 
@@ -91,6 +92,7 @@ void RenderResourceManager::SetRenderTargetsToCommandList(
     rtv_handles[0] = accessor.GetBackBufferHandle().cpu_handle_;
   } else {
     rtv_handles[0] = created_render_targets_[current_render_target_id_]
+                         .GetRenderTarget()
                          .GetHandle()
                          .cpu_handle_;
   }

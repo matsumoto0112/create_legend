@@ -7,10 +7,13 @@
 
 #include "src/directx/directx_accessor.h"
 #include "src/directx/render_target/depth_stencil.h"
-#include "src/directx/render_target/render_target.h"
+#include "src/directx/render_target/render_target_texture.h"
 
 namespace legend {
 namespace directx {
+namespace shader {
+class GraphicsPipelineState;
+}  // namespace shader
 namespace render_target {
 class RenderResourceManager {
  public:
@@ -27,6 +30,8 @@ class RenderResourceManager {
                           const std::wstring& name);
   void SetRenderTarget(u32 unique_id);
   void SetDepthStencilTarget(u32 unique_id);
+  void WriteRenderTargetInfoToPipelineDesc(
+      u32 unique_id, shader::GraphicsPipelineState& pipeline);
 
   void ClearCurrentRenderTarget(IDirectXAccessor& accessor);
   void ClearCurrentDepthStencilTarget(IDirectXAccessor& accessor);
@@ -34,7 +39,7 @@ class RenderResourceManager {
 
  private:
   static constexpr u32 SWAP_CHAIN_RENDER_TARGET_ID = 0;
-  std::unordered_map<u32, RenderTarget> created_render_targets_;
+  std::unordered_map<u32, RenderTargetTexture> created_render_targets_;
   std::unordered_map<u32, DepthStencil> created_depth_stencil_targets_;
   u32 current_render_target_id_;
   u32 current_depth_stencil_target_id_;

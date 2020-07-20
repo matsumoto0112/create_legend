@@ -112,18 +112,30 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   float distance = math::Vector3::Dot(obb.GetPosition() - plane.GetPosition(),
                                       plane.GetNormal());
 
-  if (fabs(distance) - proximity_distance >= 0) {
+  if (fabs(distance) - proximity_distance > 0) {
     MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
     return false;
   }
 
-  ////–ß‚µ‹——£
-  // float return_distance = 0;
-  // if (distance > 0) {
-  //  return_distance = proximity_distance - fabs(distance);
-  //} else {
-  //  return_distance = proximity_distance + fabs(distance);
-  //}
+  //–ß‚µ‹——£
+  float return_distance = 0;
+  if (distance > 0) {
+    return_distance = proximity_distance - fabs(distance);
+  } else {
+    return_distance = proximity_distance + fabs(distance);
+  }
+
+  //À•W‚ÌC³
+  math::Vector3 normal = plane.GetNormal();
+  math::Vector3 return_vector = math::Vector3::kZeroVector;
+  if (normal.x > 0) {
+    return_vector = math::Vector3(return_distance, 0, 0) + obb.GetPosition();
+  } else if (normal.y > 0) {
+    return_vector = math::Vector3(0, return_distance, 0) + obb.GetPosition();
+  } else if (normal.z > 0) {
+    return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
+  }
+  obb.SetPosition(return_vector);
 
   return true;
 }

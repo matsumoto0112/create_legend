@@ -6,20 +6,20 @@ namespace legend {
 namespace physics {
 //コンストラクタ
 Plane::Plane()
-    : position_(math::Vector3::kZeroVector), normal_(math::Vector3(1, 0, 0)) {}
+    : position_(math::Vector3::kZeroVector), normal_(math::Vector3(0, 1, 0)) {}
 
 //初期化
 bool Plane::Initialize(directx::DirectX12Device& device) {
   float front = GetPosition().z - 1;
   float back = GetPosition().z + 1;
-  float up = GetPosition().y - 1;
-  float down = GetPosition().y + 1;
+  float left = GetPosition().x - 1;
+  float right = GetPosition().x + 1;
 
   const std::vector<directx::BoundingBox> vertices{
-      {{0, up, front}},
-      {{0, down, front}},
-      {{0, down, back}},
-      {{0, up, back}},
+      {{left, 0, front}},
+      {{right, 0, front}},
+      {{right, 0, back}},
+      {{left, 0, back}},
   };
 
   //頂点バッファ作成

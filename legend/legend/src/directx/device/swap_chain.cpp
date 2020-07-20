@@ -66,7 +66,7 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
             util::string_util::Format(L"Render Target %u", n))) {
       return false;
     }
-    //if (!render_targets_[n].CreateDepthStencil(
+    // if (!render_targets_[n].CreateDepthStencil(
     //        accessor, DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT, 1280,
     //        720, buffer::DepthStencil::ClearValue(1.0f, 0),
     //        util::string_util::Format(L"DepthStencil %u", n))) {
@@ -80,7 +80,7 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
 
 //バックバッファにセットする
 void SwapChain::SetBackBuffer(IDirectXAccessor& accessor) {
-  render_targets_[frame_index_].SetRenderTarget(accessor);
+  // render_targets_[frame_index_].SetRenderTarget(accessor);
 }
 
 //バックバッファをクリアする

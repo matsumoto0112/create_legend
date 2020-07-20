@@ -7,8 +7,9 @@
 
  */
 
-#include "src/directx/render_target/render_target.h"
 #include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/directx_accessor.h"
+#include "src/directx/render_target/render_target.h"
 #include "src/window/window.h"
 
 namespace legend {
@@ -67,7 +68,7 @@ class SwapChain {
   /**
    * @brief 現在のレンダーターゲットを取得する
    */
-  const buffer::RenderTarget& GetRenderTarget() const {
+  const render_target::RenderTarget& GetRenderTarget() const {
     return render_targets_[frame_index_];
   }
   /**
@@ -83,7 +84,7 @@ class SwapChain {
   //! スワップチェイン
   ComPtr<IDXGISwapChain3> swap_chain_;
   //! レンダーターゲット
-  std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
+  std::array<render_target::RenderTarget, FRAME_COUNT> render_targets_;
   //! 現在フレームのインデックス
   u32 frame_index_;
   //テアリングが許可されているか

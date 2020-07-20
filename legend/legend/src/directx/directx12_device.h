@@ -13,6 +13,7 @@
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/heap_manager.h"
+#include "src/directx/render_target/render_resource_manager.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
@@ -79,6 +80,9 @@ class DirectX12Device : public IDirectXAccessor {
   virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
                                const DescriptorHandle& handle) override;
 
+  virtual DescriptorHandle GetBackBufferHandle() const override;
+  virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) override;
+
  public:
   virtual inline ID3D12Device* GetDevice() const override {
     return device_.Get();
@@ -86,7 +90,7 @@ class DirectX12Device : public IDirectXAccessor {
   virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_lists_[frame_index_].GetCommandList();
   }
-  const inline buffer::RenderTarget& GetRenderTarget() const {
+  const inline render_target::RenderTarget& GetRenderTarget() const {
     return swap_chain_.GetRenderTarget();
   }
   /**
@@ -146,6 +150,7 @@ class DirectX12Device : public IDirectXAccessor {
   HeapManager heap_manager_;
   //! デフォルトのルートシグネチャ
   std::shared_ptr<shader::RootSignature> default_root_signature_;
+  render_target::RenderResourceManager render_resource_manager_;
 };
 }  // namespace directx
 }  // namespace legend

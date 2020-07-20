@@ -58,16 +58,16 @@ void GraphicsPipelineState::SetPixelShader(
 
 //レンダーターゲットの情報をセットする
 void GraphicsPipelineState::SetRenderTargetInfo(
-    const buffer::RenderTarget& render_target, bool write_with_depth_stencil) {
+    const render_target::RenderTarget& render_target, bool write_with_depth_stencil) {
   render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_,
                                              write_with_depth_stencil);
 }
 
-void GraphicsPipelineState::SetRenderTargetInfo(
-    const buffer::MultiRenderTargetTexture& render_target,
-    bool write_with_depth_stencil) {
-  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_);
-}
+//void GraphicsPipelineState::SetRenderTargetInfo(
+//    const render_target::MultiRenderTargetTexture& render_target,
+//    bool write_with_depth_stencil) {
+//  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_);
+//}
 
 //アルファブレンドデスクをセットする
 void GraphicsPipelineState::SetBlendDesc(

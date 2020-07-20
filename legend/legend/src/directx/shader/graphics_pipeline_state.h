@@ -53,15 +53,15 @@ class GraphicsPipelineState {
    * @brief レンダーターゲットの情報をセットする
    * @param render_target 対象となるレンダーターゲット
    */
-  void SetRenderTargetInfo(const buffer::RenderTarget& render_target,
+  void SetRenderTargetInfo(const render_target::RenderTarget& render_target,
                            bool write_with_depth_stencil);
   /**
    * @brief レンダーターゲットの情報をセットする
    * @param render_target 対象となるレンダーターゲット
    */
-  void SetRenderTargetInfo(
-      const buffer::MultiRenderTargetTexture& render_target,
-      bool write_with_depth_stencil);
+  //void SetRenderTargetInfo(
+  //    const render_target::MultiRenderTargetTexture& render_target,
+  //    bool write_with_depth_stencil);
   /**
    * @brief アルファブレンドデスクを設定する
    */

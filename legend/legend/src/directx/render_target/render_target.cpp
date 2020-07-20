@@ -2,7 +2,7 @@
 
 namespace legend {
 namespace directx {
-namespace buffer {
+namespace render_target {
 
 //コンストラクタ
 RenderTarget::RenderTarget() {}
@@ -18,7 +18,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   clear_value.Format = format;
   memcpy(clear_value.Color, clear_color.Get().data(), sizeof(float) * 4);
 
-  const CommittedResource::TextureBufferDesc desc(
+  const buffer::CommittedResource::TextureBufferDesc desc(
       name, format, width, height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
       clear_value);
@@ -66,42 +66,10 @@ bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
   return true;
 }
 
-//デプス・ステンシルを作成する
-bool RenderTarget::CreateDepthStencil(
-    IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width, u32 height,
-    const DepthStencil::ClearValue& clear_value, const std::wstring& name) {
-  depth_stencil_ = std::make_unique<DepthStencil>();
-  if (!depth_stencil_->Init(accessor, format, width, height, clear_value,
-                            name)) {
-    return false;
-  }
-
-  return true;
-}
-
-//レンダーターゲットをセットする
-void RenderTarget::SetRenderTarget(IDirectXAccessor& accessor) {
-  this->Transition(accessor,
-                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-  if (depth_stencil_) {
-    depth_stencil_->PrepareToSetCommandList(accessor);
-    accessor.GetCommandList()->OMSetRenderTargets(
-        1, &rtv_handle_.cpu_handle_, TRUE, &depth_stencil_->GetCPUHandle());
-
-  } else {
-    accessor.GetCommandList()->OMSetRenderTargets(1, &rtv_handle_.cpu_handle_,
-                                                  FALSE, nullptr);
-  }
-}
-
 //レンダーターゲットをクリアする
 void RenderTarget::ClearRenderTarget(IDirectXAccessor& accessor) const {
   accessor.GetCommandList()->ClearRenderTargetView(
       rtv_handle_.cpu_handle_, clear_color_.Get().data(), 0, nullptr);
-  if (depth_stencil_) {
-    depth_stencil_->ClearDepthStencil(accessor);
-  }
 }
 
 //描画終了
@@ -122,16 +90,8 @@ void RenderTarget::WriteInfoToPipelineStateDesc(
     bool write_with_depth_stencil) const {
   pipeline_state_desc->NumRenderTargets = 1;
   pipeline_state_desc->RTVFormats[0] = format_;
-
-  if (write_with_depth_stencil) {
-    if (depth_stencil_) {
-      depth_stencil_->WriteInfoToPipelineStateDesc(pipeline_state_desc);
-    } else {
-      MY_LOG(L"書き込むデプス・ステンシルの情報が存在しません。");
-    }
-  }
 }
 
-}  // namespace buffer
+}  // namespace render_target
 }  // namespace directx
 }  // namespace legend

@@ -78,6 +78,7 @@
     <ClCompile Include="src\directx\render_target\render_target_texture.cpp" />
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="src\directx\render_target\render_target_texture.h" />
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

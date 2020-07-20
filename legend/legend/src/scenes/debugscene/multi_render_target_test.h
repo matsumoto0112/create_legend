@@ -40,7 +40,7 @@ class MultiRenderTargetTest : public Scene {
   directx::buffer::VertexBuffer post_process_vertex_buffer_;
   directx::buffer::IndexBuffer post_process_index_buffer_;
 
-  directx::buffer::MultiRenderTargetTexture render_target_texture_;
+  //directx::render_target::MultiRenderTargetTexture render_target_texture_;
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       post_process_transform_cb_;
   directx::buffer::ConstantBuffer<

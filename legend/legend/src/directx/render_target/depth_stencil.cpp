@@ -2,7 +2,7 @@
 
 namespace legend {
 namespace directx {
-namespace buffer {
+namespace render_target {
 
 //コンストラクタ
 DepthStencil::DepthStencil() {}
@@ -19,7 +19,7 @@ bool DepthStencil::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   dsv_clear_value.DepthStencil.Depth = clear_value.depth;
   dsv_clear_value.DepthStencil.Stencil = clear_value.stencil;
 
-  const CommittedResource::TextureBufferDesc dsv_desc(
+  const buffer::CommittedResource::TextureBufferDesc dsv_desc(
       name, format, width, height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
       dsv_clear_value);
@@ -66,6 +66,6 @@ void DepthStencil::WriteInfoToPipelineStateDesc(
       CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
 }
 
-}  // namespace buffer
+}  // namespace render_target
 }  // namespace directx
 }  // namespace legend

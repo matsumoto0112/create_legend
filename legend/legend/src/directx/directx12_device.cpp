@@ -68,8 +68,9 @@ bool DirectX12Device::Prepare() {
   command_lists_[frame_index_].GetCommandList()->RSSetScissorRects(
       1, &scissor_rect);
 
-  swap_chain_.SetBackBuffer(*this);
-  swap_chain_.ClearBackBuffer(*this);
+  render_resource_manager_.SetRenderTarget(0);
+  render_resource_manager_.SetRenderTargetsToCommandList(*this);
+  render_resource_manager_.ClearCurrentRenderTarget(*this);
 
   heap_manager_.BeginFrame();
   default_root_signature_->SetGraphicsCommandList(*this);
@@ -132,6 +133,14 @@ void DirectX12Device::SetToGlobalHeap(u32 register_num,
                                      handle.cpu_handle_);
 }
 
+DescriptorHandle DirectX12Device::GetBackBufferHandle() const {
+  return swap_chain_.GetRenderTarget().GetHandle();
+}
+
+void DirectX12Device::ClearBackBufferTarget(IDirectXAccessor& accessor) {
+  swap_chain_.ClearBackBuffer(accessor);
+}
+
 bool DirectX12Device::CreateDevice() {
   if (FAILED(D3D12CreateDevice(adapter_.GetAdapter(),
                                device::defines::MIN_FEATURE_LEVEL,
@@ -172,6 +181,10 @@ bool DirectX12Device::CreateDevice() {
     if (!command_lists_[i].Init(device_.Get(), command_queue_.Get())) {
       return false;
     }
+  }
+
+  if (!render_resource_manager_.Init()) {
+    return false;
   }
 
   //同期用のフェンス作成

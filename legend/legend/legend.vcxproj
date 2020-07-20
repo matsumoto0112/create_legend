@@ -85,6 +85,7 @@
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\directx\render_target\render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
     <ClInclude Include="src\directx\render_target\render_target_texture.h" />
     <ClInclude Include="src\directx\device\CommandList.h" />

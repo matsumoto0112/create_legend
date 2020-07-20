@@ -9,12 +9,11 @@
 #include "src/directx/buffer/committed_resource.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
-#include "src/directx/render_target/depth_stencil.h"
 #include "src/util/color_4.h"
 
 namespace legend {
 namespace directx {
-namespace buffer {
+namespace render_target {
 /**
  * @class RenderTarget
  * @brief レンダーターゲット
@@ -55,25 +54,6 @@ class RenderTarget {
                       const util::Color4& clear_color,
                       const std::wstring& name);
   /**
-   * @brief デプス・ステンシルを作成する
-   * @param accessor DirextX12アクセサ
-   * @param format フォーマット
-   * @param width 幅
-   * @param height 高さ
-   * @param clear_value 初期化値
-   * @param name リソース名
-   * @return 作成に成功したらtrueを返す
-   */
-  bool CreateDepthStencil(IDirectXAccessor& accessor, DXGI_FORMAT format,
-                          u32 width, u32 height,
-                          const DepthStencil::ClearValue& clear_value,
-                          const std::wstring& name);
-  /**
-   * @brief レンダーターゲットにセットする
-   * @param accessor DirextX12アクセサ
-   */
-  void SetRenderTarget(IDirectXAccessor& accessor);
-  /**
    * @brief レンダーターゲットの色をクリアする
    * @param accessor DirextX12アクセサ
    * @details レンダーターゲットにセットされていないときは無効
@@ -110,18 +90,16 @@ class RenderTarget {
 
  private:
   //! リソース
-  CommittedResource resource_;
+  buffer::CommittedResource resource_;
   //! レンダーターゲットハンドル
   DescriptorHandle rtv_handle_;
   //! バッファのクリア色
   util::Color4 clear_color_;
   //! レンダーターゲットのフォーマット
   DXGI_FORMAT format_;
-  //! デプス・ステンシル
-  std::unique_ptr<DepthStencil> depth_stencil_;
 };
 
-}  // namespace buffer
+}  // namespace render_target
 }  // namespace directx
 }  // namespace legend
 

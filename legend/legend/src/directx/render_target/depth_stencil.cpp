@@ -1,4 +1,4 @@
-#include "src/directx/buffer/depth_stencil.h"
+#include "src/directx/render_target/depth_stencil.h"
 
 namespace legend {
 namespace directx {

@@ -1,4 +1,4 @@
-#include "src/directx/buffer/multi_render_target_texture.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 
 #include "src/util/string_util.h"
 
@@ -102,8 +102,8 @@ void MultiRenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
 
 void MultiRenderTargetTexture::SetToGlobalHeap(
     IDirectXAccessor& accessor) const {
-    accessor.SetToGlobalHeap(0, ResourceType::Srv, srv_handles_[0]);
-    accessor.SetToGlobalHeap(1, ResourceType::Srv, srv_handles_[1]);
+  accessor.SetToGlobalHeap(0, ResourceType::Srv, srv_handles_[0]);
+  accessor.SetToGlobalHeap(1, ResourceType::Srv, srv_handles_[1]);
 }
 
 }  // namespace buffer

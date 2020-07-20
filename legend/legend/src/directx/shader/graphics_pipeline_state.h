@@ -7,8 +7,8 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/multi_render_target_texture.h"
-#include "src/directx/buffer/render_target.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
+#include "src/directx/render_target/render_target.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/directx12_device.h"

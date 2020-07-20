@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
-#define LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_
 
 /**
  * @file depth_stencil.h
@@ -101,4 +101,4 @@ class DepthStencil {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
+#endif //! LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_

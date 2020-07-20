@@ -1,12 +1,12 @@
-#ifndef LEGEND_DIRECTX_BUFFER_RENDER_TARGET_TEXTURE_H_
-#define LEGEND_DIRECTX_BUFFER_RENDER_TARGET_TEXTURE_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_TEXTURE_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_TEXTURE_H_
 
 /**
  * @file render_target_texture.h
  * @brief テクスチャ使用可能なレンダーターゲットクラス定義
  */
 
-#include "src/directx/buffer/render_target.h"
+#include "src/directx/render_target/render_target.h"
 
 namespace legend {
 namespace directx {
@@ -77,4 +77,4 @@ class RenderTargetTexture {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_RENDER_TARGET_TEXTURE_H_
+#endif  //! LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_TEXTURE_H_

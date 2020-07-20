@@ -7,7 +7,7 @@
 
  */
 
-#include "src/directx/buffer/render_target.h"
+#include "src/directx/render_target/render_target.h"
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/window/window.h"
 

@@ -1,4 +1,4 @@
-#include "src/directx/buffer/render_target_texture.h"
+#include "src/directx/render_target/render_target_texture.h"
 
 namespace legend {
 namespace directx {

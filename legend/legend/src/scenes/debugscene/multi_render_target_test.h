@@ -8,7 +8,7 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/multi_render_target_texture.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"

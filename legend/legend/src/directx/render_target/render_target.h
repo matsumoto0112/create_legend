@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
-#define LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_
 
 /**
  * @file render_target.h
@@ -7,9 +7,9 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/buffer/depth_stencil.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/render_target/depth_stencil.h"
 #include "src/util/color_4.h"
 
 namespace legend {
@@ -125,4 +125,4 @@ class RenderTarget {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
+#endif  //! LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_

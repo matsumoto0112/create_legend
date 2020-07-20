@@ -1,13 +1,13 @@
-#ifndef LEGEND_DIRECTX_BUFFER_MULTI_RENDER_TARGET_TEXTURE_H_
-#define LEGEND_DIRECTX_BUFFER_MULTI_RENDER_TARGET_TEXTURE_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_MULTI_RENDER_TARGET_TEXTURE_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_MULTI_RENDER_TARGET_TEXTURE_H_
 
 /**
  * @file multi_render_target_texture.h
  * @brief テクスチャ利用可能なマルチレンダーターゲットクラス定義
  */
 
-#include "src/directx/buffer/render_target_texture.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/render_target/render_target_texture.h"
 
 namespace legend {
 namespace directx {
@@ -61,4 +61,4 @@ class MultiRenderTargetTexture {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_MULTI_RENDER_TARGET_TEXTURE_H_
+#endif //! LEGEND_DIRECTX_RENDER_TARGET_MULTI_RENDER_TARGET_TEXTURE_H_

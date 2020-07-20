@@ -5,8 +5,14 @@
 namespace legend {
 namespace directx {
 namespace device {
+
+//コンストラクタ
 CommandList::CommandList() {}
+
+//デストラクタ
 CommandList::~CommandList() {}
+
+//初期化
 bool CommandList::Init(ID3D12Device* device,
                        ID3D12CommandQueue* command_queue) {
   MY_ASSERTION(device, L"デバイスがnullptrです。");
@@ -32,6 +38,16 @@ bool CommandList::Init(ID3D12Device* device,
     return false;
   }
 
+  return true;
+}
+
+//コマンドリストを閉じる
+bool CommandList::Close() {
+  if (HRESULT hr = command_list_->Close(); FAILED(hr)) {
+    MY_LOG(L"CommandList Close failed.\nReason: %s",
+           directx_helper::HrToWString(hr).c_str());
+    return false;
+  }
   return true;
 }
 }  // namespace device

@@ -14,7 +14,9 @@ namespace debugscene {
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
 
-ModelView::~ModelView() {}
+ModelView::~ModelView() {
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 
 //初期化
 bool ModelView::Initialize() {

@@ -11,7 +11,9 @@ namespace debugscene {
 SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-SpriteRenderTest::~SpriteRenderTest() {}
+SpriteRenderTest::~SpriteRenderTest() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 
 bool SpriteRenderTest::Initialize() {
   const auto fon =

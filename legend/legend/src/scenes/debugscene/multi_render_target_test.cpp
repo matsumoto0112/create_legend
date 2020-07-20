@@ -13,7 +13,9 @@ namespace debugscene {
 MultiRenderTargetTest::MultiRenderTargetTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-MultiRenderTargetTest::~MultiRenderTargetTest() {}
+MultiRenderTargetTest::~MultiRenderTargetTest() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 bool MultiRenderTargetTest::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();

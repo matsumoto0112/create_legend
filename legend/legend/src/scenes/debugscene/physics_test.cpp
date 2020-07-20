@@ -12,7 +12,9 @@ namespace debugscene {
 PhysicsTest::PhysicsTest(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //デストラクタ
-PhysicsTest::~PhysicsTest() {}
+PhysicsTest::~PhysicsTest() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 
 //初期化
 bool PhysicsTest::Initialize() {

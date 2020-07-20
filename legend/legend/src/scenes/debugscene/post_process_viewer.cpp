@@ -13,7 +13,9 @@ namespace debugscene {
 PostProcessViewer::PostProcessViewer(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-PostProcessViewer::~PostProcessViewer() {}
+PostProcessViewer::~PostProcessViewer() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 bool PostProcessViewer::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();

@@ -16,7 +16,9 @@ PerspectiveCameraTest::PerspectiveCameraTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
 //デストラクタ
-PerspectiveCameraTest::~PerspectiveCameraTest() {}
+PerspectiveCameraTest::~PerspectiveCameraTest() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 
 //初期化
 bool PerspectiveCameraTest::Initialize() {

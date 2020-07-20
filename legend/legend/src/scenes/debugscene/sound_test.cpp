@@ -9,7 +9,9 @@ namespace legend {
 namespace scenes {
 namespace debugscene {
 SoundTest::SoundTest(ISceneChange* scene_change) : Scene(scene_change) {}
-SoundTest::~SoundTest() {}
+SoundTest::~SoundTest() {
+    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+}
 bool SoundTest::Initialize() {
   audio::AudioManager& audio_manager =
       game::GameDevice::GetInstance()->GetAudioManager();

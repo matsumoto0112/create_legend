@@ -35,8 +35,7 @@ bool DirectX12Device::Init(std::weak_ptr<window::Window> target_window) {
 bool DirectX12Device::InitAfter() {
   std::array<ID3D12CommandList*, FRAME_COUNT> command_lists;
   for (u32 i = 0; i < FRAME_COUNT; i++) {
-    if (FAILED(command_lists_[i].GetCommandList()->Close())) {
-      MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
+    if (!command_lists_[i].Close()) {
       return false;
     }
     command_lists[i] = command_lists_[i].GetCommandList();

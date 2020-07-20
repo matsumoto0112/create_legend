@@ -4,7 +4,6 @@
 /**
  * @file swap_chain.h
  * @brief スワップチェインクラス定義
-
  */
 
 #include "src/directx/device/dxgi_adapter.h"

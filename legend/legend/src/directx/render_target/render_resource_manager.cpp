@@ -59,6 +59,11 @@ void RenderResourceManager::SetDepthStencilTarget(u32 unique_id) {
   this->current_depth_stencil_target_id_ = unique_id;
 }
 
+void RenderResourceManager::WriteRenderTargetInfoToPipelineDesc(
+    u32 unique_id, shader::GraphicsPipelineState& pipeline) {
+  created_render_targets_[unique_id].WriteInfoToPipelineDesc(pipeline);
+}
+
 void RenderResourceManager::ClearCurrentRenderTarget(
     IDirectXAccessor& accessor) {
   if (current_render_target_id_ == SWAP_CHAIN_RENDER_TARGET_ID) {

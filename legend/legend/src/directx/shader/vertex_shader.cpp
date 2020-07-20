@@ -13,7 +13,7 @@ VertexShader::VertexShader() {}
 VertexShader::~VertexShader() {}
 
 //‰Šú‰»
-bool VertexShader::Init(DirectX12Device& device,
+bool VertexShader::Init(IDirectXAccessor& accessor,
                         const std::filesystem::path& filepath,
                         const std::vector<D3D12_INPUT_ELEMENT_DESC>& elements) {
   this->shader_code_ = util::byte_reader::Read(filepath);

@@ -66,11 +66,7 @@ bool PostProcessViewer::Initialize() {
 
     pipeline_state_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    pipeline_state_.SetRenderTargetInfo(game::GameDevice::GetInstance()
-                                            ->GetDevice()
-                                            .GetRenderResourceManager()
-                                            .WriteRenderTargetInfoToPipelineDesc(),
-                                        true);
+    pipeline_state_.SetRenderTargetInfo(0);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
     }
@@ -110,7 +106,7 @@ bool PostProcessViewer::Initialize() {
 
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    post_process_pipeline_.SetRenderTargetInfo(device.GetRenderTarget(), false);
+    post_process_pipeline_.SetRenderTargetInfo(0);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
     }

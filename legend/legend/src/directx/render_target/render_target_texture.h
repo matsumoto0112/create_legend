@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/render_target/render_target.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 
 namespace legend {
 namespace directx {
@@ -55,6 +56,7 @@ class RenderTargetTexture {
    * @param accessor DirextX12アクセサ
    */
   void SetToGlobalHeap(IDirectXAccessor& accessor) const;
+  void WriteInfoToPipelineDesc(shader::GraphicsPipelineState& pipeline);
 
  public:
   inline const RenderTarget& GetRenderTarget() const { return render_target_; }

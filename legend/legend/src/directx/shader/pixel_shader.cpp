@@ -13,7 +13,7 @@ PixelShader::PixelShader() {}
 PixelShader::~PixelShader() {}
 
 //‰Šú‰»
-bool PixelShader::Init(DirectX12Device& device,
+bool PixelShader::Init(IDirectXAccessor& accessor,
                        const std::filesystem::path& filepath) {
   this->pixel_shader_data = util::byte_reader::Read(filepath);
   if (this->pixel_shader_data.empty()) {

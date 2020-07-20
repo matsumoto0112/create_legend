@@ -6,12 +6,7 @@
  * @brief パイプラインステート定義
  */
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/texture_2d.h"
-#include "src/directx/descriptor_heap/descriptor_heap.h"
-#include "src/directx/directx12_device.h"
-#include "src/directx/render_target/multi_render_target_texture.h"
-#include "src/directx/render_target/render_target.h"
+#include "src/directx/directx_accessor.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -36,7 +31,7 @@ class GraphicsPipelineState {
    * @brief 初期化
    * @param device DirectX12デバイス
    */
-  bool Init(DirectX12Device& device);
+  bool Init(IDirectXAccessor& device);
   /**
    * @brief ルートシグネチャをセットする
    */
@@ -55,13 +50,6 @@ class GraphicsPipelineState {
    */
   void SetRenderTargetInfo(u32 render_target_id);
   /**
-   * @brief レンダーターゲットの情報をセットする
-   * @param render_target 対象となるレンダーターゲット
-   */
-  // void SetRenderTargetInfo(
-  //    const render_target::MultiRenderTargetTexture& render_target,
-  //    bool write_with_depth_stencil);
-  /**
    * @brief アルファブレンドデスクを設定する
    */
   void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc,
@@ -70,16 +58,18 @@ class GraphicsPipelineState {
    * @brief 描画対象のプリミティブ形状を設定する
    */
   void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology_type);
+  void SetRTVFormat(DXGI_FORMAT format, u32 rtv_index);
+  void SetRenderTargetNum(u32 num);
   /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス
    */
-  bool CreatePipelineState(DirectX12Device& device);
+  bool CreatePipelineState(IDirectXAccessor& device);
   /**
    * @brief コマンドリストにセットする
    * @param device DirectX12デバイス
    */
-  void SetGraphicsCommandList(DirectX12Device& device);
+  void SetGraphicsCommandList(IDirectXAccessor& device);
 
  protected:
   //! パイプラインステートデスク

@@ -8,7 +8,7 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
-#include "src/directx/device/CommandList.h"
+#include "src/directx/device/command_list.h"
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"

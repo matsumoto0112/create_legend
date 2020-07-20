@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_DEVICE_COMMANDLIST_H_
-#define LEGEND_DIRECTX_DEVICE_COMMANDLIST_H_
+#ifndef LEGEND_DIRECTX_DEVICE_COMMAND_LIST_H_
+#define LEGEND_DIRECTX_DEVICE_COMMAND_LIST_H_
 
 /**
  * @file CommandList.h
@@ -60,4 +60,4 @@ class CommandList {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_DEVICE_COMMANDLIST_H_
+#endif  //! LEGEND_DIRECTX_DEVICE_COMMAND_LIST_H_

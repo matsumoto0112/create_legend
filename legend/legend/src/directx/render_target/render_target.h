@@ -9,6 +9,7 @@
 #include "src/directx/buffer/committed_resource.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/util/color_4.h"
 
 namespace legend {
@@ -75,8 +76,7 @@ class RenderTarget {
    * @param pipeline_state_desc ‘‚«‚Ş‘ÎÛ
    */
   void WriteInfoToPipelineStateDesc(
-      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc,
-      bool write_with_depth_stencil) const;
+      shader::GraphicsPipelineState& pipeline) const;
 
  public:
   /**

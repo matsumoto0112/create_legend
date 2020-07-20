@@ -91,7 +91,7 @@ bool PhysicsTest::Initialize() {
   pipeline_state_.SetRootSignature(root_signature_);
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
-  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  pipeline_state_.SetRenderTargetInfo(0);
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
   pipeline_state_.SetPrimitiveTopology(

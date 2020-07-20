@@ -6,7 +6,7 @@
  * @brief ピクセルシェーダー定義
  */
 
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -31,13 +31,14 @@ class PixelShader {
    * @param filepath ファイルパス
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, const std::filesystem::path& filepath);
+  bool Init(IDirectXAccessor& accessor, const std::filesystem::path& filepath);
 
   /**
    * @brief シェーダーコードを返す
    */
   CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
-    return CD3DX12_SHADER_BYTECODE{pixel_shader_data.data(), pixel_shader_data.size()};
+    return CD3DX12_SHADER_BYTECODE{pixel_shader_data.data(),
+                                   pixel_shader_data.size()};
   }
 
  private:

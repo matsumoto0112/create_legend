@@ -86,10 +86,9 @@ void RenderTarget::Transition(IDirectXAccessor& accessor,
 
 //パイプラインステートデスクに情報を書き込む
 void RenderTarget::WriteInfoToPipelineStateDesc(
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc,
-    bool write_with_depth_stencil) const {
-  pipeline_state_desc->NumRenderTargets = 1;
-  pipeline_state_desc->RTVFormats[0] = format_;
+    shader::GraphicsPipelineState& pipeline) const {
+  pipeline.SetRTVFormat(format_, 0);
+  pipeline.SetRenderTargetNum(1);
 }
 
 }  // namespace render_target

@@ -55,7 +55,7 @@ bool PerspectiveCameraTest::Initialize() {
 
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  pipeline_state_.SetRenderTargetInfo(0);
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;
   }

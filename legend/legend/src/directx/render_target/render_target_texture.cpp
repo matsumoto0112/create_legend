@@ -2,8 +2,7 @@
 
 namespace legend {
 namespace directx {
-namespace render_target
-{
+namespace render_target {
 
 //コンストラクタ
 RenderTargetTexture::RenderTargetTexture() {}
@@ -51,6 +50,11 @@ void RenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
 //グローバルヒープにセットする
 void RenderTargetTexture::SetToGlobalHeap(IDirectXAccessor& accessor) const {
   accessor.SetToGlobalHeap(register_num_, ResourceType::Srv, srv_handle_);
+}
+
+void RenderTargetTexture::WriteInfoToPipelineDesc(
+    shader::GraphicsPipelineState& pipeline) {
+  render_target_.WriteInfoToPipelineStateDesc(pipeline);
 }
 
 }  // namespace render_target

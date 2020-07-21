@@ -86,14 +86,14 @@ class RenderTarget {
   /**
    * @brief ハンドルを取得する
    */
-  DescriptorHandle GetHandle() const { return rtv_handle_; }
+  descriptor_heap::DescriptorHandle GetHandle() const { return rtv_handle_; }
   inline DXGI_FORMAT GetFormat() const { return format_; }
 
  private:
   //! リソース
   buffer::CommittedResource resource_;
   //! レンダーターゲットハンドル
-  DescriptorHandle rtv_handle_;
+  descriptor_heap::DescriptorHandle rtv_handle_;
   //! バッファのクリア色
   util::Color4 clear_color_;
   //! レンダーターゲットのフォーマット

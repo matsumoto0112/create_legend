@@ -90,7 +90,7 @@ class DepthStencil {
   //! リソース
   legend::directx::buffer::CommittedResource resource_;
   //! ハンドル
-  legend::directx::DescriptorHandle handle_;
+  legend::directx::descriptor_heap::DescriptorHandle handle_;
   //! フォーマット
   DXGI_FORMAT format_;
   //! クリア値

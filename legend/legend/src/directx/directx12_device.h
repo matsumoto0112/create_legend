@@ -70,7 +70,7 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief ディスクリプタハンドルを取得する
    * @param heap_type 取得するディスクリプタヒープの種類
    */
-  virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
+  virtual descriptor_heap::DescriptorHandle GetHandle(descriptor_heap::DescriptorHeapType heap_type) override;
   /**
    * @brief グローバルヒープにディスクリプタハンドルをセットする
    * @param register_num セットするハンドルのシェーダにおけるレジスター番号
@@ -78,9 +78,9 @@ class DirectX12Device : public IDirectXAccessor {
    * @param handle セットするハンドル
    */
   virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
-                               const DescriptorHandle& handle) override;
+                               const descriptor_heap::DescriptorHandle& handle) override;
 
-  virtual DescriptorHandle GetBackBufferHandle() const override;
+  virtual descriptor_heap::DescriptorHandle GetBackBufferHandle() const override;
   virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) override;
   virtual DXGI_FORMAT GetBackBufferFormat() const;
   virtual void SetBackBuffer(IDirectXAccessor& accessor) override;
@@ -100,7 +100,7 @@ class DirectX12Device : public IDirectXAccessor {
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
-  inline HeapManager& GetHeapManager() { return heap_manager_; }
+  inline descriptor_heap::HeapManager& GetHeapManager() { return heap_manager_; }
   /**
    * @brief デフォルトのルートシグネチャを取得する
    */
@@ -151,7 +151,7 @@ class DirectX12Device : public IDirectXAccessor {
   //! フェンスイベント
   Microsoft::WRL::Wrappers::Event fence_event_;
   //! ディスクリプタヒープ管理
-  HeapManager heap_manager_;
+  descriptor_heap::HeapManager heap_manager_;
   //! デフォルトのルートシグネチャ
   std::shared_ptr<shader::RootSignature> default_root_signature_;
   render_target::RenderResourceManager render_resource_manager_;

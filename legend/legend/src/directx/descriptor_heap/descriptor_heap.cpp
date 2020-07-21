@@ -2,26 +2,26 @@
 
 namespace {
 //! ヒープの種類テーブル
-static const std::unordered_map<legend::directx::DescriptorHeapType,
+static const std::unordered_map<legend::directx::descriptor_heap::DescriptorHeapType,
                                 D3D12_DESCRIPTOR_HEAP_TYPE>
     HEAP_TYPES{
-        {legend::directx::DescriptorHeapType::CBV_SRV_UAV,
+        {legend::directx::descriptor_heap::DescriptorHeapType::CBV_SRV_UAV,
          D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV},
-        {legend::directx::DescriptorHeapType::SAMPLER,
+        {legend::directx::descriptor_heap::DescriptorHeapType::SAMPLER,
          D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER},
-        {legend::directx::DescriptorHeapType::RTV,
+        {legend::directx::descriptor_heap::DescriptorHeapType::RTV,
          D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV},
-        {legend::directx::DescriptorHeapType::DSV,
+        {legend::directx::descriptor_heap::DescriptorHeapType::DSV,
          D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_DSV},
     };
 
 //! ヒープのフラグテーブル
-static const std::unordered_map<legend::directx::DescriptorHeapFlag,
+static const std::unordered_map<legend::directx::descriptor_heap::DescriptorHeapFlag,
                                 D3D12_DESCRIPTOR_HEAP_FLAGS>
     HEAP_FLAGS{
-        {legend::directx::DescriptorHeapFlag::NONE,
+        {legend::directx::descriptor_heap::DescriptorHeapFlag::NONE,
          D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE},
-        {legend::directx::DescriptorHeapFlag::SHADER_VISIBLE,
+        {legend::directx::descriptor_heap::DescriptorHeapFlag::SHADER_VISIBLE,
          D3D12_DESCRIPTOR_HEAP_FLAGS::
              D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE},
     };
@@ -29,6 +29,7 @@ static const std::unordered_map<legend::directx::DescriptorHeapFlag,
 
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
 
 // コンストラクタ
 DescriptorHeap::DescriptorHeap() : heap_(nullptr), heap_size_(0) {}
@@ -75,5 +76,6 @@ DescriptorHandle DescriptorHeap::GetHandle(u32 index) const {
                                     index, heap_size_)};
 }
 
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend

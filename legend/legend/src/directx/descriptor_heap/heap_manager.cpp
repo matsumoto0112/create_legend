@@ -11,11 +11,12 @@ constexpr legend::u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! デプス・ステンシルヒープの作成するディスクリプタ数
 constexpr legend::u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
 
-legend::directx::DescriptorHandle default_cbv_;
+legend::directx::descriptor_heap::DescriptorHandle default_cbv_;
 }  // namespace
 
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
 
 //コンストラクタ
 HeapManager::HeapManager() {}
@@ -130,5 +131,6 @@ void HeapManager::CopyHeapAndSetToGraphicsCommandList(
   SetTo(1, srv_handles_);
 }
 
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend

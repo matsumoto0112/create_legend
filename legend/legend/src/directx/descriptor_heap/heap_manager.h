@@ -19,6 +19,7 @@
 
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
 
 /**
  * @brief ヒープ管理クラス
@@ -97,6 +98,7 @@ class HeapManager {
   CountingDescriptorHeap dsv_heap_;
 };
 
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend
 

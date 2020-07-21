@@ -20,7 +20,7 @@ class MultiRenderTargetTexture {
   struct RenderTargetTexture {
     u32 register_num;
     RenderTarget render_target;
-    DescriptorHandle srv_handle;
+    descriptor_heap::DescriptorHandle srv_handle;
   };
 
  public:

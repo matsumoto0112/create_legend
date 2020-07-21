@@ -112,29 +112,29 @@ void DirectX12Device::WaitForGPU() noexcept {
   }
 }
 
-DescriptorHandle DirectX12Device::GetHandle(DescriptorHeapType heap_type) {
+descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(descriptor_heap::DescriptorHeapType heap_type) {
   switch (heap_type) {
-    case legend::directx::DescriptorHeapType::CBV_SRV_UAV:
+    case legend::directx::descriptor_heap::DescriptorHeapType::CBV_SRV_UAV:
       return heap_manager_.GetCbvSrvUavHeap().GetHandle();
-    case legend::directx::DescriptorHeapType::RTV:
+    case legend::directx::descriptor_heap::DescriptorHeapType::RTV:
       return heap_manager_.GetRtvHeap().GetHandle();
-    case legend::directx::DescriptorHeapType::DSV:
+    case legend::directx::descriptor_heap::DescriptorHeapType::DSV:
       return heap_manager_.GetDsvHeap().GetHandle();
     default:
       MY_ASSERTION(false, L"ñ¢íËã`ÇÃheap_typeÇ™ëIëÇ≥ÇÍÇ‹ÇµÇΩÅB");
       break;
   }
-  return DescriptorHandle{};
+  return descriptor_heap::DescriptorHandle{};
 }
 
 void DirectX12Device::SetToGlobalHeap(u32 register_num,
                                       ResourceType resource_type,
-                                      const DescriptorHandle& handle) {
+                                      const descriptor_heap::DescriptorHandle& handle) {
   heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
                                      handle.cpu_handle_);
 }
 
-DescriptorHandle DirectX12Device::GetBackBufferHandle() const {
+descriptor_heap::DescriptorHandle DirectX12Device::GetBackBufferHandle() const {
   return swap_chain_.GetRenderTarget().GetHandle();
 }
 

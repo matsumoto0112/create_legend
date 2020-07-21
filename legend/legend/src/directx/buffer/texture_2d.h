@@ -110,7 +110,7 @@ class Texture2D {
   //! テクスチャの高さ
   u32 height_;
   //! ハンドル
-  DescriptorHandle handle_;
+  descriptor_heap::DescriptorHandle handle_;
 };
 
 }  // namespace buffer

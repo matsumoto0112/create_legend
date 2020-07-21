@@ -8,6 +8,7 @@
 
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
 
 /**
  * @brief ディスクリプタヒープの種類
@@ -26,6 +27,8 @@ enum class DescriptorHeapFlag {
   NONE,
   SHADER_VISIBLE,
 };
+
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend
 

@@ -206,5 +206,8 @@
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />
     <Media Include="assets\audios\free_2.wav" />
+    <Media Include="assets\audios\free_4.wav" />
+    <Media Include="assets\audios\free_5.wav" />
+    <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
 </Project>

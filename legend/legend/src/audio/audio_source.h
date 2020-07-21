@@ -31,7 +31,8 @@ class AudioSource {
    * @return 処理が正しく終了したらtrueを返す
    */
   bool LoadWav(IXAudio2* p_xaudio2, std::wstring filepath,
-               std::wstring filename, AudioType audio_type);
+               std::wstring filename, AudioType audio_type,
+               AudioSplitType audio_split_type);
   /**
    * @brief 再生
    * @return 再生に成功したらtrueを返す
@@ -76,7 +77,7 @@ class AudioSource {
   /**
    * @brief コピー
    */
-  bool Copy(IXAudio2* p_xaudio2, const AudioSource& other_audiosource);
+  bool Copy(IXAudio2* p_xaudio2, const AudioSource& other);
   /**
    * @brief ファイルパスを取得
    */
@@ -85,6 +86,15 @@ class AudioSource {
    * @brief ファイルネームを取得
    */
   std::wstring GetFileName();
+
+ private:
+  bool LoadSplit(IXAudio2* p_xaudio2, std::wstring filepath);
+
+  bool LoadNoSplit(IXAudio2* p_xaudio2, std::wstring filepath);
+
+  bool CopyNoSplit(IXAudio2* p_xaudio2, const AudioSource& other);
+
+  bool CopySplit(IXAudio2* p_xaudio2, const AudioSource& other);
 
  public:
   //! ループ再生するかどうか
@@ -126,6 +136,8 @@ class AudioSource {
 
   //! 音の種類
   AudioType audio_type_;
+  //! 分割するかどうか
+  AudioSplitType audio_split_type_;
 
   //! 読み込んだファイルパス
   std::wstring file_path_;

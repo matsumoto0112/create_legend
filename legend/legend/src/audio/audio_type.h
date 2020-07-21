@@ -9,5 +9,10 @@ enum class AudioType {
     SE,
 };
 
+enum class AudioSplitType {
+    NO_SPLIT = 0,
+    SPLIT,
+};
+
 
 #endif //! LEGEND_AUDIO_AUDIO_TYPE_H_

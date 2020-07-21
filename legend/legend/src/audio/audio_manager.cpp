@@ -51,7 +51,8 @@ bool AudioManager::Init() {
   return true;
 }
 
-bool AudioManager::LoadWav(std::wstring filename, AudioType audio_type) {
+bool AudioManager::LoadWav(std::wstring filename, AudioType audio_type,
+                           AudioSplitType audio_split_type) {
   //既に読み込み済みかチェック
   if (base_audiosources_.find(filename) != base_audiosources_.end()) {
     MY_LOG(L"既に読み込み済みです。");
@@ -63,13 +64,13 @@ bool AudioManager::LoadWav(std::wstring filename, AudioType audio_type) {
   std::wstring filepath = path_;
 
   if (!FindDirectory(&filepath, filename)) {
-      MY_LOG(L"ファイルが見つけられませんでした。");
-      return false;
+    MY_LOG(L"ファイルが見つけられませんでした。");
+    return false;
   }
 
   // wavの読み込み
   if (!base_audiosources_[filename]->LoadWav(p_xaudio2_, filepath, filename,
-                                             audio_type)) {
+                                             audio_type, audio_split_type)) {
     MY_LOG(L"wavの読み込みに失敗しました。\n");
     base_audiosources_.erase(filename);
     return false;
@@ -198,44 +199,43 @@ void AudioManager::LoopStart(i32 key, std::wstring filename, float volume,
   audiosources_[key]->Play();
 }
 
-bool AudioManager::FindDirectory(std::wstring *filepath, std::wstring filename)
-{
-    WIN32_FIND_DATA find_data;
-    HANDLE h_file = ::FindFirstFile((*filepath + L"\\*.*").c_str(), &find_data);
-    if (INVALID_HANDLE_VALUE == h_file) {
-        MY_LOG(L"指定されたファイルがありません。");
+bool AudioManager::FindDirectory(std::wstring* filepath,
+                                 std::wstring filename) {
+  WIN32_FIND_DATA find_data;
+  HANDLE h_file = ::FindFirstFile((*filepath + L"\\*.*").c_str(), &find_data);
+  if (INVALID_HANDLE_VALUE == h_file) {
+    MY_LOG(L"指定されたファイルがありません。");
+  }
+
+  do {
+    TCHAR* wp_file_name = find_data.cFileName;
+
+    //フォルダの判断
+    if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+      if (L'.' == wp_file_name[0]) {
+        if ((L'\0' == wp_file_name[1]) ||
+            (L'.' == wp_file_name[1] && L'\0' == wp_file_name[2])) {
+          continue;
+        }
+      }
+
+      //フルパスの生成
+      std::wstring fullpath = *filepath + L"\\" + wp_file_name;
+
+      //再起してサブフォルダを巡回
+      if (FindDirectory(&fullpath, filename)) {
+        *filepath = fullpath;
+        return true;
+      }
+    } else if (wp_file_name == filename) {
+      //フルパスの生成
+      *filepath = *filepath + L"\\" + wp_file_name;
+      return true;
     }
-
-    do {
-        TCHAR* wp_file_name = find_data.cFileName;
-
-        //フォルダの判断
-        if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            if (L'.' == wp_file_name[0]) {
-                if ((L'\0' == wp_file_name[1]) ||
-                    (L'.' == wp_file_name[1] && L'\0' == wp_file_name[2])) {
-                    continue;
-                }
-            }
-
-            //フルパスの生成
-            std::wstring fullpath = *filepath + L"\\" + wp_file_name;
-
-            //再起してサブフォルダを巡回
-            if (FindDirectory(&fullpath, filename)) {
-                *filepath = fullpath;
-                return true;
-            }
-        }
-        else if(wp_file_name == filename) {
-            //フルパスの生成
-            *filepath = *filepath + L"\\" + wp_file_name;
-            return true;
-        }
-    } while (::FindNextFile(h_file, &find_data));
-    //検索ハンドルを閉じる
-    ::FindClose(h_file);
-    return false;
+  } while (::FindNextFile(h_file, &find_data));
+  //検索ハンドルを閉じる
+  ::FindClose(h_file);
+  return false;
 }
 
 }  // namespace audio

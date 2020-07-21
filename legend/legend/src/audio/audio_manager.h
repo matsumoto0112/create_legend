@@ -37,7 +37,8 @@ class AudioManager {
    * @brief wav“Ç‚İ‚İ
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool LoadWav(std::wstring filename, AudioType audio_type);
+  bool LoadWav(std::wstring filename, AudioType audio_type,
+               AudioSplitType audio_split_type = AudioSplitType::NO_SPLIT);
   /**
    * @brief Ä¶ˆ—
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çkey‚ğ•Ô‚·
@@ -81,10 +82,10 @@ class AudioManager {
    */
   void Update();
 
-private :
-    void LoopStart(i32 key, std::wstring filename, float volume, float pitch);
+ private:
+  void LoopStart(i32 key, std::wstring filename, float volume, float pitch);
 
-    bool FindDirectory(std::wstring *filepath, std::wstring filename);
+  bool FindDirectory(std::wstring* filepath, std::wstring filename);
 
  public:
   //! AudioSource”z—ñ

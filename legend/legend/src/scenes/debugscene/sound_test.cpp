@@ -14,7 +14,7 @@ bool SoundTest::Initialize() {
   audio::AudioManager& audio_manager =
       game::GameDevice::GetInstance()->GetAudioManager();
 
-  audio_manager.LoadWav(L"free_2.wav", AudioType::SE);
+  audio_manager.LoadWav(L"free_2.wav", AudioType::SE, AudioSplitType::SPLIT);
   audio_manager.LoadWav(L"free_3.wav", AudioType::BGM);
 
   return true;
@@ -30,10 +30,10 @@ bool SoundTest::Update() {
     }
 
     for (auto&& audio : audio_manager.base_audiosources_) {
-        if (ImGui::Button((util::string_util::WString_2_String(audio.first)).c_str()))
-        {
-            audio_manager.Start(audio.first, 1.0f);
-        }
+      if (ImGui::Button(
+              (util::string_util::WString_2_String(audio.first)).c_str())) {
+        audio_manager.Start(audio.first, 1.0f);
+      }
     }
   }
 

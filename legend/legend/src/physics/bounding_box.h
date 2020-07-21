@@ -13,6 +13,10 @@ namespace physics {
 struct Transform {
   math::Matrix4x4 world;
 };
+struct WorldContext {
+    math::Matrix4x4 view;
+    math::Matrix4x4 projection;
+};
 
 /**
  * @class BoundingBox
@@ -25,6 +29,10 @@ class BoundingBox {
    * @brief コンストラクタ
    */
   BoundingBox();
+  /**
+   * @brief デストラクタ
+   */
+  ~BoundingBox();
   /**
    * @brief 初期化
    * @param デバイス
@@ -131,6 +139,10 @@ class BoundingBox {
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
   directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
+
+  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
+  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  directx::shader::GraphicsPipelineState pipeline_state_;
 };
 
 }  // namespace physics

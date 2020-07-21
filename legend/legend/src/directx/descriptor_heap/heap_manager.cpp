@@ -1,4 +1,4 @@
-#include "src/directx/heap_manager.h"
+#include "src/directx/descriptor_heap/heap_manager.h"
 
 namespace {
 

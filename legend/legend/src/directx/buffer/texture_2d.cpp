@@ -1,7 +1,7 @@
 #include "src/directx/buffer/texture_2d.h"
 
 #include "src/directx/directx_helper.h"
-#include "src/directx/heap_manager.h"
+#include "src/directx/descriptor_heap/heap_manager.h"
 #include "src/libs/stb_image.h"
 #include "src/util/loader/texture_loader.h"
 

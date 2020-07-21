@@ -12,7 +12,7 @@
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
-#include "src/directx/heap_manager.h"
+#include "src/directx/descriptor_heap/heap_manager.h"
 #include "src/directx/render_target/render_resource_manager.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"

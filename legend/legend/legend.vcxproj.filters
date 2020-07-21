@@ -74,11 +74,10 @@
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
-    <ClCompile Include="src\directx\render_target\render_target_texture.cpp" />
-    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
     <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
     <ClCompile Include="src\directx\device\command_list.cpp" />
+    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -182,11 +181,10 @@
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
-    <ClInclude Include="src\directx\render_target\render_target_texture.h" />
-    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
     <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
     <ClInclude Include="src\directx\device\command_list.h" />
+    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

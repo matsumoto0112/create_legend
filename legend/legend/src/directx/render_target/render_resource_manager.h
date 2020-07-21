@@ -7,7 +7,7 @@
 
 #include "src/directx/directx_accessor.h"
 #include "src/directx/render_target/depth_stencil.h"
-#include "src/directx/render_target/render_target_texture.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 
 namespace legend {
 namespace directx {

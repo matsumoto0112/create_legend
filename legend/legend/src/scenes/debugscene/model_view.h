@@ -7,7 +7,7 @@
 
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
-#include "src/directx/render_target/render_target_texture.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/shader/graphics_pipeline_state.h"

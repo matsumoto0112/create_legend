@@ -82,7 +82,8 @@ class DirectX12Device : public IDirectXAccessor {
 
   virtual DescriptorHandle GetBackBufferHandle() const override;
   virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) override;
-
+  virtual DXGI_FORMAT GetBackBufferFormat() const;
+  virtual void SetBackBuffer(IDirectXAccessor& accessor) override;
  public:
   virtual inline ID3D12Device* GetDevice() const override {
     return device_.Get();

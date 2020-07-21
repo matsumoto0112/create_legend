@@ -28,8 +28,8 @@ VSOutput VSMain(const VSInput v){
 
 float4 PSMain(const PSInput i){
     float4 color = g_albedo.Sample(g_sampler_linear,i.uv);
-    //float gray = color.r * 0.2125+ color.g * 0.7154+ color.b * 0.0721;
-    //color = float4(gray,gray,gray,1.0);
+    float gray = color.r * 0.2125+ color.g * 0.7154+ color.b * 0.0721;
+    color = float4(gray,gray,gray,1.0);
     return color;
 }
 

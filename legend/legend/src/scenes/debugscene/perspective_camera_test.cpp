@@ -17,7 +17,7 @@ PerspectiveCameraTest::PerspectiveCameraTest(ISceneChange* scene_change)
 
 //デストラクタ
 PerspectiveCameraTest::~PerspectiveCameraTest() {
-    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 
 //初期化
@@ -55,7 +55,9 @@ bool PerspectiveCameraTest::Initialize() {
 
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-  pipeline_state_.SetRenderTargetInfo(0);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
+      device, 0, pipeline_state_);
+
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;
   }

@@ -64,7 +64,8 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   pipeline_state_.SetPixelShader(pixel_shader);
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  pipeline_state_.SetRenderTargetInfo(0);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
+      device, 0, pipeline_state_);
 
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;

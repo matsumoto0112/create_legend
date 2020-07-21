@@ -80,7 +80,8 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
 
 //バックバッファにセットする
 void SwapChain::SetBackBuffer(IDirectXAccessor& accessor) {
-  // render_targets_[frame_index_].SetRenderTarget(accessor);
+  render_targets_[frame_index_].Transition(
+      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 //バックバッファをクリアする

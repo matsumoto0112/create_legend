@@ -23,9 +23,28 @@ bool RenderResourceManager::CreateRenderTarget(
       created_render_targets_.find(unique_id) == created_render_targets_.end(),
       L"unique_idが重複しています。");
 
-  RenderTargetTexture render_target;
-  if (!render_target.Init(accessor, 0, format, width, height, clear_color,
-                          name)) {
+  MultiRenderTargetTexture render_target;
+  const MultiRenderTargetTexture::Info ifo{0,      format,         width,
+                                           height, util::Color4(), L""};
+  if (!render_target.Init(accessor, ifo)) {
+    return false;
+  }
+
+  created_render_targets_[unique_id] = render_target;
+  return true;
+}
+
+bool RenderResourceManager::CreateRenderTargets(IDirectXAccessor& accessor,
+                                                u32 unique_id,
+                                                const std::vector<Info>& info) {
+  MY_ASSERTION(unique_id != SWAP_CHAIN_RENDER_TARGET_ID,
+               L"SwapChainのIDとして予約されています。");
+  MY_ASSERTION(
+      created_render_targets_.find(unique_id) == created_render_targets_.end(),
+      L"unique_idが重複しています。");
+
+  MultiRenderTargetTexture render_target;
+  if (!render_target.Init(accessor, info)) {
     return false;
   }
 
@@ -60,8 +79,26 @@ void RenderResourceManager::SetDepthStencilTarget(u32 unique_id) {
 }
 
 void RenderResourceManager::WriteRenderTargetInfoToPipelineDesc(
-    u32 unique_id, shader::GraphicsPipelineState& pipeline) {
-  created_render_targets_[unique_id].WriteInfoToPipelineDesc(pipeline);
+    IDirectXAccessor& accessor, u32 unique_id,
+    shader::GraphicsPipelineState& pipeline) {
+  if (unique_id == SWAP_CHAIN_RENDER_TARGET_ID) {
+    pipeline.SetRTVFormat(accessor.GetBackBufferFormat(), 0);
+    pipeline.SetRenderTargetNum(1);
+  } else {
+    MY_ASSERTION(created_render_targets_.find(unique_id) !=
+                     created_render_targets_.end(),
+                 L"未登録のレンダーターゲットが選択されました。");
+    created_render_targets_[unique_id].WriteInfoToPipelineDesc(pipeline);
+  }
+}
+
+void RenderResourceManager::UseRenderTargetToShaderResource(
+    IDirectXAccessor& accessor, u32 unique_id, u32 render_target_number) {
+  MY_ASSERTION(
+      unique_id != SWAP_CHAIN_RENDER_TARGET_ID,
+      L"SwapChainのレンダーターゲットはリソースとして使用できません。");
+  created_render_targets_[unique_id].SetToGlobalHeap(accessor,
+                                                     render_target_number);
 }
 
 void RenderResourceManager::ClearCurrentRenderTarget(
@@ -92,27 +129,41 @@ void RenderResourceManager::SetRenderTargetsToCommandList(
                        created_depth_stencil_targets_.end(),
                L"未登録のデプス・ステンシルターゲットIDが選択されました。");
 
-  D3D12_CPU_DESCRIPTOR_HANDLE rtv_handles[1];
   if (current_render_target_id_ == SWAP_CHAIN_RENDER_TARGET_ID) {
-    rtv_handles[0] = accessor.GetBackBufferHandle().cpu_handle_;
+    accessor.SetBackBuffer(accessor);
   } else {
-    rtv_handles[0] = created_render_targets_[current_render_target_id_]
-                         .GetRenderTarget()
-                         .GetHandle()
-                         .cpu_handle_;
+    created_render_targets_[current_render_target_id_].PrepareToUseRenderTarget(
+        accessor);
   }
 
+  const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtv_handles = [&]() {
+    if (current_render_target_id_ == SWAP_CHAIN_RENDER_TARGET_ID) {
+      return std::vector{accessor.GetBackBufferHandle().cpu_handle_};
+    } else {
+      return created_render_targets_[current_render_target_id_].GetRTVHandles();
+    }
+  }();
+  // accessor
+  const u32 render_target_num = static_cast<u32>(rtv_handles.size());
   if (current_depth_stencil_target_id_ == UINT_LEAST32_MAX) {
-    accessor.GetCommandList()->OMSetRenderTargets(1, rtv_handles, FALSE,
-                                                  nullptr);
+    accessor.GetCommandList()->OMSetRenderTargets(
+        render_target_num, rtv_handles.data(), FALSE, nullptr);
   } else {
     D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle =
         created_depth_stencil_targets_[current_depth_stencil_target_id_]
             .GetCPUHandle();
-    accessor.GetCommandList()->OMSetRenderTargets(1, rtv_handles, TRUE,
-                                                  &dsv_handle);
+    accessor.GetCommandList()->OMSetRenderTargets(
+        render_target_num, rtv_handles.data(), TRUE, &dsv_handle);
   }
 }
+void RenderResourceManager::DrawEnd(IDirectXAccessor& accessor) {
+  if (current_render_target_id_ == SWAP_CHAIN_RENDER_TARGET_ID) {
+    // accessor.
+  } else {
+    created_render_targets_[current_render_target_id_].DrawEnd(accessor);
+  }
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

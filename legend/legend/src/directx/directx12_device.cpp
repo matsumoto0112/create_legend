@@ -78,6 +78,7 @@ bool DirectX12Device::Prepare() {
 }
 
 bool DirectX12Device::Present() {
+  render_resource_manager_.DrawEnd(*this);
   swap_chain_.DrawEnd(*this);
 
   if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
@@ -139,6 +140,14 @@ DescriptorHandle DirectX12Device::GetBackBufferHandle() const {
 
 void DirectX12Device::ClearBackBufferTarget(IDirectXAccessor& accessor) {
   swap_chain_.ClearBackBuffer(accessor);
+}
+
+DXGI_FORMAT DirectX12Device::GetBackBufferFormat() const {
+  return swap_chain_.GetRenderTarget().GetFormat();
+}
+
+void DirectX12Device::SetBackBuffer(IDirectXAccessor& accessor) {
+  swap_chain_.SetBackBuffer(accessor);
 }
 
 bool DirectX12Device::CreateDevice() {

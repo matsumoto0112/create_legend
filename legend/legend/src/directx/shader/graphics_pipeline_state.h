@@ -45,11 +45,6 @@ class GraphicsPipelineState {
    */
   void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader);
   /**
-   * @brief レンダーターゲットの情報をセットする
-   * @param render_target 対象となるレンダーターゲット
-   */
-  void SetRenderTargetInfo(u32 render_target_id);
-  /**
    * @brief アルファブレンドデスクを設定する
    */
   void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc,

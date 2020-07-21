@@ -16,30 +16,39 @@ namespace render_target {
  * @class RenderTargetTexture
  * @brief テクスチャ使用可能なレンダーターゲット
  */
-class RenderTargetTexture {
+class MultiRenderTargetTexture {
+  struct RenderTargetTexture {
+    u32 register_num;
+    RenderTarget render_target;
+    DescriptorHandle srv_handle;
+  };
+
+ public:
+  struct Info {
+    u32 register_num;
+    DXGI_FORMAT format;
+    u32 width;
+    u32 height;
+    util::Color4 clear_color;
+    std::wstring name;
+  };
+
  public:
   /**
    * @brief コンストラクタ
    */
-  RenderTargetTexture();
+  MultiRenderTargetTexture();
   /**
    * @brief デストラクタ
    */
-  ~RenderTargetTexture();
+  ~MultiRenderTargetTexture();
   /**
    * @brief 初期化
    * @param accessor DirectX12アクセサ
-   * @param register_num シェーダーのレジスター番号
-   * @param format テクスチャフォーマット
-   * @param width テクスチャ幅
-   * @param height テクスチャ高さ
-   * @param clear_color レンダーターゲットのクリア色
-   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, u32 register_num, DXGI_FORMAT format,
-            u32 width, u32 height, const util::Color4& clear_color,
-            const std::wstring& name);
+  bool Init(IDirectXAccessor& accessor, const Info& info);
+  bool Init(IDirectXAccessor& accessor, const std::vector<Info>& infos);
   /**
    * @brief レンダーターゲットの色をクリアする
    * @param accessor DirextX12アクセサ
@@ -55,19 +64,15 @@ class RenderTargetTexture {
    * @brief テクスチャをSRVとしてグローバルヒープにセットする
    * @param accessor DirextX12アクセサ
    */
-  void SetToGlobalHeap(IDirectXAccessor& accessor) const;
+  void SetToGlobalHeap(IDirectXAccessor& accessor,
+                       u32 render_target_number) const;
   void WriteInfoToPipelineDesc(shader::GraphicsPipelineState& pipeline);
 
- public:
-  inline const RenderTarget& GetRenderTarget() const { return render_target_; }
+  void PrepareToUseRenderTarget(IDirectXAccessor& accessor);
+  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const;
 
  private:
-  //! レンダーターゲット
-  RenderTarget render_target_;
-  //! SRVハンドル
-  DescriptorHandle srv_handle_;
-  //! シェーダーのレジスター番号
-  u32 register_num_;
+  std::vector<RenderTargetTexture> render_targets_;
 };
 
 }  // namespace render_target

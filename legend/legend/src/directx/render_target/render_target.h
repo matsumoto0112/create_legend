@@ -87,6 +87,7 @@ class RenderTarget {
    * @brief ハンドルを取得する
    */
   DescriptorHandle GetHandle() const { return rtv_handle_; }
+  inline DXGI_FORMAT GetFormat() const { return format_; }
 
  private:
   //! リソース

@@ -36,11 +36,10 @@ bool MultiRenderTargetTest::Initialize() {
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
 
     std::vector<directx::render_target::RenderResourceManager::Info> infos{
-        {directx::shader::TextureRegisterID::Albedo,
-         DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+        {3, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
          static_cast<u32>(screen_size.x), static_cast<u32>(screen_size.y),
          util::Color4(1.0f, 0.0f, 0.0f, 1.0f), L"RenderTarget_0"},
-        {1, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+        {5, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
          static_cast<u32>(screen_size.x), static_cast<u32>(screen_size.y),
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 

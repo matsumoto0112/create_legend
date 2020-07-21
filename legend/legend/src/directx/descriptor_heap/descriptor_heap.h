@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
-#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
+#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_
+#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_
 
 /**
  * @file descriptor_heap.h
@@ -85,4 +85,4 @@ class DescriptorHeap {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
+#endif //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_

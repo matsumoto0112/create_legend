@@ -1,7 +1,7 @@
 #include "src/directx/buffer/texture_2d.h"
 
-#include "src/directx/directx_helper.h"
 #include "src/directx/descriptor_heap/heap_manager.h"
+#include "src/directx/directx_helper.h"
 #include "src/libs/stb_image.h"
 #include "src/util/loader/texture_loader.h"
 
@@ -103,7 +103,7 @@ bool Texture2D::InitTexBuffer(DirectX12Device& device, u32 register_num,
   this->width_ = width;
   this->height_ = height;
 
-  handle_ = device.GetHeapManager().GetLocalHandle();
+  handle_ = device.GetHandle(descriptor_heap::DescriptorHeapType::CBV_SRV_UAV);
 
   D3D12_SHADER_RESOURCE_VIEW_DESC srv_view = {};
   srv_view.Texture2D.MipLevels = 1;

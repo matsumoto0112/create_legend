@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_TYPE_H_
-#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_TYPE_H_
+#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_TYPE_H_
+#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_TYPE_H_
 
 /**
  * @file descriptor_heap_type.h
@@ -32,4 +32,4 @@ enum class DescriptorHeapFlag {
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_TYPE_H_
+#endif //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_TYPE_H_

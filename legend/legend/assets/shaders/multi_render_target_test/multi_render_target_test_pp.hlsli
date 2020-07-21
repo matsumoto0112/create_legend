@@ -3,8 +3,8 @@
 
 #include "../defines/global.hlsli"
 
-Texture2D<float4> g_output1 : register(t0);
-Texture2D<float4> g_output2 : register(t1);
+Texture2D<float4> g_output1 : register(t3);
+Texture2D<float4> g_output2 : register(t5);
 
 struct MultiRenderTargetTestPP_ConstantBufferStructure {
     float border;

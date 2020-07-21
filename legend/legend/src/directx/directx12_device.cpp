@@ -115,7 +115,7 @@ void DirectX12Device::WaitForGPU() noexcept {
 descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(descriptor_heap::DescriptorHeapType heap_type) {
   switch (heap_type) {
     case legend::directx::descriptor_heap::DescriptorHeapType::CBV_SRV_UAV:
-      return heap_manager_.GetCbvSrvUavHeap().GetHandle();
+      return heap_manager_.GetLocalHeap().GetHandle();
     case legend::directx::descriptor_heap::DescriptorHeapType::RTV:
       return heap_manager_.GetRtvHeap().GetHandle();
     case legend::directx::descriptor_heap::DescriptorHeapType::DSV:

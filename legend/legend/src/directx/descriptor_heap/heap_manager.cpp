@@ -1,5 +1,6 @@
 #include "src/directx/descriptor_heap/heap_manager.h"
 
+#include "src/directx/descriptor_heap/heap_parameter.h"
 namespace {
 
 //! グローバルヒープの作成するディスクリプタ数
@@ -26,9 +27,9 @@ HeapManager::~HeapManager() {}
 
 //初期化
 bool HeapManager::Init(IDirectXAccessor& device) {
-  DescriptorHeap::Desc global_desc(L"GlobalHeap", GLOBAL_HEAP_DESCRIPTOR_NUM,
-                                   DescriptorHeapType::CBV_SRV_UAV,
-                                   DescriptorHeapFlag::SHADER_VISIBLE);
+  DescriptorHeap::Desc global_desc(
+      L"GlobalHeap", parameter::GLOBAL_HEAP_DESCRIPTOR_NUM,
+      DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::SHADER_VISIBLE);
 
   if (!global_heap_.Init(device, global_desc)) {
     return false;
@@ -37,7 +38,8 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   DescriptorHeap::Desc local_desc(L"LocalHeap", LOCAL_HEAP_DESCRIPTOR_NUM,
                                   DescriptorHeapType::CBV_SRV_UAV,
                                   DescriptorHeapFlag::NONE);
-  if (!cbv_srv_uav_heap_.Init(device, local_desc)) {
+
+  if (!local_heaps_[0].Init(device, local_desc)) {
     return false;
   }
 
@@ -56,13 +58,8 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   }
 
   this->global_heap_allocated_count_ = 0;
-  default_cbv_ = GetLocalHandle();
+  default_cbv_ = local_heaps_[0].GetHandle();
   return true;
-}
-
-//ローカルのヒープハンドルを取得する
-DescriptorHandle HeapManager::GetLocalHandle() {
-  return cbv_srv_uav_heap_.GetHandle();
 }
 
 //フレーム開始時イベント
@@ -84,7 +81,7 @@ void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
          D3D12_CPU_DESCRIPTOR_HANDLE handle) {
         //レジスター番号より現在サイズ数が小さければ足りない分拡張する
         if (handles->size() <= register_num) {
-          handles->resize(register_num + 1);
+          handles->resize(register_num + 1, default_cbv_.cpu_handle_);
         }
         (*handles)[register_num] = handle;
       };
@@ -129,6 +126,13 @@ void HeapManager::CopyHeapAndSetToGraphicsCommandList(
   }
   SetTo(0, cbv_handles_);
   SetTo(1, srv_handles_);
+}
+
+CountingDescriptorHeap& HeapManager::GetLocalHeap(u32 id) {
+  MY_ASSERTION(local_heaps_.find(id) != local_heaps_.end(),
+               L"未登録のIDが送られました。");
+
+  return local_heaps_.at(id);
 }
 
 }  // namespace descriptor_heap

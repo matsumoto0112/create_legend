@@ -185,6 +185,7 @@
     <ClInclude Include="src\directx\device\command_list.h" />
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_manager.h" />
+    <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

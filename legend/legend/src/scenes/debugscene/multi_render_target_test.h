@@ -8,6 +8,7 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/descriptor_heap/counting_descriptor_heap.h"
 #include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
@@ -40,7 +41,7 @@ class MultiRenderTargetTest : public Scene {
   directx::buffer::VertexBuffer post_process_vertex_buffer_;
   directx::buffer::IndexBuffer post_process_index_buffer_;
 
-  //directx::render_target::MultiRenderTargetTexture render_target_texture_;
+  // directx::render_target::MultiRenderTargetTexture render_target_texture_;
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       post_process_transform_cb_;
   directx::buffer::ConstantBuffer<

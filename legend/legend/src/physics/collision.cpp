@@ -90,6 +90,7 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   return true;
 }
 
+//直方体と平面の衝突判定
 bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   //平面の法線に対するOBBの射影線の長さを算出
   //近接距離
@@ -112,7 +113,7 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   float distance = math::Vector3::Dot(obb.GetPosition() - plane.GetPosition(),
                                       plane.GetNormal());
 
-  if (fabs(distance) - proximity_distance > 0) {
+  if (math::util::Abs(distance) - proximity_distance > 0) {
     MY_LOG(L"衝突しませんでした");
     return false;
   }
@@ -140,23 +141,37 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   return true;
 }
 
+//球と平面の衝突判定
+bool Collision::Collision_Sphere_Plane(Sphere& sphere, Plane& plane) {
+  //平面と球の距離を算出
+  float distance = math::Vector3::Dot(
+      sphere.GetPosition() - plane.GetPosition(), plane.GetNormal());
+
+  if (math::util::Abs(distance) > sphere.GetRadius()) {
+    MY_LOG(L"衝突しませんでした");
+    return false;
+  }
+
+  return true;
+}
+
 // OBBの投影距離比較
 bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
                                    math::Vector3 vSep, math::Vector3 distance) {
   //分離軸上の距離
-  float length = fabsf(math::Vector3::Dot(vSep, distance));
+  float length = math::util::Abs(math::Vector3::Dot(vSep, distance));
 
   //分離軸上で最も遠いobb1の頂点までの距離
-  float len_a =
-      fabsf(math::Vector3::Dot(obb1.GetAxisX(), vSep) * obb1.GetLength(0) +
-            math::Vector3::Dot(obb1.GetAxisY(), vSep) * obb1.GetLength(1) +
-            math::Vector3::Dot(obb1.GetAxisZ(), vSep) * obb1.GetLength(2));
+  float len_a = math::util::Abs(
+      math::Vector3::Dot(obb1.GetAxisX(), vSep) * obb1.GetLength(0) +
+      math::Vector3::Dot(obb1.GetAxisY(), vSep) * obb1.GetLength(1) +
+      math::Vector3::Dot(obb1.GetAxisZ(), vSep) * obb1.GetLength(2));
 
   //分離軸上で最も遠いobb2の頂点までの距離
-  float len_b =
-      fabsf(math::Vector3::Dot(obb2.GetAxisX(), vSep) * obb2.GetLength(0) +
-            math::Vector3::Dot(obb2.GetAxisY(), vSep) * obb2.GetLength(1) +
-            math::Vector3::Dot(obb2.GetAxisZ(), vSep) * obb2.GetLength(2));
+  float len_b = math::util::Abs(
+      math::Vector3::Dot(obb2.GetAxisX(), vSep) * obb2.GetLength(0) +
+      math::Vector3::Dot(obb2.GetAxisY(), vSep) * obb2.GetLength(1) +
+      math::Vector3::Dot(obb2.GetAxisZ(), vSep) * obb2.GetLength(2));
 
   if (length > len_a + len_b) {
     //衝突していない

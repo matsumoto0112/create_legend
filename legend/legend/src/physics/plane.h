@@ -11,44 +11,53 @@ namespace physics {
  * @brief 平面クラス
  */
 class Plane {
-public:
-    /**
-     * @brief コンストラクタ
-     */
-    Plane();
-    /**
-     * @brief 初期化
-     */
-    bool Initialize(directx::DirectX12Device& device);
-    /**
-     * @brief 描画
-     */
-    void Draw(directx::DirectX12Device& device);
-    /**
-     * @brief 位置の設定
-     */
-    void SetPosition(math::Vector3 position);
-    /**
-     * @brief 法線ベクトルの設定
-     */
-    void SetNormal(math::Vector3 normal);
-    /**
-     * @brief 位置の取得
-     */
-    math::Vector3 GetPosition();
-    /**
-     * @brief 法線ベクトルの取得
-     */
-    math::Vector3 GetNormal();
-private:
-    //! 位置
-    math::Vector3 position_;
-    //! 法線ベクトル
-    math::Vector3 normal_;
+ public:
+  /**
+   * @brief コンストラクタ
+   */
+  Plane();
+  /**
+   * @brief デストラクタ
+   */
+  ~Plane();
+  /**
+   * @brief 初期化
+   */
+  bool Initialize(directx::DirectX12Device& device);
+  /**
+   * @brief 描画
+   */
+  void Draw(directx::DirectX12Device& device);
+  /**
+   * @brief 位置の設定
+   */
+  void SetPosition(math::Vector3 position);
+  /**
+   * @brief 法線ベクトルの設定
+   */
+  void SetNormal(math::Vector3 normal);
+  /**
+   * @brief 位置の取得
+   */
+  math::Vector3 GetPosition();
+  /**
+   * @brief 法線ベクトルの取得
+   */
+  math::Vector3 GetNormal();
 
-    directx::buffer::VertexBuffer vertex_buffer_;
-    directx::buffer::IndexBuffer index_buffer_;
-    directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
+ private:
+  //! 位置
+  math::Vector3 position_;
+  //! 法線ベクトル
+  math::Vector3 normal_;
+
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
+  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
+
+  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
+  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  directx::shader::GraphicsPipelineState pipeline_state_;
 };
 
 }  // namespace physics

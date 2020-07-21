@@ -6,7 +6,7 @@
 #include "src/directx/shader/root_signature.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/plane.h"
-#include "src/scenes/debugscene/model_view.h"
+#include "src/physics/sphere.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -51,10 +51,8 @@ class PhysicsTest : public Scene {
   i32 obb_num_ = 2;
   //! •½–Ê
   physics::Plane plane_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  //! ‹…
+  physics::Sphere sphere_;
 };
 
 }  // namespace debugscene

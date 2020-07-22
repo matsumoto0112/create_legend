@@ -36,8 +36,6 @@ class BoundingBox {
   /**
    * @brief 初期化
    * @param デバイス
-   * @param オブジェクトネーム
-   * @param GLBLoader
    */
   bool Initialize(directx::DirectX12Device& device);
   /**

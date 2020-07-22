@@ -18,7 +18,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   float left = GetPosition().x - 1;
   float right = GetPosition().x + 1;
 
-  const std::vector<directx::BoundingBox> vertices{
+  const std::vector<directx::PhysicsVertex> vertices{
       {{left, 0, front}},
       {{right, 0, front}},
       {{right, 0, back}},
@@ -26,7 +26,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"Plane_VertexBuffer")) {
     return false;

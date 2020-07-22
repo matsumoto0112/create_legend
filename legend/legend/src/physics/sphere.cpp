@@ -17,7 +17,7 @@ Sphere::Sphere()
 Sphere::~Sphere() {}
 
 bool Sphere::Initialize(directx::DirectX12Device& device) {
-  std::vector<directx::BoundingBox> vertices(u_max * (v_max + 1));
+  std::vector<directx::PhysicsVertex> vertices(u_max * (v_max + 1));
   for (i32 v = 0; v < v_max; v++) {
     for (i32 u = 0; u < u_max; u++) {
       float theta = math::util::DEG_2_RAD * (180.0f * v / v_max);
@@ -30,7 +30,7 @@ bool Sphere::Initialize(directx::DirectX12Device& device) {
   }
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"Sphere_VertexBuffer")) {
     return false;

@@ -34,7 +34,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   float front = GetPosition().z + -GetLength(2);
   float back = GetPosition().z + GetLength(2);
 
-  const std::vector<directx::BoundingBox> vertices{
+  const std::vector<directx::PhysicsVertex> vertices{
       {{left, down, front}},   // 0
       {{left, down, back}},    // 1
       {{right, down, back}},   // 2
@@ -46,7 +46,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"BoundingBox_VertexBuffer")) {
     return false;
@@ -151,6 +151,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   return true;
 }
 
+//更新
 void BoundingBox::Update() {
   math::Vector3 position = GetPosition();
   math::Vector3 rotate = GetRotation();
@@ -162,7 +163,7 @@ void BoundingBox::Update() {
   transform_constant_buffer_.UpdateStaging();
 }
 
-//更新
+//描画
 void BoundingBox::Draw(directx::DirectX12Device& device) {
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);

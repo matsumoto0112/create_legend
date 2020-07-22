@@ -1,8 +1,6 @@
 #ifndef LEGEND_PHYSICS_SPHERE_H_
 #define LEGEND_PHYSICS_SPHERE_H_
 
-#include "src/math/vector_3.h"
-#include "src/game/game_device.h"
 #include "src/physics/bounding_box.h"
 
 namespace legend {

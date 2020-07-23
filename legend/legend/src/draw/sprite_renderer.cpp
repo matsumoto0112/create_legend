@@ -73,7 +73,9 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
 
   if (!world_cb_.Init(
           device, directx::shader::ConstantBufferRegisterID::WorldContext,
-          device.GetLocalHeapHandle(0), L"Sprite_WorldContextConstantBuffer")) {
+          device.GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Sprite_WorldContextConstantBuffer")) {
     return false;
   }
 

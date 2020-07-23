@@ -35,8 +35,11 @@ bool PhysicsTest::Initialize() {
     return false;
   }
 
-  if (!world_constant_buffer_.Init(device, 1, device.GetLocalHeapHandle(0),
-                                   L"WorldContext ConstantBuffer")) {
+  if (!world_constant_buffer_.Init(
+          device, 1,
+          device.GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"WorldContext ConstantBuffer")) {
     return false;
   }
 

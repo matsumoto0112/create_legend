@@ -1,3 +1,4 @@
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/game/application.h"
 #include "src/game/game_device.h"
 #include "src/scenes/scene_manager.h"
@@ -17,9 +18,14 @@ class MyApp final : public device::Application {
     if (!scene_manager_.Initialize()) {
       return false;
     }
-    game::GameDevice::GetInstance()->GetDevice().GetHeapManager().AddLocalHeap(
-        game::GameDevice::GetInstance()->GetDevice(), 1,
-        directx::descriptor_heap::DescriptorHeap::Desc(L"HOGE", 2));
+    if (!game::GameDevice::GetInstance()
+             ->GetDevice()
+             .GetHeapManager()
+             .AddLocalHeap(game::GameDevice::GetInstance()->GetDevice(),
+                           directx::descriptor_heap::heap_parameter::
+                               LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE)) {
+      return false;
+    }
     return true;
   }
   bool Update() override {

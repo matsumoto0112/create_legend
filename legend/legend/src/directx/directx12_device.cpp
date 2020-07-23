@@ -90,7 +90,9 @@ bool DirectX12Device::Present() {
       command_lists_[frame_index_].GetCommandList()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
-  swap_chain_.Present();
+  if (!swap_chain_.Present()) {
+    return false;
+  }
 
   if (!MoveToNextFrame()) {
     return false;
@@ -111,22 +113,6 @@ void DirectX12Device::WaitForGPU() noexcept {
       }
     }
   }
-}
-
-descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(
-    descriptor_heap::DescriptorHeapType heap_type) {
-  switch (heap_type) {
-    case legend::directx::descriptor_heap::DescriptorHeapType::CBV_SRV_UAV:
-      return heap_manager_.GetLocalHeap()->GetHandle();
-    case legend::directx::descriptor_heap::DescriptorHeapType::RTV:
-      return heap_manager_.GetRtvHeap()->GetHandle();
-    case legend::directx::descriptor_heap::DescriptorHeapType::DSV:
-      return heap_manager_.GetDsvHeap()->GetHandle();
-    default:
-      MY_ASSERTION(false, L"–¢’è‹`‚Ìheap_type‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
-      break;
-  }
-  return descriptor_heap::DescriptorHandle{};
 }
 
 void DirectX12Device::SetToGlobalHeap(

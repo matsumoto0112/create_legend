@@ -30,7 +30,7 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
                    D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON);
 
   this->clear_color_ = clear_color;
-  this->rtv_handle_ = accessor.GetHandle(descriptor_heap::DescriptorHeapType::RTV);
+  this->rtv_handle_ = accessor.GetRTVHandle();
   this->format_ = format;
 
   D3D12_RENDER_TARGET_VIEW_DESC rtv_desc = {};
@@ -57,7 +57,7 @@ bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
   rtv_desc.Format = desc.Format;
 
   this->clear_color_ = clear_color;
-  this->rtv_handle_ = accessor.GetHandle(descriptor_heap::DescriptorHeapType::RTV);
+  this->rtv_handle_ = accessor.GetRTVHandle();
   this->format_ = desc.Format;
 
   accessor.GetDevice()->CreateRenderTargetView(

@@ -83,7 +83,6 @@
   <ItemGroup>
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
-    <ClCompile Include="src\directx\descriptor_heap\heap_parameter.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
     <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
@@ -160,6 +159,7 @@
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -271,6 +271,7 @@
     <ClInclude Include="src\util\stl_extend.h" />
     <ClInclude Include="src\util\string_util.h" />
     <ClInclude Include="src\util\loader\texture_loader.h" />
+    <ClInclude Include="src\util\transform.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\window\window_procedure.h" />

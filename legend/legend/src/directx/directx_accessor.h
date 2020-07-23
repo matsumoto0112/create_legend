@@ -8,6 +8,7 @@
 
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/descriptor_heap/descriptor_heap_type.h"
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/resource_type.h"
 
 namespace legend {
@@ -31,10 +32,10 @@ class IDirectXAccessor {
    */
   virtual ID3D12GraphicsCommandList4* GetCommandList() const = 0;
 
-  virtual descriptor_heap::DescriptorHandle GetHandle(
-      descriptor_heap::DescriptorHeapType heap_type) = 0;
-
-  virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(u32 id) = 0;
+  virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(
+      descriptor_heap::heap_parameter::LocalHeapID id) = 0;
+  virtual descriptor_heap::DescriptorHandle GetRTVHandle() = 0;
+  virtual descriptor_heap::DescriptorHandle GetDSVHandle() = 0;
   virtual void SetToGlobalHeap(
       u32 register_num, ResourceType resource_type,
       const descriptor_heap::DescriptorHandle& handle) = 0;

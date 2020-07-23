@@ -40,36 +40,15 @@ class Model {
    */
   void Draw();
 
- public:
-  inline void SetPosition(const math::Vector3& position) {
-    this->position_ = position;
-  }
-  inline math::Vector3 GetPosition() const { return position_; }
-  inline void SetRotation(const math::Quaternion& rotation) {
-    this->rotation_ = rotation;
-  }
-  inline math::Quaternion GetRotation() const { return rotation_; }
-  inline void SetScale(const math::Vector3& scale) { this->scale_ = scale; }
-  inline math::Vector3 GetScale() const { return scale_; }
-
  private:
   //! モデル名
   std::wstring model_name_;
-  //! 座標
-  math::Vector3 position_;
-  //! 回転
-  math::Quaternion rotation_;
-  //! スケーリング
-  math::Vector3 scale_;
   //! 頂点バッファ
   directx::buffer::VertexBuffer vertex_buffer_;
   //! インデックスバッファ
   directx::buffer::IndexBuffer index_buffer_;
   //! アルベドテクスチャ
   directx::buffer::Texture2D albedo_;
-  //! トランスフォーム用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_constant_buffer_;
 };
 
 }  // namespace draw

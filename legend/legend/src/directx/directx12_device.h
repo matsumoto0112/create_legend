@@ -67,12 +67,6 @@ class DirectX12Device : public IDirectXAccessor {
    */
   void WaitForGPU() noexcept;
   /**
-   * @brief ディスクリプタハンドルを取得する
-   * @param heap_type 取得するディスクリプタヒープの種類
-   */
-  virtual descriptor_heap::DescriptorHandle GetHandle(
-      descriptor_heap::DescriptorHeapType heap_type) override;
-  /**
    * @brief グローバルヒープにディスクリプタハンドルをセットする
    * @param register_num セットするハンドルのシェーダにおけるレジスター番号
    * @param resource_type リソースの種類
@@ -115,8 +109,14 @@ class DirectX12Device : public IDirectXAccessor {
     return default_root_signature_;
   }
   virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(
-      u32 id) override {
+      descriptor_heap::heap_parameter::LocalHeapID id) override {
     return heap_manager_.GetLocalHeap(id)->GetHandle();
+  }
+  virtual descriptor_heap::DescriptorHandle GetRTVHandle() override {
+    return heap_manager_.GetRtvHeap()->GetHandle();
+  }
+  virtual descriptor_heap::DescriptorHandle GetDSVHandle() override {
+    return heap_manager_.GetDsvHeap()->GetHandle();
   }
 
  private:

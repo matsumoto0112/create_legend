@@ -1,5 +1,6 @@
 #include "src/scenes/debugscene/multi_render_target_test.h"
 
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
@@ -134,7 +135,9 @@ bool MultiRenderTargetTest::Initialize() {
                                           static_cast<float>(screen_size.y));
     if (!post_process_transform_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::Transform,
-            device.GetLocalHeapHandle(0),
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::
+                    MULTI_RENDER_TARGET_TEST_SCENE),
             L"PostProcess_TransformConstantBuffer")) {
       return false;
     }
@@ -145,7 +148,9 @@ bool MultiRenderTargetTest::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(0), L"PostProcess_WorldConstantBuffer")) {
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+            L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
     post_process_world_cb_.GetStagingRef().view = math::Matrix4x4::kIdentity;
@@ -175,14 +180,30 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
 
-    if (!post_process_local_cb_.Init(device, 2, device.GetLocalHeapHandle(1),
-                                     L"Local")) {
+    if (!post_process_local_cb_.Init(
+            device, 2,
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::
+                    MULTI_RENDER_TARGET_TEST_SCENE),
+            L"Local")) {
       return false;
     }
     post_process_local_cb_.GetStagingRef().border = 0.5f;
     post_process_local_cb_.UpdateStaging();
   }
 
+  constexpr u32 MODEL_NUM = 10;
+  for (u32 i = 0; i < MODEL_NUM; i++) {
+    transforms_.emplace_back(math::Vector3(3.0f * i, 0, 0));
+    auto& cb = transform_cbs_.emplace_back();
+    if (!cb.Init(device, directx::shader::ConstantBufferRegisterID::Transform,
+                 device.GetLocalHeapHandle(
+                     directx::descriptor_heap::heap_parameter::LocalHeapID::
+                         MULTI_RENDER_TARGET_TEST_SCENE),
+                 L"")) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -230,7 +251,14 @@ void MultiRenderTargetTest::Draw() {
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
-  model_.Draw();
+
+  for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
+    transform_cbs_[i].GetStagingRef().world =
+        transforms_[i].CreateWorldMatrix();
+    transform_cbs_[i].UpdateStaging();
+    transform_cbs_[i].SetToHeap(device);
+    model_.Draw();
+  }
 
   device.GetRenderResourceManager().SetRenderTarget(0);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
@@ -253,7 +281,9 @@ void MultiRenderTargetTest::Finalize() {
   game::GameDevice::GetInstance()
       ->GetDevice()
       .GetHeapManager()
-      .ResetLocalHeapAllocateCounter(1);
+      .ResetLocalHeapAllocateCounter(
+          directx::descriptor_heap::heap_parameter::LocalHeapID::
+              MULTI_RENDER_TARGET_TEST_SCENE);
 }
 
 }  // namespace debugscene

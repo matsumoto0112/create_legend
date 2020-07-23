@@ -2,6 +2,7 @@
 
 #include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/shader/root_parameter_index.h"
+#include "src/util/stl_extend.h"
 
 namespace {
 //! レンダーターゲットヒープの作成するディスクリプタ数
@@ -33,10 +34,10 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   const DescriptorHeap::Desc local_desc(
       L"LocalHeap",
       heap_parameter::local::GetDefinedLocalDescriptorNum(
-          heap_parameter::local_heap_id::STATIC),
+          heap_parameter::LocalHeapID::GLOBAL_ID),
       DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::NONE);
-  if (!local_heaps_[heap_parameter::local_heap_id::STATIC].Init(device,
-                                                                local_desc)) {
+  if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(device,
+                                                              local_desc)) {
     return false;
   }
 
@@ -56,7 +57,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
 
   this->global_heap_allocated_count_ = 0;
   this->default_handle_ =
-      local_heaps_[heap_parameter::local_heap_id::STATIC].GetHandle();
+      local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
   return true;
 }
 
@@ -132,26 +133,30 @@ void HeapManager::CopyHeapAndSetToGraphicsCommandList(
   CopyAndSetToCommandList(shader::root_parameter_index::SRV, srv_handles_);
 }
 
-//ローカルヒープを追加する
-bool HeapManager::AddLocalHeap(IDirectXAccessor& accessor, u32 id,
-                               const DescriptorHeap::Desc& desc) {
-  if (local_heaps_.find(id) != local_heaps_.end()) {
+//ローカルヒープを追加するs
+bool HeapManager::AddLocalHeap(IDirectXAccessor& accessor,
+                               heap_parameter::LocalHeapID id) {
+  if (util::Exist(local_heaps_, id)) {
     MY_LOG(L"すでに追加済みのヒープIDが追加されようとしました。");
     return false;
   }
 
+  std::wstringstream wss;
+  wss << L"LocalHeap_" << static_cast<u32>(id);
+  const DescriptorHeap::Desc desc{
+      wss.str(), heap_parameter::local::GetDefinedLocalDescriptorNum(id)};
   return local_heaps_[id].Init(accessor, desc);
 }
 
-void HeapManager::ResetLocalHeapAllocateCounter(u32 id) {
-  MY_ASSERTION(local_heaps_.find(id) != local_heaps_.end(),
-               L"未登録のIDが送られました。");
+void HeapManager::ResetLocalHeapAllocateCounter(
+    heap_parameter::LocalHeapID id) {
+  MY_ASSERTION(util::Exist(local_heaps_, id), L"未登録のIDが送られました。");
   local_heaps_[id].ResetAllocateCounter();
 }
 // IDに対応したローカルヒープを返す
-CountingDescriptorHeap* HeapManager::GetLocalHeap(u32 id) {
-  MY_ASSERTION(local_heaps_.find(id) != local_heaps_.end(),
-               L"未登録のIDが送られました。");
+CountingDescriptorHeap* HeapManager::GetLocalHeap(
+    heap_parameter::LocalHeapID id) {
+  MY_ASSERTION(util::Exist(local_heaps_, id), L"未登録のIDが送られました。");
 
   return &local_heaps_.at(id);
 }

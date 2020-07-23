@@ -123,7 +123,8 @@ bool PostProcessViewer::Initialize() {
                                           static_cast<float>(screen_size.y));
     if (!post_process_transform_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::Transform,
-            device.GetLocalHeapHandle(0),
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
             L"PostProcess_TransformConstantBuffer")) {
       return false;
     }
@@ -134,7 +135,9 @@ bool PostProcessViewer::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(0), L"PostProcess_WorldConstantBuffer")) {
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+            L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
     post_process_world_cb_.GetStagingRef().view = math::Matrix4x4::kIdentity;

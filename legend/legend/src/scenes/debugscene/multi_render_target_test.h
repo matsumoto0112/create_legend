@@ -13,8 +13,8 @@
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"
-#include "src/math/matrix_4x4.h"
 #include "src/scenes/scene.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace scenes {
@@ -54,6 +54,10 @@ class MultiRenderTargetTest : public Scene {
       MultiRenderTargetTestPPConstantBufferStructure>
       post_process_local_cb_;
 
+  std::vector<util::Transform> transforms_;
+  std::vector<directx::buffer::ConstantBuffer<
+      directx::constant_buffer_structure::Transform>>
+      transform_cbs_;
   //! ƒJƒƒ‰
   camera::PerspectiveCamera camera_;
 };

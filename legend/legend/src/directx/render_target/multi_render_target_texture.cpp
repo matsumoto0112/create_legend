@@ -20,7 +20,8 @@ bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
     return false;
   }
   target.register_num = info.register_num;
-  target.srv_handle = accessor.GetHandle(descriptor_heap::DescriptorHeapType::CBV_SRV_UAV);
+  target.srv_handle = accessor.GetLocalHeapHandle(
+      descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
 
   // accessor.
   D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
@@ -48,7 +49,8 @@ bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
       return false;
     }
     target.register_num = infos[i].register_num;
-    target.srv_handle = accessor.GetHandle(descriptor_heap::DescriptorHeapType::CBV_SRV_UAV);
+    target.srv_handle = accessor.GetLocalHeapHandle(
+        descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
 
     // accessor.
     D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};

@@ -14,6 +14,7 @@
 #include "src/directx/descriptor_heap/counting_descriptor_heap.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/resource_type.h"
 
@@ -66,15 +67,13 @@ class HeapManager {
    * @brief ローカルヒープを追加する
    * @param accessor DirectX12アクセサ
    * @param id ヒープの識別ID
-   * @param desc
    * @return
    */
-  bool AddLocalHeap(IDirectXAccessor& accessor, u32 id,
-                    const DescriptorHeap::Desc& desc);
+  bool AddLocalHeap(IDirectXAccessor& accessor, heap_parameter::LocalHeapID id);
   /**
    * @brief IDに対応したローカルヒープのカウンターをリセットする
    */
-  void ResetLocalHeapAllocateCounter(u32 id);
+  void ResetLocalHeapAllocateCounter(heap_parameter::LocalHeapID id);
 
  public:
   /**
@@ -90,7 +89,7 @@ class HeapManager {
    * @param id ローカルヒープのID
    * @return IDが有効なら対応したローカルヒープを返す
    */
-  CountingDescriptorHeap* GetLocalHeap(u32 id = 0);
+  CountingDescriptorHeap* GetLocalHeap(heap_parameter::LocalHeapID id);
 
  private:
   //! グローバルヒープ
@@ -102,7 +101,8 @@ class HeapManager {
   //! シェーダーリソースのハンドル
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles_;
   //! ローカルのシェーダーリソースヒープ
-  std::unordered_map<u32, CountingDescriptorHeap> local_heaps_;
+  std::unordered_map<heap_parameter::LocalHeapID, CountingDescriptorHeap>
+      local_heaps_;
   //! レンダーターゲットヒープ
   CountingDescriptorHeap rtv_heap_;
   //! デプス・ステンシルヒープ

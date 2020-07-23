@@ -23,7 +23,8 @@ bool TextureChar::Init(wchar_t c, const std::wstring& font, i32 font_size) {
   if (!texture->Init(
           game::GameDevice::GetInstance()->GetDevice(), 0,
           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, width, height,
-          game::GameDevice::GetInstance()->GetDevice().GetLocalHeapHandle(0),
+          game::GameDevice::GetInstance()->GetDevice().GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"TextureChar_Texture")) {
     return false;
   }

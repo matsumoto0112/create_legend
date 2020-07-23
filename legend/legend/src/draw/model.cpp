@@ -1,5 +1,6 @@
 #include "src/draw/model.h"
 
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
@@ -9,10 +10,7 @@ namespace legend {
 namespace draw {
 
 //コンストラクタ
-Model::Model()
-    : position_(math::Vector3::kZeroVector),
-      rotation_(math::Quaternion::kIdentity),
-      scale_(math::Vector3::kUnitVector) {}
+Model::Model() {}
 
 //デストラクタ
 Model::~Model() {}
@@ -88,22 +86,13 @@ bool Model::Init(const std::filesystem::path& path) {
 
   //アルベドテクスチャ
   const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!albedo_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
-                            albedo, device.GetLocalHeapHandle(0),
-                            model_name_ + L"_Albedo")) {
+  if (!albedo_.InitAndWrite(
+          device, directx::shader::TextureRegisterID::Albedo, albedo,
+          device.GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          model_name_ + L"_Albedo")) {
     return false;
   }
-
-  if (!transform_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(0),
-          model_name_ + L"_TransformConstantBuffer")) {
-    return false;
-  }
-  transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale_) * rotation_.ToMatrix() *
-      math::Matrix4x4::CreateTranslate(position_);
-  transform_constant_buffer_.UpdateStaging();
 
   return true;
 }
@@ -113,11 +102,6 @@ void Model::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale_) * rotation_.ToMatrix() *
-      math::Matrix4x4::CreateTranslate(position_);
-  transform_constant_buffer_.UpdateStaging();
-  transform_constant_buffer_.SetToHeap(device);
   albedo_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 

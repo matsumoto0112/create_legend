@@ -33,7 +33,7 @@ bool DepthStencil::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   dsv_view.Texture2D.MipSlice = 0;
   dsv_view.ViewDimension = D3D12_DSV_DIMENSION::D3D12_DSV_DIMENSION_TEXTURE2D;
 
-  this->handle_ = accessor.GetHandle(descriptor_heap::DescriptorHeapType::DSV);
+  this->handle_ = accessor.GetDSVHandle();
   accessor.GetDevice()->CreateDepthStencilView(resource_.GetResource(),
                                                &dsv_view, handle_.cpu_handle_);
   this->format_ = format;

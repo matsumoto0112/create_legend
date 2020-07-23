@@ -90,6 +90,7 @@ bool DirectX12Device::Present() {
       command_lists_[frame_index_].GetCommandList()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
+  WaitForGPU();
   if (!swap_chain_.Present()) {
     return false;
   }

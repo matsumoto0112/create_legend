@@ -76,7 +76,12 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
       this->options_ &= ~DeviceOptionFlags::TEARING;
     }
   }
-  if (!InitializeAdapter(adapter_id_override, &adapter_)) {
+  // if (!InitializeAdapter(adapter_id_override, &adapter_)) {
+  //  return false;
+  //}
+
+  //特定環境下でWarpAdapterを使用しないと内部エラーが発生するため
+  if (FAILED(factory_->EnumWarpAdapter(IID_PPV_ARGS(&adapter_)))) {
     return false;
   }
 

@@ -17,19 +17,35 @@ namespace render_target {
  * @brief テクスチャ使用可能なレンダーターゲット
  */
 class MultiRenderTargetTexture {
+ private:
+  /**
+   * @brief レンダーターゲットテクスチャ構造体
+   */
   struct RenderTargetTexture {
+    //! シェーダーのレジスター番号
     u32 register_num;
+    //! レンダーターゲット
     RenderTarget render_target;
+    //! SRVハンドル
     descriptor_heap::DescriptorHandle srv_handle;
   };
 
  public:
+  /**
+   * @brief レンダーターゲットの情報
+   */
   struct Info {
+    //! シェーダーのレジスター番号
     u32 register_num;
+    //! フォーマット
     DXGI_FORMAT format;
+    //! 幅
     u32 width;
+    //! 高さ
     u32 height;
+    //! クリア色
     util::Color4 clear_color;
+    //! リソース名
     std::wstring name;
   };
 
@@ -43,11 +59,18 @@ class MultiRenderTargetTexture {
    */
   ~MultiRenderTargetTexture();
   /**
-   * @brief 初期化
+   * @brief シングルレンダーターゲットとして初期化する
    * @param accessor DirectX12アクセサ
+   * @param info レンダーターゲットの情報
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(IDirectXAccessor& accessor, const Info& info);
+  /**
+   * @brief マルチレンダーターゲットとして初期化する
+   * @param accessor DirectX12アクセサ
+   * @param info 各レンダーターゲットの情報
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init(IDirectXAccessor& accessor, const std::vector<Info>& infos);
   /**
    * @brief レンダーターゲットの色をクリアする
@@ -66,7 +89,7 @@ class MultiRenderTargetTexture {
    */
   void SetToGlobalHeap(IDirectXAccessor& accessor,
                        u32 render_target_number) const;
-  void WriteInfoToPipelineDesc(shader::GraphicsPipelineState& pipeline);
+  void WriteInfoToPipelineDesc(shader::GraphicsPipelineState* pipeline);
 
   void PrepareToUseRenderTarget(IDirectXAccessor& accessor);
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const;

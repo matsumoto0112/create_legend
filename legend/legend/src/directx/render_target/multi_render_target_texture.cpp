@@ -13,28 +13,7 @@ MultiRenderTargetTexture::~MultiRenderTargetTexture() {}
 //‰Šú‰»
 bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
                                     const Info& info) {
-  render_targets_.resize(1);
-  RenderTargetTexture& target = render_targets_[0];
-  if (!target.render_target.Init(accessor, info.format, info.width, info.height,
-                                 info.clear_color, info.name)) {
-    return false;
-  }
-  target.register_num = info.register_num;
-  target.srv_handle = accessor.GetLocalHeapHandle(
-      descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
-
-  // accessor.
-  D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
-  srv_desc.Texture2D.MipLevels = 1;
-  srv_desc.Format = info.format;
-  srv_desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-  srv_desc.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-
-  accessor.GetDevice()->CreateShaderResourceView(
-      target.render_target.GetResource(), &srv_desc,
-      target.srv_handle.cpu_handle_);
-
-  return true;
+  return Init(accessor, std::vector{info});
 }
 
 bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
@@ -88,12 +67,12 @@ void MultiRenderTargetTexture::SetToGlobalHeap(IDirectXAccessor& accessor,
 }
 
 void MultiRenderTargetTexture::WriteInfoToPipelineDesc(
-    shader::GraphicsPipelineState& pipeline) {
+    shader::GraphicsPipelineState* pipeline) {
   const u32 render_target_num = static_cast<u32>(render_targets_.size());
   for (u32 i = 0; i < render_target_num; i++) {
-    pipeline.SetRTVFormat(render_targets_[i].render_target.GetFormat(), i);
+    pipeline->SetRTVFormat(render_targets_[i].render_target.GetFormat(), i);
   }
-  pipeline.SetRenderTargetNum(render_target_num);
+  pipeline->SetRenderTargetNum(render_target_num);
 }
 
 void MultiRenderTargetTexture::PrepareToUseRenderTarget(

@@ -88,7 +88,7 @@ void RenderResourceManager::WriteRenderTargetInfoToPipelineDesc(
     MY_ASSERTION(created_render_targets_.find(unique_id) !=
                      created_render_targets_.end(),
                  L"未登録のレンダーターゲットが選択されました。");
-    created_render_targets_[unique_id].WriteInfoToPipelineDesc(pipeline);
+    created_render_targets_[unique_id].WriteInfoToPipelineDesc(&pipeline);
   }
 }
 

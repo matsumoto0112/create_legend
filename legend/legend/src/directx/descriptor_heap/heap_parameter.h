@@ -21,6 +21,10 @@ namespace heap_parameter {
 //! アプリケーション全体でのディスクリプタヒープの最大数
 //! CBV,SRV,UAVで共通する割り当て可能数の上限値
 constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 100000;
+//! RTVで使用する割り当て可能数
+constexpr u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
+//! DSVで使用する割り当て可能数
+constexpr u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
 
 /**
  * @brief ローカルヒープの登録ID

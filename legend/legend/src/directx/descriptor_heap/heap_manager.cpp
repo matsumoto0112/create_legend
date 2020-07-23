@@ -4,13 +4,6 @@
 #include "src/directx/shader/root_parameter_index.h"
 #include "src/util/stl_extend.h"
 
-namespace {
-//! レンダーターゲットヒープの作成するディスクリプタ数
-constexpr legend::u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
-//! デプス・ステンシルヒープの作成するディスクリプタ数
-constexpr legend::u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
-}  // namespace
-
 namespace legend {
 namespace directx {
 namespace descriptor_heap {
@@ -37,20 +30,20 @@ bool HeapManager::Init(IDirectXAccessor& device) {
           heap_parameter::LocalHeapID::GLOBAL_ID),
       DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::NONE);
   if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(device,
-                                                              local_desc)) {
+                                                                 local_desc)) {
     return false;
   }
 
-  const DescriptorHeap::Desc rtv_desc(L"RTVHeap", RTV_HEAP_DESCRIPTOR_NUM,
-                                      DescriptorHeapType::RTV,
-                                      DescriptorHeapFlag::NONE);
+  const DescriptorHeap::Desc rtv_desc(
+      L"RTVHeap", heap_parameter::RTV_HEAP_DESCRIPTOR_NUM,
+      DescriptorHeapType::RTV, DescriptorHeapFlag::NONE);
   if (!rtv_heap_.Init(device, rtv_desc)) {
     return false;
   }
 
-  const DescriptorHeap::Desc dsv_desc(L"DSVHeap", DSV_HEAP_DESCRIPTOR_NUM,
-                                      DescriptorHeapType::DSV,
-                                      DescriptorHeapFlag::NONE);
+  const DescriptorHeap::Desc dsv_desc(
+      L"DSVHeap", heap_parameter::DSV_HEAP_DESCRIPTOR_NUM,
+      DescriptorHeapType::DSV, DescriptorHeapFlag::NONE);
   if (!dsv_heap_.Init(device, dsv_desc)) {
     return false;
   }

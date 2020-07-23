@@ -220,8 +220,4 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
   </ItemGroup>
-  <ItemGroup>
-    <Media Include="assets\audios\free_3.wav" />
-    <Media Include="assets\audios\free_2.wav" />
-  </ItemGroup>
 </Project>

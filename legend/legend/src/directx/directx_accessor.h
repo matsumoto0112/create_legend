@@ -34,6 +34,7 @@ class IDirectXAccessor {
   virtual descriptor_heap::DescriptorHandle GetHandle(
       descriptor_heap::DescriptorHeapType heap_type) = 0;
 
+  virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(u32 id) = 0;
   virtual void SetToGlobalHeap(
       u32 register_num, ResourceType resource_type,
       const descriptor_heap::DescriptorHandle& handle) = 0;

@@ -113,7 +113,6 @@ void PerspectiveCameraTest::Draw() {
 
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
   model_.Draw();
 }
 

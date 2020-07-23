@@ -18,13 +18,14 @@ bool Sprite2D::Init(const std::filesystem::path& filepath) {
       game::GameDevice::GetInstance()->GetDevice();
 
   texture_ = std::make_shared<directx::buffer::Texture2D>();
-  if (!texture_->InitAndWrite(
-          device, directx::shader::TextureRegisterID::Albedo, filepath)) {
+  if (!texture_->InitAndWrite(device,
+                              directx::shader::TextureRegisterID::Albedo,
+                              filepath, device.GetLocalHeapHandle(0))) {
     return false;
   }
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
-          L"Sprite_TransformConstantBuffer")) {
+          device.GetLocalHeapHandle(0), L"Sprite_TransformConstantBuffer")) {
     return false;
   }
 
@@ -49,7 +50,7 @@ bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
 
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
-          L"Sprite_TransformConstantBuffer")) {
+          device.GetLocalHeapHandle(0), L"Sprite_TransformConstantBuffer")) {
     return false;
   }
 

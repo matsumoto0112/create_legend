@@ -164,6 +164,11 @@ void RenderResourceManager::DrawEnd(IDirectXAccessor& accessor) {
   }
 }
 
+bool RenderResourceManager::IsRegisteredRenderTargetID(u32 unique_id) const {
+  return created_render_targets_.find(unique_id) !=
+         created_render_targets_.end();
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

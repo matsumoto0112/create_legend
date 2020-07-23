@@ -45,6 +45,8 @@ class RenderResourceManager {
   void SetRenderTargetsToCommandList(IDirectXAccessor& accessor);
   void DrawEnd(IDirectXAccessor& accessor);
 
+  bool IsRegisteredRenderTargetID(u32 unique_id) const;
+
  private:
   static constexpr u32 SWAP_CHAIN_RENDER_TARGET_ID = 0;
   std::unordered_map<u32, MultiRenderTargetTexture> created_render_targets_;

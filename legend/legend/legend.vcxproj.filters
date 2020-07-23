@@ -78,6 +78,7 @@
     <ClCompile Include="src\directx\device\command_list.cpp" />
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\heap_manager.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap\heap_parameter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -186,6 +187,8 @@
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_manager.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
+    <ClInclude Include="src\util\stl_extend.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

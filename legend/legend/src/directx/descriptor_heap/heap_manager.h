@@ -43,12 +43,12 @@ class HeapManager {
   /**
    * @brief フレーム開始時イベント
    */
-  void BeginFrame();
+  void BeginNewFrame();
   /**
    * @brief コマンドリストにグローバルヒープをセットする
    * @param accessor DirectX12アクセサ
    */
-  void SetGraphicsCommandList(IDirectXAccessor& accessor) const;
+  void SetHeapToCommandList(IDirectXAccessor& accessor) const;
   /**
    * @brief ローカルヒープにハンドルをセットする
    * @param register_num 使用するリソースのシェーダーにおけるレジスター番号
@@ -62,18 +62,35 @@ class HeapManager {
    * @param accessor DirectX12アクセサ
    */
   void CopyHeapAndSetToGraphicsCommandList(IDirectXAccessor& accessor);
+  /**
+   * @brief ローカルヒープを追加する
+   * @param accessor DirectX12アクセサ
+   * @param id ヒープの識別ID
+   * @param desc
+   * @return
+   */
+  bool AddLocalHeap(IDirectXAccessor& accessor, u32 id,
+                    const DescriptorHeap::Desc& desc);
+  /**
+   * @brief IDに対応したローカルヒープのカウンターをリセットする
+   */
+  void ResetLocalHeapAllocateCounter(u32 id);
 
  public:
   /**
    * @brief レンダーターゲットヒープを取得する
    */
-  CountingDescriptorHeap& GetRtvHeap() { return rtv_heap_; }
-
-  CountingDescriptorHeap& GetLocalHeap(u32 id = 0);
+  CountingDescriptorHeap* GetRtvHeap() { return &rtv_heap_; }
   /**
    * @brief デプス・ステンシルヒープを取得する
    */
-  CountingDescriptorHeap& GetDsvHeap() { return dsv_heap_; }
+  CountingDescriptorHeap* GetDsvHeap() { return &dsv_heap_; }
+  /**
+   * @brief IDからローカルヒープを取得する
+   * @param id ローカルヒープのID
+   * @return IDが有効なら対応したローカルヒープを返す
+   */
+  CountingDescriptorHeap* GetLocalHeap(u32 id = 0);
 
  private:
   //! グローバルヒープ
@@ -90,6 +107,8 @@ class HeapManager {
   CountingDescriptorHeap rtv_heap_;
   //! デプス・ステンシルヒープ
   CountingDescriptorHeap dsv_heap_;
+  //! 空白の割り当てを置き換えるデフォルトハンドル
+  DescriptorHandle default_handle_;
 };
 
 }  // namespace descriptor_heap

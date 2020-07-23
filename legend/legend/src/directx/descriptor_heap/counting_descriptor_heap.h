@@ -48,6 +48,10 @@ class CountingDescriptorHeap {
    */
   DescriptorHandle GetForceHandle(u32 index) const;
   /**
+   * @brief アロケートカウンターをリセットする
+   */
+  void ResetAllocateCounter();
+  /**
    * @brief ヒープを取得する
    */
   ID3D12DescriptorHeap* GetHeap() const { return heap_.GetHeap(); };

@@ -35,7 +35,8 @@ bool PhysicsTest::Initialize() {
     return false;
   }
 
-  if (!world_constant_buffer_.Init(device, 1, L"WorldContext ConstantBuffer")) {
+  if (!world_constant_buffer_.Init(device, 1, device.GetLocalHeapHandle(0),
+                                   L"WorldContext ConstantBuffer")) {
     return false;
   }
 
@@ -164,7 +165,6 @@ void PhysicsTest::Draw() {
 
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
   world_constant_buffer_.SetToHeap(device);
 
   for (i32 i = 0; i < obb_num_; i++) {

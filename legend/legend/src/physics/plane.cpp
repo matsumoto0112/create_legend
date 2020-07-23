@@ -40,7 +40,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
     return false;
   }
 
-  if (!transform_constant_buffer_.Init(device, 0,
+  if (!transform_constant_buffer_.Init(device, 0, device.GetLocalHeapHandle(0),
                                        L"Transform ConstantBuffer")) {
     return false;
   }

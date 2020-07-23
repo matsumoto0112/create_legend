@@ -72,7 +72,8 @@ bool DirectX12Device::Prepare() {
   render_resource_manager_.SetRenderTargetsToCommandList(*this);
   render_resource_manager_.ClearCurrentRenderTarget(*this);
 
-  heap_manager_.BeginFrame();
+  heap_manager_.BeginNewFrame();
+  heap_manager_.SetHeapToCommandList(*this);
   default_root_signature_->SetGraphicsCommandList(*this);
   return true;
 }
@@ -112,14 +113,15 @@ void DirectX12Device::WaitForGPU() noexcept {
   }
 }
 
-descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(descriptor_heap::DescriptorHeapType heap_type) {
+descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(
+    descriptor_heap::DescriptorHeapType heap_type) {
   switch (heap_type) {
     case legend::directx::descriptor_heap::DescriptorHeapType::CBV_SRV_UAV:
-      return heap_manager_.GetLocalHeap().GetHandle();
+      return heap_manager_.GetLocalHeap()->GetHandle();
     case legend::directx::descriptor_heap::DescriptorHeapType::RTV:
-      return heap_manager_.GetRtvHeap().GetHandle();
+      return heap_manager_.GetRtvHeap()->GetHandle();
     case legend::directx::descriptor_heap::DescriptorHeapType::DSV:
-      return heap_manager_.GetDsvHeap().GetHandle();
+      return heap_manager_.GetDsvHeap()->GetHandle();
     default:
       MY_ASSERTION(false, L"–¢’è‹`‚Ìheap_type‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
       break;
@@ -127,9 +129,9 @@ descriptor_heap::DescriptorHandle DirectX12Device::GetHandle(descriptor_heap::De
   return descriptor_heap::DescriptorHandle{};
 }
 
-void DirectX12Device::SetToGlobalHeap(u32 register_num,
-                                      ResourceType resource_type,
-                                      const descriptor_heap::DescriptorHandle& handle) {
+void DirectX12Device::SetToGlobalHeap(
+    u32 register_num, ResourceType resource_type,
+    const descriptor_heap::DescriptorHandle& handle) {
   heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
                                      handle.cpu_handle_);
 }

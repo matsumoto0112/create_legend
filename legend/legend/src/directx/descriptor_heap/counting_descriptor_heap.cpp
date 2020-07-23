@@ -36,6 +36,9 @@ DescriptorHandle CountingDescriptorHeap::GetForceHandle(u32 index) const {
   return heap_.GetHandle(index);
 }
 
+//アロケートカウンターのリセット
+void CountingDescriptorHeap::ResetAllocateCounter() { allocate_index_ = 0; }
+
 }  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend

@@ -36,7 +36,8 @@ class Texture2D {
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(DirectX12Device& device, u32 register_num, DXGI_FORMAT format,
-            u32 width, u32 height, const std::wstring& name);
+            u32 width, u32 height, descriptor_heap::DescriptorHandle handle,
+            const std::wstring& name);
   /**
    * @brief テクスチャを読み込みつつ初期化する
    * @param device DirectX12デバイス
@@ -45,7 +46,8 @@ class Texture2D {
    * @return 初期化に成功したらtrueを返す
    */
   bool InitAndWrite(DirectX12Device& device, u32 register_num,
-                    const std::filesystem::path& filename);
+                    const std::filesystem::path& filename,
+                    descriptor_heap::DescriptorHandle handle);
   /**
    * @brief テクスチャを書き込みつつ初期化する
    * @param device DirectX12デバイス
@@ -55,7 +57,9 @@ class Texture2D {
    * @return 初期化に成功したらtrueを返す
    */
   bool InitAndWrite(DirectX12Device& device, u32 register_num,
-                    const std::vector<u8>& data, const std::wstring& name);
+                    const std::vector<u8>& data,
+                    descriptor_heap::DescriptorHandle handle,
+                    const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
    * @param device DirectX12デバイス
@@ -94,6 +98,7 @@ class Texture2D {
    */
   bool InitTexBuffer(DirectX12Device& device, u32 register_num,
                      DXGI_FORMAT format, u32 width, u32 height,
+                     descriptor_heap::DescriptorHandle handle,
                      const std::wstring& name);
 
  private:

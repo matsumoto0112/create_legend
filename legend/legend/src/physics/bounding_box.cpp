@@ -64,7 +64,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
     return false;
   }
 
-  if (!transform_constant_buffer_.Init(device, 0,
+  if (!transform_constant_buffer_.Init(device, 0, device.GetLocalHeapHandle(0),
                                        L"Transform ConstantBuffer")) {
     return false;
   }
@@ -169,9 +169,12 @@ void BoundingBox::SetScale(math::Vector3 scale) { scale_ = scale; }
 void BoundingBox::SetAxis() {
   math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(rotation_);
 
-  axis_x = math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) * scale_.x;
-  axis_y = math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) * scale_.y;
-  axis_z = math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) * scale_.z;
+  axis_x =
+      math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) * scale_.x;
+  axis_y =
+      math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) * scale_.y;
+  axis_z =
+      math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) * scale_.z;
 }
 
 }  // namespace physics

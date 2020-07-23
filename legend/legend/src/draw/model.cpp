@@ -89,12 +89,14 @@ bool Model::Init(const std::filesystem::path& path) {
   //アルベドテクスチャ
   const std::vector<u8> albedo = loader.GetAlbedo();
   if (!albedo_.InitAndWrite(device, directx::shader::TextureRegisterID::Albedo,
-                            albedo, model_name_ + L"_Albedo")) {
+                            albedo, device.GetLocalHeapHandle(0),
+                            model_name_ + L"_Albedo")) {
     return false;
   }
 
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(0),
           model_name_ + L"_TransformConstantBuffer")) {
     return false;
   }

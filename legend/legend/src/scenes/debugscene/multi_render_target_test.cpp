@@ -43,12 +43,14 @@ bool MultiRenderTargetTest::Initialize() {
          static_cast<u32>(screen_size.x), static_cast<u32>(screen_size.y),
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 
-    //ポストプロセス描画用レンダーターゲット
-    if (!device.GetRenderResourceManager().CreateRenderTargets(
-            device, PRE_POST_PROCESS_RENDER_TARGET_ID, infos)) {
-      return false;
+    if (!device.GetRenderResourceManager().IsRegisteredRenderTargetID(
+            PRE_POST_PROCESS_RENDER_TARGET_ID)) {
+      //ポストプロセス描画用レンダーターゲット
+      if (!device.GetRenderResourceManager().CreateRenderTargets(
+              device, PRE_POST_PROCESS_RENDER_TARGET_ID, infos)) {
+        return false;
+      }
     }
-
     if (!pipeline_state_.Init(device)) {
       return false;
     }
@@ -132,6 +134,7 @@ bool MultiRenderTargetTest::Initialize() {
                                           static_cast<float>(screen_size.y));
     if (!post_process_transform_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::Transform,
+            device.GetLocalHeapHandle(0),
             L"PostProcess_TransformConstantBuffer")) {
       return false;
     }
@@ -142,7 +145,7 @@ bool MultiRenderTargetTest::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            L"PostProcess_WorldConstantBuffer")) {
+            device.GetLocalHeapHandle(0), L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
     post_process_world_cb_.GetStagingRef().view = math::Matrix4x4::kIdentity;
@@ -172,7 +175,8 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
 
-    if (!post_process_local_cb_.Init(device, 2, L"Local")) {
+    if (!post_process_local_cb_.Init(device, 2, device.GetLocalHeapHandle(1),
+                                     L"Local")) {
       return false;
     }
     post_process_local_cb_.GetStagingRef().border = 0.5f;
@@ -226,7 +230,6 @@ void MultiRenderTargetTest::Draw() {
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
   model_.Draw();
 
   device.GetRenderResourceManager().SetRenderTarget(0);
@@ -246,7 +249,13 @@ void MultiRenderTargetTest::Draw() {
   post_process_index_buffer_.SetGraphicsCommandList(device);
   post_process_index_buffer_.Draw(device);
 }
-void MultiRenderTargetTest::Finalize() {}
+void MultiRenderTargetTest::Finalize() {
+  game::GameDevice::GetInstance()
+      ->GetDevice()
+      .GetHeapManager()
+      .ResetLocalHeapAllocateCounter(1);
+}
+
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

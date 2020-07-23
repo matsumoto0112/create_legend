@@ -8,11 +8,11 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
+#include "src/directx/descriptor_heap/heap_manager.h"
 #include "src/directx/device/command_list.h"
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
-#include "src/directx/descriptor_heap/heap_manager.h"
 #include "src/directx/render_target/render_resource_manager.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"
@@ -70,20 +70,24 @@ class DirectX12Device : public IDirectXAccessor {
    * @brief ディスクリプタハンドルを取得する
    * @param heap_type 取得するディスクリプタヒープの種類
    */
-  virtual descriptor_heap::DescriptorHandle GetHandle(descriptor_heap::DescriptorHeapType heap_type) override;
+  virtual descriptor_heap::DescriptorHandle GetHandle(
+      descriptor_heap::DescriptorHeapType heap_type) override;
   /**
    * @brief グローバルヒープにディスクリプタハンドルをセットする
    * @param register_num セットするハンドルのシェーダにおけるレジスター番号
    * @param resource_type リソースの種類
    * @param handle セットするハンドル
    */
-  virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
-                               const descriptor_heap::DescriptorHandle& handle) override;
+  virtual void SetToGlobalHeap(
+      u32 register_num, ResourceType resource_type,
+      const descriptor_heap::DescriptorHandle& handle) override;
 
-  virtual descriptor_heap::DescriptorHandle GetBackBufferHandle() const override;
+  virtual descriptor_heap::DescriptorHandle GetBackBufferHandle()
+      const override;
   virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) override;
   virtual DXGI_FORMAT GetBackBufferFormat() const;
   virtual void SetBackBuffer(IDirectXAccessor& accessor) override;
+
  public:
   virtual inline ID3D12Device* GetDevice() const override {
     return device_.Get();
@@ -100,13 +104,19 @@ class DirectX12Device : public IDirectXAccessor {
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
-  inline descriptor_heap::HeapManager& GetHeapManager() { return heap_manager_; }
+  inline descriptor_heap::HeapManager& GetHeapManager() {
+    return heap_manager_;
+  }
   /**
    * @brief デフォルトのルートシグネチャを取得する
    */
   inline std::shared_ptr<shader::RootSignature> GetDefaultRootSignature()
       const {
     return default_root_signature_;
+  }
+  virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(
+      u32 id) override {
+    return heap_manager_.GetLocalHeap(id)->GetHandle();
   }
 
  private:

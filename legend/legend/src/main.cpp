@@ -17,6 +17,9 @@ class MyApp final : public device::Application {
     if (!scene_manager_.Initialize()) {
       return false;
     }
+    game::GameDevice::GetInstance()->GetDevice().GetHeapManager().AddLocalHeap(
+        game::GameDevice::GetInstance()->GetDevice(), 1,
+        directx::descriptor_heap::DescriptorHeap::Desc(L"HOGE", 2));
     return true;
   }
   bool Update() override {

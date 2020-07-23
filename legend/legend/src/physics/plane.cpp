@@ -144,9 +144,9 @@ void Plane::SetPosition(math::Vector3 position) { position_ = position; }
 void Plane::SetNormal(math::Vector3 normal) { normal_ = normal; }
 
 //位置の取得
-math::Vector3 Plane::GetPosition() { return position_; }
+math::Vector3 Plane::GetPosition() const { return position_; }
 
 //法線ベクトルの取得
-math::Vector3 Plane::GetNormal() { return normal_; }
+math::Vector3 Plane::GetNormal() const { return normal_; }
 }  // namespace physics
 }  // namespace legend

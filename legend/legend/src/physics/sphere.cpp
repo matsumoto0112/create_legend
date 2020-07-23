@@ -10,7 +10,7 @@ namespace physics {
 Sphere::Sphere()
     : position_(math::Vector3::kZeroVector),
       rotation_(math::Vector3::kZeroVector),
-      scale_(math::Vector3(0.1f, 0.1f, 0.1f)),
+      scale_(0.1f),
       radius_(2) {}
 
 //デストラクタ
@@ -151,7 +151,8 @@ bool Sphere::Initialize(directx::DirectX12Device& device) {
 void Sphere::Update() {
   math::Vector3 position = GetPosition();
   math::Vector3 rotate = GetRotation();
-  math::Vector3 scale = GetScale() * radius_;
+  math::Vector3 scale =
+      math::Vector3(GetScale(), GetScale(), GetScale()) * radius_;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
@@ -173,21 +174,28 @@ void Sphere::Draw(directx::DirectX12Device& device) {
 }
 
 //座標の取得
-math::Vector3 Sphere::GetPosition() { return position_; }
+math::Vector3 Sphere::GetPosition() const { return position_; }
 
-math::Vector3 Sphere::GetRotation() { return rotation_; }
+//回転量の取得
+math::Vector3 Sphere::GetRotation() const { return rotation_; }
 
-math::Vector3 Sphere::GetScale() { return scale_; }
+//スケールの取得
+float Sphere::GetScale() const { return scale_; }
 
 //半径の取得
-float Sphere::GetRadius() { return radius_; }
+float Sphere::GetRadius() const { return radius_ * scale_; }
+
+//半径の2乗を取得
+float Sphere::GetSquareRadius() const { return GetRadius() * GetRadius(); }
 
 //座標の設定
 void Sphere::SetPosition(math::Vector3 position) { position_ = position; }
 
+//回転量の設定
 void Sphere::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
 
-void Sphere::SetScale(math::Vector3 scale) { scale_ = scale; }
+//スケールの設定
+void Sphere::SetScale(float scale) { scale_ = scale; }
 
 //半径の設定
 void Sphere::SetRadius(float radius) { radius_ = radius; }

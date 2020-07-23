@@ -51,36 +51,36 @@ class BoundingBox {
    * @brief 方向ベクトルを取得
    * @param 軸番号
    */
-  math::Vector3 GetDirection(i32 direction_num);
+  math::Vector3 GetDirection(i32 direction_num) const;
   /**
    * @brief 長さを取得
    * @param 軸番号
    */
-  float GetLength(i32 length_num);
+  float GetLength(i32 length_num) const;
   /**
    * @brief 現在の位置を取得
    */
-  math::Vector3 GetPosition();
+  math::Vector3 GetPosition() const;
   /**
    * @brief 現在の角度を取得
    */
-  math::Vector3 GetRotation();
+  math::Vector3 GetRotation() const;
   /**
    * @brief 現在のスケールを取得
    */
-  math::Vector3 GetScale();
+  math::Vector3 GetScale() const;
   /**
    * @brief 分離軸Xの取得
    */
-  math::Vector3 GetAxisX();
+  math::Vector3 GetAxisX() const;
   /**
    * @brief 分離軸Yの取得
    */
-  math::Vector3 GetAxisY();
+  math::Vector3 GetAxisY() const;
   /**
    * @brief 分離軸Zの取得
    */
-  math::Vector3 GetAxisZ();
+  math::Vector3 GetAxisZ() const;
   /**
    * @brief 各方向ベクトルの設定
    * @param X方向

@@ -178,7 +178,7 @@ void BoundingBox::Draw(directx::DirectX12Device& device) {
 }
 
 //方向ベクトルを取得
-math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
+math::Vector3 BoundingBox::GetDirection(i32 direction_num) const {
   if (direction_num > directions_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return math::Vector3::kZeroVector;
@@ -188,7 +188,7 @@ math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
 }
 
 //長さを取得
-float BoundingBox::GetLength(i32 length_num) {
+float BoundingBox::GetLength(i32 length_num) const {
   if (length_num > lengthes_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return 1;
@@ -198,22 +198,22 @@ float BoundingBox::GetLength(i32 length_num) {
 }
 
 //現在の位置を取得
-math::Vector3 BoundingBox::GetPosition() { return position_; }
+math::Vector3 BoundingBox::GetPosition() const { return position_; }
 
 //現在の回転量を取得
-math::Vector3 BoundingBox::GetRotation() { return rotation_; }
+math::Vector3 BoundingBox::GetRotation() const { return rotation_; }
 
 //現在のスケールを取得
-math::Vector3 BoundingBox::GetScale() { return scale_; }
+math::Vector3 BoundingBox::GetScale() const { return scale_; }
 
 //分離軸Xを取得
-math::Vector3 BoundingBox::GetAxisX() { return axis_x; }
+math::Vector3 BoundingBox::GetAxisX() const { return axis_x; }
 
 //分離軸Yを取得
-math::Vector3 BoundingBox::GetAxisY() { return axis_y; }
+math::Vector3 BoundingBox::GetAxisY() const { return axis_y; }
 
 //分離軸Zを取得
-math::Vector3 BoundingBox::GetAxisZ() { return axis_z; }
+math::Vector3 BoundingBox::GetAxisZ() const { return axis_z; }
 
 //各方向ベクトルの設定
 void BoundingBox::SetDirection(math::Vector3 direction_x,

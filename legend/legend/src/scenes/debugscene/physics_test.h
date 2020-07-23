@@ -6,6 +6,7 @@
 #include "src/directx/shader/root_signature.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/plane.h"
+#include "src/physics/ray.h"
 #include "src/physics/sphere.h"
 #include "src/scenes/scene.h"
 
@@ -53,6 +54,8 @@ class PhysicsTest : public Scene {
   physics::Plane plane_;
   //! ‹…
   physics::Sphere sphere_;
+  //! ƒŒƒC
+  physics::Ray ray_;
 };
 
 }  // namespace debugscene

@@ -29,12 +29,16 @@ bool PhysicsTest::Initialize() {
   //  }
   //}
 
-  if (!plane_.Initialize(device)) {
-    return false;
-  }
+  //if (!plane_.Initialize(device)) {
+  //  return false;
+  //}
 
   if (!sphere_.Initialize(device)) {
     return false;
+  }
+
+  if (!ray_.Initialize(device)) {
+      return false;
   }
 
   return true;
@@ -60,12 +64,13 @@ bool PhysicsTest::Update() {
     //obbs_[0].SetRotation(obb1_rotation);
     //obbs_[0].SetScale(obb1_scale);
 
+    //‹…
     math::Vector3 sphere_position = sphere_.GetPosition();
     math::Vector3 sphere_rotation = sphere_.GetRotation();
-    math::Vector3 sphere_scale = sphere_.GetScale();
+    float sphere_scale = sphere_.GetScale();
     ImGui::SliderFloat3("Sphere_Position", &sphere_position.x, -180.0f, 180.0f);
     ImGui::SliderFloat3("Sphere_Rotation", &sphere_rotation.x, -180.0f, 180.0f);
-    ImGui::SliderFloat3("Sphere_Scale", &sphere_scale.x, 0.1f, 2.0f);
+    ImGui::SliderFloat("Sphere_Scale", &sphere_scale, 0.1f, 2.0f);
     sphere_.SetPosition(sphere_position);
     sphere_.SetRotation(sphere_rotation);
     sphere_.SetScale(sphere_scale);
@@ -97,10 +102,18 @@ bool PhysicsTest::Update() {
   //  MY_LOG(L"’¼•û‘Ì1‚Æ•½–Ê‚ªÕ“Ë‚µ‚Ü‚µ‚½");
   //}
 
-  if (physics::Collision::GetInstance()->Collision_Sphere_Plane(sphere_,
-                                                                plane_)) {
-    MY_LOG(L"‹…‚Æ•½–Ê‚ªÕ“Ë‚µ‚Ü‚µ‚½");
+  //if (physics::Collision::GetInstance()->Collision_Sphere_Plane(sphere_,
+  //                                                              plane_)) {
+  //  MY_LOG(L"‹…‚Æ•½–Ê‚ªÕ“Ë‚µ‚Ü‚µ‚½");
+  //}
+
+  if (physics::Collision::GetInstance()->Collision_Ray_Sphere(ray_, sphere_)) {
+      MY_LOG(L"ƒŒƒC‚Æ‹…‚ªÕ“Ë‚µ‚Ü‚µ‚½");
   }
+
+  //if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray_, obbs_[0])) {
+  //    MY_LOG(L"ƒŒƒC‚Æ’¼•û‘Ì‚ªÕ“Ë‚µ‚Ü‚µ‚½");
+  //}
 
   return true;
 }
@@ -116,8 +129,9 @@ void PhysicsTest::Draw() {
   //  obbs_[i].Draw(device);
   //}
 
-  plane_.Draw(device);
+  //plane_.Draw(device);
   sphere_.Draw(device);
+  ray_.Draw(device);
 }
 
 //I—¹

@@ -188,6 +188,7 @@
     <ClInclude Include="src\directx\shader\root_parameter_index.h" />
     <ClInclude Include="src\util\stl_extend.h" />
     <ClInclude Include="src\util\transform.h" />
+    <ClInclude Include="src\directx\render_target\render_target_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

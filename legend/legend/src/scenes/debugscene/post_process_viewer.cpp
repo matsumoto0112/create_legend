@@ -7,10 +7,6 @@
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 
-namespace {
-legend::u32 PRE_POST_PROCESS_RENDER_TARGET_ID = 1;
-}  // namespace
-
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -34,7 +30,8 @@ bool PostProcessViewer::Initialize() {
              ->GetDevice()
              .GetRenderResourceManager()
              .CreateRenderTarget(
-                 device, PRE_POST_PROCESS_RENDER_TARGET_ID,
+                 device,
+                 directx::render_target::RenderTargetID::POST_PROCESS_PRE,
                  DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, screen_size.x,
                  screen_size.y, util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"RTT")) {
       return false;
@@ -71,7 +68,8 @@ bool PostProcessViewer::Initialize() {
     pipeline_state_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-        device, PRE_POST_PROCESS_RENDER_TARGET_ID, pipeline_state_);
+        device, directx::render_target::RenderTargetID::POST_PROCESS_PRE,
+        pipeline_state_);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
     }
@@ -112,7 +110,8 @@ bool PostProcessViewer::Initialize() {
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-        device, 0, post_process_pipeline_);
+        device, directx::render_target::RenderTargetID::POST_PROCESS_PRE,
+        post_process_pipeline_);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
     }
@@ -123,8 +122,8 @@ bool PostProcessViewer::Initialize() {
                                           static_cast<float>(screen_size.y));
     if (!post_process_transform_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::Transform,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                          LocalHeapID::GLOBAL_ID),
             L"PostProcess_TransformConstantBuffer")) {
       return false;
     }
@@ -135,8 +134,8 @@ bool PostProcessViewer::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                          LocalHeapID::GLOBAL_ID),
             L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
@@ -205,18 +204,19 @@ void PostProcessViewer::Draw() {
       game::GameDevice::GetInstance()->GetDevice();
 
   device.GetRenderResourceManager().SetRenderTarget(
-      PRE_POST_PROCESS_RENDER_TARGET_ID);
+      directx::render_target::RenderTargetID::POST_PROCESS_PRE);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
   model_.Draw();
 
-  device.GetRenderResourceManager().SetRenderTarget(0);
+  device.GetRenderResourceManager().SetRenderTarget(
+      directx::render_target::RenderTargetID::BACK_BUFFER);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   post_process_pipeline_.SetGraphicsCommandList(device);
   device.GetRenderResourceManager().UseRenderTargetToShaderResource(
-      device, PRE_POST_PROCESS_RENDER_TARGET_ID, 0);
+      device, directx::render_target::RenderTargetID::POST_PROCESS_PRE, 0);
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);

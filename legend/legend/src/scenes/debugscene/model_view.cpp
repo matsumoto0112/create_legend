@@ -1,5 +1,6 @@
 #include "src/scenes/debugscene/model_view.h"
 
+#include "src/directx/render_target/render_target_id.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
@@ -28,6 +29,7 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  //モデルデータを読み込む
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
   if (!model_.Init(model_path)) {
@@ -35,6 +37,7 @@ bool ModelView::Initialize() {
     return false;
   }
 
+  //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
           device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
@@ -46,6 +49,7 @@ bool ModelView::Initialize() {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
+  //カメラの初期化
   {
     const math::Vector3 camera_position = math::Vector3(0, 10, -10);
     const math::Quaternion camera_rotation =
@@ -59,62 +63,43 @@ bool ModelView::Initialize() {
     }
   }
 
-  //頂点シェーダー
-  std::filesystem::path path = util::Path::GetInstance()->shader();
-  std::filesystem::path vertex_shader_path =
-      path / L"modelview" / L"model_view_vs.cso";
-  std::filesystem::path pixel_shader_path =
-      path / L"modelview" / L"model_view_ps.cso";
-  std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
-      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0}};
+  //パイプライン作成
+  {
+    if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
+      return false;
+    }
 
-  //頂点シェーダー
-  std::shared_ptr<directx::shader::VertexShader> vertex_shader =
-      std::make_shared<directx::shader::VertexShader>();
-  if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                           vertex_shader_path, elements)) {
-    return false;
-  }
+    const std::filesystem::path path = util::Path::GetInstance()->shader();
+    const std::filesystem::path vertex_shader_path =
+        path / L"modelview" / L"model_view_vs.cso";
+    auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
+    if (!vertex_shader->Init(
+            game::GameDevice::GetInstance()->GetDevice(), vertex_shader_path,
+            directx::input_element::GetElementDescs<directx::Vertex>())) {
+      return false;
+    }
 
-  //ピクセルシェーダー
-  std::shared_ptr<directx::shader::PixelShader> pixel_shader =
-      std::make_shared<directx::shader::PixelShader>();
-  if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                          pixel_shader_path)) {
-    return false;
-  }
+    const std::filesystem::path pixel_shader_path =
+        path / L"modelview" / L"model_view_ps.cso";
+    auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
+    if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+                            pixel_shader_path)) {
+      return false;
+    }
 
-  if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-    return false;
-  }
+    pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
+    pipeline_state_.SetVertexShader(vertex_shader);
+    pipeline_state_.SetPixelShader(pixel_shader);
+    device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
+        device, directx::render_target::RenderTargetID::BACK_BUFFER,
+        pipeline_state_);
+    pipeline_state_.SetBlendDesc(
+        directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
 
-  //パイプライン作成開始
-  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-  pipeline_state_.SetVertexShader(vertex_shader);
-  pipeline_state_.SetPixelShader(pixel_shader);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-      device, 0, pipeline_state_);
-  pipeline_state_.SetBlendDesc(
-      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-
-  if (!pipeline_state_.CreatePipelineState(
-          game::GameDevice::GetInstance()->GetDevice())) {
-    return false;
+    if (!pipeline_state_.CreatePipelineState(
+            game::GameDevice::GetInstance()->GetDevice())) {
+      return false;
+    }
   }
 
   return true;

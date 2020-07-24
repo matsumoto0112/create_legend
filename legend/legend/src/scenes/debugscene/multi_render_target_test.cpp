@@ -45,10 +45,11 @@ bool MultiRenderTargetTest::Initialize() {
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 
     if (!device.GetRenderResourceManager().IsRegisteredRenderTargetID(
-            PRE_POST_PROCESS_RENDER_TARGET_ID)) {
+            directx::render_target::RenderTargetID::POST_PROCESS_PRE)) {
       //ポストプロセス描画用レンダーターゲット
       if (!device.GetRenderResourceManager().CreateRenderTargets(
-              device, PRE_POST_PROCESS_RENDER_TARGET_ID, infos)) {
+              device, directx::render_target::RenderTargetID::POST_PROCESS_PRE,
+              infos)) {
         return false;
       }
     }
@@ -80,7 +81,9 @@ bool MultiRenderTargetTest::Initialize() {
     pipeline_state_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-        device, PRE_POST_PROCESS_RENDER_TARGET_ID, pipeline_state_);
+        device,
+        directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+        pipeline_state_);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
     }
@@ -124,7 +127,9 @@ bool MultiRenderTargetTest::Initialize() {
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-        device, 0, post_process_pipeline_);
+        device,
+        directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+        post_process_pipeline_);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
     }
@@ -148,8 +153,8 @@ bool MultiRenderTargetTest::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                          LocalHeapID::GLOBAL_ID),
             L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
@@ -246,7 +251,7 @@ void MultiRenderTargetTest::Draw() {
       game::GameDevice::GetInstance()->GetDevice();
 
   device.GetRenderResourceManager().SetRenderTarget(
-      PRE_POST_PROCESS_RENDER_TARGET_ID);
+      directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   camera_.RenderStart();
@@ -260,14 +265,17 @@ void MultiRenderTargetTest::Draw() {
     model_.Draw();
   }
 
-  device.GetRenderResourceManager().SetRenderTarget(0);
+  device.GetRenderResourceManager().SetRenderTarget(
+      directx::render_target::RenderTargetID::BACK_BUFFER);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   post_process_pipeline_.SetGraphicsCommandList(device);
   device.GetRenderResourceManager().UseRenderTargetToShaderResource(
-      device, PRE_POST_PROCESS_RENDER_TARGET_ID, 0);
+      device, directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+      0);
   device.GetRenderResourceManager().UseRenderTargetToShaderResource(
-      device, PRE_POST_PROCESS_RENDER_TARGET_ID, 1);
+      device, directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+      1);
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   post_process_local_cb_.SetToHeap(device);

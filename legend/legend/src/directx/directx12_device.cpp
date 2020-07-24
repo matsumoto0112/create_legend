@@ -68,7 +68,8 @@ bool DirectX12Device::Prepare() {
   command_lists_[frame_index_].GetCommandList()->RSSetScissorRects(
       1, &scissor_rect);
 
-  render_resource_manager_.SetRenderTarget(0);
+  render_resource_manager_.SetRenderTarget(
+      render_target::RenderTargetID::BACK_BUFFER);
   render_resource_manager_.SetRenderTargetsToCommandList(*this);
   render_resource_manager_.ClearCurrentRenderTarget(*this);
 

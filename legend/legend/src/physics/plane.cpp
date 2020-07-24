@@ -7,7 +7,7 @@ namespace legend {
 namespace physics {
 //コンストラクタ
 Plane::Plane()
-    : position_(math::Vector3::kZeroVector), normal_(math::Vector3(0, 1, 0)) {}
+    : position_(math::Vector3::kZeroVector), normal_(math::Vector3::kUpVector) {}
 
 Plane::~Plane() {}
 
@@ -18,7 +18,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   float left = GetPosition().x - 1;
   float right = GetPosition().x + 1;
 
-  const std::vector<directx::BoundingBox> vertices{
+  const std::vector<directx::PhysicsVertex> vertices{
       {{left, 0, front}},
       {{right, 0, front}},
       {{right, 0, back}},
@@ -26,7 +26,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"Plane_VertexBuffer")) {
     return false;
@@ -144,9 +144,9 @@ void Plane::SetPosition(math::Vector3 position) { position_ = position; }
 void Plane::SetNormal(math::Vector3 normal) { normal_ = normal; }
 
 //位置の取得
-math::Vector3 Plane::GetPosition() { return position_; }
+math::Vector3 Plane::GetPosition() const { return position_; }
 
 //法線ベクトルの取得
-math::Vector3 Plane::GetNormal() { return normal_; }
+math::Vector3 Plane::GetNormal() const { return normal_; }
 }  // namespace physics
 }  // namespace legend

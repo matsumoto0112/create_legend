@@ -6,6 +6,7 @@
 #include "src/directx/shader/root_signature.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/plane.h"
+#include "src/physics/ray.h"
 #include "src/physics/sphere.h"
 #include "src/scenes/scene.h"
 
@@ -48,11 +49,13 @@ class PhysicsTest : public Scene {
   //! íºï˚ëÃ
   std::vector<physics::BoundingBox> obbs_;
   //! ê∂ê¨êî
-  i32 obb_num_ = 2;
+  i32 obb_num_ = 1;
   //! ïΩñ 
   physics::Plane plane_;
   //! ãÖ
   physics::Sphere sphere_;
+  //! ÉåÉC
+  physics::Ray ray_;
 };
 
 }  // namespace debugscene

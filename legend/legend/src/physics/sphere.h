@@ -1,8 +1,6 @@
 #ifndef LEGEND_PHYSICS_SPHERE_H_
 #define LEGEND_PHYSICS_SPHERE_H_
 
-#include "src/math/vector_3.h"
-#include "src/game/game_device.h"
 #include "src/physics/bounding_box.h"
 
 namespace legend {
@@ -36,19 +34,23 @@ class Sphere {
   /**
    * @brief 座標の取得
    */
-  math::Vector3 GetPosition();
+  math::Vector3 GetPosition() const;
   /**
    * @brief 回転量の取得
    */
-  math::Vector3 GetRotation();
+  math::Vector3 GetRotation() const;
   /**
    * @brief スケールの取得
    */
-  math::Vector3 GetScale();
+  float GetScale() const;
   /**
    * @brief 半径の取得
    */
-  float GetRadius();
+  float GetRadius() const;
+  /**
+   * @brief 半径の2乗を取得
+   */
+  float GetSquareRadius() const;
   /**
    * @brief 座標の設定
    */
@@ -60,9 +62,9 @@ class Sphere {
   /**
    * @brief スケールの設定
    */
-  void SetScale(math::Vector3 scale);
+  void SetScale(float scale);
   /**
-   * @brief 半径の取得
+   * @brief 半径の設定
    */
   void SetRadius(float radius);
 
@@ -72,7 +74,7 @@ class Sphere {
   //!回転
   math::Vector3 rotation_;
   //!スケール
-  math::Vector3 scale_;
+  float scale_;
   //!半径
   float radius_;
 

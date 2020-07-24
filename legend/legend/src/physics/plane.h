@@ -39,11 +39,11 @@ class Plane {
   /**
    * @brief 位置の取得
    */
-  math::Vector3 GetPosition();
+  math::Vector3 GetPosition() const;
   /**
    * @brief 法線ベクトルの取得
    */
-  math::Vector3 GetNormal();
+  math::Vector3 GetNormal() const;
 
  private:
   //! 位置

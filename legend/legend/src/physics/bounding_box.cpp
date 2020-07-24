@@ -27,14 +27,14 @@ BoundingBox::~BoundingBox() {}
 //初期化
 bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   //中心座標と各軸の長さから頂点座標を設定
-  float left = GetPosition().x + -GetLength(0);
+  float left = GetPosition().x - GetLength(0);
   float right = GetPosition().x + GetLength(0);
-  float down = GetPosition().y + -GetLength(1);
+  float down = GetPosition().y - GetLength(1);
   float up = GetPosition().y + GetLength(1);
-  float front = GetPosition().z + -GetLength(2);
+  float front = GetPosition().z - GetLength(2);
   float back = GetPosition().z + GetLength(2);
 
-  const std::vector<directx::BoundingBox> vertices{
+  const std::vector<directx::PhysicsVertex> vertices{
       {{left, down, front}},   // 0
       {{left, down, back}},    // 1
       {{right, down, back}},   // 2
@@ -46,7 +46,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"BoundingBox_VertexBuffer")) {
     return false;
@@ -74,7 +74,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
 
   math::Vector3 position = math::Vector3::kZeroVector;
   math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector * 0.5f;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
@@ -151,6 +151,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   return true;
 }
 
+//更新
 void BoundingBox::Update() {
   math::Vector3 position = GetPosition();
   math::Vector3 rotate = GetRotation();
@@ -162,7 +163,7 @@ void BoundingBox::Update() {
   transform_constant_buffer_.UpdateStaging();
 }
 
-//更新
+//描画
 void BoundingBox::Draw(directx::DirectX12Device& device) {
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
@@ -177,7 +178,7 @@ void BoundingBox::Draw(directx::DirectX12Device& device) {
 }
 
 //方向ベクトルを取得
-math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
+math::Vector3 BoundingBox::GetDirection(i32 direction_num) const {
   if (direction_num > directions_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return math::Vector3::kZeroVector;
@@ -187,7 +188,7 @@ math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
 }
 
 //長さを取得
-float BoundingBox::GetLength(i32 length_num) {
+float BoundingBox::GetLength(i32 length_num) const {
   if (length_num > lengthes_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return 1;
@@ -196,23 +197,41 @@ float BoundingBox::GetLength(i32 length_num) {
   return lengthes_[length_num];
 }
 
+//スケール倍した長さを取得
+float BoundingBox::GetLengthByScale(i32 length_num) const {
+  if (length_num > lengthes_.size()) {
+    MY_LOG(L"格納数よりも大きい値です");
+    return 1;
+  }
+
+  float scale;
+  if (length_num == 0)
+    scale = GetScale().x;
+  else if (length_num == 1)
+    scale = GetScale().y;
+  else
+    scale = GetScale().z;
+
+  return lengthes_[length_num] * scale;
+}
+
 //現在の位置を取得
-math::Vector3 BoundingBox::GetPosition() { return position_; }
+math::Vector3 BoundingBox::GetPosition() const { return position_; }
 
 //現在の回転量を取得
-math::Vector3 BoundingBox::GetRotation() { return rotation_; }
+math::Vector3 BoundingBox::GetRotation() const { return rotation_; }
 
 //現在のスケールを取得
-math::Vector3 BoundingBox::GetScale() { return scale_; }
+math::Vector3 BoundingBox::GetScale() const { return scale_; }
 
 //分離軸Xを取得
-math::Vector3 BoundingBox::GetAxisX() { return axis_x; }
+math::Vector3 BoundingBox::GetAxisX() const { return axis_x; }
 
 //分離軸Yを取得
-math::Vector3 BoundingBox::GetAxisY() { return axis_y; }
+math::Vector3 BoundingBox::GetAxisY() const { return axis_y; }
 
 //分離軸Zを取得
-math::Vector3 BoundingBox::GetAxisZ() { return axis_z; }
+math::Vector3 BoundingBox::GetAxisZ() const { return axis_z; }
 
 //各方向ベクトルの設定
 void BoundingBox::SetDirection(math::Vector3 direction_x,

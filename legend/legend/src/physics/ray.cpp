@@ -1,4 +1,4 @@
-#include "src/physics/sphere.h"
+#include "src/physics/ray.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/vertex.h"
@@ -7,60 +7,48 @@ namespace legend {
 namespace physics {
 
 //コンストラクタ
-Sphere::Sphere()
-    : position_(math::Vector3::kZeroVector),
-      rotation_(math::Vector3::kZeroVector),
-      scale_(0.1f),
-      radius_(2) {}
+Ray::Ray()
+    : start_position_(math::Vector3::kZeroVector),
+      direction_(math::Vector3::kRightVector),
+      max_distance_(1) {}
+
+//コンストラクタ
+Ray::Ray(math::Vector3 direction, float max_distance)
+    : start_position_(math::Vector3::kZeroVector),
+      direction_(direction),
+      max_distance_(max_distance) {}
+
+//コンストラクタ
+Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
+         float max_distance)
+    : start_position_(start_position),
+      direction_(direction),
+      max_distance_(max_distance) {}
 
 //デストラクタ
-Sphere::~Sphere() {}
+Ray::~Ray() {}
 
-bool Sphere::Initialize(directx::DirectX12Device& device) {
-  std::vector<directx::PhysicsVertex> vertices(u_max * (v_max + 1));
-  for (i32 v = 0; v < v_max; v++) {
-    for (i32 u = 0; u < u_max; u++) {
-      float theta = math::util::DEG_2_RAD * (180.0f * v / v_max);
-      float phi = math::util::DEG_2_RAD * (360.0f * u / u_max);
-      float x = math::util::Sin(theta) * math::util::Cos(phi);
-      float y = math::util::Cos(theta);
-      float z = math::util::Sin(theta) * math::util::Sin(phi);
-      vertices[u_max * v + u].position = math::Vector3(x, y, z);
-    }
-  }
+bool Ray::Initialize(directx::DirectX12Device& device) {
+  const std::vector<directx::PhysicsVertex> vertices{
+      {{start_position_}},            // 0
+      {{direction_ * max_distance_}}  // 1
+  };
 
   //頂点バッファ作成
   if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
-                           L"Sphere_VertexBuffer")) {
+                           L"Ray_VertexBuffer")) {
     return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
     return false;
   }
 
-  std::vector<u16> indices(2 * v_max * (u_max + 1));
-  i32 i = 0;
-  for (i32 v = 0; v < v_max; v++) {
-    for (i32 u = 0; u < u_max; u++) {
-      if (u == u_max) {
-        indices[i] = v * u_max;
-        i++;
-        indices[i] = (v + 1) * u_max;
-        i++;
-      } else {
-        indices[i] = (v * u_max) + u;
-        i++;
-        indices[i] = indices[i - 1] + u_max;
-        i++;
-      }
-    }
-  }
-
+  const std::vector<u16> indices{0, 1};
   //インデックスバッファ作成
   if (!index_buffer_.InitAndWrite(device, indices,
-                                  directx::PrimitiveTopology::PointList,
-                                  L"Sphere_IndexBuffer")) {
+                                  directx::PrimitiveTopology::LineList,
+                                  L"Ray_IndexBuffer")) {
     return false;
   }
 
@@ -71,7 +59,7 @@ bool Sphere::Initialize(directx::DirectX12Device& device) {
 
   math::Vector3 position = math::Vector3::kZeroVector;
   math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3(0.1f, 0.1f, 0.1f) * radius_;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
@@ -138,29 +126,18 @@ bool Sphere::Initialize(directx::DirectX12Device& device) {
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
   pipeline_state_.SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT);
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
   if (!pipeline_state_.CreatePipelineState(
           game::GameDevice::GetInstance()->GetDevice())) {
     return false;
   }
-
   return true;
 }
 
-void Sphere::Update() {
-  math::Vector3 position = GetPosition();
-  math::Vector3 rotate = GetRotation();
-  math::Vector3 scale =
-      math::Vector3(GetRadius(), GetRadius(), GetRadius());
-  transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale) *
-      math::Matrix4x4::CreateRotation(rotate) *
-      math::Matrix4x4::CreateTranslate(position);
-  transform_constant_buffer_.UpdateStaging();
-}
+void Ray::Update() {}
 
-void Sphere::Draw(directx::DirectX12Device& device) {
+void Ray::Draw(directx::DirectX12Device& device) {
   root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
   device.GetHeapManager().SetGraphicsCommandList(device);
@@ -173,31 +150,13 @@ void Sphere::Draw(directx::DirectX12Device& device) {
   index_buffer_.Draw(device);
 }
 
-//座標の取得
-math::Vector3 Sphere::GetPosition() const { return position_; }
+//始点の取得
+math::Vector3 Ray::GetStartPosition() const { return start_position_; }
 
-//回転量の取得
-math::Vector3 Sphere::GetRotation() const { return rotation_; }
+//方向ベクトルの取得
+math::Vector3 Ray::GetDirection() const { return direction_; }
 
-//スケールの取得
-float Sphere::GetScale() const { return scale_; }
-
-//半径の取得
-float Sphere::GetRadius() const { return radius_ * scale_; }
-
-//半径の2乗を取得
-float Sphere::GetSquareRadius() const { return GetRadius() * GetRadius(); }
-
-//座標の設定
-void Sphere::SetPosition(math::Vector3 position) { position_ = position; }
-
-//回転量の設定
-void Sphere::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
-
-//スケールの設定
-void Sphere::SetScale(float scale) { scale_ = scale; }
-
-//半径の設定
-void Sphere::SetRadius(float radius) { radius_ = radius; }
+//最大範囲の取得
+float Ray::GetDistance() const { return max_distance_; }
 }  // namespace physics
 }  // namespace legend

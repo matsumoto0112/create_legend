@@ -30,7 +30,10 @@ struct Sprite {
   math::Vector2 uv;
 };
 
-struct BoundingBox {
+/**
+ * @brief ï®óùåní∏ì_
+ */
+struct PhysicsVertex {
     math::Vector3 position;
 };
 

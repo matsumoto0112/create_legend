@@ -76,6 +76,7 @@
     <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\physics\sphere.h" />
+    <ClInclude Include="src\physics\ray.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

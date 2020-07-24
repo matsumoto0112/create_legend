@@ -58,6 +58,11 @@ class BoundingBox {
    */
   float GetLength(i32 length_num) const;
   /**
+   * @brief スケール倍の長さを取得
+   * @param 軸番号
+   */
+  float GetLengthByScale(i32 length_num) const;
+  /**
    * @brief 現在の位置を取得
    */
   math::Vector3 GetPosition() const;

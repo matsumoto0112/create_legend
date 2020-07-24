@@ -49,7 +49,7 @@ class PhysicsTest : public Scene {
   //! ’¼•û‘Ì
   std::vector<physics::BoundingBox> obbs_;
   //! ¶¬”
-  i32 obb_num_ = 2;
+  i32 obb_num_ = 1;
   //! •½–Ê
   physics::Plane plane_;
   //! ‹…

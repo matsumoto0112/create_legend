@@ -9,8 +9,8 @@ namespace physics {
 //コンストラクタ
 Ray::Ray()
     : start_position_(math::Vector3::kZeroVector),
-      direction_(math::Vector3::kForwardVector),
-      max_distance_(5) {}
+      direction_(math::Vector3::kRightVector),
+      max_distance_(1) {}
 
 //コンストラクタ
 Ray::Ray(math::Vector3 direction, float max_distance)
@@ -59,7 +59,7 @@ bool Ray::Initialize(directx::DirectX12Device& device) {
 
   math::Vector3 position = math::Vector3::kZeroVector;
   math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector * 0.5f;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *

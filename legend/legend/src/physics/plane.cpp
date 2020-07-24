@@ -7,7 +7,7 @@ namespace legend {
 namespace physics {
 //コンストラクタ
 Plane::Plane()
-    : position_(math::Vector3::kZeroVector), normal_(math::Vector3(0, 1, 0)) {}
+    : position_(math::Vector3::kZeroVector), normal_(math::Vector3::kUpVector) {}
 
 Plane::~Plane() {}
 

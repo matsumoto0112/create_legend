@@ -27,11 +27,11 @@ BoundingBox::~BoundingBox() {}
 //初期化
 bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   //中心座標と各軸の長さから頂点座標を設定
-  float left = GetPosition().x + -GetLength(0);
+  float left = GetPosition().x - GetLength(0);
   float right = GetPosition().x + GetLength(0);
-  float down = GetPosition().y + -GetLength(1);
+  float down = GetPosition().y - GetLength(1);
   float up = GetPosition().y + GetLength(1);
-  float front = GetPosition().z + -GetLength(2);
+  float front = GetPosition().z - GetLength(2);
   float back = GetPosition().z + GetLength(2);
 
   const std::vector<directx::PhysicsVertex> vertices{
@@ -74,7 +74,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
 
   math::Vector3 position = math::Vector3::kZeroVector;
   math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector * 0.5f;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
@@ -195,6 +195,24 @@ float BoundingBox::GetLength(i32 length_num) const {
   }
 
   return lengthes_[length_num];
+}
+
+//スケール倍した長さを取得
+float BoundingBox::GetLengthByScale(i32 length_num) const {
+  if (length_num > lengthes_.size()) {
+    MY_LOG(L"格納数よりも大きい値です");
+    return 1;
+  }
+
+  float scale;
+  if (length_num == 0)
+    scale = GetScale().x;
+  else if (length_num == 1)
+    scale = GetScale().y;
+  else
+    scale = GetScale().z;
+
+  return lengthes_[length_num] * scale;
 }
 
 //現在の位置を取得

@@ -37,6 +37,20 @@ class Collision : public util::Singleton<Collision> {
    */
   bool Collision_OBB_Plane(BoundingBox& obb, Plane& plane);
   /**
+   * @brief 球と直方体の衝突判定
+   * @param 球
+   * @param 直方体
+   */
+  bool Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb);
+  /**
+   * @brief 球と線分の距離比較
+   * @param 球
+   * @param 始点
+   * @param 終点
+   */
+  bool IsCheckLength_Point_Segment(Sphere& sphere, math::Vector3 start_position,
+                                math::Vector3 end_position);
+  /**
    * @brief 球と平面の衝突判定
    * @param 球
    * @param 平面

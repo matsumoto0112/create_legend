@@ -152,7 +152,7 @@ void Sphere::Update() {
   math::Vector3 position = GetPosition();
   math::Vector3 rotate = GetRotation();
   math::Vector3 scale =
-      math::Vector3(GetScale(), GetScale(), GetScale()) * radius_;
+      math::Vector3(GetRadius(), GetRadius(), GetRadius());
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *

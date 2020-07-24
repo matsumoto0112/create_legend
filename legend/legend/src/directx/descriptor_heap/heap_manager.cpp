@@ -51,6 +51,8 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   this->global_heap_allocated_count_ = 0;
   this->default_handle_ =
       local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
+  device.GetDevice()->CreateConstantBufferView(nullptr,
+                                               default_handle_.cpu_handle_);
   return true;
 }
 

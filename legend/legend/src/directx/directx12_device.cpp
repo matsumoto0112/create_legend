@@ -82,15 +82,8 @@ bool DirectX12Device::Present() {
   render_resource_manager_.DrawEnd(*this);
   swap_chain_.DrawEnd(*this);
 
-  if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
-    return false;
-  }
+  ExecuteCommandList();
 
-  ID3D12CommandList* command_lists[] = {
-      command_lists_[frame_index_].GetCommandList()};
-  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
-
-  WaitForGPU();
   if (!swap_chain_.Present()) {
     return false;
   }
@@ -137,6 +130,19 @@ DXGI_FORMAT DirectX12Device::GetBackBufferFormat() const {
 
 void DirectX12Device::SetBackBuffer(IDirectXAccessor& accessor) {
   swap_chain_.SetBackBuffer(accessor);
+}
+
+bool DirectX12Device::ExecuteCommandList() {
+  if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
+    return false;
+  }
+
+  ID3D12CommandList* command_lists[] = {
+      command_lists_[frame_index_].GetCommandList()};
+  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
+
+  WaitForGPU();
+  return true;
 }
 
 bool DirectX12Device::CreateDevice() {

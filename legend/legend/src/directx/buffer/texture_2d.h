@@ -18,6 +18,25 @@ namespace buffer {
 class Texture2D {
  public:
   /**
+   * @brief テクスチャデスク
+   */
+  struct Desc {
+    //! シェーダーのレジスター番号
+    u32 register_num;
+    //! フォーマット
+    DXGI_FORMAT format;
+    //! 幅
+    u32 width;
+    //! 高さ
+    u32 height;
+    //! ハンドル
+    descriptor_heap::DescriptorHandle handle;
+    //! リソース名
+    std::wstring name;
+  };
+
+ public:
+  /**
    * @brief コンストラクタ
    */
   Texture2D();
@@ -28,37 +47,34 @@ class Texture2D {
   /**
    * @brief 初期化
    * @param device DirectX12デバイス
-   * @param register_num シェーダーのレジスター番号
-   * @param format テクスチャのフォーマット
-   * @param width テクスチャの幅
-   * @param height テクスチャの高さ
-   * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
+   * @param desc テクスチャデスク
+=   * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 register_num, DXGI_FORMAT format,
-            u32 width, u32 height, descriptor_heap::DescriptorHandle handle,
-            const std::wstring& name);
+  bool Init(DirectX12Device& device, const Desc& desc);
   /**
    * @brief テクスチャを読み込みつつ初期化する
    * @param device DirectX12デバイス
    * @param register_num シェーダーのレジスター番号
    * @param filename ファイル名
+   * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
    */
   bool InitAndWrite(DirectX12Device& device, u32 register_num,
                     const std::filesystem::path& filename,
-                    descriptor_heap::DescriptorHandle handle);
+                    const descriptor_heap::DescriptorHandle& handle);
   /**
    * @brief テクスチャを書き込みつつ初期化する
    * @param device DirectX12デバイス
    * @param register_num シェーダーのレジスター番号
+   * @param format テクスチャのフォーマット
    * @param data テクスチャデータ
+   * @param handle テクスチャハンドル
    * @param filename ファイル名
    * @return 初期化に成功したらtrueを返す
    */
   bool InitAndWrite(DirectX12Device& device, u32 register_num,
-                    const std::vector<u8>& data,
-                    descriptor_heap::DescriptorHandle handle,
+                    DXGI_FORMAT format, const std::vector<u8>& data,
+                    const descriptor_heap::DescriptorHandle& handle,
                     const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
@@ -80,26 +96,23 @@ class Texture2D {
   void SetToHeap(DirectX12Device& device, u32 overwrite_register_num);
 
  public:
-  inline void SetWidth(u32 width) { this->width_ = width; }
+  /**
+   * @brief テクスチャの幅を取得する
+   */
   inline u32 GetWidth() const { return width_; }
-  inline void SetHeight(u32 height) { this->height_ = height; }
+  /**
+   * @brief テクスチャの高さを取得する
+   */
   inline u32 GetHeight() const { return height_; }
 
  private:
   /**
    * @brief テクスチャバッファを初期化する
    * @param device DirectX12デバイス
-   * @param register_num シェーダーのレジスター番号
-   * @param format テクスチャのフォーマット
-   * @param width テクスチャの幅
-   * @param height テクスチャの高さ
-   * @param name リソース名
+   * @param desc テクスチャデスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitTexBuffer(DirectX12Device& device, u32 register_num,
-                     DXGI_FORMAT format, u32 width, u32 height,
-                     descriptor_heap::DescriptorHandle handle,
-                     const std::wstring& name);
+  bool InitTexBuffer(DirectX12Device& device, const Desc& desc);
 
  private:
   //! テクスチャデータ

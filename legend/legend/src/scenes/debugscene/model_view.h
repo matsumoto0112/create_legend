@@ -3,30 +3,27 @@
 
 /**
  * @brief モデル描画テストシーン
+ * @details モデルを一つ読み込み、アルベドテクスチャを張った状態で描画するシーン
+ パラメータとしてモデルの座標、回転、スケーリング、カメラの座標、回転、fovが操作できる
  */
 
+#include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
-#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
+#include "src/draw/model.h"
 #include "src/math/matrix_4x4.h"
 #include "src/math/quaternion.h"
 #include "src/scenes/scene.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace scenes {
 namespace debugscene {
-
-struct Transform {
-  math::Matrix4x4 world;
-};
-struct WorldContext {
-  math::Matrix4x4 view;
-  math::Matrix4x4 projection;
-};
 
 /**
  * @class ModelView
@@ -61,15 +58,18 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_cb_;
-  math::Quaternion rotation_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_cb_;
-  directx::buffer::Texture2D texture_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
+  //! モデル名
+  static const std::wstring MODEL_NAME;
+  //! 読み込んだモデルデータ
+  draw::Model model_;
+  //! トランスフォーム転送用コンスタントバッファ
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
+  util::Transform transform_;
+  //描画マテリアル
   directx::shader::GraphicsPipelineState pipeline_state_;
+
+  camera::PerspectiveCamera camera_;
 };
 
 }  // namespace debugscene

@@ -2,7 +2,6 @@
 
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/multi_render_target_test.h"
-#include "src/scenes/debugscene/perspective_camera_test.h"
 #include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/post_process_viewer.h"
 #include "src/scenes/debugscene/sound_test.h"
@@ -67,10 +66,6 @@ bool SceneManager::Update() {
         break;
       case SceneType::SOUND_TEST:
         current_scene_ = std::make_unique<debugscene::SoundTest>(this);
-        break;
-      case SceneType::PERSPECTIVE_CAMERA_TEST:
-        current_scene_ =
-            std::make_unique<debugscene::PerspectiveCameraTest>(this);
         break;
       case SceneType::PHYSICS_TEST:
         current_scene_ = std::make_unique<debugscene::PhysicsTest>(this);

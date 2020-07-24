@@ -13,7 +13,6 @@ namespace legend {
 namespace util {
 class Transform {
  public:
-  Transform();
   Transform(const math::Vector3& position = math::Vector3::kZeroVector,
             const math::Quaternion& rotation = math::Quaternion::kIdentity,
             const math::Vector3& scale = math::Vector3::kUnitVector);

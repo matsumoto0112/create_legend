@@ -1,6 +1,7 @@
 #include "src/scenes/debugscene/model_view.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/libs/stb_image.h"
@@ -11,8 +12,12 @@ namespace legend {
 namespace scenes {
 namespace debugscene {
 
+//モデル名
+const std::wstring ModelView::MODEL_NAME = L"1000cmObject";
+
 //コンストラクタ
-ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
+ModelView::ModelView(ISceneChange* scene_change)
+    : Scene(scene_change), transform_() {}
 
 ModelView::~ModelView() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
@@ -23,143 +28,35 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  const std::wstring name = L"1000cmObject";
   const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / (name + L".glb");
-  util::loader::GLBLoader loader;
-  if (!loader.Load(model_path)) {
-    MY_LOG(L"モデルの読み込みに失敗しました。対象のファイルは%sです。",
-           model_path.generic_wstring().c_str());
+      util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
+  if (!model_.Init(model_path)) {
+    MY_LOG(L"モデルの読み込みに失敗しました。");
     return false;
   }
 
-  const u32 vertex_num = loader.GetVertexNum();
-  std::vector<directx::Vertex> vertices(vertex_num);
-
-  //頂点座標
-  {
-    const std::vector<float> position_list = loader.GetPosition();
-    const u32 position_component_size = loader.GetPositionComponentSize();
-
-    if (position_component_size == 3) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].position.x = position_list[i * position_component_size + 0];
-        vertices[i].position.y = position_list[i * position_component_size + 1];
-        vertices[i].position.z = position_list[i * position_component_size + 2];
-      }
-    } else {
-      MY_LOG(L"頂点座標情報の格納に失敗しました。リソース名は%sです",
-             name.c_str());
-    }
-  }
-
-  //法線
-  {
-    const std::vector<float> normal_list = loader.GetNormal();
-    const u32 normal_component_size = loader.GetNormalComponentSize();
-    if (normal_component_size == 3) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].normal.x = normal_list[i * normal_component_size + 0];
-        vertices[i].normal.y = normal_list[i * normal_component_size + 1];
-        vertices[i].normal.z = normal_list[i * normal_component_size + 2];
-      }
-    } else {
-      MY_LOG(L"法線情報の格納に失敗しました。リソース名は%sです", name.c_str());
-    }
-  }
-
-  // UV
-  {
-    const std::vector<float> uv_list = loader.GetUV();
-    const u32 uv_component_size = loader.GetUVComponentSize();
-    if (uv_component_size == 2) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].uv.x = uv_list[i * uv_component_size + 0];
-        vertices[i].uv.y = uv_list[i * uv_component_size + 1];
-      }
-    } else {
-      MY_LOG(L"UV情報の格納に失敗しました。リソース名は%sです", name.c_str());
-    }
-  }
-
-  //接線
-  {
-    const std::vector<float> tangent_list = loader.GetTangent();
-    const u32 tangent_component_size = loader.GetTangentComponentSize();
-    if (tangent_component_size == 4) {
-      for (u32 i = 0; i < vertex_num; i++) {
-        vertices[i].tangent.x = tangent_list[i * tangent_component_size + 0];
-        vertices[i].tangent.y = tangent_list[i * tangent_component_size + 1];
-        vertices[i].tangent.z = tangent_list[i * tangent_component_size + 2];
-        vertices[i].tangent.w = tangent_list[i * tangent_component_size + 3];
-      }
-    } else {
-      MY_LOG(L"接線情報の格納に失敗しました。リソース名は%sです", name.c_str());
-    }
-  }
-
-  //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::Vertex), vertex_num,
-                           name + L"_VertexBuffer")) {
-    return false;
-  }
-  if (!vertex_buffer_.WriteBufferResource(vertices)) {
-    return false;
-  }
-
-  const std::vector<u16> index = loader.GetIndex();
-  //インデックスバッファ作成
-  if (!index_buffer_.InitAndWrite(device, index,
-                                  directx::PrimitiveTopology::TriangleList,
-                                  name + L"_IndexBuffer")) {
-    return false;
-  }
   if (!transform_cb_.Init(
-          device, 0,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::MODEL_VIEW_SCENE),
           L"Transform ConstantBuffer")) {
     return false;
   }
 
-  math::Vector3 position = math::Vector3(0, 0, 0);
-  math::Vector3 scale = math::Vector3::kUnitVector * 1.0f;
-  transform_cb_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale) *
-      math::Matrix4x4::CreateTranslate(position);
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  if (!world_cb_.Init(
-          device, 1,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"WorldContext ConstantBuffer")) {
-    return false;
-  }
-
-  world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
-      math::Vector3::kUpVector);
-  const float aspect = 1280.0f / 720.0f;
-  world_cb_.GetStagingRef().projection =
-      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
-  world_cb_.UpdateStaging();
-
-  //メインテクスチャの書き込み
-  const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!texture_.InitAndWrite(
-          device, 0, albedo,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          name + L"_Albedo")) {
-    return false;
-  }
-
-  //ルートシグネチャ作成
-  root_signature_ = std::make_shared<directx::shader::RootSignature>();
-  if (!root_signature_->Init(game::GameDevice::GetInstance()->GetDevice(),
-                             L"Global Root Signature")) {
-    return false;
+  {
+    const math::Vector3 camera_position = math::Vector3(0, 10, -10);
+    const math::Quaternion camera_rotation =
+        math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
+    const math::IntVector2 screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
+    if (!camera_.Init(L"MainCamera", camera_position, camera_rotation,
+                      math::util::DEG_2_RAD * 50.0f, aspect_ratio)) {
+      return false;
+    }
   }
 
   //頂点シェーダー
@@ -207,7 +104,7 @@ bool ModelView::Initialize() {
   }
 
   //パイプライン作成開始
-  pipeline_state_.SetRootSignature(root_signature_);
+  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
   device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
@@ -226,17 +123,8 @@ bool ModelView::Initialize() {
 //更新
 bool ModelView::Update() {
   if (ImGui::Begin("Transform")) {
-    static std::array<float, 3> rotation;
-    ImGui::SliderFloat3("Rotation", rotation.data(), -180.0f, 180.0f);
-    rotation_ =
-        math::Quaternion::FromEular(rotation[0] * math::util::DEG_2_RAD,
-                                    rotation[1] * math::util::DEG_2_RAD,
-                                    rotation[2] * math::util::DEG_2_RAD);
   }
   ImGui::End();
-
-  // rotation_ = rotation_ * math::Quaternion::FromEular(1.0f, 0.0f, 0.0f);
-
   return true;
 }
 
@@ -247,20 +135,12 @@ void ModelView::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
-  texture_.SetToHeap(device);
-  world_cb_.SetToHeap(device);
-
-  transform_cb_.GetStagingRef().world = math::Quaternion::ToMatrix(rotation_);
-  transform_cb_.UpdateStaging();
+  camera_.RenderStart();
   transform_cb_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
+  model_.Draw();
 }
+
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }

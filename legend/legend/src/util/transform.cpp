@@ -2,8 +2,6 @@
 
 namespace legend {
 namespace util {
-Transform::Transform() {}
-
 Transform::Transform(const math::Vector3& position,
                      const math::Quaternion& rotation,
                      const math::Vector3& scale)

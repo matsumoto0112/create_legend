@@ -18,13 +18,19 @@ class MyApp final : public device::Application {
     if (!scene_manager_.Initialize()) {
       return false;
     }
-    if (!game::GameDevice::GetInstance()
-             ->GetDevice()
-             .GetHeapManager()
-             .AddLocalHeap(game::GameDevice::GetInstance()->GetDevice(),
-                           directx::descriptor_heap::heap_parameter::
-                               LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE)) {
-      return false;
+
+    directx::descriptor_heap::HeapManager& heap_manager =
+        game::GameDevice::GetInstance()->GetDevice().GetHeapManager();
+    const auto HEAP_IDS = {
+        directx::descriptor_heap::heap_parameter::LocalHeapID::MODEL_VIEW_SCENE,
+        directx::descriptor_heap::heap_parameter::LocalHeapID::
+            PERSPECTIVE_CAMERA_TEST_SCENE,
+    };
+    for (auto&& id : HEAP_IDS) {
+      if (!heap_manager.AddLocalHeap(
+              game::GameDevice::GetInstance()->GetDevice(), id)) {
+        return false;
+      }
     }
     return true;
   }
@@ -47,7 +53,6 @@ class MyApp final : public device::Application {
           scenes::SceneType::GAMEOVER,
           scenes::SceneType::MODEL_VIEW,
           scenes::SceneType::SOUND_TEST,
-          scenes::SceneType::PERSPECTIVE_CAMERA_TEST,
           scenes::SceneType::PHYSICS_TEST,
           scenes::SceneType::SPRITE_TEST,
           scenes::SceneType::POST_PROCES_VIEWER,

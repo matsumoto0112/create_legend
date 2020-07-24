@@ -12,7 +12,9 @@ TextureChar::TextureChar() {}
 TextureChar::~TextureChar() {}
 
 //èâä˙âª
-bool TextureChar::Init(wchar_t c, const std::wstring& font, i32 font_size) {
+bool TextureChar::Init(
+    wchar_t c, const std::wstring& font, i32 font_size, u32 register_num,
+    const directx::descriptor_heap::DescriptorHandle& handle) {
   std::vector<u8> data;
   u32 width, height;
   if (!CreateChar(c, font, font_size, &data, &width, &height)) {
@@ -20,12 +22,13 @@ bool TextureChar::Init(wchar_t c, const std::wstring& font, i32 font_size) {
   }
 
   auto texture = std::make_shared<directx::buffer::Texture2D>();
-  if (!texture->Init(
-          game::GameDevice::GetInstance()->GetDevice(), 0,
-          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, width, height,
-          game::GameDevice::GetInstance()->GetDevice().GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"TextureChar_Texture")) {
+  const directx::buffer::Texture2D::Desc desc{
+      register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+      width,        height,
+      handle,       L"TextureChar_" + c,
+  };
+
+  if (!texture->Init(game::GameDevice::GetInstance()->GetDevice(), desc)) {
     return false;
   }
 

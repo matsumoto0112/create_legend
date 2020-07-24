@@ -1,5 +1,6 @@
 ﻿#include "src/scenes/debugscene/sprite_render_test.h"
 
+#include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 #include "src/util/loader/font_loader.h"
 #include "src/util/path.h"
@@ -12,14 +13,17 @@ SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
 SpriteRenderTest::~SpriteRenderTest() {
-    game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 
 bool SpriteRenderTest::Initialize() {
   const auto fon =
       util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
   const std::wstring name = util::loader::FontLoader::GetInstance()->Load(fon);
-  if (!string_.Init(L"", name, 128)) {
+  if (!string_.Init(L"", directx::shader::TextureRegisterID::Albedo,
+                    directx::descriptor_heap::heap_parameter::LocalHeapID::
+                        SPRITE_RENDER_TEST,
+                    name, 128)) {
     return false;
   }
   return true;

@@ -44,7 +44,6 @@ bool MultiRenderTargetTest::Initialize() {
     //まだレンダーターゲットが作られていないなら作る
     if (!device.GetRenderResourceManager().IsRegisteredRenderTargetID(
             directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST)) {
-      //ポストプロセス描画用レンダーターゲット
       if (!device.GetRenderResourceManager().CreateRenderTargets(
               device,
               directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
@@ -52,6 +51,17 @@ bool MultiRenderTargetTest::Initialize() {
         return false;
       }
     }
+
+    //デプス・ステンシルが作られていなければ作る
+    if (!device.GetRenderResourceManager().IsRegisterdDepthStencilTargetID(
+            directx::render_target::DepthStencilTargetID::Depth)) {
+      if (!device.GetRenderResourceManager().CreateDepthStencil(
+              device, directx::render_target::DepthStencilTargetID::Depth,
+              DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, w, h, 1.0f, 0, L"Depth")) {
+        return false;
+      }
+    }
+
     if (!pipeline_state_.Init(device)) {
       return false;
     }
@@ -82,6 +92,9 @@ bool MultiRenderTargetTest::Initialize() {
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device,
         directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+        &pipeline_state_);
+    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+        device, directx::render_target::DepthStencilTargetID::Depth,
         &pipeline_state_);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
@@ -224,6 +237,8 @@ bool MultiRenderTargetTest::Update() {
     ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
     camera_.SetRotation(
         math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
+
+    //カメラの上方向ベクトルを変更する
     if (ImGui::Button("X_UP")) {
       camera_.SetUpVector(math::Vector3::kRightVector);
     }
@@ -237,6 +252,7 @@ bool MultiRenderTargetTest::Update() {
     ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
     camera_.SetFov(fov * math::util::DEG_2_RAD);
 
+    //ボーダーラインを移動する
     float border = post_process_local_cb_.GetStagingRef().border;
     ImGui::SliderFloat("Border", &border, 0.0f, 1.0f);
     post_process_local_cb_.GetStagingRef().border = border;
@@ -249,10 +265,14 @@ void MultiRenderTargetTest::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  //まず、マルチレンダーターゲット側にモデルを描画する
   device.GetRenderResourceManager().SetRenderTargetID(
       directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST);
+  device.GetRenderResourceManager().SetDepthStencilTargetID(
+      directx::render_target::DepthStencilTargetID::Depth);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
+  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
   camera_.RenderStart();
   pipeline_state_.SetGraphicsCommandList(device);
 
@@ -264,8 +284,11 @@ void MultiRenderTargetTest::Draw() {
     model_.Draw();
   }
 
+  //バックバッファに切り替え、ポストプロセスを利用して描画をする
   device.GetRenderResourceManager().SetRenderTargetID(
       directx::render_target::RenderTargetID::BACK_BUFFER);
+  device.GetRenderResourceManager().SetDepthStencilTargetID(
+      directx::render_target::DepthStencilTargetID::None);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   post_process_pipeline_.SetGraphicsCommandList(device);

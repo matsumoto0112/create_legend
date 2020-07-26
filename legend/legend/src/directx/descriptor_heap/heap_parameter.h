@@ -66,7 +66,7 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
     case LocalHeapID::SOUND_TEST:
       return 100;
     case LocalHeapID::SPRITE_RENDER_TEST:
-      return 10;
+      return 2000;
     default:
       MY_LOG(L"–¢’è‹`‚ÌID‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
       break;

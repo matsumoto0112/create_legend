@@ -9,6 +9,7 @@
 #include "src/directx/buffer/committed_resource.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 
 namespace legend {
 namespace directx {
@@ -72,11 +73,10 @@ class DepthStencil {
    */
   void PrepareToSetCommandList(IDirectXAccessor& accessor);
   /**
-   * @brief パイプラインステートデスクにRTV情報を書き込む
-   * @param pipeline_state_desc 書き込む対象
+   * @brief パイプラインにDSV情報を書き込む
+   * @param pipeline 書き込む対象
    */
-  void WriteInfoToPipelineStateDesc(
-      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc) const;
+  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
 
   /**
    * @brief CPUハンドルを取得する

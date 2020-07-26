@@ -172,6 +172,7 @@
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />

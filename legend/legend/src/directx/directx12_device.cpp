@@ -58,7 +58,7 @@ bool DirectX12Device::Prepare() {
     return false;
   }
 
-  render_resource_manager_.SetRenderTarget(
+  render_resource_manager_.SetRenderTargetID(
       render_target::RenderTargetID::BACK_BUFFER);
   render_resource_manager_.SetRenderTargetsToCommandList(*this);
   render_resource_manager_.ClearCurrentRenderTarget(*this);
@@ -181,6 +181,7 @@ bool DirectX12Device::MoveToNextFrame() {
     return false;
   }
 
+  render_resource_manager_.UpdateCurrentFrameIndex();
   frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {

@@ -76,6 +76,15 @@ void GraphicsPipelineState::SetRenderTargetNum(u32 num) {
   pipeline_state_desc_.NumRenderTargets = num;
 }
 
+void GraphicsPipelineState::SetDSVFormat(DXGI_FORMAT format) {
+  pipeline_state_desc_.DSVFormat = format;
+}
+
+void GraphicsPipelineState::SetDepthStencilState(
+    const D3D12_DEPTH_STENCIL_DESC& desc) {
+  pipeline_state_desc_.DepthStencilState = desc;
+}
+
 //パイプラインステートをセットする
 bool GraphicsPipelineState::CreatePipelineState(IDirectXAccessor& device) {
   pipeline_state_desc_.SampleMask = UINT_MAX;

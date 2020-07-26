@@ -72,11 +72,10 @@ class RenderTarget {
    */
   void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
   /**
-   * @brief パイプラインステートデスクにRTV情報を書き込む
-   * @param pipeline_state_desc 書き込む対象
+   * @brief パイプラインステートにRTV情報を書き込む
+   * @param pipeline 書き込む対象
    */
-  void WriteInfoToPipelineStateDesc(
-      shader::GraphicsPipelineState& pipeline) const;
+  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
 
  public:
   /**

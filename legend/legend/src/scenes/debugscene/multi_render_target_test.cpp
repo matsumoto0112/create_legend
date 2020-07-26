@@ -79,10 +79,10 @@ bool MultiRenderTargetTest::Initialize() {
 
     pipeline_state_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
+    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device,
         directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-        pipeline_state_);
+        &pipeline_state_);
     if (!pipeline_state_.CreatePipelineState(device)) {
       return false;
     }
@@ -125,9 +125,9 @@ bool MultiRenderTargetTest::Initialize() {
 
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
+    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device, directx::render_target::RenderTargetID::BACK_BUFFER,
-        post_process_pipeline_);
+        &post_process_pipeline_);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
     }
@@ -249,7 +249,7 @@ void MultiRenderTargetTest::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  device.GetRenderResourceManager().SetRenderTarget(
+  device.GetRenderResourceManager().SetRenderTargetID(
       directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
@@ -264,7 +264,7 @@ void MultiRenderTargetTest::Draw() {
     model_.Draw();
   }
 
-  device.GetRenderResourceManager().SetRenderTarget(
+  device.GetRenderResourceManager().SetRenderTargetID(
       directx::render_target::RenderTargetID::BACK_BUFFER);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);

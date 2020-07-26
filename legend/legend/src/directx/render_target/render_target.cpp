@@ -91,10 +91,10 @@ void RenderTarget::Transition(IDirectXAccessor& accessor,
 }
 
 //パイプラインステートデスクに情報を書き込む
-void RenderTarget::WriteInfoToPipelineStateDesc(
-    shader::GraphicsPipelineState& pipeline) const {
-  pipeline.SetRTVFormat(format_, 0);
-  pipeline.SetRenderTargetNum(1);
+void RenderTarget::WriteInfoToPipelineState(
+    shader::GraphicsPipelineState* pipeline) const {
+  pipeline->SetRTVFormat(format_, 0);
+  pipeline->SetRenderTargetNum(1);
 }
 
 }  // namespace render_target

@@ -59,11 +59,10 @@ void DepthStencil::PrepareToSetCommandList(IDirectXAccessor& accessor) {
 }
 
 //パイプラインステートデスクに情報を書き込む
-void DepthStencil::WriteInfoToPipelineStateDesc(
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc) const {
-  pipeline_state_desc->DSVFormat = format_;
-  pipeline_state_desc->DepthStencilState =
-      CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+void DepthStencil::WriteInfoToPipelineState(
+    shader::GraphicsPipelineState* pipeline) const {
+  pipeline->SetDSVFormat(format_);
+  pipeline->SetDepthStencilState(CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT));
 }
 
 }  // namespace render_target

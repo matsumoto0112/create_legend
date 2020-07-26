@@ -53,8 +53,18 @@ class GraphicsPipelineState {
    * @brief 描画対象のプリミティブ形状を設定する
    */
   void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology_type);
+  /**
+   * @brief レンダーターゲットのフォーマットを設定する
+   * @param format フォーマット
+   * @param rtv_index 設定するレンダーターゲットインデックス
+   */
   void SetRTVFormat(DXGI_FORMAT format, u32 rtv_index);
+  /**
+   * @brief レンダーターゲット数を設定する
+   */
   void SetRenderTargetNum(u32 num);
+  void SetDSVFormat(DXGI_FORMAT format);
+  void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& desc);
   /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス

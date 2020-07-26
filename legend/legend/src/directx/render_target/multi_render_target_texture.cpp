@@ -76,7 +76,7 @@ void MultiRenderTargetTexture::SetToGlobalHeap(IDirectXAccessor& accessor,
   accessor.SetToGlobalHeap(rtt.register_num, ResourceType::Srv, rtt.srv_handle);
 }
 
-void MultiRenderTargetTexture::WriteInfoToPipelineDesc(
+void MultiRenderTargetTexture::WriteInfoToPipelineState(
     shader::GraphicsPipelineState* pipeline) {
   const u32 render_target_num = static_cast<u32>(render_targets_.size());
   for (u32 i = 0; i < render_target_num; i++) {

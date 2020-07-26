@@ -18,9 +18,6 @@ namespace device {
  * @brief スワップチェインクラス
  */
 class SwapChain {
-  //! バックバッファの枚数
-  static constexpr u32 FRAME_COUNT = 3;
-
  public:
   /**
    * @brief コンストラクタ
@@ -35,24 +32,24 @@ class SwapChain {
    * @param accessor DirectX12アクセサ
    * @param apapter アダプター
    * @param target_window 描画対象のウィンドウk
-   * @param command_queue コマンドキュー
    * @param format バックバッファのフォーマット
+   * @param back_buffer_count バックバッファの枚数
+   * @param command_queue コマンドキュー
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
-            window::Window& target_window, ID3D12CommandQueue* command_queue,
-            DXGI_FORMAT format);
-  /**
-   * @brief バックバッファをセットする
-   * @param accessor DirectX12アクセサ
-   */
-  void SetBackBuffer(IDirectXAccessor& accessor);
+            window::Window& target_window, DXGI_FORMAT format,
+            u32 back_buffer_count, ID3D12CommandQueue* command_queue);
   /**
    * @brief バックバッファをクリアする
    * @param accessor DirectX12アクセサ
    */
   void ClearBackBuffer(IDirectXAccessor& accessor);
-  bool DrawBegin(IDirectXAccessor& accessor);
+  /**
+   * @brief 描画開始
+   * @param accessor DirectX12アクセサ
+   */
+  void DrawBegin(IDirectXAccessor& accessor);
   /**
    * @brief 描画終了
    * @param accessor DirectX12アクセサ
@@ -94,7 +91,7 @@ class SwapChain {
   //! スワップチェイン
   ComPtr<IDXGISwapChain3> swap_chain_;
   //! レンダーターゲット
-  std::array<render_target::RenderTarget, FRAME_COUNT> render_targets_;
+  std::vector<render_target::RenderTarget> render_targets_;
   //! 現在フレームのインデックス
   u32 frame_index_;
   //テアリングが許可されているか

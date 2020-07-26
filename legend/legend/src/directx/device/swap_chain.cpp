@@ -14,16 +14,18 @@ SwapChain::~SwapChain() {}
 
 //初期化
 bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
-                     window::Window& target_window,
-                     ID3D12CommandQueue* command_queue, DXGI_FORMAT format) {
+                     window::Window& target_window, DXGI_FORMAT format,
+                     u32 back_buffer_count, ID3D12CommandQueue* command_queue) {
   this->allow_tearing_ = util::enum_util::IsBitpop(adapter.GetOptions() &
                                                    DeviceOptionFlags::TEARING);
+  render_targets_.resize(back_buffer_count);
+
   const u32 screen_width = target_window.GetScreenSize().x;
   const u32 screen_height = target_window.GetScreenSize().y;
 
   //スワップチェインを作成する
   DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
-  swap_chain_desc.BufferCount = FRAME_COUNT;
+  swap_chain_desc.BufferCount = back_buffer_count;
   swap_chain_desc.Width = screen_width;
   swap_chain_desc.Height = screen_height;
   swap_chain_desc.Format = format;
@@ -56,7 +58,7 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
   }
 
   //レンダーターゲットを作成する
-  for (u32 n = 0; n < FRAME_COUNT; n++) {
+  for (u32 n = 0; n < back_buffer_count; n++) {
     ComPtr<ID3D12Resource> buffer;
     if (HRESULT hr = swap_chain_->GetBuffer(n, IID_PPV_ARGS(&buffer));
         FAILED(hr)) {
@@ -78,24 +80,17 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
   return true;
 }
 
-//バックバッファにセットする
-void SwapChain::SetBackBuffer(IDirectXAccessor& accessor) {
-  render_targets_[frame_index_].Transition(
-      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
-}
-
 //バックバッファをクリアする
 void SwapChain::ClearBackBuffer(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].ClearRenderTarget(accessor);
 }
 
-bool SwapChain::DrawBegin(IDirectXAccessor& accessor) {
+//描画開始
+void SwapChain::DrawBegin(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].Transition(
       accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
   SetViewport(accessor);
   SetScissorRect(accessor);
-
-  return true;
 }
 
 //描画を終了する

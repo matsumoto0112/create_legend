@@ -93,7 +93,7 @@ class MultiRenderTargetTexture {
    */
   void SetToGlobalHeap(IDirectXAccessor& accessor,
                        u32 render_target_number) const;
-  void WriteInfoToPipelineDesc(shader::GraphicsPipelineState* pipeline);
+  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline);
 
   void PrepareToUseRenderTarget(IDirectXAccessor& accessor);
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const;

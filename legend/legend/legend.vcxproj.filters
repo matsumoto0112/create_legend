@@ -187,6 +187,7 @@
     <ClInclude Include="src\util\stl_extend.h" />
     <ClInclude Include="src\util\transform.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

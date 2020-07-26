@@ -1,4 +1,4 @@
-#include "src/physics/plane.h"
+#include "src/physics/ray.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
@@ -6,42 +6,50 @@
 
 namespace legend {
 namespace physics {
+
 //コンストラクタ
-Plane::Plane()
-    : position_(math::Vector3::kZeroVector),
-      normal_(math::Vector3::kUpVector) {}
+Ray::Ray()
+    : start_position_(math::Vector3::kZeroVector),
+      direction_(math::Vector3::kRightVector),
+      max_distance_(1) {}
 
-Plane::~Plane() {}
+//コンストラクタ
+Ray::Ray(math::Vector3 direction, float max_distance)
+    : start_position_(math::Vector3::kZeroVector),
+      direction_(direction),
+      max_distance_(max_distance) {}
 
-//初期化
-bool Plane::Initialize(directx::DirectX12Device& device) {
-  float front = GetPosition().z - 1;
-  float back = GetPosition().z + 1;
-  float left = GetPosition().x - 1;
-  float right = GetPosition().x + 1;
+//コンストラクタ
+Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
+         float max_distance)
+    : start_position_(start_position),
+      direction_(direction),
+      max_distance_(max_distance) {}
 
+//デストラクタ
+Ray::~Ray() {}
+
+bool Ray::Initialize(directx::DirectX12Device& device) {
   const std::vector<directx::PhysicsVertex> vertices{
-      {{left, 0, front}},
-      {{right, 0, front}},
-      {{right, 0, back}},
-      {{left, 0, back}},
+      {{start_position_}},            // 0
+      {{direction_ * max_distance_}}  // 1
   };
 
   //頂点バッファ作成
   if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
-                           L"Plane_VertexBuffer")) {
+                           L"Ray_VertexBuffer")) {
     return false;
   }
   if (!vertex_buffer_.WriteBufferResource(vertices)) {
     return false;
   }
 
-  const std::vector<u16> indices{0, 1, 1, 2, 2, 3, 3, 0};
+  const std::vector<u16> indices{0, 1};
   //インデックスバッファ作成
   if (!index_buffer_.InitAndWrite(device, indices,
                                   directx::PrimitiveTopology::LineList,
-                                  L"Plane_IndexBuffer")) {
+                                  L"Ray_IndexBuffer")) {
     return false;
   }
 
@@ -54,7 +62,11 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   }
 
   math::Vector3 position = math::Vector3::kZeroVector;
+  math::Vector3 rotate = math::Vector3::kZeroVector;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
+      math::Matrix4x4::CreateScale(scale) *
+      math::Matrix4x4::CreateRotation(rotate) *
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
 
@@ -123,12 +135,12 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
           game::GameDevice::GetInstance()->GetDevice())) {
     return false;
   }
-
   return true;
 }
 
-//描画
-void Plane::Draw(directx::DirectX12Device& device) {
+void Ray::Update() {}
+
+void Ray::Draw(directx::DirectX12Device& device) {
   pipeline_state_.SetGraphicsCommandList(device);
   world_constant_buffer_.SetToHeap(device);
   transform_constant_buffer_.SetToHeap(device);
@@ -138,16 +150,13 @@ void Plane::Draw(directx::DirectX12Device& device) {
   index_buffer_.Draw(device);
 }
 
-//位置の設定
-void Plane::SetPosition(math::Vector3 position) { position_ = position; }
+//始点の取得
+math::Vector3 Ray::GetStartPosition() const { return start_position_; }
 
-//法線ベクトルの設定
-void Plane::SetNormal(math::Vector3 normal) { normal_ = normal; }
+//方向ベクトルの取得
+math::Vector3 Ray::GetDirection() const { return direction_; }
 
-//位置の取得
-math::Vector3 Plane::GetPosition() const { return position_; }
-
-//法線ベクトルの取得
-math::Vector3 Plane::GetNormal() const { return normal_; }
+//最大範囲の取得
+float Ray::GetDistance() const { return max_distance_; }
 }  // namespace physics
 }  // namespace legend

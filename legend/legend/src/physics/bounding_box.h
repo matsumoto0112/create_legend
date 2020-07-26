@@ -13,6 +13,10 @@ namespace physics {
 struct Transform {
   math::Matrix4x4 world;
 };
+struct WorldContext {
+    math::Matrix4x4 view;
+    math::Matrix4x4 projection;
+};
 
 /**
  * @class BoundingBox
@@ -26,10 +30,12 @@ class BoundingBox {
    */
   BoundingBox();
   /**
+   * @brief デストラクタ
+   */
+  ~BoundingBox();
+  /**
    * @brief 初期化
    * @param デバイス
-   * @param オブジェクトネーム
-   * @param GLBLoader
    */
   bool Initialize(directx::DirectX12Device& device);
   /**
@@ -45,36 +51,41 @@ class BoundingBox {
    * @brief 方向ベクトルを取得
    * @param 軸番号
    */
-  math::Vector3 GetDirection(i32 direction_num);
+  math::Vector3 GetDirection(i32 direction_num) const;
   /**
    * @brief 長さを取得
    * @param 軸番号
    */
-  float GetLength(i32 length_num);
+  float GetLength(i32 length_num) const;
+  /**
+   * @brief スケール倍の長さを取得
+   * @param 軸番号
+   */
+  float GetLengthByScale(i32 length_num) const;
   /**
    * @brief 現在の位置を取得
    */
-  math::Vector3 GetPosition();
+  math::Vector3 GetPosition() const;
   /**
    * @brief 現在の角度を取得
    */
-  math::Vector3 GetRotation();
+  math::Vector3 GetRotation() const;
   /**
    * @brief 現在のスケールを取得
    */
-  math::Vector3 GetScale();
+  math::Vector3 GetScale() const;
   /**
    * @brief 分離軸Xの取得
    */
-  math::Vector3 GetAxisX();
+  math::Vector3 GetAxisX() const;
   /**
    * @brief 分離軸Yの取得
    */
-  math::Vector3 GetAxisY();
+  math::Vector3 GetAxisY() const;
   /**
    * @brief 分離軸Zの取得
    */
-  math::Vector3 GetAxisZ();
+  math::Vector3 GetAxisZ() const;
   /**
    * @brief 各方向ベクトルの設定
    * @param X方向
@@ -131,6 +142,9 @@ class BoundingBox {
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
   directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
+
+  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
+  directx::shader::GraphicsPipelineState pipeline_state_;
 };
 
 }  // namespace physics

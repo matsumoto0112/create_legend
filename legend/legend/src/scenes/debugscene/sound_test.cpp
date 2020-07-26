@@ -17,6 +17,9 @@ bool SoundTest::Initialize() {
       game::GameDevice::GetInstance()->GetAudioManager();
 
   audio_manager.LoadWav(L"free_2.wav", AudioType::SE, AudioSplitType::SPLIT);
+  audio_manager.LoadWav(L"free_4.wav", AudioType::SE, AudioSplitType::SPLIT);
+  audio_manager.LoadWav(L"free_5.wav", AudioType::SE, AudioSplitType::SPLIT);
+  audio_manager.LoadWav(L"free_6.wav", AudioType::SE, AudioSplitType::SPLIT);
   audio_manager.LoadWav(L"free_3.wav", AudioType::BGM);
 
   return true;

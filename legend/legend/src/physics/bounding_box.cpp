@@ -1,5 +1,7 @@
 #include "src/physics/bounding_box.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 
 namespace legend {
@@ -21,17 +23,19 @@ BoundingBox::BoundingBox()
   lengthes_[2] = 1.0f;
 }
 
+BoundingBox::~BoundingBox() {}
+
 //初期化
 bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   //中心座標と各軸の長さから頂点座標を設定
-  float left = GetPosition().x + -GetLength(0);
+  float left = GetPosition().x - GetLength(0);
   float right = GetPosition().x + GetLength(0);
-  float down = GetPosition().y + -GetLength(1);
+  float down = GetPosition().y - GetLength(1);
   float up = GetPosition().y + GetLength(1);
-  float front = GetPosition().z + -GetLength(2);
+  float front = GetPosition().z - GetLength(2);
   float back = GetPosition().z + GetLength(2);
 
-  const std::vector<directx::BoundingBox> vertices{
+  const std::vector<directx::PhysicsVertex> vertices{
       {{left, down, front}},   // 0
       {{left, down, back}},    // 1
       {{right, down, back}},   // 2
@@ -43,7 +47,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   };
 
   //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::BoundingBox),
+  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"BoundingBox_VertexBuffer")) {
     return false;
@@ -65,30 +69,96 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   }
 
   if (!transform_constant_buffer_.Init(
-          device, 0,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::PHYSICS_TEST),
           L"Transform ConstantBuffer")) {
     return false;
   }
 
   math::Vector3 position = math::Vector3::kZeroVector;
   math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector * 0.5f;
+  math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
+
+  if (!world_constant_buffer_.Init(
+          device, directx::shader::ConstantBufferRegisterID::WorldContext,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::PHYSICS_TEST),
+          L"WorldContext ConstantBuffer")) {
+    return false;
+  }
+
+  world_constant_buffer_.GetStagingRef().view = math::Matrix4x4::CreateView(
+      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
+      math::Vector3::kUpVector);
+  const float aspect = 1280.0f / 720.0f;
+  world_constant_buffer_.GetStagingRef().projection =
+      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
+  world_constant_buffer_.UpdateStaging();
+
+  std::filesystem::path path = util::Path::GetInstance()->shader();
+  std::filesystem::path vertex_shader_path = path / L"physics" / L"obb_vs.cso";
+  std::filesystem::path pixel_shader_path = path / L"physics" / L"obb_ps.cso";
+  std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
+      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
+       D3D12_APPEND_ALIGNED_ELEMENT,
+       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+       0},
+      {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
+       D3D12_APPEND_ALIGNED_ELEMENT,
+       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+       0}};
+
+  //頂点シェーダー
+  std::shared_ptr<directx::shader::VertexShader> vertex_shader =
+      std::make_shared<directx::shader::VertexShader>();
+  if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+                           vertex_shader_path, elements)) {
+    return false;
+  }
+
+  //ピクセルシェーダー
+  std::shared_ptr<directx::shader::PixelShader> pixel_shader =
+      std::make_shared<directx::shader::PixelShader>();
+  if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+                          pixel_shader_path)) {
+    return false;
+  }
+
+  if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
+    return false;
+  }
+
+  //パイプライン作成開始
+  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
+  pipeline_state_.SetVertexShader(vertex_shader);
+  pipeline_state_.SetPixelShader(pixel_shader);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER,
+      &pipeline_state_);
+  pipeline_state_.SetBlendDesc(
+      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
+  pipeline_state_.SetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+
+  if (!pipeline_state_.CreatePipelineState(
+          game::GameDevice::GetInstance()->GetDevice())) {
+    return false;
+  }
 
   return true;
 }
 
+//更新
 void BoundingBox::Update() {
   math::Vector3 position = GetPosition();
   math::Vector3 rotate = GetRotation();
   math::Vector3 scale = GetScale();
-  ;
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
       math::Matrix4x4::CreateRotation(rotate) *
@@ -96,8 +166,10 @@ void BoundingBox::Update() {
   transform_constant_buffer_.UpdateStaging();
 }
 
-//更新
+//描画
 void BoundingBox::Draw(directx::DirectX12Device& device) {
+  pipeline_state_.SetGraphicsCommandList(device);
+  world_constant_buffer_.SetToHeap(device);
   transform_constant_buffer_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
   vertex_buffer_.SetGraphicsCommandList(device);
@@ -106,7 +178,7 @@ void BoundingBox::Draw(directx::DirectX12Device& device) {
 }
 
 //方向ベクトルを取得
-math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
+math::Vector3 BoundingBox::GetDirection(i32 direction_num) const {
   if (direction_num > directions_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return math::Vector3::kZeroVector;
@@ -116,7 +188,7 @@ math::Vector3 BoundingBox::GetDirection(i32 direction_num) {
 }
 
 //長さを取得
-float BoundingBox::GetLength(i32 length_num) {
+float BoundingBox::GetLength(i32 length_num) const {
   if (length_num > lengthes_.size()) {
     MY_LOG(L"格納数よりも大きい値です");
     return 1;
@@ -125,23 +197,41 @@ float BoundingBox::GetLength(i32 length_num) {
   return lengthes_[length_num];
 }
 
+//スケール倍した長さを取得
+float BoundingBox::GetLengthByScale(i32 length_num) const {
+  if (length_num > lengthes_.size()) {
+    MY_LOG(L"格納数よりも大きい値です");
+    return 1;
+  }
+
+  float scale;
+  if (length_num == 0)
+    scale = GetScale().x;
+  else if (length_num == 1)
+    scale = GetScale().y;
+  else
+    scale = GetScale().z;
+
+  return lengthes_[length_num] * scale;
+}
+
 //現在の位置を取得
-math::Vector3 BoundingBox::GetPosition() { return position_; }
+math::Vector3 BoundingBox::GetPosition() const { return position_; }
 
 //現在の回転量を取得
-math::Vector3 BoundingBox::GetRotation() { return rotation_; }
+math::Vector3 BoundingBox::GetRotation() const { return rotation_; }
 
 //現在のスケールを取得
-math::Vector3 BoundingBox::GetScale() { return scale_; }
+math::Vector3 BoundingBox::GetScale() const { return scale_; }
 
 //分離軸Xを取得
-math::Vector3 BoundingBox::GetAxisX() { return axis_x; }
+math::Vector3 BoundingBox::GetAxisX() const { return axis_x; }
 
 //分離軸Yを取得
-math::Vector3 BoundingBox::GetAxisY() { return axis_y; }
+math::Vector3 BoundingBox::GetAxisY() const { return axis_y; }
 
 //分離軸Zを取得
-math::Vector3 BoundingBox::GetAxisZ() { return axis_z; }
+math::Vector3 BoundingBox::GetAxisZ() const { return axis_z; }
 
 //各方向ベクトルの設定
 void BoundingBox::SetDirection(math::Vector3 direction_x,

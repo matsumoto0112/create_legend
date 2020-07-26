@@ -134,6 +134,8 @@
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
@@ -243,6 +245,8 @@
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\physics\ray.h" />
+    <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
@@ -325,6 +329,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audios\free_2.wav" />
+    <Media Include="assets\audios\free_3.wav" />
+    <Media Include="assets\audios\free_4.wav" />
+    <Media Include="assets\audios\free_5.wav" />
+    <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -77,6 +77,8 @@
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\heap_manager.cpp" />
     <ClCompile Include="src\util\transform.cpp" />
+    <ClCompile Include="src\physics\sphere.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -188,6 +190,8 @@
     <ClInclude Include="src\util\transform.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
+    <ClInclude Include="src\physics\sphere.h" />
+    <ClInclude Include="src\physics\ray.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -210,5 +214,12 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audios\free_3.wav" />
+    <Media Include="assets\audios\free_2.wav" />
+    <Media Include="assets\audios\free_4.wav" />
+    <Media Include="assets\audios\free_5.wav" />
+    <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
 </Project>

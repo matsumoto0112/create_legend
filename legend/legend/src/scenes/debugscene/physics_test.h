@@ -1,12 +1,12 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 #define LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 
-#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/plane.h"
-#include "src/scenes/debugscene/model_view.h"
+#include "src/physics/ray.h"
+#include "src/physics/sphere.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -48,15 +48,13 @@ class PhysicsTest : public Scene {
   //! íºï˚ëÃ
   std::vector<physics::BoundingBox> obbs_;
   //! ê∂ê¨êî
-  i32 obb_num_ = 2;
+  i32 obb_num_ = 1;
   //! ïΩñ 
   physics::Plane plane_;
-
-  directx::buffer::ConstantBuffer<
-      directx::constant_buffer_structure::WorldContext>
-      world_constant_buffer_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  //! ãÖ
+  physics::Sphere sphere_;
+  //! ÉåÉC
+  physics::Ray ray_;
 };
 
 }  // namespace debugscene

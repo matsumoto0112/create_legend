@@ -11,6 +11,7 @@ static const LocalHeapID USE_HEAP_IDS[] = {
     LocalHeapID::MODEL_VIEW_SCENE,
     LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE,
     LocalHeapID::SPRITE_RENDER_TEST,
+    LocalHeapID::PHYSICS_TEST,
 };
 }  // namespace
 

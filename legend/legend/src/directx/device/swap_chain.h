@@ -52,6 +52,7 @@ class SwapChain {
    * @param accessor DirectX12アクセサ
    */
   void ClearBackBuffer(IDirectXAccessor& accessor);
+  bool DrawBegin(IDirectXAccessor& accessor);
   /**
    * @brief 描画終了
    * @param accessor DirectX12アクセサ
@@ -62,6 +63,16 @@ class SwapChain {
    * @return 表示に成功したらtrueを返す
    */
   bool Present();
+  /**
+   * @brief ビューポートをセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void SetViewport(IDirectXAccessor& accessor) const;
+  /**
+   * @brief シザー矩形をセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void SetScissorRect(IDirectXAccessor& accessor) const;
 
  public:
   /**
@@ -88,6 +99,8 @@ class SwapChain {
   u32 frame_index_;
   //テアリングが許可されているか
   bool allow_tearing_;
+  D3D12_VIEWPORT viewport_;
+  D3D12_RECT scissor_rect_;
 };
 
 }  // namespace device

@@ -56,12 +56,6 @@ class DirectX12Device : public IDirectXAccessor {
    * @return 成功したらtrueを返す
    */
   bool Present();
-
-  /**
-   * @brief バックバッファのレンダーターゲットをセットする
-   */
-  void SetBackBuffer();
-
   /**
    * @brief GPUの処理を待機する
    */
@@ -75,12 +69,6 @@ class DirectX12Device : public IDirectXAccessor {
   virtual void SetToGlobalHeap(
       u32 register_num, ResourceType resource_type,
       const descriptor_heap::DescriptorHandle& handle) override;
-
-  virtual descriptor_heap::DescriptorHandle GetBackBufferHandle()
-      const override;
-  virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) override;
-  virtual DXGI_FORMAT GetBackBufferFormat() const;
-  virtual void SetBackBuffer(IDirectXAccessor& accessor) override;
   bool ExecuteCommandList();
 
  public:
@@ -89,9 +77,6 @@ class DirectX12Device : public IDirectXAccessor {
   }
   virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
     return command_lists_[frame_index_].GetCommandList();
-  }
-  const inline render_target::RenderTarget& GetRenderTarget() const {
-    return swap_chain_.GetRenderTarget();
   }
   inline render_target::RenderResourceManager& GetRenderResourceManager() {
     return render_resource_manager_;
@@ -141,8 +126,6 @@ class DirectX12Device : public IDirectXAccessor {
   ComPtr<ID3D12Device> device_;
   //! アダプター
   device::DXGIAdapter adapter_;
-  //! スワップチェイン
-  device::SwapChain swap_chain_;
   //! レンダーターゲットとなるウィンドウ
   std::weak_ptr<window::Window> target_window_;
   //! レンダーターゲットとなるスクリーンの大きさ

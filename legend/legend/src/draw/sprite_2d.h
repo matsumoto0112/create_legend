@@ -30,7 +30,8 @@ class Sprite2D {
    * @brief 初期化
    * @param filepath ファイルへのパス
    */
-  bool Init(const std::filesystem::path& filepath);
+  bool Init(const std::filesystem::path& filepath,
+            directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id);
   /**
    * @brief テクスチャから初期化
    * @param texture 設定するテクスチャ

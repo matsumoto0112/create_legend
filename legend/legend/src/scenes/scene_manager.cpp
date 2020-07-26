@@ -3,7 +3,6 @@
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/physics_test.h"
-#include "src/scenes/debugscene/post_process_viewer.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/game_over.h"
@@ -72,9 +71,6 @@ bool SceneManager::Update() {
         break;
       case SceneType::SPRITE_TEST:
         current_scene_ = std::make_unique<debugscene::SpriteRenderTest>(this);
-        break;
-      case SceneType::POST_PROCES_VIEWER:
-        current_scene_ = std::make_unique<debugscene::PostProcessViewer>(this);
         break;
       case SceneType::MULTI_RENDER_TARGET_TEST:
         current_scene_ =

@@ -20,7 +20,6 @@ std::string Get(SceneType type) {
       CREATE_PAIR(SceneType::SOUND_TEST),
       CREATE_PAIR(SceneType::PHYSICS_TEST),
       CREATE_PAIR(SceneType::SPRITE_TEST),
-      CREATE_PAIR(SceneType::POST_PROCES_VIEWER),
       CREATE_PAIR(SceneType::MULTI_RENDER_TARGET_TEST),
   };
 

@@ -8,10 +8,6 @@
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 
-namespace {
-legend::u32 PRE_POST_PROCESS_RENDER_TARGET_ID = 2;
-}  // namespace
-
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -27,6 +23,7 @@ bool MultiRenderTargetTest::Initialize() {
 
   //通常描画用パラメータ設定
   {
+    //描画するモデルを読み込む
     const std::filesystem::path filepath =
         util::Path::GetInstance()->model() / L"1000cmObject.glb";
     if (!model_.Init(filepath)) {
@@ -36,19 +33,21 @@ bool MultiRenderTargetTest::Initialize() {
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
 
+    const u32 w = static_cast<u32>(screen_size.x);
+    const u32 h = static_cast<u32>(screen_size.y);
     std::vector<directx::render_target::RenderResourceManager::Info> infos{
-        {3, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-         static_cast<u32>(screen_size.x), static_cast<u32>(screen_size.y),
+        {3, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
          util::Color4(1.0f, 0.0f, 0.0f, 1.0f), L"RenderTarget_0"},
-        {5, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-         static_cast<u32>(screen_size.x), static_cast<u32>(screen_size.y),
+        {5, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 
+    //まだレンダーターゲットが作られていないなら作る
     if (!device.GetRenderResourceManager().IsRegisteredRenderTargetID(
-            directx::render_target::RenderTargetID::POST_PROCESS_PRE)) {
+            directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST)) {
       //ポストプロセス描画用レンダーターゲット
       if (!device.GetRenderResourceManager().CreateRenderTargets(
-              device, directx::render_target::RenderTargetID::POST_PROCESS_PRE,
+              device,
+              directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
               infos)) {
         return false;
       }
@@ -127,8 +126,7 @@ bool MultiRenderTargetTest::Initialize() {
     post_process_pipeline_.SetBlendDesc(
         directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipelineDesc(
-        device,
-        directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+        device, directx::render_target::RenderTargetID::BACK_BUFFER,
         post_process_pipeline_);
     if (!post_process_pipeline_.CreatePipelineState(device)) {
       return false;
@@ -153,8 +151,9 @@ bool MultiRenderTargetTest::Initialize() {
 
     if (!post_process_world_cb_.Init(
             device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                          LocalHeapID::GLOBAL_ID),
+            device.GetLocalHeapHandle(
+                directx::descriptor_heap::heap_parameter::LocalHeapID::
+                    MULTI_RENDER_TARGET_TEST_SCENE),
             L"PostProcess_WorldConstantBuffer")) {
       return false;
     }

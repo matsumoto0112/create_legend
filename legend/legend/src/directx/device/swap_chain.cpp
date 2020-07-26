@@ -18,11 +18,14 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
                      ID3D12CommandQueue* command_queue, DXGI_FORMAT format) {
   this->allow_tearing_ = util::enum_util::IsBitpop(adapter.GetOptions() &
                                                    DeviceOptionFlags::TEARING);
+  const u32 screen_width = target_window.GetScreenSize().x;
+  const u32 screen_height = target_window.GetScreenSize().y;
+
   //スワップチェインを作成する
   DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = {};
   swap_chain_desc.BufferCount = FRAME_COUNT;
-  swap_chain_desc.Width = target_window.GetScreenSize().x;
-  swap_chain_desc.Height = target_window.GetScreenSize().y;
+  swap_chain_desc.Width = screen_width;
+  swap_chain_desc.Height = screen_height;
   swap_chain_desc.Format = format;
   swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -66,15 +69,12 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
             util::string_util::Format(L"Render Target %u", n))) {
       return false;
     }
-    // if (!render_targets_[n].CreateDepthStencil(
-    //        accessor, DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT, 1280,
-    //        720, buffer::DepthStencil::ClearValue(1.0f, 0),
-    //        util::string_util::Format(L"DepthStencil %u", n))) {
-    //  return false;
-    //}
   }
 
   this->frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+  this->viewport_ =
+      CD3DX12_VIEWPORT(0.0f, 0.0f, screen_width * 1.0f, screen_height * 1.0f);
+  this->scissor_rect_ = CD3DX12_RECT(0, 0, screen_width, screen_height);
   return true;
 }
 
@@ -87,6 +87,15 @@ void SwapChain::SetBackBuffer(IDirectXAccessor& accessor) {
 //バックバッファをクリアする
 void SwapChain::ClearBackBuffer(IDirectXAccessor& accessor) {
   render_targets_[frame_index_].ClearRenderTarget(accessor);
+}
+
+bool SwapChain::DrawBegin(IDirectXAccessor& accessor) {
+  render_targets_[frame_index_].Transition(
+      accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
+  SetViewport(accessor);
+  SetScissorRect(accessor);
+
+  return true;
 }
 
 //描画を終了する
@@ -107,6 +116,16 @@ bool SwapChain::Present() {
   }
 
   return true;
+}
+
+//ビューポートをセットする
+void SwapChain::SetViewport(IDirectXAccessor& accessor) const {
+  accessor.GetCommandList()->RSSetViewports(1, &viewport_);
+}
+
+//シザー矩形をセットする
+void SwapChain::SetScissorRect(IDirectXAccessor& accessor) const {
+  accessor.GetCommandList()->RSSetScissorRects(1, &scissor_rect_);
 }
 
 //現在のフレームインデックスを更新する

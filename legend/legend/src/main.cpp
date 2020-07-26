@@ -5,6 +5,15 @@
 #include "src/scenes/scene_names.h"
 #include "src/window/window.h"
 
+namespace {
+using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
+static const LocalHeapID USE_HEAP_IDS[] = {
+    LocalHeapID::MODEL_VIEW_SCENE,
+    LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE,
+    LocalHeapID::SPRITE_RENDER_TEST,
+};
+}  // namespace
+
 namespace legend {
 class MyApp final : public device::Application {
  public:
@@ -19,19 +28,17 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    //使用するローカルヒープを追加する
     directx::descriptor_heap::HeapManager& heap_manager =
         game::GameDevice::GetInstance()->GetDevice().GetHeapManager();
-    const auto HEAP_IDS = {
-        directx::descriptor_heap::heap_parameter::LocalHeapID::MODEL_VIEW_SCENE,
-        directx::descriptor_heap::heap_parameter::LocalHeapID::
-            PERSPECTIVE_CAMERA_TEST_SCENE,
-    };
-    for (auto&& id : HEAP_IDS) {
+
+    for (auto&& id : USE_HEAP_IDS) {
       if (!heap_manager.AddLocalHeap(
               game::GameDevice::GetInstance()->GetDevice(), id)) {
         return false;
       }
     }
+
     return true;
   }
   bool Update() override {
@@ -41,7 +48,6 @@ class MyApp final : public device::Application {
     if (!scene_manager_.Update()) {
       return false;
     }
-    timer_.Update();
 
     if (ImGui::Begin("Scenes")) {
       ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
@@ -55,7 +61,6 @@ class MyApp final : public device::Application {
           scenes::SceneType::SOUND_TEST,
           scenes::SceneType::PHYSICS_TEST,
           scenes::SceneType::SPRITE_TEST,
-          scenes::SceneType::POST_PROCES_VIEWER,
           scenes::SceneType::MULTI_RENDER_TARGET_TEST,
       };
       for (auto&& scene : SCENES) {
@@ -91,7 +96,6 @@ class MyApp final : public device::Application {
 
  private:
   scenes::SceneManager scene_manager_;
-  util::FPSCounter timer_;
 };
 }  // namespace legend
 

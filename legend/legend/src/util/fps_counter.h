@@ -11,7 +11,7 @@ namespace util {
 class FPSCounter {
   // Tick‚©‚ç•b‚É•ÏŠ·‚·‚éŒW”
   //Šî–{“I‚É1•b‚Í10,000,000Tick
-  static constexpr u64 TICKS_PER_SECONDS = 10'00'000;
+  static constexpr u64 TICKS_PER_SECONDS = 10'000'000;
 
  public:
   /**

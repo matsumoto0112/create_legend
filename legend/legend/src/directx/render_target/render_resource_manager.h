@@ -5,6 +5,8 @@
  * @brief レンダーターゲットリソース管理クラス定義
  */
 
+#include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
 #include "src/directx/render_target/depth_stencil.h"
 #include "src/directx/render_target/multi_render_target_texture.h"
@@ -12,10 +14,11 @@
 
 namespace legend {
 namespace directx {
-namespace shader {
-class GraphicsPipelineState;
-}  // namespace shader
 namespace render_target {
+
+/**
+ * @brief レンダーターゲットリソース管理クラス
+ */
 class RenderResourceManager {
  public:
   using Info = MultiRenderTargetTexture::Info;
@@ -23,7 +26,10 @@ class RenderResourceManager {
  public:
   RenderResourceManager();
   ~RenderResourceManager();
-  bool Init();
+
+  bool Init(IDirectXAccessor& accessor, device::DXGIAdapter& adapter,
+            window::Window& target_window, u32 frame_count, DXGI_FORMAT format,
+            ID3D12CommandQueue* command_queue);
   bool CreateRenderTarget(IDirectXAccessor& accessor, RenderTargetID unique_id,
                           DXGI_FORMAT format, u32 width, u32 height,
                           const util::Color4& clear_color,
@@ -48,8 +54,14 @@ class RenderResourceManager {
   void DrawEnd(IDirectXAccessor& accessor);
 
   bool IsRegisteredRenderTargetID(RenderTargetID unique_id) const;
+  bool Present();
+  u32 GetCurrentFrameIndex();
 
  private:
+  void SetBackBufferToCommandList(IDirectXAccessor& accessor);
+
+ private:
+  device::SwapChain swap_chain_;
   std::unordered_map<RenderTargetID, MultiRenderTargetTexture>
       created_render_targets_;
   std::unordered_map<u32, DepthStencil> created_depth_stencil_targets_;

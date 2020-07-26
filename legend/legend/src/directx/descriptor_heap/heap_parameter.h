@@ -38,11 +38,8 @@ enum class LocalHeapID : u32 {
   TITLE,
 
   MODEL_VIEW_SCENE = 100,
-  //! マルチレンダーターゲットテストシーン用
   MULTI_RENDER_TARGET_TEST_SCENE,
-  PERSPECTIVE_CAMERA_TEST_SCENE,
   PHYSICS_TEST,
-  POST_PROCESS_VIEWER,
   SOUND_TEST,
   SPRITE_RENDER_TEST,
 };
@@ -52,36 +49,24 @@ namespace local {
  * @brief 定義済みのローカルIDに対応したディスクリプタ数を取得する
  */
 inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
+  using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
   switch (id) {
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        GLOBAL_ID:
+    case LocalHeapID::GLOBAL_ID:
       return 20000;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        GAME_OVER:
+    case LocalHeapID::GAME_OVER:
       return 10000;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::TITLE:
+    case LocalHeapID::TITLE:
       return 10000;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        MODEL_VIEW_SCENE:
+    case LocalHeapID::MODEL_VIEW_SCENE:
       return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        MULTI_RENDER_TARGET_TEST_SCENE:
+    case LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE:
       return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        PERSPECTIVE_CAMERA_TEST_SCENE:
+    case LocalHeapID::PHYSICS_TEST:
       return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        PHYSICS_TEST:
+    case LocalHeapID::SOUND_TEST:
       return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        POST_PROCESS_VIEWER:
-      return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        SOUND_TEST:
-      return 100;
-    case legend::directx::descriptor_heap::heap_parameter::LocalHeapID::
-        SPRITE_RENDER_TEST:
-      return 100;
+    case LocalHeapID::SPRITE_RENDER_TEST:
+      return 10;
     default:
       MY_LOG(L"未定義のIDが選択されました。");
       break;

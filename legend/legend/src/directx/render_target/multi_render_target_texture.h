@@ -64,14 +64,18 @@ class MultiRenderTargetTexture {
    * @param info レンダーターゲットの情報
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const Info& info);
+  bool Init(IDirectXAccessor& accessor,
+            descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
+            const Info& info);
   /**
    * @brief マルチレンダーターゲットとして初期化する
    * @param accessor DirectX12アクセサ
    * @param info 各レンダーターゲットの情報
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const std::vector<Info>& infos);
+  bool Init(IDirectXAccessor& accessor,
+            descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
+            const std::vector<Info>& infos);
   /**
    * @brief レンダーターゲットの色をクリアする
    * @param accessor DirextX12アクセサ
@@ -94,7 +98,12 @@ class MultiRenderTargetTexture {
   void PrepareToUseRenderTarget(IDirectXAccessor& accessor);
   std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const;
 
+  void SetViewport(IDirectXAccessor& accessor) const;
+  void SetScissorRect(IDirectXAccessor& accessor) const;
+
  private:
+  std::vector<D3D12_VIEWPORT> viewports_;
+  std::vector<D3D12_RECT> scissor_rects_;
   std::vector<RenderTargetTexture> render_targets_;
 };
 

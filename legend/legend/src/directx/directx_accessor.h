@@ -39,11 +39,6 @@ class IDirectXAccessor {
   virtual void SetToGlobalHeap(
       u32 register_num, ResourceType resource_type,
       const descriptor_heap::DescriptorHandle& handle) = 0;
-
-  virtual void SetBackBuffer(IDirectXAccessor& accessor) = 0;
-  virtual void ClearBackBufferTarget(IDirectXAccessor& accessor) = 0;
-  virtual descriptor_heap::DescriptorHandle GetBackBufferHandle() const = 0;
-  virtual DXGI_FORMAT GetBackBufferFormat() const = 0;
 };
 }  // namespace directx
 }  // namespace legend

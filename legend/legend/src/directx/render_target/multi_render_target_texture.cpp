@@ -11,15 +11,22 @@ MultiRenderTargetTexture::MultiRenderTargetTexture() {}
 MultiRenderTargetTexture::~MultiRenderTargetTexture() {}
 
 //èâä˙âª
-bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
-                                    const Info& info) {
-  return Init(accessor, std::vector{info});
+bool MultiRenderTargetTexture::Init(
+    IDirectXAccessor& accessor,
+    descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
+    const Info& info) {
+  return Init(accessor, srv_local_heap_id, std::vector{info});
 }
 
-bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
-                                    const std::vector<Info>& infos) {
+bool MultiRenderTargetTexture::Init(
+    IDirectXAccessor& accessor,
+    descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
+    const std::vector<Info>& infos) {
   const u32 render_target_num = static_cast<u32>(infos.size());
   render_targets_.resize(render_target_num);
+  viewports_.resize(render_target_num);
+  scissor_rects_.resize(render_target_num);
+
   for (u32 i = 0; i < render_target_num; i++) {
     RenderTargetTexture& target = render_targets_[i];
     if (!target.render_target.Init(accessor, infos[i].format, infos[i].width,
@@ -31,7 +38,6 @@ bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
     target.srv_handle = accessor.GetLocalHeapHandle(
         descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
 
-    // accessor.
     D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
     srv_desc.Texture2D.MipLevels = 1;
     srv_desc.Format = infos[i].format;
@@ -41,7 +47,11 @@ bool MultiRenderTargetTexture::Init(IDirectXAccessor& accessor,
     accessor.GetDevice()->CreateShaderResourceView(
         target.render_target.GetResource(), &srv_desc,
         target.srv_handle.cpu_handle_);
+
+    viewports_[i] = target.render_target.GetViewport();
+    scissor_rects_[i] = target.render_target.GetScissorRect();
   }
+
   return true;
 }
 
@@ -91,6 +101,17 @@ MultiRenderTargetTexture::GetRTVHandles() const {
     res[i] = render_targets_[i].render_target.GetHandle().cpu_handle_;
   }
   return res;
+}
+
+void MultiRenderTargetTexture::SetViewport(IDirectXAccessor& accessor) const {
+  const u32 viewport_num = static_cast<u32>(viewports_.size());
+  accessor.GetCommandList()->RSSetViewports(viewport_num, viewports_.data());
+}
+
+void MultiRenderTargetTexture::SetScissorRect(
+    IDirectXAccessor& accessor) const {
+  const u32 rect_num = static_cast<u32>(scissor_rects_.size());
+  accessor.GetCommandList()->RSSetScissorRects(rect_num, scissor_rects_.data());
 }
 
 }  // namespace render_target

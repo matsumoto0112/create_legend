@@ -82,12 +82,25 @@ class RenderTarget {
   /**
    * @brief リソースを取得する
    */
-  ID3D12Resource* GetResource() const { return resource_.GetResource(); }
+  inline ID3D12Resource* GetResource() const { return resource_.GetResource(); }
   /**
    * @brief ハンドルを取得する
    */
-  descriptor_heap::DescriptorHandle GetHandle() const { return rtv_handle_; }
+  inline descriptor_heap::DescriptorHandle GetHandle() const {
+    return rtv_handle_;
+  }
+  /**
+   * @brief フォーマットを取得する
+   */
   inline DXGI_FORMAT GetFormat() const { return format_; }
+  /**
+   * @brief ビューポートを取得する
+   */
+  inline D3D12_VIEWPORT GetViewport() const { return viewport_; }
+  /**
+   * @brief シザー矩形を取得する
+   */
+  inline D3D12_RECT GetScissorRect() const { return scissor_rect_; }
 
  private:
   //! リソース
@@ -98,6 +111,10 @@ class RenderTarget {
   util::Color4 clear_color_;
   //! レンダーターゲットのフォーマット
   DXGI_FORMAT format_;
+  //! ビューポート
+  D3D12_VIEWPORT viewport_;
+  //! シザー矩形
+  D3D12_RECT scissor_rect_;
 };
 
 }  // namespace render_target

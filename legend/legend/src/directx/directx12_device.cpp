@@ -58,16 +58,6 @@ bool DirectX12Device::Prepare() {
     return false;
   }
 
-  CD3DX12_VIEWPORT viewport(0.0f, 0.0f,
-                            static_cast<float>(render_target_screen_size_.x),
-                            static_cast<float>(render_target_screen_size_.y));
-  CD3DX12_RECT scissor_rect(0, 0,
-                            static_cast<long>(render_target_screen_size_.x),
-                            static_cast<long>(render_target_screen_size_.y));
-  command_lists_[frame_index_].GetCommandList()->RSSetViewports(1, &viewport);
-  command_lists_[frame_index_].GetCommandList()->RSSetScissorRects(
-      1, &scissor_rect);
-
   render_resource_manager_.SetRenderTarget(
       render_target::RenderTargetID::BACK_BUFFER);
   render_resource_manager_.SetRenderTargetsToCommandList(*this);
@@ -81,11 +71,10 @@ bool DirectX12Device::Prepare() {
 
 bool DirectX12Device::Present() {
   render_resource_manager_.DrawEnd(*this);
-  swap_chain_.DrawEnd(*this);
 
   ExecuteCommandList();
 
-  if (!swap_chain_.Present()) {
+  if (!render_resource_manager_.Present()) {
     return false;
   }
 
@@ -95,8 +84,6 @@ bool DirectX12Device::Present() {
 
   return true;
 }
-
-void DirectX12Device::SetBackBuffer() { swap_chain_.SetBackBuffer(*this); }
 
 void DirectX12Device::WaitForGPU() noexcept {
   if (command_queue_ && fence_ && fence_event_.IsValid()) {
@@ -115,22 +102,6 @@ void DirectX12Device::SetToGlobalHeap(
     const descriptor_heap::DescriptorHandle& handle) {
   heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
                                      handle.cpu_handle_);
-}
-
-descriptor_heap::DescriptorHandle DirectX12Device::GetBackBufferHandle() const {
-  return swap_chain_.GetRenderTarget().GetHandle();
-}
-
-void DirectX12Device::ClearBackBufferTarget(IDirectXAccessor& accessor) {
-  swap_chain_.ClearBackBuffer(accessor);
-}
-
-DXGI_FORMAT DirectX12Device::GetBackBufferFormat() const {
-  return swap_chain_.GetRenderTarget().GetFormat();
-}
-
-void DirectX12Device::SetBackBuffer(IDirectXAccessor& accessor) {
-  swap_chain_.SetBackBuffer(accessor);
 }
 
 bool DirectX12Device::ExecuteCommandList() {
@@ -174,13 +145,6 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  //スワップチェインの作成
-  if (!swap_chain_.Init(*this, adapter_, *target_window_.lock(),
-                        command_queue_.Get(),
-                        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)) {
-    return false;
-  }
-
   //フレーム枚数分のアロケータ作成
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
     if (!command_lists_[i].Init(device_.Get(), command_queue_.Get())) {
@@ -188,7 +152,9 @@ bool DirectX12Device::CreateDevice() {
     }
   }
 
-  if (!render_resource_manager_.Init()) {
+  if (!render_resource_manager_.Init(
+          *this, adapter_, *target_window_.lock(), FRAME_COUNT,
+          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, command_queue_.Get())) {
     return false;
   }
 
@@ -215,8 +181,7 @@ bool DirectX12Device::MoveToNextFrame() {
     return false;
   }
 
-  swap_chain_.UpdateCurrentFrameIndex();
-  frame_index_ = swap_chain_.GetCurrentFrameIndex();
+  frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
     if (FAILED(fence_->SetEventOnCompletion(fence_values_[frame_index_],

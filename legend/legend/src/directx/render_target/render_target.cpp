@@ -32,6 +32,8 @@ bool RenderTarget::Init(IDirectXAccessor& accessor, DXGI_FORMAT format,
   this->clear_color_ = clear_color;
   this->rtv_handle_ = accessor.GetRTVHandle();
   this->format_ = format;
+  this->viewport_ = CD3DX12_VIEWPORT(0.0f, 0.0f, width * 1.0f, height * 1.0f);
+  this->scissor_rect_ = CD3DX12_RECT(0, 0, width, height);
 
   D3D12_RENDER_TARGET_VIEW_DESC rtv_desc = {};
   rtv_desc.ViewDimension = D3D12_RTV_DIMENSION::D3D12_RTV_DIMENSION_TEXTURE2D;
@@ -59,6 +61,10 @@ bool RenderTarget::InitFromBuffer(IDirectXAccessor& accessor,
   this->clear_color_ = clear_color;
   this->rtv_handle_ = accessor.GetRTVHandle();
   this->format_ = desc.Format;
+  this->viewport_ =
+      CD3DX12_VIEWPORT(0.0f, 0.0f, desc.Width * 1.0f, desc.Height * 1.0f);
+  this->scissor_rect_ =
+      CD3DX12_RECT(0, 0, static_cast<u32>(desc.Width), desc.Height);
 
   accessor.GetDevice()->CreateRenderTargetView(
       resource_.GetResource(), &rtv_desc, rtv_handle_.cpu_handle_);

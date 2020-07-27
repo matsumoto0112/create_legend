@@ -1,13 +1,12 @@
 #include "counting_descriptor_heap.h"
 
-#include "src/directx/descriptor_heap/descriptor_heap.h"
-
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
 
 //コンストラクタ
 CountingDescriptorHeap::CountingDescriptorHeap()
-    : heap_(), allocate_index_(0) {}
+    : heap_(), allocate_index_(0), max_allocate_num_(0) {}
 
 //デストラクタ
 CountingDescriptorHeap::~CountingDescriptorHeap() {}
@@ -24,18 +23,22 @@ bool CountingDescriptorHeap::Init(IDirectXAccessor& accessor,
   return true;
 }
 
-//ディスクリプタハンドル
+//ハンドルを取得する
 DescriptorHandle CountingDescriptorHeap::GetHandle() {
   MY_ASSERTION(allocate_index_ < max_allocate_num_,
                L"割り当て可能上限数を超えています。");
-  const DescriptorHandle handle = heap_.GetHandle(allocate_index_);
-  allocate_index_++;
-  return handle;
+
+  return heap_.GetHandle(allocate_index_++);
 }
 
+//インデックス指定のハンドルを取得する
 DescriptorHandle CountingDescriptorHeap::GetForceHandle(u32 index) const {
   return heap_.GetHandle(index);
 }
 
+//アロケートカウンターのリセット
+void CountingDescriptorHeap::ResetAllocateCounter() { allocate_index_ = 0; }
+
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend

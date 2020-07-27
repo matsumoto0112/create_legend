@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
-#define LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_
 
 /**
  * @file render_target.h
@@ -7,14 +7,14 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/buffer/depth_stencil.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/util/color_4.h"
 
 namespace legend {
 namespace directx {
-namespace buffer {
+namespace render_target {
 /**
  * @class RenderTarget
  * @brief レンダーターゲット
@@ -55,25 +55,6 @@ class RenderTarget {
                       const util::Color4& clear_color,
                       const std::wstring& name);
   /**
-   * @brief デプス・ステンシルを作成する
-   * @param accessor DirextX12アクセサ
-   * @param format フォーマット
-   * @param width 幅
-   * @param height 高さ
-   * @param clear_value 初期化値
-   * @param name リソース名
-   * @return 作成に成功したらtrueを返す
-   */
-  bool CreateDepthStencil(IDirectXAccessor& accessor, DXGI_FORMAT format,
-                          u32 width, u32 height,
-                          const DepthStencil::ClearValue& clear_value,
-                          const std::wstring& name);
-  /**
-   * @brief レンダーターゲットにセットする
-   * @param accessor DirextX12アクセサ
-   */
-  void SetRenderTarget(IDirectXAccessor& accessor);
-  /**
    * @brief レンダーターゲットの色をクリアする
    * @param accessor DirextX12アクセサ
    * @details レンダーターゲットにセットされていないときは無効
@@ -91,34 +72,52 @@ class RenderTarget {
    */
   void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
   /**
-   * @brief パイプラインステートデスクにRTV情報を書き込む
-   * @param pipeline_state_desc 書き込む対象
+   * @brief パイプラインステートにRTV情報を書き込む
+   * @param pipeline 書き込む対象
    */
-  void WriteInfoToPipelineStateDesc(
-      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc,
-      bool write_with_depth_stencil) const;
+  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
 
  public:
   /**
    * @brief リソースを取得する
    */
-  ID3D12Resource* GetResource() const { return resource_.GetResource(); }
+  inline ID3D12Resource* GetResource() const { return resource_.GetResource(); }
+  /**
+   * @brief ハンドルを取得する
+   */
+  inline descriptor_heap::DescriptorHandle GetHandle() const {
+    return rtv_handle_;
+  }
+  /**
+   * @brief フォーマットを取得する
+   */
+  inline DXGI_FORMAT GetFormat() const { return format_; }
+  /**
+   * @brief ビューポートを取得する
+   */
+  inline D3D12_VIEWPORT GetViewport() const { return viewport_; }
+  /**
+   * @brief シザー矩形を取得する
+   */
+  inline D3D12_RECT GetScissorRect() const { return scissor_rect_; }
 
  private:
   //! リソース
-  CommittedResource resource_;
+  buffer::CommittedResource resource_;
   //! レンダーターゲットハンドル
-  DescriptorHandle rtv_handle_;
+  descriptor_heap::DescriptorHandle rtv_handle_;
   //! バッファのクリア色
   util::Color4 clear_color_;
   //! レンダーターゲットのフォーマット
   DXGI_FORMAT format_;
-  //! デプス・ステンシル
-  std::unique_ptr<DepthStencil> depth_stencil_;
+  //! ビューポート
+  D3D12_VIEWPORT viewport_;
+  //! シザー矩形
+  D3D12_RECT scissor_rect_;
 };
 
-}  // namespace buffer
+}  // namespace render_target
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_RENDER_TARGET_H_
+#endif  //! LEGEND_DIRECTX_RENDER_TARGET_RENDER_TARGET_H_

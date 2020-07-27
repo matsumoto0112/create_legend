@@ -83,10 +83,12 @@
   <ItemGroup>
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
-    <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
-    <ClCompile Include="src\directx\buffer\render_target.cpp" />
-    <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
+    <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
+    <ClCompile Include="src\directx\render_target\render_target.cpp" />
+    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
+    <ClCompile Include="src\directx\device\command_list.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
@@ -102,7 +104,7 @@
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\descriptor_heap.cpp" />
-    <ClCompile Include="src\directx\heap_manager.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap\heap_manager.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
@@ -132,11 +134,10 @@
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
-    <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
-    <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
   </ItemGroup>
@@ -171,9 +173,15 @@
       <FileType>Document</FileType>
     </None>
     <ClInclude Include="src\camera\perspective_camera.h" />
-    <ClInclude Include="src\directx\buffer\depth_stencil.h" />
-    <ClInclude Include="src\directx\buffer\render_target.h" />
-    <ClInclude Include="src\directx\buffer\render_target_texture.h" />
+    <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
+    <ClInclude Include="src\directx\render_target\render_target.h" />
+    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
+    <ClInclude Include="src\directx\device\command_list.h" />
+    <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
     <ClInclude Include="src\directx\constant_buffer_structure.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
@@ -200,7 +208,7 @@
     <ClInclude Include="src\directx\descriptor_heap\descriptor_handle.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap.h" />
     <ClInclude Include="src\directx\directx_accessor.h" />
-    <ClInclude Include="src\directx\heap_manager.h" />
+    <ClInclude Include="src\directx\descriptor_heap\heap_manager.h" />
     <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
@@ -238,11 +246,10 @@
     <ClInclude Include="src\physics\capsule.h" />
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\sphere.h" />
-    <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
-    <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\game_over.h" />
@@ -265,8 +272,10 @@
     <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\fps_counter.h" />
+    <ClInclude Include="src\util\stl_extend.h" />
     <ClInclude Include="src\util\string_util.h" />
     <ClInclude Include="src\util\loader\texture_loader.h" />
+    <ClInclude Include="src\util\transform.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\window\window_procedure.h" />
@@ -275,18 +284,13 @@
   <ItemGroup>
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
+    <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
+    <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
-    <None Include="assets\shaders\postprocess\gray_scale.hlsli" />
     <None Include="packages.config" />
     <None Include="src\.clang-format" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-    </FxCompile>
     <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -303,6 +307,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="assets\shaders\physics\obb_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -311,32 +331,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="assets\shaders\PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\postprocess\gray_scale_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\postprocess\gray_scale_vs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\TextureTest.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\VertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_2.wav" />
     <Media Include="assets\audios\free_3.wav" />
+    <Media Include="assets\audios\free_4.wav" />
+    <Media Include="assets\audios\free_5.wav" />
+    <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

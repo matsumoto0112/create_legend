@@ -13,17 +13,23 @@ Sprite2D::Sprite2D() {}
 Sprite2D::~Sprite2D() {}
 
 //‰Šú‰»
-bool Sprite2D::Init(const std::filesystem::path& filepath) {
+bool Sprite2D::Init(
+    const std::filesystem::path& filepath,
+    directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
   texture_ = std::make_shared<directx::buffer::Texture2D>();
   if (!texture_->InitAndWrite(
-          device, directx::shader::TextureRegisterID::Albedo, filepath)) {
+          device, directx::shader::TextureRegisterID::Albedo, filepath,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::GLOBAL_ID))) {
     return false;
   }
+
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(cbv_heap_id),
           L"Sprite_TransformConstantBuffer")) {
     return false;
   }
@@ -49,6 +55,8 @@ bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
 
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Sprite_TransformConstantBuffer")) {
     return false;
   }

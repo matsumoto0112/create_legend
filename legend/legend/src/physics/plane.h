@@ -60,7 +60,6 @@ class Plane {
   directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
 
   directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  std::shared_ptr<directx::shader::RootSignature> root_signature_;
   directx::shader::GraphicsPipelineState pipeline_state_;
 };
 

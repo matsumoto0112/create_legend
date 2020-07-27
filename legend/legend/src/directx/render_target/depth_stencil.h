@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
-#define LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
+#ifndef LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_
+#define LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_
 
 /**
  * @file depth_stencil.h
@@ -9,10 +9,11 @@
 #include "src/directx/buffer/committed_resource.h"
 #include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 
 namespace legend {
 namespace directx {
-namespace buffer {
+namespace render_target {
 /**
  * @class DepthStencil
  * @brief デプス・ステンシルクラス
@@ -72,11 +73,10 @@ class DepthStencil {
    */
   void PrepareToSetCommandList(IDirectXAccessor& accessor);
   /**
-   * @brief パイプラインステートデスクにRTV情報を書き込む
-   * @param pipeline_state_desc 書き込む対象
+   * @brief パイプラインにDSV情報を書き込む
+   * @param pipeline 書き込む対象
    */
-  void WriteInfoToPipelineStateDesc(
-      D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipeline_state_desc) const;
+  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
 
   /**
    * @brief CPUハンドルを取得する
@@ -90,15 +90,15 @@ class DepthStencil {
   //! リソース
   legend::directx::buffer::CommittedResource resource_;
   //! ハンドル
-  legend::directx::DescriptorHandle handle_;
+  legend::directx::descriptor_heap::DescriptorHandle handle_;
   //! フォーマット
   DXGI_FORMAT format_;
   //! クリア値
   ClearValue clear_value_;
 };
 
-}  // namespace buffer
+}  // namespace render_target
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_BUFFER_DEPTH_STENCIL_H_
+#endif  //! LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_H_

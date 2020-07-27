@@ -38,7 +38,6 @@
     <ClCompile Include="src\main_matsumoto.cpp" />
     <ClCompile Include="src\input\keyboard.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
-    <ClCompile Include="src\directx\heap_manager.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
@@ -48,12 +47,9 @@
     <ClCompile Include="src\input\input_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
-    <ClCompile Include="src\directx\buffer\render_target.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\descriptor_heap.cpp" />
-    <ClCompile Include="src\directx\buffer\render_target_texture.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
-    <ClCompile Include="src\directx\buffer\depth_stencil.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
@@ -61,7 +57,6 @@
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
-    <ClCompile Include="src\scenes\debugscene\perspective_camera_test.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
@@ -73,8 +68,15 @@
     <ClCompile Include="src\draw\texture_char.cpp" />
     <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\util\loader\font_loader.cpp" />
-    <ClCompile Include="src\scenes\debugscene\post_process_viewer.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\directx\render_target\render_target.cpp" />
+    <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
+    <ClCompile Include="src\directx\device\command_list.cpp" />
+    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
+    <ClCompile Include="src\directx\descriptor_heap\heap_manager.cpp" />
+    <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
@@ -130,7 +132,6 @@
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\input\keyboard.h" />
     <ClInclude Include="src\input\mouse.h" />
-    <ClInclude Include="src\directx\heap_manager.h" />
     <ClInclude Include="src\directx\directx_accessor.h" />
     <ClInclude Include="src\directx\resource_type.h" />
     <ClInclude Include="src\libs\stb_image.h" />
@@ -147,15 +148,12 @@
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\input\input_code.h" />
     <ClInclude Include="src\input\input_command.h" />
-    <ClInclude Include="src\directx\buffer\render_target.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_handle.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
-    <ClInclude Include="src\directx\buffer\render_target_texture.h" />
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="assets\shaders\defines\global.h" />
-    <ClInclude Include="src\directx\buffer\depth_stencil.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
@@ -165,7 +163,6 @@
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\math\quaternion.h" />
-    <ClInclude Include="src\scenes\debugscene\perspective_camera_test.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\constant_buffer_structure.h" />
     <ClInclude Include="src\physics\collision.h" />
@@ -180,8 +177,20 @@
     <ClInclude Include="src\draw\texture_char.h" />
     <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\util\loader\font_loader.h" />
-    <ClInclude Include="src\scenes\debugscene\post_process_viewer.h" />
     <ClInclude Include="src\draw\model.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\directx\render_target\render_target.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
+    <ClInclude Include="src\directx\device\command_list.h" />
+    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
+    <ClInclude Include="src\directx\descriptor_heap\heap_manager.h" />
+    <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
+    <ClInclude Include="src\util\stl_extend.h" />
+    <ClInclude Include="src\util\transform.h" />
+    <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\capsule.h" />
@@ -193,24 +202,26 @@
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
-    <None Include="assets\shaders\postprocess\gray_scale.hlsli" />
+    <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
+    <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="assets\shaders\VertexShader.hlsl" />
-    <FxCompile Include="assets\shaders\PixelShader.hlsl" />
-    <FxCompile Include="assets\shaders\ConstantBufferTest.hlsl" />
-    <FxCompile Include="assets\shaders\TextureTest.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
     <FxCompile Include="assets\shaders\modelview\model_view_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl" />
     <FxCompile Include="assets\shaders\physics\obb_ps.hlsl" />
     <FxCompile Include="assets\shaders\physics\obb_vs.hlsl" />
-    <FxCompile Include="assets\shaders\postprocess\gray_scale_vs.hlsl" />
-    <FxCompile Include="assets\shaders\postprocess\gray_scale_ps.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_vs.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
+    <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />
     <Media Include="assets\audios\free_2.wav" />
+    <Media Include="assets\audios\free_4.wav" />
+    <Media Include="assets\audios\free_5.wav" />
+    <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
 </Project>

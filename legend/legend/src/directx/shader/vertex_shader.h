@@ -6,7 +6,7 @@
  * @brief 頂点シェーダー定義
  */
 
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -31,7 +31,7 @@ class VertexShader {
    * @param elements 入力レイアウト
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, const std::filesystem::path& filepath,
+  bool Init(IDirectXAccessor& accessor, const std::filesystem::path& filepath,
             const std::vector<D3D12_INPUT_ELEMENT_DESC>& elements);
   /**
    * @brief シェーダーコードとして返す

@@ -33,12 +33,16 @@ bool DirectX12Device::Init(std::weak_ptr<window::Window> target_window) {
 }
 
 bool DirectX12Device::InitAfter() {
-  if (FAILED(command_list_->Close())) {
-    MY_LOG(L"ID3D12GraphicsCommandList::Close failed");
-    return false;
+  std::array<ID3D12CommandList*, FRAME_COUNT> command_lists;
+  for (u32 i = 0; i < FRAME_COUNT; i++) {
+    if (!command_lists_[i].Close()) {
+      return false;
+    }
+    command_lists[i] = command_lists_[i].GetCommandList();
   }
-  ID3D12CommandList* command_lists[] = {command_list_.Get()};
-  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
+
+  command_queue_->ExecuteCommandLists(static_cast<u32>(command_lists.size()),
+                                      command_lists.data());
 
   MoveToNextFrame();
 
@@ -46,42 +50,33 @@ bool DirectX12Device::InitAfter() {
 }
 
 bool DirectX12Device::Prepare() {
-  if (FAILED(command_allocator_[frame_index_]->Reset())) {
+  if (FAILED(command_lists_[frame_index_].GetCommandAllocator()->Reset())) {
     return false;
   }
-  if (FAILED(command_list_->Reset(command_allocator_[frame_index_].Get(),
-                                  nullptr))) {
+  if (FAILED(command_lists_[frame_index_].GetCommandList()->Reset(
+          command_lists_[frame_index_].GetCommandAllocator(), nullptr))) {
     return false;
   }
 
-  CD3DX12_VIEWPORT viewport(0.0f, 0.0f,
-                            static_cast<float>(render_target_screen_size_.x),
-                            static_cast<float>(render_target_screen_size_.y));
-  CD3DX12_RECT scissor_rect(0, 0,
-                            static_cast<long>(render_target_screen_size_.x),
-                            static_cast<long>(render_target_screen_size_.y));
-  command_list_->RSSetViewports(1, &viewport);
-  command_list_->RSSetScissorRects(1, &scissor_rect);
+  render_resource_manager_.SetRenderTargetID(
+      render_target::RenderTargetID::BACK_BUFFER);
+  render_resource_manager_.SetRenderTargetsToCommandList(*this);
+  render_resource_manager_.ClearCurrentRenderTarget(*this);
 
-  swap_chain_.SetBackBuffer(*this);
-  swap_chain_.ClearBackBuffer(*this);
-
-  heap_manager_.BeginFrame();
+  heap_manager_.BeginNewFrame();
+  heap_manager_.SetHeapToCommandList(*this);
   default_root_signature_->SetGraphicsCommandList(*this);
   return true;
 }
 
 bool DirectX12Device::Present() {
-  swap_chain_.DrawEnd(*this);
+  render_resource_manager_.DrawEnd(*this);
 
-  if (FAILED(command_list_->Close())) {
+  ExecuteCommandList();
+
+  if (!render_resource_manager_.Present()) {
     return false;
   }
-
-  ID3D12CommandList* command_lists[] = {command_list_.Get()};
-  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
-
-  swap_chain_.Present();
 
   if (!MoveToNextFrame()) {
     return false;
@@ -89,8 +84,6 @@ bool DirectX12Device::Present() {
 
   return true;
 }
-
-void DirectX12Device::SetBackBuffer() { swap_chain_.SetBackBuffer(*this); }
 
 void DirectX12Device::WaitForGPU() noexcept {
   if (command_queue_ && fence_ && fence_event_.IsValid()) {
@@ -104,26 +97,24 @@ void DirectX12Device::WaitForGPU() noexcept {
   }
 }
 
-DescriptorHandle DirectX12Device::GetHandle(DescriptorHeapType heap_type) {
-  switch (heap_type) {
-    case legend::directx::DescriptorHeapType::CBV_SRV_UAV:
-      return heap_manager_.GetCbvSrvUavHeap().GetHandle();
-    case legend::directx::DescriptorHeapType::RTV:
-      return heap_manager_.GetRtvHeap().GetHandle();
-    case legend::directx::DescriptorHeapType::DSV:
-      return heap_manager_.GetDsvHeap().GetHandle();
-    default:
-      MY_ASSERTION(false, L"未定義のheap_typeが選択されました。");
-      break;
-  }
-  return DescriptorHandle{};
-}
-
-void DirectX12Device::SetToGlobalHeap(u32 register_num,
-                                      ResourceType resource_type,
-                                      const DescriptorHandle& handle) {
+void DirectX12Device::SetToGlobalHeap(
+    u32 register_num, ResourceType resource_type,
+    const descriptor_heap::DescriptorHandle& handle) {
   heap_manager_.SetHandleToLocalHeap(register_num, resource_type,
                                      handle.cpu_handle_);
+}
+
+bool DirectX12Device::ExecuteCommandList() {
+  if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
+    return false;
+  }
+
+  ID3D12CommandList* command_lists[] = {
+      command_lists_[frame_index_].GetCommandList()};
+  command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
+
+  WaitForGPU();
+  return true;
 }
 
 bool DirectX12Device::CreateDevice() {
@@ -154,29 +145,16 @@ bool DirectX12Device::CreateDevice() {
     return false;
   }
 
-  //スワップチェインの作成
-  if (!swap_chain_.Init(*this, adapter_, *target_window_.lock(),
-                        command_queue_.Get(),
-                        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)) {
-    return false;
-  }
-
   //フレーム枚数分のアロケータ作成
   for (unsigned int i = 0; i < FRAME_COUNT; i++) {
-    if (FAILED(device_->CreateCommandAllocator(
-            D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
-            IID_PPV_ARGS(&command_allocator_[i])))) {
-      MY_LOG(L"CreateCommandAllocator %d failed", i);
+    if (!command_lists_[i].Init(device_.Get(), command_queue_.Get())) {
       return false;
     }
   }
 
-  //コマンドリストの作成
-  if (FAILED(device_->CreateCommandList(
-          0, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
-          command_allocator_[0].Get(), nullptr,
-          IID_PPV_ARGS(&command_list_)))) {
-    MY_LOG(L"CreateCommandList failed");
+  if (!render_resource_manager_.Init(
+          *this, adapter_, *target_window_.lock(), FRAME_COUNT,
+          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, command_queue_.Get())) {
     return false;
   }
 
@@ -203,8 +181,8 @@ bool DirectX12Device::MoveToNextFrame() {
     return false;
   }
 
-  swap_chain_.UpdateCurrentFrameIndex();
-  frame_index_ = swap_chain_.GetCurrentFrameIndex();
+  render_resource_manager_.UpdateCurrentFrameIndex();
+  frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
     if (FAILED(fence_->SetEventOnCompletion(fence_values_[frame_index_],

@@ -1,9 +1,8 @@
 #include "src/scenes/scene_manager.h"
 
 #include "src/scenes/debugscene/model_view.h"
-#include "src/scenes/debugscene/perspective_camera_test.h"
+#include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/physics_test.h"
-#include "src/scenes/debugscene/post_process_viewer.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/game_over.h"
@@ -67,18 +66,15 @@ bool SceneManager::Update() {
       case SceneType::SOUND_TEST:
         current_scene_ = std::make_unique<debugscene::SoundTest>(this);
         break;
-      case SceneType::PERSPECTIVE_CAMERA_TEST:
-        current_scene_ =
-            std::make_unique<debugscene::PerspectiveCameraTest>(this);
-        break;
       case SceneType::PHYSICS_TEST:
         current_scene_ = std::make_unique<debugscene::PhysicsTest>(this);
         break;
       case SceneType::SPRITE_TEST:
         current_scene_ = std::make_unique<debugscene::SpriteRenderTest>(this);
         break;
-      case SceneType::POST_PROCES_VIEWER:
-        current_scene_ = std::make_unique<debugscene::PostProcessViewer>(this);
+      case SceneType::MULTI_RENDER_TARGET_TEST:
+        current_scene_ =
+            std::make_unique<debugscene::MultiRenderTargetTest>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

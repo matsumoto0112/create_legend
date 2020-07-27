@@ -1,6 +1,7 @@
 #include "src/physics/bounding_box.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 
 namespace legend {
@@ -67,8 +68,11 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
     return false;
   }
 
-  if (!transform_constant_buffer_.Init(device, 0,
-                                       L"Transform ConstantBuffer")) {
+  if (!transform_constant_buffer_.Init(
+          device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::PHYSICS_TEST),
+          L"Transform ConstantBuffer")) {
     return false;
   }
 
@@ -81,7 +85,11 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
 
-  if (!world_constant_buffer_.Init(device, 1, L"WorldContext ConstantBuffer")) {
+  if (!world_constant_buffer_.Init(
+          device, directx::shader::ConstantBufferRegisterID::WorldContext,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::PHYSICS_TEST),
+          L"WorldContext ConstantBuffer")) {
     return false;
   }
 
@@ -92,13 +100,6 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   world_constant_buffer_.GetStagingRef().projection =
       math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
   world_constant_buffer_.UpdateStaging();
-
-  //ルートシグネチャ作成
-  root_signature_ = std::make_shared<directx::shader::RootSignature>();
-  if (!root_signature_->Init(game::GameDevice::GetInstance()->GetDevice(),
-                             L"Global Root Signature")) {
-    return false;
-  }
 
   std::filesystem::path path = util::Path::GetInstance()->shader();
   std::filesystem::path vertex_shader_path = path / L"physics" / L"obb_vs.cso";
@@ -134,10 +135,12 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   }
 
   //パイプライン作成開始
-  pipeline_state_.SetRootSignature(root_signature_);
+  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
   pipeline_state_.SetVertexShader(vertex_shader);
   pipeline_state_.SetPixelShader(pixel_shader);
-  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER,
+      &pipeline_state_);
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
   pipeline_state_.SetPrimitiveTopology(
@@ -165,11 +168,8 @@ void BoundingBox::Update() {
 
 //描画
 void BoundingBox::Draw(directx::DirectX12Device& device) {
-  root_signature_->SetGraphicsCommandList(device);
   pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
   world_constant_buffer_.SetToHeap(device);
-
   transform_constant_buffer_.SetToHeap(device);
   device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
   vertex_buffer_.SetGraphicsCommandList(device);

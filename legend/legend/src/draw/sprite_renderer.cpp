@@ -64,15 +64,19 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   pipeline_state_.SetPixelShader(pixel_shader);
   pipeline_state_.SetBlendDesc(
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  pipeline_state_.SetRenderTargetInfo(device.GetRenderTarget(), true);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER,
+      &pipeline_state_);
 
   if (!pipeline_state_.CreatePipelineState(device)) {
     return false;
   }
 
-  if (!world_cb_.Init(device,
-                      directx::shader::ConstantBufferRegisterID::WorldContext,
-                      L"Sprite_WorldContextConstantBuffer")) {
+  if (!world_cb_.Init(
+          device, directx::shader::ConstantBufferRegisterID::WorldContext,
+          device.GetLocalHeapHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Sprite_WorldContextConstantBuffer")) {
     return false;
   }
 
@@ -95,7 +99,6 @@ void SpriteRenderer::DrawItems() {
       game::GameDevice::GetInstance()->GetDevice();
 
   pipeline_state_.SetGraphicsCommandList(device);
-  device.GetHeapManager().SetGraphicsCommandList(device);
   world_cb_.SetToHeap(device);
 
   vertex_buffer_.SetGraphicsCommandList(device);

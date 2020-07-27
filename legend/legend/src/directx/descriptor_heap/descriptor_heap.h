@@ -1,5 +1,5 @@
-#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
-#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
+#ifndef LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_
+#define LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_
 
 /**
  * @file descriptor_heap.h
@@ -12,6 +12,8 @@
 
 namespace legend {
 namespace directx {
+namespace descriptor_heap {
+
 /**
  * @brief ディスクリプタヒープのラップクラス
  */
@@ -30,7 +32,14 @@ class DescriptorHeap {
     //! ヒープフラグ
     DescriptorHeapFlag flag;
 
-    Desc(const std::wstring name = std::wstring(), u32 descriptor_num = 0,
+    /**
+     * @brief コンストラクタ
+     * @param name ヒープ名
+     * @param descriptor_num 割り当てる数
+     * @param type ヒープの種類
+     * @param flag ヒープフラグ
+     */
+    Desc(const std::wstring name = L"", u32 descriptor_num = 0,
          DescriptorHeapType type = DescriptorHeapType::CBV_SRV_UAV,
          DescriptorHeapFlag flag = DescriptorHeapFlag::NONE)
         : name(name), descriptor_num(descriptor_num), type(type), flag(flag) {}
@@ -72,7 +81,8 @@ class DescriptorHeap {
   u32 heap_size_;
 };
 
+}  // namespace descriptor_heap
 }  // namespace directx
 }  // namespace legend
 
-#endif  //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_H_
+#endif //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_H_

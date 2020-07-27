@@ -1,30 +1,31 @@
-#ifndef LEGEND_SCENES_DEBUGSCENE_POST_PROCESS_VIEWER_H_
-#define LEGEND_SCENES_DEBUGSCENE_POST_PROCESS_VIEWER_H_
+#ifndef LEGEND_SCENES_DEBUGSCENE_MULTI_RENDER_TARGET_TEST_H_
+#define LEGEND_SCENES_DEBUGSCENE_MULTI_RENDER_TARGET_TEST_H_
 
 /**
- * @file post_process_viewer.h
- * @brief ポストプロセス確認シーン
+ * @file multi_render_target_test.h
+ * @brief マルチレンダーターゲットテストシーン
  */
 
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/render_target_texture.h"
+#include "src/directx/descriptor_heap/counting_descriptor_heap.h"
+#include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"
-#include "src/math/matrix_4x4.h"
 #include "src/scenes/scene.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace scenes {
 namespace debugscene {
 /**
- * @brief ポストプロセス確認シーン
+ * @brief マルチレンダーターゲットテストシーン
  */
-class PostProcessViewer : public Scene {
+class MultiRenderTargetTest : public Scene {
  public:
-  PostProcessViewer(ISceneChange* scene_change);
-  virtual ~PostProcessViewer();
+  MultiRenderTargetTest(ISceneChange* scene_change);
+  virtual ~MultiRenderTargetTest();
   virtual bool Initialize() override;
   virtual bool Update() override;
   virtual void Draw() override;
@@ -40,13 +41,23 @@ class PostProcessViewer : public Scene {
   directx::buffer::VertexBuffer post_process_vertex_buffer_;
   directx::buffer::IndexBuffer post_process_index_buffer_;
 
-  directx::buffer::RenderTargetTexture render_target_texture_;
+  // directx::render_target::MultiRenderTargetTexture render_target_texture_;
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       post_process_transform_cb_;
   directx::buffer::ConstantBuffer<
       directx::constant_buffer_structure::WorldContext>
       post_process_world_cb_;
+  struct MultiRenderTargetTestPPConstantBufferStructure {
+    float border;
+  };
+  directx::buffer::ConstantBuffer<
+      MultiRenderTargetTestPPConstantBufferStructure>
+      post_process_local_cb_;
 
+  std::vector<util::Transform> transforms_;
+  std::vector<directx::buffer::ConstantBuffer<
+      directx::constant_buffer_structure::Transform>>
+      transform_cbs_;
   //! カメラ
   camera::PerspectiveCamera camera_;
 };
@@ -55,4 +66,4 @@ class PostProcessViewer : public Scene {
 }  // namespace scenes
 }  // namespace legend
 
-#endif  //! LEGEND_SCENES_DEBUGSCENE_POST_PROCESS_VIEWER_H_
+#endif  //! LEGEND_SCENES_DEBUGSCENE_MULTI_RENDER_TARGET_TEST_H_

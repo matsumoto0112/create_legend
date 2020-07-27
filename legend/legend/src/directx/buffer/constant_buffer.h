@@ -56,7 +56,7 @@ class ConstantBuffer {
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(IDirectXAccessor& accessor, u32 register_num,
-            const std::wstring& name);
+            descriptor_heap::DescriptorHandle handle, const std::wstring& name);
 
   /**
    * @brief 現在のコンスタントバッファ構造体の参照を取得する
@@ -86,7 +86,7 @@ class ConstantBuffer {
   //! リソース
   CommittedResource resource_;
   //! ハンドル
-  DescriptorHandle resource_handle_;
+  descriptor_heap::DescriptorHandle resource_handle_;
   //! コンスタントバッファ構造体
   T staging_;
   //! CPU上のリソースの書き込み領域
@@ -164,16 +164,16 @@ inline void ConstantBuffer<T>::Reset() {
   WriteEnd();
 
   resource_.Reset();
-  resource_handle_ = DescriptorHandle{};
+  resource_handle_ = descriptor_heap::DescriptorHandle{};
   staging_ = T{};
   u32 buffer_aligned_size_ = 0;
   register_num_ = 0;
 }
 
-//初期化
 template <class T>
 inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
                                     u32 register_num,
+                                    descriptor_heap::DescriptorHandle handle,
                                     const std::wstring& name) {
   Reset();
 
@@ -184,7 +184,7 @@ inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
   }
 
   this->register_num_ = register_num;
-  this->resource_handle_ = accessor.GetHandle(DescriptorHeapType::CBV_SRV_UAV);
+  this->resource_handle_ = handle;
 
   D3D12_CONSTANT_BUFFER_VIEW_DESC cbv_desc = {};
   cbv_desc.BufferLocation = resource_.GetResource()->GetGPUVirtualAddress();

@@ -4,11 +4,11 @@
 /**
  * @file swap_chain.h
  * @brief スワップチェインクラス定義
-
  */
 
-#include "src/directx/buffer/render_target.h"
 #include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/directx_accessor.h"
+#include "src/directx/render_target/render_target.h"
 #include "src/window/window.h"
 
 namespace legend {
@@ -18,9 +18,6 @@ namespace device {
  * @brief スワップチェインクラス
  */
 class SwapChain {
-  //! バックバッファの枚数
-  static constexpr u32 FRAME_COUNT = 3;
-
  public:
   /**
    * @brief コンストラクタ
@@ -35,23 +32,24 @@ class SwapChain {
    * @param accessor DirectX12アクセサ
    * @param apapter アダプター
    * @param target_window 描画対象のウィンドウk
-   * @param command_queue コマンドキュー
    * @param format バックバッファのフォーマット
+   * @param back_buffer_count バックバッファの枚数
+   * @param command_queue コマンドキュー
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
-            window::Window& target_window, ID3D12CommandQueue* command_queue,
-            DXGI_FORMAT format);
-  /**
-   * @brief バックバッファをセットする
-   * @param accessor DirectX12アクセサ
-   */
-  void SetBackBuffer(IDirectXAccessor& accessor);
+            window::Window& target_window, DXGI_FORMAT format,
+            u32 back_buffer_count, ID3D12CommandQueue* command_queue);
   /**
    * @brief バックバッファをクリアする
    * @param accessor DirectX12アクセサ
    */
   void ClearBackBuffer(IDirectXAccessor& accessor);
+  /**
+   * @brief 描画開始
+   * @param accessor DirectX12アクセサ
+   */
+  void DrawBegin(IDirectXAccessor& accessor);
   /**
    * @brief 描画終了
    * @param accessor DirectX12アクセサ
@@ -62,12 +60,22 @@ class SwapChain {
    * @return 表示に成功したらtrueを返す
    */
   bool Present();
+  /**
+   * @brief ビューポートをセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void SetViewport(IDirectXAccessor& accessor) const;
+  /**
+   * @brief シザー矩形をセットする
+   * @param accessor DirectX12アクセサ
+   */
+  void SetScissorRect(IDirectXAccessor& accessor) const;
 
  public:
   /**
    * @brief 現在のレンダーターゲットを取得する
    */
-  const buffer::RenderTarget& GetRenderTarget() const {
+  const render_target::RenderTarget& GetRenderTarget() const {
     return render_targets_[frame_index_];
   }
   /**
@@ -83,11 +91,13 @@ class SwapChain {
   //! スワップチェイン
   ComPtr<IDXGISwapChain3> swap_chain_;
   //! レンダーターゲット
-  std::array<buffer::RenderTarget, FRAME_COUNT> render_targets_;
+  std::vector<render_target::RenderTarget> render_targets_;
   //! 現在フレームのインデックス
   u32 frame_index_;
   //テアリングが許可されているか
   bool allow_tearing_;
+  D3D12_VIEWPORT viewport_;
+  D3D12_RECT scissor_rect_;
 };
 
 }  // namespace device

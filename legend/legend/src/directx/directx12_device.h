@@ -8,10 +8,12 @@
 
 #include <wrl/wrappers/corewrappers.h>
 
+#include "src/directx/descriptor_heap/heap_manager.h"
+#include "src/directx/device/command_list.h"
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/directx_accessor.h"
-#include "src/directx/heap_manager.h"
+#include "src/directx/render_target/render_resource_manager.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/libs/d3dx12.h"
 #include "src/window/window.h"
@@ -54,50 +56,53 @@ class DirectX12Device : public IDirectXAccessor {
    * @return 成功したらtrueを返す
    */
   bool Present();
-
-  /**
-   * @brief バックバッファのレンダーターゲットをセットする
-   */
-  void SetBackBuffer();
-
   /**
    * @brief GPUの処理を待機する
    */
   void WaitForGPU() noexcept;
-  /**
-   * @brief ディスクリプタハンドルを取得する
-   * @param heap_type 取得するディスクリプタヒープの種類
-   */
-  virtual DescriptorHandle GetHandle(DescriptorHeapType heap_type) override;
   /**
    * @brief グローバルヒープにディスクリプタハンドルをセットする
    * @param register_num セットするハンドルのシェーダにおけるレジスター番号
    * @param resource_type リソースの種類
    * @param handle セットするハンドル
    */
-  virtual void SetToGlobalHeap(u32 register_num, ResourceType resource_type,
-                               const DescriptorHandle& handle) override;
+  virtual void SetToGlobalHeap(
+      u32 register_num, ResourceType resource_type,
+      const descriptor_heap::DescriptorHandle& handle) override;
+  bool ExecuteCommandList();
 
  public:
   virtual inline ID3D12Device* GetDevice() const override {
     return device_.Get();
   }
   virtual inline ID3D12GraphicsCommandList4* GetCommandList() const override {
-    return command_list_.Get();
+    return command_lists_[frame_index_].GetCommandList();
   }
-  const inline buffer::RenderTarget& GetRenderTarget() const {
-    return swap_chain_.GetRenderTarget();
+  inline render_target::RenderResourceManager& GetRenderResourceManager() {
+    return render_resource_manager_;
   }
   /**
    * @brief ディスクリプタヒープ管理者を取得する
    */
-  inline HeapManager& GetHeapManager() { return heap_manager_; }
+  inline descriptor_heap::HeapManager& GetHeapManager() {
+    return heap_manager_;
+  }
   /**
    * @brief デフォルトのルートシグネチャを取得する
    */
   inline std::shared_ptr<shader::RootSignature> GetDefaultRootSignature()
       const {
     return default_root_signature_;
+  }
+  virtual descriptor_heap::DescriptorHandle GetLocalHeapHandle(
+      descriptor_heap::heap_parameter::LocalHeapID id) override {
+    return heap_manager_.GetLocalHeap(id)->GetHandle();
+  }
+  virtual descriptor_heap::DescriptorHandle GetRTVHandle() override {
+    return heap_manager_.GetRtvHeap()->GetHandle();
+  }
+  virtual descriptor_heap::DescriptorHandle GetDSVHandle() override {
+    return heap_manager_.GetDsvHeap()->GetHandle();
   }
 
  private:
@@ -121,8 +126,6 @@ class DirectX12Device : public IDirectXAccessor {
   ComPtr<ID3D12Device> device_;
   //! アダプター
   device::DXGIAdapter adapter_;
-  //! スワップチェイン
-  device::SwapChain swap_chain_;
   //! レンダーターゲットとなるウィンドウ
   std::weak_ptr<window::Window> target_window_;
   //! レンダーターゲットとなるスクリーンの大きさ
@@ -132,11 +135,9 @@ class DirectX12Device : public IDirectXAccessor {
   //! バッファインデックス
   i32 frame_index_;
   //! コマンドアロケータ
-  std::array<ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> command_allocator_;
+  std::array<device::CommandList, FRAME_COUNT> command_lists_;
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
-  //! コマンドリスト
-  ComPtr<ID3D12GraphicsCommandList4> command_list_;
   //!< 現在のレンダーターゲットの状態
   D3D12_RESOURCE_STATES current_resource_state_;
   //! フェンス値
@@ -144,9 +145,10 @@ class DirectX12Device : public IDirectXAccessor {
   //! フェンスイベント
   Microsoft::WRL::Wrappers::Event fence_event_;
   //! ディスクリプタヒープ管理
-  HeapManager heap_manager_;
+  descriptor_heap::HeapManager heap_manager_;
   //! デフォルトのルートシグネチャ
   std::shared_ptr<shader::RootSignature> default_root_signature_;
+  render_target::RenderResourceManager render_resource_manager_;
 };
 }  // namespace directx
 }  // namespace legend

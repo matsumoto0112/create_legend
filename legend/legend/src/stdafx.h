@@ -22,6 +22,7 @@
 #include <vector>
 #include <Windows.h>
 #include <functional>
+#include <map>
 
 #include <d3d12.h>
 #include <d3dcompiler.h>

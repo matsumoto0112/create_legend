@@ -1,7 +1,6 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 #define LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 
-#include "src/directx/buffer/render_target_texture.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/physics/bounding_box.h"

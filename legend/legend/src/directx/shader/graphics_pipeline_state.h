@@ -6,11 +6,7 @@
  * @brief パイプラインステート定義
  */
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/render_target.h"
-#include "src/directx/buffer/texture_2d.h"
-#include "src/directx/descriptor_heap/descriptor_heap.h"
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -35,7 +31,7 @@ class GraphicsPipelineState {
    * @brief 初期化
    * @param device DirectX12デバイス
    */
-  bool Init(DirectX12Device& device);
+  bool Init(IDirectXAccessor& device);
   /**
    * @brief ルートシグネチャをセットする
    */
@@ -49,12 +45,6 @@ class GraphicsPipelineState {
    */
   void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader);
   /**
-   * @brief レンダーターゲットの情報をセットする
-   * @param render_target 対象となるレンダーターゲット
-   */
-  void SetRenderTargetInfo(const buffer::RenderTarget& render_target,
-                           bool write_with_depth_stencil);
-  /**
    * @brief アルファブレンドデスクを設定する
    */
   void SetBlendDesc(const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc,
@@ -64,15 +54,27 @@ class GraphicsPipelineState {
    */
   void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology_type);
   /**
+   * @brief レンダーターゲットのフォーマットを設定する
+   * @param format フォーマット
+   * @param rtv_index 設定するレンダーターゲットインデックス
+   */
+  void SetRTVFormat(DXGI_FORMAT format, u32 rtv_index);
+  /**
+   * @brief レンダーターゲット数を設定する
+   */
+  void SetRenderTargetNum(u32 num);
+  void SetDSVFormat(DXGI_FORMAT format);
+  void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& desc);
+  /**
    * @brief パイプラインステートを作成する
    * @param device DirectX12デバイス
    */
-  bool CreatePipelineState(DirectX12Device& device);
+  bool CreatePipelineState(IDirectXAccessor& device);
   /**
    * @brief コマンドリストにセットする
    * @param device DirectX12デバイス
    */
-  void SetGraphicsCommandList(DirectX12Device& device);
+  void SetGraphicsCommandList(IDirectXAccessor& device);
 
  protected:
   //! パイプラインステートデスク

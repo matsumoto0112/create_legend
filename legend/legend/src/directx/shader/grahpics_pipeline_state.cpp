@@ -16,7 +16,7 @@ GraphicsPipelineState::GraphicsPipelineState()
 GraphicsPipelineState::~GraphicsPipelineState() {}
 
 //初期化
-bool GraphicsPipelineState::Init(DirectX12Device& device) {
+bool GraphicsPipelineState::Init(IDirectXAccessor& device) {
   pipeline_state_desc_.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
   pipeline_state_desc_.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
   pipeline_state_desc_.PrimitiveTopologyType =
@@ -56,13 +56,6 @@ void GraphicsPipelineState::SetPixelShader(
   }
 }
 
-//レンダーターゲットの情報をセットする
-void GraphicsPipelineState::SetRenderTargetInfo(
-    const buffer::RenderTarget& render_target, bool write_with_depth_stencil) {
-  render_target.WriteInfoToPipelineStateDesc(&pipeline_state_desc_,
-                                             write_with_depth_stencil);
-}
-
 //アルファブレンドデスクをセットする
 void GraphicsPipelineState::SetBlendDesc(
     const D3D12_RENDER_TARGET_BLEND_DESC& blend_desc, u32 rtv_index) {
@@ -75,8 +68,25 @@ void GraphicsPipelineState::SetPrimitiveTopology(
   pipeline_state_desc_.PrimitiveTopologyType = topology_type;
 }
 
+void GraphicsPipelineState::SetRTVFormat(DXGI_FORMAT format, u32 rtv_index) {
+  pipeline_state_desc_.RTVFormats[rtv_index] = format;
+}
+
+void GraphicsPipelineState::SetRenderTargetNum(u32 num) {
+  pipeline_state_desc_.NumRenderTargets = num;
+}
+
+void GraphicsPipelineState::SetDSVFormat(DXGI_FORMAT format) {
+  pipeline_state_desc_.DSVFormat = format;
+}
+
+void GraphicsPipelineState::SetDepthStencilState(
+    const D3D12_DEPTH_STENCIL_DESC& desc) {
+  pipeline_state_desc_.DepthStencilState = desc;
+}
+
 //パイプラインステートをセットする
-bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
+bool GraphicsPipelineState::CreatePipelineState(IDirectXAccessor& device) {
   pipeline_state_desc_.SampleMask = UINT_MAX;
   pipeline_state_desc_.SampleDesc.Count = 1;
 
@@ -89,7 +99,7 @@ bool GraphicsPipelineState::CreatePipelineState(DirectX12Device& device) {
 }
 
 //コマンドリストにセットする
-void GraphicsPipelineState::SetGraphicsCommandList(DirectX12Device& device) {
+void GraphicsPipelineState::SetGraphicsCommandList(IDirectXAccessor& device) {
   device.GetCommandList()->SetPipelineState(pipeline_state_.Get());
 }
 

@@ -33,7 +33,6 @@ VSOutput VSMain(const VSInput v){
 
 float4 PSMain(const PSInput i){
     float4 color = g_albedo.Sample(g_sampler_linear,i.uv);
-    color.a = 0.1f;
     return color;
 }
 

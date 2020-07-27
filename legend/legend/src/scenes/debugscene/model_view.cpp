@@ -14,7 +14,7 @@ namespace scenes {
 namespace debugscene {
 
 //モデル名
-const std::wstring ModelView::MODEL_NAME = L"1000cmObject";
+const std::wstring ModelView::MODEL_NAME = L"kari";
 
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change)
@@ -103,11 +103,36 @@ bool ModelView::Initialize() {
   }
 
   return true;
-}  // namespace scenes
+}
 
 //更新
 bool ModelView::Update() {
   if (ImGui::Begin("Transform")) {
+    //カメラ座標
+    math::Vector3 camera_position = camera_.GetPosition();
+    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
+    camera_.SetPosition(camera_position);
+    //カメラ回転角
+    math::Vector3 camera_rotation =
+        math::Quaternion::ToEular(camera_.GetRotation()) *
+        math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
+    camera_.SetRotation(
+        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
+
+    //カメラの上方向ベクトルを変更する
+    if (ImGui::Button("X_UP")) {
+      camera_.SetUpVector(math::Vector3::kRightVector);
+    }
+    if (ImGui::Button("Y_UP")) {
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("Z_UP")) {
+      camera_.SetUpVector(math::Vector3::kForwardVector);
+    }
+    float fov = camera_.GetFov() * math::util::RAD_2_DEG;
+    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
+    camera_.SetFov(fov * math::util::DEG_2_RAD);
   }
   ImGui::End();
   return true;

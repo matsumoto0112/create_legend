@@ -86,15 +86,30 @@ bool Model::Init(const std::filesystem::path& path) {
 
   //アルベドテクスチャ
   const std::vector<u8> albedo = loader.GetAlbedo();
-  if (!albedo_.InitAndWrite(
-          device, directx::shader::TextureRegisterID::Albedo,
-          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, albedo,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          model_name_ + L"_Albedo")) {
-    return false;
+  if (albedo.size() != 0) {
+    if (!albedo_.InitAndWrite(
+            device, directx::shader::TextureRegisterID::Albedo,
+            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, albedo,
+            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                          LocalHeapID::GLOBAL_ID),
+            model_name_ + L"_Albedo")) {
+      return false;
+    }
+  } else {
+    const std::vector<u8> tex_white = {0xff, 0xff, 0xff, 0xff};
+    const directx::buffer::Texture2D::Desc desc{
+        directx::shader::TextureRegisterID::Albedo,
+        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+        1,
+        1,
+        device.GetLocalHeapHandle(
+            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+        model_name_ + L"_Albedo"};
+    if (!albedo_.Init(device, desc)) {
+      return false;
+    }
+    albedo_.WriteResource(device, tex_white.data());
   }
-
   return true;
 }
 

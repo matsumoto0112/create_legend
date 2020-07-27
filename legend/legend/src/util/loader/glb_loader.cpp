@@ -124,6 +124,10 @@ std::vector<u16> GLBLoader::GetIndex(u32 mesh_index,
 }
 
 std::vector<u8> GLBLoader::GetAlbedo() const {
+  if (document_.images.Size() == 0) {
+    return std::vector<u8>();
+  }
+
   const Image& image = document_.images[0];
   return glb_resource_reader_->ReadBinaryData(document_, image);
 }

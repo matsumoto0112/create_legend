@@ -2,6 +2,7 @@
 #define LEGEND_PHYSICS_COLLISION_H_
 
 #include "src/physics/bounding_box.h"
+#include "src/physics/capsule.h"
 #include "src/physics/plane.h"
 #include "src/physics/ray.h"
 #include "src/physics/sphere.h"
@@ -49,13 +50,42 @@ class Collision : public util::Singleton<Collision> {
    * @param 終点
    */
   bool IsCheckLength_Point_Segment(Sphere& sphere, math::Vector3 start_position,
-                                math::Vector3 end_position);
+                                   math::Vector3 end_position);
   /**
    * @brief 球と平面の衝突判定
    * @param 球
    * @param 平面
    */
   bool Collision_Sphere_Plane(Sphere& sphere, Plane& plane);
+  /**
+   * @brief 球とカプセルの衝突判定
+   * @param 球
+   * @param カプセル
+   */
+  bool Collision_Sphere_Capsule(Sphere& sphere, Capsule& capsule);
+  /**
+   * @brief 球とカプセルの衝突判定
+   * @param 球の中心座標
+   * @param 球の半径
+   * @param カプセルの始点
+   * @param カプセルの終点
+   * @param カプセルの半径
+   */
+  bool Collision_Sphere_Capsule(math::Vector3 center, float radius1,
+                                math::Vector3 start_position,
+                                math::Vector3 end_position, float radius2);
+  /**
+   * @brief カプセルとカプセルの衝突判定
+   * @param カプセル1
+   * @param カプセル2
+   */
+  bool Collision_Capsule_Capsule(Capsule& capsule1, Capsule& capsule2);
+  /**
+   * @brief カプセルと平面の衝突判定
+   * @param カプセル
+   * @param 平面
+   */
+  bool Collision_Capsule_Plane(Capsule& capsule, Plane& plane);
   /**
    * @brief レイの長さを調べる
    * @param レイ

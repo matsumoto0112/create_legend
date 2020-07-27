@@ -7,7 +7,8 @@ namespace legend {
 namespace physics {
 //コンストラクタ
 Plane::Plane()
-    : position_(math::Vector3::kZeroVector), normal_(math::Vector3::kUpVector) {}
+    : position_(math::Vector3::kZeroVector),
+      normal_(math::Vector3::kUpVector) {}
 
 Plane::~Plane() {}
 
@@ -54,7 +55,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   transform_constant_buffer_.UpdateStaging();
 
   if (!world_constant_buffer_.Init(device, 1, L"WorldContext ConstantBuffer")) {
-      return false;
+    return false;
   }
 
   world_constant_buffer_.GetStagingRef().view = math::Matrix4x4::CreateView(
@@ -68,8 +69,8 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
   //ルートシグネチャ作成
   root_signature_ = std::make_shared<directx::shader::RootSignature>();
   if (!root_signature_->Init(game::GameDevice::GetInstance()->GetDevice(),
-      L"Global Root Signature")) {
-      return false;
+                             L"Global Root Signature")) {
+    return false;
   }
 
   std::filesystem::path path = util::Path::GetInstance()->shader();
@@ -83,26 +84,26 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
       {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
        D3D12_APPEND_ALIGNED_ELEMENT,
        D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0} };
+       0}};
 
   //頂点シェーダー
   std::shared_ptr<directx::shader::VertexShader> vertex_shader =
       std::make_shared<directx::shader::VertexShader>();
   if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-      vertex_shader_path, elements)) {
-      return false;
+                           vertex_shader_path, elements)) {
+    return false;
   }
 
   //ピクセルシェーダー
   std::shared_ptr<directx::shader::PixelShader> pixel_shader =
       std::make_shared<directx::shader::PixelShader>();
   if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-      pixel_shader_path)) {
-      return false;
+                          pixel_shader_path)) {
+    return false;
   }
 
   if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-      return false;
+    return false;
   }
 
   //パイプライン作成開始
@@ -116,8 +117,8 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
   if (!pipeline_state_.CreatePipelineState(
-      game::GameDevice::GetInstance()->GetDevice())) {
-      return false;
+          game::GameDevice::GetInstance()->GetDevice())) {
+    return false;
   }
 
   return true;
@@ -148,5 +149,10 @@ math::Vector3 Plane::GetPosition() const { return position_; }
 
 //法線ベクトルの取得
 math::Vector3 Plane::GetNormal() const { return normal_; }
+
+//距離を取得
+float Plane::GetDistance() const {
+  return math::Vector3::Dot(position_, GetNormal());
+}
 }  // namespace physics
 }  // namespace legend

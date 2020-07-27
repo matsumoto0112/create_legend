@@ -77,6 +77,7 @@
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\capsule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\physics\ray.h" />
+    <ClInclude Include="src\physics\capsule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

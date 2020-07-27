@@ -190,6 +190,7 @@ bool Collision::Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb) {
     vertices[i] = math::Matrix4x4::MultiplyCoord(vertices[i], rotate_matrix);
   }
 
+  //各線分と球の半径から判定を得る
   if (IsCheckLength_Point_Segment(sphere, vertices[0], vertices[1])) {
     return true;
   }
@@ -276,6 +277,173 @@ bool Collision::Collision_Sphere_Plane(Sphere& sphere, Plane& plane) {
   if (math::util::Abs(distance) <= sphere.GetRadius()) {
     return true;
   }
+
+  MY_LOG(L"衝突しませんでした");
+  return false;
+}
+
+//球とカプセルの衝突判定
+bool Collision::Collision_Sphere_Capsule(Sphere& sphere, Capsule& capsule) {
+  //線分を計算
+  math::Vector3 v = capsule.GetEndPosition() - capsule.GetStartPosition();
+  float r = sphere.GetRadius() + capsule.GetRadius();
+  float r2 = r * r;
+
+  //球の座標と始点の距離を計算
+  math::Vector3 sp = sphere.GetPosition() - capsule.GetStartPosition();
+  float t = math::Vector3::Dot(v, sp) / v.Magnitude();
+
+  if ((t < 0) && (sp.MagnitudeSquared() <= r2)) {
+    //始点より外側で衝突
+    MY_LOG(L"始点より外側で衝突");
+    return true;
+  }
+
+  //球の座標と終点の距離を計算
+  math::Vector3 ep = sphere.GetPosition() - capsule.GetEndPosition();
+  if ((1 < t) && (ep.MagnitudeSquared() <= r2)) {
+    //終点より外側で衝突
+    MY_LOG(L"終点より外側で衝突");
+    return true;
+  }
+
+  math::Vector3 h = sp - t * v;
+  if ((0 <= t) && (t <= 1) && (h.MagnitudeSquared() <= r2)) {
+    //始点と終点の間で衝突
+    MY_LOG(L"始点と終点の間で衝突");
+    return true;
+  }
+
+  return false;
+}
+
+//球とカプセルの衝突判定
+bool Collision::Collision_Sphere_Capsule(math::Vector3 center, float radius1,
+                                         math::Vector3 start_position,
+                                         math::Vector3 end_position,
+                                         float radius2) {
+  //線分を計算
+  math::Vector3 v = end_position - start_position;
+  float r = radius1 + radius2;
+  float r2 = r * r;
+
+  //球の座標と始点の距離を計算
+  math::Vector3 sp = center - start_position;
+  float t = math::Vector3::Dot(v, sp) / v.Magnitude();
+
+  if ((t < 0) && (sp.MagnitudeSquared() <= r2)) {
+    //始点より外側で衝突
+    MY_LOG(L"始点より外側で衝突");
+    return true;
+  }
+
+  //球の座標と終点の距離を計算
+  math::Vector3 ep = center - end_position;
+  if ((1 < t) && (ep.MagnitudeSquared() <= r2)) {
+    //終点より外側で衝突
+    MY_LOG(L"終点より外側で衝突");
+    return true;
+  }
+
+  math::Vector3 h = sp - t * v;
+  if ((0 <= t) && (t <= 1) && (h.MagnitudeSquared() <= r2)) {
+    //始点と終点の間で衝突
+    MY_LOG(L"始点と終点の間で衝突");
+    return true;
+  }
+
+  return false;
+}
+
+//カプセルとカプセルの衝突判定
+bool Collision::Collision_Capsule_Capsule(Capsule& capsule1,
+                                          Capsule& capsule2) {
+  math::Vector3 a = capsule1.GetEndPosition() - capsule1.GetStartPosition();
+  math::Vector3 b = capsule2.GetEndPosition() - capsule2.GetStartPosition();
+  math::Vector3 c = capsule2.GetStartPosition() - capsule1.GetStartPosition();
+  // 2つのカプセルの半径の合計
+  float total_radius = capsule1.GetRadius() + capsule2.GetRadius();
+
+  //法線ベクトル
+  math::Vector3 normal = math::Vector3::Cross(a, b).Normalized();
+  //中心線間の距離
+  float distance = math::Vector3::Dot(c, normal);
+  //カプセル1の法線ベクトル
+  math::Vector3 a_normal = math::Vector3::Cross(normal, a).Normalized();
+  //カプセル2の法線ベクトル
+  math::Vector3 b_normal = math::Vector3::Cross(normal, b).Normalized();
+
+  math::Vector3 a_plane_point1 =
+      capsule2.GetStartPosition() - distance * normal;
+  math::Vector3 a_plane_point2 = capsule2.GetEndPosition() - distance * normal;
+
+  //端点までのベクトル
+  math::Vector3 v1 = capsule1.GetStartPosition() - capsule2.GetStartPosition();
+  math::Vector3 v2 = capsule1.GetEndPosition() - capsule2.GetStartPosition();
+  math::Vector3 v3 = capsule2.GetStartPosition() - capsule2.GetStartPosition();
+  math::Vector3 v4 = capsule2.GetEndPosition() - capsule1.GetStartPosition();
+  float l1 = math::Vector3::Dot(b_normal, v1);
+  float l2 = math::Vector3::Dot(b_normal, v2);
+  float l3 = math::Vector3::Dot(a_normal, v3);
+  float l4 = math::Vector3::Dot(a_normal, v4);
+
+  //交点までの比を求める
+  float t1 = l3 / (l3 - l4);
+  float t2 = l1 / (l1 - l2);
+
+  // distanceがtotal_radiusより小さければ衝突している
+  //カプセル中心線間で衝突しているときの処理
+  if ((math::util::Abs(distance) < total_radius) && (0 < t1 && t1 < 1) &&
+      (0 < t2 && t2 < 1)) {
+    return true;
+  }
+
+  //カプセル1の始点がカプセル2に衝突
+  if (t2 < 0 && Collision_Sphere_Capsule(
+                    capsule1.GetStartPosition(), capsule1.GetRadius(),
+                    capsule2.GetStartPosition(), capsule2.GetEndPosition(),
+                    capsule2.GetRadius())) {
+    return true;
+  }
+  //カプセル1の終点がカプセル2に衝突
+  if (t2 > 1 && Collision_Sphere_Capsule(
+                    capsule1.GetEndPosition(), capsule1.GetRadius(),
+                    capsule2.GetStartPosition(), capsule2.GetEndPosition(),
+                    capsule2.GetRadius())) {
+    return true;
+  }
+  //カプセル2の始点がカプセル1に衝突
+  if (t1 < 0 && Collision_Sphere_Capsule(
+                    capsule2.GetStartPosition(), capsule2.GetRadius(),
+                    capsule1.GetStartPosition(), capsule1.GetEndPosition(),
+                    capsule1.GetRadius())) {
+    return true;
+  }
+  //カプセル1の終点がカプセル1に衝突
+  if (t1 > 1 && Collision_Sphere_Capsule(
+                    capsule2.GetEndPosition(), capsule2.GetRadius(),
+                    capsule1.GetStartPosition(), capsule1.GetEndPosition(),
+                    capsule1.GetRadius())) {
+    return true;
+  }
+
+  MY_LOG(L"衝突しませんでした");
+  return false;
+}
+
+//カプセルと平面の衝突判定
+bool Collision::Collision_Capsule_Plane(Capsule& capsule, Plane& plane) {
+  //カプセルの線分と平面の衝突判定
+  math::Vector3 v1 = capsule.GetStartPosition() - plane.GetPosition();
+  math::Vector3 v2 = capsule.GetEndPosition() - plane.GetPosition();
+
+  if (math::Vector3::Dot(v1, plane.GetNormal()) *
+          math::Vector3::Dot(v2, plane.GetNormal()) <=
+      0) {
+    return true;
+  }
+
+  //カプセルの球と平面の衝突判定
 
   MY_LOG(L"衝突しませんでした");
   return false;

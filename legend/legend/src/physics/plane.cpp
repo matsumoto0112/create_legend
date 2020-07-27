@@ -149,5 +149,10 @@ math::Vector3 Plane::GetPosition() const { return position_; }
 
 //法線ベクトルの取得
 math::Vector3 Plane::GetNormal() const { return normal_; }
+
+//距離を取得
+float Plane::GetDistance() const {
+  return math::Vector3::Dot(position_, GetNormal());
+}
 }  // namespace physics
 }  // namespace legend

@@ -131,6 +131,7 @@
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
+    <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
+    <ClInclude Include="src\physics\capsule.h" />
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />

@@ -44,6 +44,10 @@ class Plane {
    * @brief 法線ベクトルの取得
    */
   math::Vector3 GetNormal() const;
+  /**
+   * @brief 距離を取得
+   */
+  float GetDistance() const;
 
  private:
   //! 位置

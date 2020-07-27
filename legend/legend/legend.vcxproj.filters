@@ -79,6 +79,7 @@
     <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\capsule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\physics\ray.h" />
+    <ClInclude Include="src\physics\capsule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef LEGEND_GAME_GAME_DEVICE_H_
 #define LEGEND_GAME_GAME_DEVICE_H_
 
@@ -13,7 +12,7 @@
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
 #include "src/util/random.h"
-#include "src/util/resource.h"
+#include "src/util/resource/resource.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -72,7 +71,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   /**
    * @brief リソース管理システムを取得する
    */
-  util::Resource& GetResource() const { return *resource_; }
+  util::resource::Resource& GetResource() const { return *resource_; }
 
  protected:
   /**
@@ -96,7 +95,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   //! 乱数デバイス
   std::unique_ptr<util::Random> random_;
   //! リソース管理
-  std::unique_ptr<util::Resource> resource_;
+  std::unique_ptr<util::resource::Resource> resource_;
 };
 
 }  // namespace game

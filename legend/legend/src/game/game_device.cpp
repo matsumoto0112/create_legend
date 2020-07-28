@@ -30,7 +30,7 @@ bool GameDevice::Init(std::weak_ptr<window::Window> target_window) {
     return false;
   }
 
-  resource_ = std::make_unique<util::Resource>();
+  resource_ = std::make_unique<util::resource::Resource>();
   if (!resource_->Init()) {
     return false;
   }

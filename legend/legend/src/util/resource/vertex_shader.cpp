@@ -1,27 +1,27 @@
-#include "src/util/resource_manager/vertex_shader_resource_manager.h"
+#include "src/util/resource/vertex_shader.h"
 
 #include "src/game/game_device.h"
 
 namespace legend {
 namespace util {
-namespace resource_manager {
+namespace resource {
 
 //コンストラクタ
-VertexShaderResourceManager::VertexShaderResourceManager() {}
+VertexShader::VertexShader() {}
 
 //デストラクタ
-VertexShaderResourceManager::~VertexShaderResourceManager() {
+VertexShader::~VertexShader() {
   resources_.clear();
 }
 
 //初期化
-bool VertexShaderResourceManager::Init() {
+bool VertexShader::Init() {
   resources_.clear();
   return true;
 }
 
 //読み込み
-bool VertexShaderResourceManager::Load(VertexShaderID key,
+bool VertexShader::Load(VertexShaderID key,
                                        const std::filesystem::path& filepath) {
   MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再登録されようとしています。");
 
@@ -36,11 +36,11 @@ bool VertexShaderResourceManager::Load(VertexShaderID key,
 }
 
 //削除
-bool VertexShaderResourceManager::Unload(VertexShaderID key) {
+bool VertexShader::Unload(VertexShaderID key) {
   MY_ASSERTION(IsLoaded(key), L"未登録のキーが削除されようとしています。");
   return resources_.erase(key) == 1;
 }
 
-}  // namespace resource_manager
+}  // namespace resource
 }  // namespace util
 }  // namespace legend

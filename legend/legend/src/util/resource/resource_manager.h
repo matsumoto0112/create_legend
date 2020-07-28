@@ -1,5 +1,5 @@
-#ifndef LEGEND_UTIL_RESOURCE_MANAGER_RESOURCEMANAGER_H_
-#define LEGEND_UTIL_RESOURCE_MANAGER_RESOURCE_MANAGER_H_
+#ifndef LEGEND_UTIL_RESOURCE_RESOURCE_MANAGER_H_
+#define LEGEND_UTIL_RESOURCE_RESOURCE_MANAGER_H_
 
 /**
  * @file resource_manager.h
@@ -8,7 +8,7 @@
 
 namespace legend {
 namespace util {
-namespace resource_manager {
+namespace resource {
 template <typename TKey, typename TResource>
 class ResourceManager {
  public:
@@ -26,8 +26,8 @@ class ResourceManager {
  protected:
   std::unordered_map<TKey, TResource> resources_;
 };
-
-}  // namespace resource_manager
+}  // namespace resource
 }  // namespace util
 }  // namespace legend
-#endif  //! LEGEND_UTIL_RESOURCE_MANAGER_RESOURCE_MANAGER_H_
+
+#endif  //! LEGEND_UTIL_RESOURCE_RESOURCE_MANAGER_H_

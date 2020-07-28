@@ -8,7 +8,7 @@
 #include "src/libs/stb_image.h"
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
-#include "src/util/resource_manager/vertex_shader_resource_manager.h"
+#include "src/util/resource/vertex_shader.h"
 
 namespace legend {
 namespace scenes {
@@ -30,11 +30,17 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  util::Resource& resource = game::GameDevice::GetInstance()->GetResource();
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
   if (!resource.GetVertexShader().Load(
-          util::resource_manager::VertexShaderID::MODEL_VIEW,
+          util::resource::VertexShaderID::MODEL_VIEW,
           util::Path::GetInstance()->shader() / "modelview" /
               "model_view_vs.cso")) {
+    return false;
+  }
+  if (!resource.GetPixelShader().Load(util::resource::PixelShaderID::MODEL_VIEW,
+                                      util::Path::GetInstance()->shader() /
+                                          "modelview" / "model_view_ps.cso")) {
     return false;
   }
 
@@ -78,20 +84,11 @@ bool ModelView::Initialize() {
       return false;
     }
 
-    const std::filesystem::path pixel_shader_path =
-        util::Path::GetInstance()->shader() / L"modelview" /
-        L"model_view_ps.cso";
-    auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                            pixel_shader_path)) {
-      return false;
-    }
-
     pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-    pipeline_state_.SetVertexShader(
-        game::GameDevice::GetInstance()->GetResource().GetVertexShader().Get(
-            util::resource_manager::VertexShaderID::MODEL_VIEW));
-    pipeline_state_.SetPixelShader(pixel_shader);
+    pipeline_state_.SetVertexShader(resource.GetVertexShader().Get(
+        util::resource::VertexShaderID::MODEL_VIEW));
+    pipeline_state_.SetPixelShader(resource.GetPixelShader().Get(
+        util::resource::PixelShaderID::MODEL_VIEW));
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device, directx::render_target::RenderTargetID::BACK_BUFFER,
         &pipeline_state_);
@@ -154,9 +151,12 @@ void ModelView::Draw() {
 }
 
 void ModelView::Finalize() {
-  util::Resource& resource = game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource_manager::VertexShaderID::MODEL_VIEW);
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+
+  resource.GetVertexShader().Unload(util::resource::VertexShaderID::MODEL_VIEW);
+  resource.GetPixelShader().Unload(util::resource::PixelShaderID::MODEL_VIEW);
+
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 

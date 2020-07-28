@@ -7,7 +7,6 @@
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
-    <ClCompile Include="src\directx\shader\pixel_shader.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\vector_2.cpp" />
@@ -80,6 +79,8 @@
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
+    <ClCompile Include="src\util\resource_manager\vertex_shader_resource_manager.cpp" />
+    <ClCompile Include="src\directx\shader\shader_base.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -194,6 +195,10 @@
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\capsule.h" />
+    <ClInclude Include="src\directx\material\material.h" />
+    <ClInclude Include="src\util\resource_manager\resource_manager.h" />
+    <ClInclude Include="src\util\resource_manager\vertex_shader_resource_manager.h" />
+    <ClInclude Include="src\directx\shader\shader_base.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

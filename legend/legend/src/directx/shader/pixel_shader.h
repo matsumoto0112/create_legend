@@ -7,44 +7,14 @@
  */
 
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/shader_base.h"
 
 namespace legend {
 namespace directx {
 namespace shader {
 
-/**
- * @brief ピクセルシェーダー
- */
-class PixelShader {
- public:
-  /**
-   * @brief コンストラクタ
-   */
-  PixelShader();
-  /**
-   * @brief デストラクタ
-   */
-  ~PixelShader();
-  /**
-   * @brief 初期化
-   * @param device DirectX12デバイス
-   * @param filepath ファイルパス
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool Init(IDirectXAccessor& accessor, const std::filesystem::path& filepath);
-
-  /**
-   * @brief シェーダーコードを返す
-   */
-  CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
-    return CD3DX12_SHADER_BYTECODE{pixel_shader_data.data(),
-                                   pixel_shader_data.size()};
-  }
-
- private:
-  //! ピクセルシェーダーファイル
-  std::vector<u8> pixel_shader_data;
-};
+//ピクセルシェーダーはShaderBaseと何も変わらないので再定義するだけ
+using PixelShader = ShaderBase;
 
 }  // namespace shader
 }  // namespace directx

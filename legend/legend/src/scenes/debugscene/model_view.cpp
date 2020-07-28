@@ -8,6 +8,7 @@
 #include "src/libs/stb_image.h"
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
+#include "src/util/resource_manager/vertex_shader_resource_manager.h"
 
 namespace legend {
 namespace scenes {
@@ -73,9 +74,8 @@ bool ModelView::Initialize() {
     const std::filesystem::path vertex_shader_path =
         path / L"modelview" / L"model_view_vs.cso";
     auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(
-            game::GameDevice::GetInstance()->GetDevice(), vertex_shader_path,
-            directx::input_element::GetElementDescs<directx::Vertex>())) {
+    if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
+                             vertex_shader_path)) {
       return false;
     }
 

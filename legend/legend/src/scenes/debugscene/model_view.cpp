@@ -12,7 +12,7 @@ namespace scenes {
 namespace debugscene {
 
 //モデル名
-const std::wstring ModelView::MODEL_NAME = L"kari";
+const std::wstring ModelView::MODEL_NAME = L"1000cmObject";
 
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change)
@@ -49,9 +49,25 @@ bool ModelView::Initialize() {
     MY_LOG(L"モデルの読み込みに失敗しました。");
     return false;
   }
-  if (!material_.Init()) {
-    return false;
-  }
+
+  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
+  gps->Init(device);
+  gps->SetVertexShader(resource.GetVertexShader().Get(
+      util::resource::VertexShaderID::MODEL_VIEW));
+  gps->SetPixelShader(
+      resource.GetPixelShader().Get(util::resource::PixelShaderID::MODEL_VIEW));
+  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
+  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
+  gps->SetRootSignature(device.GetDefaultRootSignature());
+  gps->SetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+  resource.GetPipeline().Register(util::resource::PipelineID::MODEL_VIEW, gps);
+  gps->CreatePipelineState(device);
+  pipeline_ =
+      resource.GetPipeline().Get(util::resource::PipelineID::MODEL_VIEW);
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -126,7 +142,7 @@ void ModelView::Draw() {
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
 
-  material_.SetToGraphicsCommandList();
+  pipeline_->SetGraphicsCommandList(device);
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
   model_.Draw();
@@ -138,6 +154,7 @@ void ModelView::Finalize() {
 
   resource.GetVertexShader().Unload(util::resource::VertexShaderID::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::PixelShaderID::MODEL_VIEW);
+  resource.GetPipeline().Unload(util::resource::PipelineID::MODEL_VIEW);
 
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }

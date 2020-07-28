@@ -6,6 +6,7 @@
  * @brief リソース管理クラス定義
  */
 
+#include "src/util/resource/pipeline.h"
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/vertex_shader.h"
 
@@ -40,12 +41,18 @@ class Resource {
    * @brief 頂点シェーダーを取得する
    */
   resource::VertexShader& GetVertexShader() { return vertex_shader_; }
+  /**
+   * @brief パイプラインを取得する
+   */
+  resource::Pipeline& GetPipeline() { return pipeline_; }
 
  private:
   //! ピクセルシェーダー管理
   resource::PixelShader pixel_shader_;
   //! 頂点シェーダー管理
   resource::VertexShader vertex_shader_;
+  //! パイプライン管理
+  resource::Pipeline pipeline_;
 };
 
 }  // namespace resource

@@ -37,6 +37,13 @@ class ResourceManager {
    */
   virtual bool Load(TKey key, const std::filesystem::path& filepath) = 0;
   /**
+   * @brief リソースを登録する
+   * @param key リソースを特定するキー
+   * @param resource リソース
+   * @return 登録に成功したらtrueを返す
+   */
+  virtual bool Register(TKey key, TResource resource);
+  /**
    * @brief リソースを破棄する
    * @param key リソースを特定するキー
    * @return 破棄に成功したらtrueを返す
@@ -61,6 +68,15 @@ class ResourceManager {
   //! 読み込んだリソースマップ
   std::unordered_map<TKey, TResource> resources_;
 };
+
+//リソースを登録する
+template <typename TKey, typename TResource>
+inline bool ResourceManager<TKey, TResource>::Register(TKey key,
+                                                       TResource resource) {
+  MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再選択されました。");
+  resources_.emplace(key, resource);
+  return true;
+}
 }  // namespace resource
 }  // namespace util
 }  // namespace legend

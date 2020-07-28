@@ -9,7 +9,7 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/material/model_material.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/draw/model.h"
 #include "src/scenes/scene.h"
 #include "src/util/transform.h"
@@ -62,8 +62,7 @@ class ModelView : public Scene {
   util::Transform transform_;
   //! メインカメラ
   camera::PerspectiveCamera camera_;
-  //! モデルのマテリアル
-  directx::material::ModelMaterial material_;
+  std::shared_ptr<directx::shader::GraphicsPipelineState> pipeline_;
 };
 
 }  // namespace debugscene

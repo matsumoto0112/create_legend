@@ -197,6 +197,8 @@ void RenderResourceManager::SetRenderTargetsToCommandList(
         util::Exist(depth_stencil_targets_, current_depth_stencil_target_id_),
         L"未登録のデプス・ステンシルターゲットIDが選択されました。");
 
+    depth_stencil_targets_.at(current_depth_stencil_target_id_)
+        .PrepareToSetCommandList(accessor);
     D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle =
         depth_stencil_targets_.at(current_depth_stencil_target_id_)
             .GetCPUHandle();

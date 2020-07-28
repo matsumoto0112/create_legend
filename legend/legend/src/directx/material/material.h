@@ -15,9 +15,11 @@ namespace material {
 class IMaterial {
  public:
   virtual ~IMaterial() = default;
-  virtual bool Init(IDirectXAccessor& accessor) = 0;
-  virtual void SetVertexShader(const std::filesystem::path& filepath);
-  virtual void SetToGraphicsCommandList(IDirectXAccessor& accessor) = 0;
+  virtual bool Init() = 0;
+  virtual void SetToGraphicsCommandList() = 0;
+
+ protected:
+  shader::GraphicsPipelineState pipeline_state_;
 };
 }  // namespace material
 }  // namespace directx

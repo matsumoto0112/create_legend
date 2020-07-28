@@ -1,13 +1,10 @@
 #include "src/scenes/debugscene/model_view.h"
 
-#include "src/directx/render_target/render_target_id.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
-#include "src/directx/vertex.h"
 #include "src/game/game_device.h"
-#include "src/libs/stb_image.h"
-#include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
+#include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/vertex_shader.h"
 
 namespace legend {
@@ -30,6 +27,7 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  //このシーンで使用するシェーダーを事前に読み込んでおく
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
   if (!resource.GetVertexShader().Load(
@@ -49,6 +47,9 @@ bool ModelView::Initialize() {
       util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
   if (!model_.Init(model_path)) {
     MY_LOG(L"モデルの読み込みに失敗しました。");
+    return false;
+  }
+  if (!material_.Init()) {
     return false;
   }
 
@@ -74,29 +75,6 @@ bool ModelView::Initialize() {
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
     if (!camera_.Init(L"MainCamera", camera_position, camera_rotation,
                       math::util::DEG_2_RAD * 50.0f, aspect_ratio)) {
-      return false;
-    }
-  }
-
-  //パイプライン作成
-  {
-    if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-      return false;
-    }
-
-    pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-    pipeline_state_.SetVertexShader(resource.GetVertexShader().Get(
-        util::resource::VertexShaderID::MODEL_VIEW));
-    pipeline_state_.SetPixelShader(resource.GetPixelShader().Get(
-        util::resource::PixelShaderID::MODEL_VIEW));
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-        device, directx::render_target::RenderTargetID::BACK_BUFFER,
-        &pipeline_state_);
-    pipeline_state_.SetBlendDesc(
-        directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-
-    if (!pipeline_state_.CreatePipelineState(
-            game::GameDevice::GetInstance()->GetDevice())) {
       return false;
     }
   }
@@ -143,8 +121,12 @@ void ModelView::Draw() {
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
+  device.GetRenderResourceManager().SetDepthStencilTargetID(
+      directx::render_target::DepthStencilTargetID::Depth);
+  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
+  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
 
-  pipeline_state_.SetGraphicsCommandList(device);
+  material_.SetToGraphicsCommandList();
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
   model_.Draw();

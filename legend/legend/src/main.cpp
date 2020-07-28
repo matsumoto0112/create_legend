@@ -25,19 +25,29 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    if (!scene_manager_.Initialize()) {
+    directx::DirectX12Device& device =
+        game::GameDevice::GetInstance()->GetDevice();
+    //使用するローカルヒープを追加する
+    directx::descriptor_heap::HeapManager& heap_manager =
+        device.GetHeapManager();
+
+    for (auto&& id : USE_HEAP_IDS) {
+      if (!heap_manager.AddLocalHeap(device, id)) {
+        return false;
+      }
+    }
+
+    const math::IntVector2 screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    if (!device.GetRenderResourceManager().CreateDepthStencil(
+            device, directx::render_target::DepthStencilTargetID::Depth,
+            DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, screen_size.x, screen_size.y,
+            1.0f, 0, L"DepthStencil")) {
       return false;
     }
 
-    //使用するローカルヒープを追加する
-    directx::descriptor_heap::HeapManager& heap_manager =
-        game::GameDevice::GetInstance()->GetDevice().GetHeapManager();
-
-    for (auto&& id : USE_HEAP_IDS) {
-      if (!heap_manager.AddLocalHeap(
-              game::GameDevice::GetInstance()->GetDevice(), id)) {
-        return false;
-      }
+    if (!scene_manager_.Initialize()) {
+      return false;
     }
 
     return true;

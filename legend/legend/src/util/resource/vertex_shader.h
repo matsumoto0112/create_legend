@@ -3,6 +3,7 @@
 
 /**
  * @file vertex_shader.h
+ * @brief 頂点シェーダーリソース管理クラス定義
  */
 
 #include "src/directx/shader/vertex_shader.h"
@@ -11,6 +12,11 @@
 namespace legend {
 namespace util {
 namespace resource {
+
+/**
+ * @enum VertexShaderID
+ * @brief 頂点シェーダーを一意に特定するID
+ */
 enum class VertexShaderID {
   MODEL_VIEW,
   SPRITE,
@@ -19,11 +25,21 @@ enum class VertexShaderID {
   OBB,
 };
 
+/**
+ * @class VertexShader
+ * @brief 頂点シェーダーリソース管理クラス
+ */
 class VertexShader final
     : public ResourceManager<VertexShaderID,
                              std::shared_ptr<directx::shader::VertexShader>> {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   VertexShader();
+  /**
+   * @brief デストラクタ
+   */
   ~VertexShader();
   bool Init() override;
   bool Load(VertexShaderID key, const std::filesystem::path& filepath) override;

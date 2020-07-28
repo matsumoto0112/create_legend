@@ -3,6 +3,7 @@
 
 /**
  * @file resource.h
+ * @brief リソース管理クラス定義
  */
 
 #include "src/util/resource/pixel_shader.h"
@@ -11,18 +12,42 @@
 namespace legend {
 namespace util {
 namespace resource {
+
+/**
+ * @class Resource
+ * @brief リソース管理クラス
+ */
 class Resource {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   Resource();
+  /**
+   * @brief デストラクタ
+   */
   ~Resource();
+  /**
+   * @brief 初期化
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init();
+  /**
+   * @brief ピクセルシェーダーを取得する
+   */
   resource::PixelShader& GetPixelShader() { return pixel_shader_; }
+  /**
+   * @brief 頂点シェーダーを取得する
+   */
   resource::VertexShader& GetVertexShader() { return vertex_shader_; }
 
  private:
+  //! ピクセルシェーダー管理
   resource::PixelShader pixel_shader_;
+  //! 頂点シェーダー管理
   resource::VertexShader vertex_shader_;
 };
+
 }  // namespace resource
 }  // namespace util
 }  // namespace legend

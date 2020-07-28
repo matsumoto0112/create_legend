@@ -30,8 +30,14 @@ bool GameDevice::Init(std::weak_ptr<window::Window> target_window) {
     return false;
   }
 
+  resource_ = std::make_unique<util::Resource>();
+  if (!resource_->Init()) {
+    return false;
+  }
+
   sprite_renderer_ = std::make_unique<draw::SpriteRenderer>();
-  if (!sprite_renderer_->Init(ToVector2(target_window.lock()->GetScreenSize()))) {
+  if (!sprite_renderer_->Init(
+          ToVector2(target_window.lock()->GetScreenSize()))) {
     return false;
   }
 

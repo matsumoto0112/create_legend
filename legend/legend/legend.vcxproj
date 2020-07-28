@@ -160,6 +160,7 @@
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\util\resource.cpp" />
     <ClCompile Include="src\util\resource_manager\vertex_shader_resource_manager.cpp" />
     <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\window\window.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\random.h" />
+    <ClInclude Include="src\util\resource.h" />
     <ClInclude Include="src\util\resource_manager\resource_manager.h" />
     <ClInclude Include="src\util\resource_manager\vertex_shader_resource_manager.h" />
     <ClInclude Include="src\util\singleton.h" />

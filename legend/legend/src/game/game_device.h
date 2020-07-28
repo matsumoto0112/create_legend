@@ -13,6 +13,7 @@
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
 #include "src/util/random.h"
+#include "src/util/resource.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -68,6 +69,10 @@ class GameDevice : public util::Singleton<GameDevice> {
    * @brief 乱数デバイスを取得する
    */
   util::Random& GetRandom() const { return *random_; }
+  /**
+   * @brief リソース管理システムを取得する
+   */
+  util::Resource& GetResource() const { return *resource_; }
 
  protected:
   /**
@@ -90,6 +95,8 @@ class GameDevice : public util::Singleton<GameDevice> {
   std::unique_ptr<draw::SpriteRenderer> sprite_renderer_;
   //! 乱数デバイス
   std::unique_ptr<util::Random> random_;
+  //! リソース管理
+  std::unique_ptr<util::Resource> resource_;
 };
 
 }  // namespace game

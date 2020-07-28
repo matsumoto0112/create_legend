@@ -81,6 +81,7 @@
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\util\resource_manager\vertex_shader_resource_manager.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
+    <ClCompile Include="src\util\resource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="src\util\resource_manager\resource_manager.h" />
     <ClInclude Include="src\util\resource_manager\vertex_shader_resource_manager.h" />
     <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\util\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

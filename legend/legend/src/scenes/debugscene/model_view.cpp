@@ -30,6 +30,14 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
+  util::Resource& resource = game::GameDevice::GetInstance()->GetResource();
+  if (!resource.GetVertexShader().Load(
+          util::resource_manager::VertexShaderID::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_vs.cso")) {
+    return false;
+  }
+
   //モデルデータを読み込む
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
@@ -70,17 +78,9 @@ bool ModelView::Initialize() {
       return false;
     }
 
-    const std::filesystem::path path = util::Path::GetInstance()->shader();
-    const std::filesystem::path vertex_shader_path =
-        path / L"modelview" / L"model_view_vs.cso";
-    auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                             vertex_shader_path)) {
-      return false;
-    }
-
     const std::filesystem::path pixel_shader_path =
-        path / L"modelview" / L"model_view_ps.cso";
+        util::Path::GetInstance()->shader() / L"modelview" /
+        L"model_view_ps.cso";
     auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
     if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
                             pixel_shader_path)) {
@@ -88,7 +88,9 @@ bool ModelView::Initialize() {
     }
 
     pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-    pipeline_state_.SetVertexShader(vertex_shader);
+    pipeline_state_.SetVertexShader(
+        game::GameDevice::GetInstance()->GetResource().GetVertexShader().Get(
+            util::resource_manager::VertexShaderID::MODEL_VIEW));
     pipeline_state_.SetPixelShader(pixel_shader);
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device, directx::render_target::RenderTargetID::BACK_BUFFER,
@@ -152,6 +154,9 @@ void ModelView::Draw() {
 }
 
 void ModelView::Finalize() {
+  util::Resource& resource = game::GameDevice::GetInstance()->GetResource();
+  resource.GetVertexShader().Unload(
+      util::resource_manager::VertexShaderID::MODEL_VIEW);
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 

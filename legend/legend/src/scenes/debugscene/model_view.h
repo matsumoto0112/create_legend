@@ -51,10 +51,6 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  //! モデル名
-  static const std::wstring MODEL_NAME;
-  //! 読み込んだモデルデータ
-  draw::Model model_;
   //! トランスフォーム転送用コンスタントバッファ
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       transform_cb_;
@@ -62,7 +58,6 @@ class ModelView : public Scene {
   util::Transform transform_;
   //! メインカメラ
   camera::PerspectiveCamera camera_;
-  std::shared_ptr<directx::shader::GraphicsPipelineState> pipeline_;
 };
 
 }  // namespace debugscene

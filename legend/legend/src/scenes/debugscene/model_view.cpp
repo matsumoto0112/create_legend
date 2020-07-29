@@ -11,9 +11,6 @@ namespace legend {
 namespace scenes {
 namespace debugscene {
 
-//モデル名
-const std::wstring ModelView::MODEL_NAME = L"1000cmObject";
-
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change)
     : Scene(scene_change), transform_() {}
@@ -44,9 +41,9 @@ bool ModelView::Initialize() {
 
   //モデルデータを読み込む
   const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
-  if (!model_.Init(model_path)) {
-    MY_LOG(L"モデルの読み込みに失敗しました。");
+      util::Path::GetInstance()->model() / "1000cmObject.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
+                                model_path)) {
     return false;
   }
 
@@ -64,10 +61,8 @@ bool ModelView::Initialize() {
   gps->SetRootSignature(device.GetDefaultRootSignature());
   gps->SetPrimitiveTopology(
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-  resource.GetPipeline().Register(util::resource::PipelineID::MODEL_VIEW, gps);
   gps->CreatePipelineState(device);
-  pipeline_ =
-      resource.GetPipeline().Get(util::resource::PipelineID::MODEL_VIEW);
+  resource.GetPipeline().Register(util::resource::PipelineID::MODEL_VIEW, gps);
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -142,10 +137,18 @@ void ModelView::Draw() {
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
 
-  pipeline_->SetGraphicsCommandList(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::PipelineID::MODEL_VIEW)
+      ->SetGraphicsCommandList(device);
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
-  model_.Draw();
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetModel()
+      .Get(util::resource::ModelID::OBJECT_1000CM)
+      ->Draw();
 }
 
 void ModelView::Finalize() {
@@ -155,6 +158,7 @@ void ModelView::Finalize() {
   resource.GetVertexShader().Unload(util::resource::VertexShaderID::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::PixelShaderID::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::PipelineID::MODEL_VIEW);
+  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
 
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }

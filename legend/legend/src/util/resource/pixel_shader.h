@@ -41,9 +41,13 @@ class PixelShader final
    * @brief デストラクタ
    */
   ~PixelShader();
-  bool Init() override;
+  /**
+   * @brief リソースを読み込む
+   * @param key リソースを一意に特定するID
+   * @param filepath ファイルへのパス
+   * @return 読み込みに成功したらtrueを返す
+   */
   bool Load(PixelShaderID key, const std::filesystem::path& filepath) override;
-  bool Unload(PixelShaderID key) override;
 };
 
 }  // namespace resource

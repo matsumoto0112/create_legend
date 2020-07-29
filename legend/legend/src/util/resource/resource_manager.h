@@ -13,6 +13,7 @@ namespace util {
 namespace resource {
 
 /**
+ * @class ResourceManager
  * @brief リソース管理システム基底クラス
  * @tparam TKey リソースを特定するキー
  * @tparam TResource 管理するリソース
@@ -28,7 +29,7 @@ class ResourceManager {
    * @brief 初期化
    * @return 初期化に成功したらtrueを返す
    */
-  virtual bool Init() = 0;
+  virtual bool Init();
   /**
    * @brief リソースを読み込む
    * @param key リソースを特定するキー
@@ -48,7 +49,7 @@ class ResourceManager {
    * @param key リソースを特定するキー
    * @return 破棄に成功したらtrueを返す
    */
-  virtual bool Unload(TKey key) = 0;
+  virtual bool Unload(TKey key);
   /**
    * @brief すでに読み込んでいるかどうか
    * @param key リソースを特定するキー
@@ -69,6 +70,13 @@ class ResourceManager {
   std::unordered_map<TKey, TResource> resources_;
 };
 
+//初期化
+template <typename TKey, typename TResource>
+inline bool ResourceManager<TKey, TResource>::Init() {
+  resources_.clear();
+  return true;
+}
+
 //リソースを登録する
 template <typename TKey, typename TResource>
 inline bool ResourceManager<TKey, TResource>::Register(TKey key,
@@ -77,6 +85,14 @@ inline bool ResourceManager<TKey, TResource>::Register(TKey key,
   resources_.emplace(key, resource);
   return true;
 }
+
+//破棄
+template <typename TKey, typename TResource>
+inline bool ResourceManager<TKey, TResource>::Unload(TKey key) {
+  MY_ASSERTION(IsLoaded(key), L"未登録のキーが削除されようとしています。");
+  return resources_.erase(key) == 1;
+}
+
 }  // namespace resource
 }  // namespace util
 }  // namespace legend

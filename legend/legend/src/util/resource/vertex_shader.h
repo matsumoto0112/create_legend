@@ -41,9 +41,13 @@ class VertexShader final
    * @brief デストラクタ
    */
   ~VertexShader();
-  bool Init() override;
+  /**
+   * @brief リソースを読み込む
+   * @param key リソースを一意に特定するID
+   * @param filepath ファイルへのパス
+   * @return 読み込みに成功したらtrueを返す
+   */
   bool Load(VertexShaderID key, const std::filesystem::path& filepath) override;
-  bool Unload(VertexShaderID key) override;
 };
 }  // namespace resource
 }  // namespace util

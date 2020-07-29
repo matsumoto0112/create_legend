@@ -10,19 +10,11 @@ namespace resource {
 VertexShader::VertexShader() {}
 
 //デストラクタ
-VertexShader::~VertexShader() {
-  resources_.clear();
-}
-
-//初期化
-bool VertexShader::Init() {
-  resources_.clear();
-  return true;
-}
+VertexShader::~VertexShader() { resources_.clear(); }
 
 //読み込み
 bool VertexShader::Load(VertexShaderID key,
-                                       const std::filesystem::path& filepath) {
+                        const std::filesystem::path& filepath) {
   MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再登録されようとしています。");
 
   auto vs = std::make_shared<directx::shader::VertexShader>();
@@ -33,12 +25,6 @@ bool VertexShader::Load(VertexShaderID key,
 
   resources_.emplace(key, vs);
   return true;
-}
-
-//削除
-bool VertexShader::Unload(VertexShaderID key) {
-  MY_ASSERTION(IsLoaded(key), L"未登録のキーが削除されようとしています。");
-  return resources_.erase(key) == 1;
 }
 
 }  // namespace resource

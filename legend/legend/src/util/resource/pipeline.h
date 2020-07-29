@@ -3,6 +3,7 @@
 
 /**
  * @file pipeline.h
+ * @brief パイプラインリソース管理クラス定義
  */
 
 #include "src/directx/shader/graphics_pipeline_state.h"
@@ -13,6 +14,7 @@ namespace util {
 namespace resource {
 
 /**
+ * @enum PipelineID
  * @brief パイプラインを一意に特定するID
  */
 enum class PipelineID {
@@ -21,6 +23,10 @@ enum class PipelineID {
   MULTI_RENDER_TARGET_POST_PROCESS,
 };
 
+/**
+ * @class Pipeline
+ * @brief パイプラインリソース管理クラス
+ */
 class Pipeline
     : public ResourceManager<
           PipelineID, std::shared_ptr<directx::shader::GraphicsPipelineState>> {
@@ -34,19 +40,17 @@ class Pipeline
    */
   ~Pipeline();
   /**
-   * @brief 初期化
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool Init() override;
-  /**
    * @brief リソースをファイルパスから読み込む（未作成）
    * @return 常にfalseを返す。代わりにRegister関数を使用すること。
    * @details csvなどで外部からパイプラインを構築できるようにしたい
    */
   bool Load(PipelineID key, const std::filesystem::path& filepath) override {
+    MY_ASSERTION(
+        false,
+        L"resource::Pipeline::Loadを使用しないでください。\n代わりにresource::"
+        L"Pipeline::Registerを使用してください。");
     return false;
   }
-  bool Unload(PipelineID key) override;
 };
 
 }  // namespace resource

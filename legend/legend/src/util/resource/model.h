@@ -3,6 +3,7 @@
 
 /**
  * @file model.h
+ * @brief 読み込んだモデルを管理するクラス定義
  */
 
 #include "src/draw/model.h"
@@ -12,19 +13,37 @@ namespace legend {
 namespace util {
 namespace resource {
 
+/**
+ * @enum ModelID
+ * @brief モデルを一意に特定するID
+ */
 enum class ModelID {
   CHECK_XYZ,
   KARI,
   OBJECT_1000CM,
 };
 
+/**
+ * @class Model
+ * @brief モデルリソース管理クラス
+ */
 class Model : public ResourceManager<ModelID, std::shared_ptr<draw::Model>> {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   Model();
+  /**
+   * @brief デストラクタ
+   */
   ~Model();
-  bool Init() override;
+  /**
+   * @brief リソースを読み込む
+   * @param key モデルを一意に特定するID
+   * @param filepath ファイルへのパス
+   * @return 読み込みに成功したらtrueを返す
+   */
   bool Load(ModelID key, const std::filesystem::path& filepath) override;
-  bool Unload(ModelID key) override;
 };
 
 }  // namespace resource

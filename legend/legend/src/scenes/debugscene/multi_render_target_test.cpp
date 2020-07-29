@@ -8,6 +8,35 @@
 #include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
 
+namespace {
+struct VS_LOAD_INFO {
+  legend::util::resource::VertexShaderID id;
+  std::filesystem::path filepath;
+};
+
+static VS_LOAD_INFO VS_PAIRS[] = {
+    {legend::util::resource::VertexShaderID::MULTI_RENDER_TARGET,
+     std::filesystem::path("multi_render_target_test") /
+         "multi_render_target_test_vs.cso"},
+    {legend::util::resource::VertexShaderID::MULTI_RENDER_TARGET_POST_PROCESS,
+     std::filesystem::path("multi_render_target_test") /
+         "multi_render_target_test_pp_vs.cso"}};
+
+struct PS_LOAD_INFO {
+  legend::util::resource::PixelShaderID id;
+  std::filesystem::path filepath;
+};
+
+static PS_LOAD_INFO PS_PAIRS[] = {
+    {legend::util::resource::PixelShaderID::MULTI_RENDER_TARGET,
+     std::filesystem::path("multi_render_target_test") /
+         "multi_render_target_test_ps.cso"},
+    {legend::util::resource::PixelShaderID::MULTI_RENDER_TARGET_POST_PROCESS,
+     std::filesystem::path("multi_render_target_test") /
+         "multi_render_target_test_pp_ps.cso"}};
+
+}  // namespace
+
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -20,6 +49,21 @@ MultiRenderTargetTest::~MultiRenderTargetTest() {
 bool MultiRenderTargetTest::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+
+  //事前に使用するリソースを読み込む
+  {
+    const std::filesystem::path shader_path =
+        util::Path::GetInstance()->shader();
+
+    for (auto&& info : VS_PAIRS) {
+      resource.GetVertexShader().Load(info.id, shader_path / info.filepath);
+    }
+    for (auto&& info : PS_PAIRS) {
+      resource.GetPixelShader().Load(info.id, shader_path / info.filepath);
+    }
+  }
 
   //通常描画用パラメータ設定
   {
@@ -51,54 +95,23 @@ bool MultiRenderTargetTest::Initialize() {
         return false;
       }
     }
-
-    //デプス・ステンシルが作られていなければ作る
-    if (!device.GetRenderResourceManager().IsRegisterdDepthStencilTargetID(
-            directx::render_target::DepthStencilTargetID::Depth)) {
-      if (!device.GetRenderResourceManager().CreateDepthStencil(
-              device, directx::render_target::DepthStencilTargetID::Depth,
-              DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, w, h, 1.0f, 0, L"Depth")) {
-        return false;
-      }
-    }
-
-    if (!pipeline_state_.Init(device)) {
-      return false;
-    }
-
-    pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-    const std::filesystem::path shader_root_path =
-        util::Path::GetInstance()->shader();
-    auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(
-            device,
-            shader_root_path / L"multi_render_target_test" /
-                L"multi_render_target_test_vs.cso",
-            directx::input_element::GetElementDescs<directx::Vertex>())) {
-      return false;
-    }
-    pipeline_state_.SetVertexShader(vertex_shader);
-
-    auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(device, shader_root_path /
-                                        L"multi_render_target_test" /
-                                        L"multi_render_target_test_ps.cso")) {
-      return false;
-    }
-    pipeline_state_.SetPixelShader(pixel_shader);
-
-    pipeline_state_.SetBlendDesc(
-        directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
+    auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
+    ps->Init(device);
+    ps->SetVertexShader(resource.GetVertexShader().Get(
+        util::resource::VertexShaderID::MULTI_RENDER_TARGET));
+    ps->SetPixelShader(resource.GetPixelShader().Get(
+        util::resource::PixelShaderID::MULTI_RENDER_TARGET));
+    ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
+    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+        device, directx::render_target::DepthStencilTargetID::Depth, ps.get());
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
         device,
         directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-        &pipeline_state_);
-    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-        device, directx::render_target::DepthStencilTargetID::Depth,
-        &pipeline_state_);
-    if (!pipeline_state_.CreatePipelineState(device)) {
-      return false;
-    }
+        ps.get());
+    ps->SetRootSignature(device.GetDefaultRootSignature());
+    ps->CreatePipelineState(device);
+    resource.GetPipeline().Register(
+        util::resource::PipelineID::MULTI_RENDER_TARGET_PRE, ps);
 
     const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
@@ -111,39 +124,22 @@ bool MultiRenderTargetTest::Initialize() {
 
   //ポストプロセス描画用パラメータ
   {
-    if (!post_process_pipeline_.Init(device)) {
-      return false;
-    }
-    post_process_pipeline_.SetRootSignature(device.GetDefaultRootSignature());
-
-    const std::filesystem::path shader_root_path =
-        util::Path::GetInstance()->shader();
-    auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(
-            device,
-            shader_root_path / L"multi_render_target_test" /
-                L"multi_render_target_test_pp_vs.cso",
-            directx::input_element::GetElementDescs<directx::Sprite>())) {
-      return false;
-    }
-    post_process_pipeline_.SetVertexShader(vertex_shader);
-
-    auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(device,
-                            shader_root_path / L"multi_render_target_test" /
-                                L"multi_render_target_test_pp_ps.cso")) {
-      return false;
-    }
-    post_process_pipeline_.SetPixelShader(pixel_shader);
-
-    post_process_pipeline_.SetBlendDesc(
-        directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
+    auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
+    ps->Init(device);
+    ps->SetVertexShader(resource.GetVertexShader().Get(
+        util::resource::VertexShaderID::MULTI_RENDER_TARGET_POST_PROCESS));
+    ps->SetPixelShader(resource.GetPixelShader().Get(
+        util::resource::PixelShaderID::MULTI_RENDER_TARGET_POST_PROCESS));
+    ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
+    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+        device, directx::render_target::DepthStencilTargetID::None, ps.get());
     device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-        device, directx::render_target::RenderTargetID::BACK_BUFFER,
-        &post_process_pipeline_);
-    if (!post_process_pipeline_.CreatePipelineState(device)) {
-      return false;
-    }
+        device, directx::render_target::RenderTargetID::BACK_BUFFER, ps.get());
+    ps->SetRootSignature(device.GetDefaultRootSignature());
+    ps->CreatePipelineState(device);
+    resource.GetPipeline().Register(
+        util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS, ps);
+
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
 
@@ -274,7 +270,11 @@ void MultiRenderTargetTest::Draw() {
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
   device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
   camera_.RenderStart();
-  pipeline_state_.SetGraphicsCommandList(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::PipelineID::MULTI_RENDER_TARGET_PRE)
+      ->SetGraphicsCommandList(device);
 
   for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
     transform_cbs_[i].GetStagingRef().world =
@@ -291,7 +291,12 @@ void MultiRenderTargetTest::Draw() {
       directx::render_target::DepthStencilTargetID::None);
   device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
   device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
-  post_process_pipeline_.SetGraphicsCommandList(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS)
+      ->SetGraphicsCommandList(device);
+
   device.GetRenderResourceManager().UseRenderTargetToShaderResource(
       device, directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
       0);
@@ -314,6 +319,19 @@ void MultiRenderTargetTest::Finalize() {
       .ResetLocalHeapAllocateCounter(
           directx::descriptor_heap::heap_parameter::LocalHeapID::
               MULTI_RENDER_TARGET_TEST_SCENE);
+
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  for (auto&& info : VS_PAIRS) {
+    resource.GetVertexShader().Unload(info.id);
+  }
+  for (auto&& info : PS_PAIRS) {
+    resource.GetPixelShader().Unload(info.id);
+  }
+  resource.GetPipeline().Unload(
+      util::resource::PipelineID::MULTI_RENDER_TARGET_PRE);
+  resource.GetPipeline().Unload(
+      util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS);
 }
 
 }  // namespace debugscene

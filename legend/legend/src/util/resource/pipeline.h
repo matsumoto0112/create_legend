@@ -17,6 +17,8 @@ namespace resource {
  */
 enum class PipelineID {
   MODEL_VIEW,
+  MULTI_RENDER_TARGET_PRE,
+  MULTI_RENDER_TARGET_POST_PROCESS,
 };
 
 class Pipeline

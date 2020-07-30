@@ -9,6 +9,7 @@
 #include "src/util/resource/model.h"
 #include "src/util/resource/pipeline.h"
 #include "src/util/resource/pixel_shader.h"
+#include "src/util/resource/texture.h"
 #include "src/util/resource/vertex_shader.h"
 
 namespace legend {
@@ -51,6 +52,8 @@ class Resource {
    */
   resource::Model& GetModel() { return model_; }
 
+  resource::Texture& GetTexture() { return texture_; }
+
  private:
   //! ピクセルシェーダー管理
   resource::PixelShader pixel_shader_;
@@ -60,6 +63,7 @@ class Resource {
   resource::Pipeline pipeline_;
   //! モデル管理
   resource::Model model_;
+  resource::Texture texture_;
 };
 
 }  // namespace resource

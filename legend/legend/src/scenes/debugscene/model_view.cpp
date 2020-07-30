@@ -154,16 +154,15 @@ void ModelView::Draw() {
 }
 
 void ModelView::Finalize() {
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
-
   resource.GetVertexShader().Unload(
       util::resource::id::VertexShader::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
   resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
-
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 
 }  // namespace debugscene

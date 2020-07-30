@@ -217,6 +217,7 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
   }
+  device.WaitForGPU();
   return true;
 }
 

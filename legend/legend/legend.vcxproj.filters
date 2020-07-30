@@ -85,6 +85,7 @@
     <ClCompile Include="src\util\resource\pixel_shader.cpp" />
     <ClCompile Include="src\util\resource\pipeline.cpp" />
     <ClCompile Include="src\util\resource\model.cpp" />
+    <ClCompile Include="src\util\resource\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

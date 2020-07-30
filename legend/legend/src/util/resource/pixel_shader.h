@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/shader/pixel_shader.h"
+#include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
 namespace legend {
@@ -14,23 +15,11 @@ namespace util {
 namespace resource {
 
 /**
- * @enum PixelShaderID
- * @brief ピクセルシェーダーを一意に特定するID
- */
-enum class PixelShaderID {
-  MODEL_VIEW,
-  SPRITE,
-  MULTI_RENDER_TARGET,
-  MULTI_RENDER_TARGET_POST_PROCESS,
-  OBB,
-};
-
-/**
  * @class PixelShader
  * @brief ピクセルシェーダーリソース管理クラス
  */
 class PixelShader final
-    : public ResourceManager<PixelShaderID,
+    : public ResourceManager<id::PixelShader,
                              std::shared_ptr<directx::shader::PixelShader>> {
  public:
   /**
@@ -47,7 +36,7 @@ class PixelShader final
    * @param filepath ファイルへのパス
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(PixelShaderID key, const std::filesystem::path& filepath) override;
+  bool Load(id::PixelShader, const std::filesystem::path& filepath) override;
 };
 
 }  // namespace resource

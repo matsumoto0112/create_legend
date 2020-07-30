@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/shader/vertex_shader.h"
+#include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
 namespace legend {
@@ -14,23 +15,11 @@ namespace util {
 namespace resource {
 
 /**
- * @enum VertexShaderID
- * @brief 頂点シェーダーを一意に特定するID
- */
-enum class VertexShaderID {
-  MODEL_VIEW,
-  SPRITE,
-  MULTI_RENDER_TARGET,
-  MULTI_RENDER_TARGET_POST_PROCESS,
-  OBB,
-};
-
-/**
  * @class VertexShader
  * @brief 頂点シェーダーリソース管理クラス
  */
 class VertexShader final
-    : public ResourceManager<VertexShaderID,
+    : public ResourceManager<id::VertexShader,
                              std::shared_ptr<directx::shader::VertexShader>> {
  public:
   /**
@@ -47,7 +36,8 @@ class VertexShader final
    * @param filepath ファイルへのパス
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(VertexShaderID key, const std::filesystem::path& filepath) override;
+  bool Load(id::VertexShader key,
+            const std::filesystem::path& filepath) override;
 };
 }  // namespace resource
 }  // namespace util

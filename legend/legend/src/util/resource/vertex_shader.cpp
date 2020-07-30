@@ -13,7 +13,7 @@ VertexShader::VertexShader() {}
 VertexShader::~VertexShader() { resources_.clear(); }
 
 //“Ç‚İ‚İ
-bool VertexShader::Load(VertexShaderID key,
+bool VertexShader::Load(id::VertexShader key,
                         const std::filesystem::path& filepath) {
   MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚İ‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
 

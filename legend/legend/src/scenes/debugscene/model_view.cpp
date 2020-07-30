@@ -28,14 +28,15 @@ bool ModelView::Initialize() {
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
   if (!resource.GetVertexShader().Load(
-          util::resource::VertexShaderID::MODEL_VIEW,
+          util::resource::id::VertexShader::MODEL_VIEW,
           util::Path::GetInstance()->shader() / "modelview" /
               "model_view_vs.cso")) {
     return false;
   }
-  if (!resource.GetPixelShader().Load(util::resource::PixelShaderID::MODEL_VIEW,
-                                      util::Path::GetInstance()->shader() /
-                                          "modelview" / "model_view_ps.cso")) {
+  if (!resource.GetPixelShader().Load(
+          util::resource::id::PixelShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_ps.cso")) {
     return false;
   }
 
@@ -50,9 +51,9 @@ bool ModelView::Initialize() {
   auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
   gps->Init(device);
   gps->SetVertexShader(resource.GetVertexShader().Get(
-      util::resource::VertexShaderID::MODEL_VIEW));
-  gps->SetPixelShader(
-      resource.GetPixelShader().Get(util::resource::PixelShaderID::MODEL_VIEW));
+      util::resource::id::VertexShader::MODEL_VIEW));
+  gps->SetPixelShader(resource.GetPixelShader().Get(
+      util::resource::id::PixelShader::MODEL_VIEW));
   gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
   device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
       device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
@@ -62,7 +63,8 @@ bool ModelView::Initialize() {
   gps->SetPrimitiveTopology(
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
   gps->CreatePipelineState(device);
-  resource.GetPipeline().Register(util::resource::PipelineID::MODEL_VIEW, gps);
+  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
+                                  gps);
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -140,7 +142,7 @@ void ModelView::Draw() {
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
-      .Get(util::resource::PipelineID::MODEL_VIEW)
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
@@ -155,9 +157,10 @@ void ModelView::Finalize() {
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
 
-  resource.GetVertexShader().Unload(util::resource::VertexShaderID::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::PixelShaderID::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::PipelineID::MODEL_VIEW);
+  resource.GetVertexShader().Unload(
+      util::resource::id::VertexShader::MODEL_VIEW);
+  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
+  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
   resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
 
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();

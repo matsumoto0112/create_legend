@@ -13,7 +13,7 @@ PixelShader::PixelShader() {}
 PixelShader::~PixelShader() {}
 
 //“Ç‚İ‚Ş
-bool PixelShader::Load(PixelShaderID key,
+bool PixelShader::Load(id::PixelShader key,
                        const std::filesystem::path& filepath) {
   MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚İ‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
   auto vs = std::make_shared<directx::shader::PixelShader>();

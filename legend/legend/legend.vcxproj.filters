@@ -206,6 +206,8 @@
     <ClInclude Include="src\util\resource\resource.h" />
     <ClInclude Include="src\util\resource\pipeline.h" />
     <ClInclude Include="src\util\resource\model.h" />
+    <ClInclude Include="src\util\resource\texture.h" />
+    <ClInclude Include="src\util\resource\resource_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -10,28 +10,28 @@
 
 namespace {
 struct VS_LOAD_INFO {
-  legend::util::resource::VertexShaderID id;
+  legend::util::resource::id::VertexShader id;
   std::filesystem::path filepath;
 };
 
 static VS_LOAD_INFO VS_PAIRS[] = {
-    {legend::util::resource::VertexShaderID::MULTI_RENDER_TARGET,
+    {legend::util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_vs.cso"},
-    {legend::util::resource::VertexShaderID::MULTI_RENDER_TARGET_POST_PROCESS,
+    {legend::util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST_PP,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_pp_vs.cso"}};
 
 struct PS_LOAD_INFO {
-  legend::util::resource::PixelShaderID id;
+  legend::util::resource::id::PixelShader id;
   std::filesystem::path filepath;
 };
 
 static PS_LOAD_INFO PS_PAIRS[] = {
-    {legend::util::resource::PixelShaderID::MULTI_RENDER_TARGET,
+    {legend::util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_ps.cso"},
-    {legend::util::resource::PixelShaderID::MULTI_RENDER_TARGET_POST_PROCESS,
+    {legend::util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST_PP,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_pp_ps.cso"}};
 
@@ -98,9 +98,9 @@ bool MultiRenderTargetTest::Initialize() {
     auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
     ps->Init(device);
     ps->SetVertexShader(resource.GetVertexShader().Get(
-        util::resource::VertexShaderID::MULTI_RENDER_TARGET));
+        util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST));
     ps->SetPixelShader(resource.GetPixelShader().Get(
-        util::resource::PixelShaderID::MULTI_RENDER_TARGET));
+        util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST));
     ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
         device, directx::render_target::DepthStencilTargetID::Depth, ps.get());
@@ -111,7 +111,7 @@ bool MultiRenderTargetTest::Initialize() {
     ps->SetRootSignature(device.GetDefaultRootSignature());
     ps->CreatePipelineState(device);
     resource.GetPipeline().Register(
-        util::resource::PipelineID::MULTI_RENDER_TARGET_PRE, ps);
+        util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST, ps);
 
     const math::Quaternion camera_rotation = math::Quaternion::kIdentity;
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
@@ -127,9 +127,9 @@ bool MultiRenderTargetTest::Initialize() {
     auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
     ps->Init(device);
     ps->SetVertexShader(resource.GetVertexShader().Get(
-        util::resource::VertexShaderID::MULTI_RENDER_TARGET_POST_PROCESS));
+        util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST_PP));
     ps->SetPixelShader(resource.GetPixelShader().Get(
-        util::resource::PixelShaderID::MULTI_RENDER_TARGET_POST_PROCESS));
+        util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST_PP));
     ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
     device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
         device, directx::render_target::DepthStencilTargetID::None, ps.get());
@@ -138,7 +138,7 @@ bool MultiRenderTargetTest::Initialize() {
     ps->SetRootSignature(device.GetDefaultRootSignature());
     ps->CreatePipelineState(device);
     resource.GetPipeline().Register(
-        util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS, ps);
+        util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP, ps);
 
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
@@ -273,7 +273,7 @@ void MultiRenderTargetTest::Draw() {
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
-      .Get(util::resource::PipelineID::MULTI_RENDER_TARGET_PRE)
+      .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST)
       ->SetGraphicsCommandList(device);
 
   for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
@@ -294,7 +294,7 @@ void MultiRenderTargetTest::Draw() {
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
-      .Get(util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS)
+      .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP)
       ->SetGraphicsCommandList(device);
 
   device.GetRenderResourceManager().UseRenderTargetToShaderResource(
@@ -329,9 +329,9 @@ void MultiRenderTargetTest::Finalize() {
     resource.GetPixelShader().Unload(info.id);
   }
   resource.GetPipeline().Unload(
-      util::resource::PipelineID::MULTI_RENDER_TARGET_PRE);
+      util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST);
   resource.GetPipeline().Unload(
-      util::resource::PipelineID::MULTI_RENDER_TARGET_POST_PROCESS);
+      util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP);
 }
 
 }  // namespace debugscene

@@ -211,6 +211,7 @@
     <ClInclude Include="src\util\resource\texture.h" />
     <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
+    <ClInclude Include="src\math\rect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

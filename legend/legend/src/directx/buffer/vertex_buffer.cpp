@@ -5,7 +5,7 @@ namespace directx {
 namespace buffer {
 
 //コンストラクタ
-VertexBuffer::VertexBuffer() : resource_(), vertex_buffer_view_{} {}
+VertexBuffer::VertexBuffer() : resource_{}, vertex_buffer_view_{} {}
 
 //デストラクタ
 VertexBuffer::~VertexBuffer() {}

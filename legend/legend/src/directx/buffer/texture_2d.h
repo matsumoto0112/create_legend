@@ -7,17 +7,20 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/directx12_device.h"
+#include "src/directx/directx_accessor.h"
 
 namespace legend {
 namespace directx {
 namespace buffer {
+
 /**
+ * @class Texture2D
  * @brief 2Dテクスチャクラス
  */
 class Texture2D {
  public:
   /**
+   * @struct Desc
    * @brief テクスチャデスク
    */
   struct Desc {
@@ -46,25 +49,25 @@ class Texture2D {
   ~Texture2D();
   /**
    * @brief 初期化
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param desc テクスチャデスク
-=   * @return 初期化に成功したらtrueを返す
+   * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, const Desc& desc);
+  bool Init(IDirectXAccessor& accessor, const Desc& desc);
   /**
    * @brief テクスチャを読み込みつつ初期化する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param register_num シェーダーのレジスター番号
    * @param filename ファイル名
    * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitAndWrite(DirectX12Device& device, u32 register_num,
+  bool InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
                     const std::filesystem::path& filename,
                     const descriptor_heap::DescriptorHandle& handle);
   /**
    * @brief テクスチャを書き込みつつ初期化する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param register_num シェーダーのレジスター番号
    * @param format テクスチャのフォーマット
    * @param data テクスチャデータ
@@ -72,28 +75,28 @@ class Texture2D {
    * @param filename ファイル名
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitAndWrite(DirectX12Device& device, u32 register_num,
+  bool InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
                     DXGI_FORMAT format, const std::vector<u8>& data,
                     const descriptor_heap::DescriptorHandle& handle,
                     const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param data テクスチャデータ
    */
-  void WriteResource(DirectX12Device& device, const void* data);
+  void WriteResource(IDirectXAccessor& accessor, const void* data);
 
   /**
    * @brief ヒープに自身を追加する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    */
-  void SetToHeap(DirectX12Device& device);
+  void SetToHeap(IDirectXAccessor& accessor);
   /**
    * @brief レジスター番号を指定してヒープに自身を追加する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param overwrite_register_num 上書きするレジスター番号
    */
-  void SetToHeap(DirectX12Device& device, u32 overwrite_register_num);
+  void SetToHeap(IDirectXAccessor& accessor, u32 overwrite_register_num);
 
  public:
   /**
@@ -108,11 +111,11 @@ class Texture2D {
  private:
   /**
    * @brief テクスチャバッファを初期化する
-   * @param device DirectX12デバイス
+   * @param accessor DirectX12デバイスアクセサ
    * @param desc テクスチャデスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitTexBuffer(DirectX12Device& device, const Desc& desc);
+  bool InitTexBuffer(IDirectXAccessor& accessor, const Desc& desc);
 
  private:
   //! テクスチャデータ

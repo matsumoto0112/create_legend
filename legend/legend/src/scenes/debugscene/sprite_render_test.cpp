@@ -18,6 +18,7 @@ bool SpriteRenderTest::Initialize() {
   const std::filesystem::path font =
       util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
   const std::wstring name = util::loader::FontLoader::GetInstance()->Load(font);
+
   if (!string_.Init(L"", directx::shader::TextureRegisterID::Albedo,
                     directx::descriptor_heap::heap_parameter::LocalHeapID::
                         SPRITE_RENDER_TEST,
@@ -60,6 +61,19 @@ bool SpriteRenderTest::Update() {
       const float sy = random.Range(0.01f, 0.1f);
       sprite.SetScale(math::Vector2(sx, sy));
       sprites_.push_back(sprite);
+    }
+
+    //スプライトのUV
+    static float uv_left = 0.0f;
+    ImGui::SliderFloat("UV_Left", &uv_left, -5.0f, 5.0f);
+    static float uv_top = 0.0f;
+    ImGui::SliderFloat("UV_Top", &uv_top, -5.0f, 5.0f);
+    static float uv_width = 1.0f;
+    ImGui::SliderFloat("UV_Width", &uv_width, -5.0f, 5.0f);
+    static float uv_height = 1.0f;
+    ImGui::SliderFloat("UV_Height", &uv_height, -5.0f, 5.0f);
+    for (auto&& sp : sprites_) {
+      sp.SetRect(math::Rect(uv_left, uv_top, uv_width, uv_height));
     }
 
     //文字列の座標・スケーリング調整スライダー

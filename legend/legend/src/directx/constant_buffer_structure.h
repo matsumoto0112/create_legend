@@ -29,6 +29,14 @@ struct WorldContext {
   //! プロジェクション行列
   math::Matrix4x4 projection;
 };
+
+struct UVRect {
+  float left;
+  float top;
+  float width;
+  float height;
+};
+
 }  // namespace constant_buffer_structure
 }  // namespace directx
 }  // namespace legend

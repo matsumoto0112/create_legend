@@ -42,7 +42,7 @@ bool ModelView::Initialize() {
 
   //モデルデータを読み込む
   const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "1000cmObject.glb";
+      util::Path::GetInstance()->model() / "eraser_fragment_01.glb";
   if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
                                 model_path)) {
     return false;

@@ -113,6 +113,10 @@ class Player {
   //! ˆÚ“®’†‚©
   bool is_move_;
 
+  //‘¬“x‚ÌXVŠÔ
+  float velocity_update_time_;
+  const float change_time_ = 0.1f;
+
   //! ˆÚ“®‚É‰Á‚¦‚é—Í
   const float power_ = 10;
   //! ÀÛ‚É‰Á‚¦‚é—Í‚Ì‰ÁŒ¸

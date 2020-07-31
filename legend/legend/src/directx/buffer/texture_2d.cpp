@@ -1,8 +1,6 @@
 #include "src/directx/buffer/texture_2d.h"
 
-#include "src/directx/descriptor_heap/heap_manager.h"
 #include "src/directx/directx_helper.h"
-#include "src/libs/stb_image.h"
 #include "src/util/loader/texture_loader.h"
 
 namespace legend {
@@ -10,18 +8,25 @@ namespace directx {
 namespace buffer {
 
 //コンストラクタ
-Texture2D::Texture2D() {}
+Texture2D::Texture2D()
+    : texture_{},
+      texture_immediate_{},
+      register_num_{0},
+      format_{DXGI_FORMAT::DXGI_FORMAT_UNKNOWN},
+      width_{0},
+      height_{0},
+      handle_{} {}
 
 //デストラクタ
 Texture2D::~Texture2D() {}
 
 //初期化
-bool Texture2D::Init(DirectX12Device& device, const Desc& desc) {
-  return InitTexBuffer(device, desc);
+bool Texture2D::Init(IDirectXAccessor& accessor, const Desc& desc) {
+  return InitTexBuffer(accessor, desc);
 }
 
 //初期化
-bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
+bool Texture2D::InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
                              const std::filesystem::path& filename,
                              const descriptor_heap::DescriptorHandle& handle) {
   //テクスチャを読み込む
@@ -32,17 +37,17 @@ bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
   const Desc desc{register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
                   data.width,   data.height,
                   handle,       data.name};
-  if (!InitTexBuffer(device, desc)) {
+  if (!InitTexBuffer(accessor, desc)) {
     return false;
   }
 
   //テクスチャのピクセルデータを書き込む
-  WriteResource(device, data.pixels.data());
+  WriteResource(accessor, data.pixels.data());
   return true;
 }
 
 //初期化と書きこみ
-bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
+bool Texture2D::InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
                              DXGI_FORMAT format, const std::vector<u8>& data,
                              const descriptor_heap::DescriptorHandle& handle,
                              const std::wstring& name) {
@@ -51,51 +56,50 @@ bool Texture2D::InitAndWrite(DirectX12Device& device, u32 register_num,
 
   const Desc desc{register_num,       format, loaded_data.width,
                   loaded_data.height, handle, name};
-  if (!Init(device, desc)) {
+  if (!Init(accessor, desc)) {
     return false;
   }
-  WriteResource(device, loaded_data.pixels.data());
+  WriteResource(accessor, loaded_data.pixels.data());
   return true;
 }
 
 //リソースを書き込む
-void Texture2D::WriteResource(DirectX12Device& device, const void* data) {
+void Texture2D::WriteResource(IDirectXAccessor& accessor, const void* data) {
   const u64 row = width_ * directx_helper::CalcPixelSizeFromFormat(format_);
   const u64 slice = row * height_;
 
-  texture_.Transition(device,
+  texture_.Transition(accessor,
                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST);
 
-  CommittedResource::UpdateSubresource(device, &texture_, &texture_immediate_,
+  CommittedResource::UpdateSubresource(accessor, &texture_, &texture_immediate_,
                                        data, row, slice);
-  texture_.Transition(device,
+  texture_.Transition(accessor,
                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 //ヒープに追加する
-void Texture2D::SetToHeap(DirectX12Device& device) {
-  device.GetHeapManager().SetHandleToLocalHeap(register_num_, ResourceType::Srv,
-                                               handle_.cpu_handle_);
+void Texture2D::SetToHeap(IDirectXAccessor& accessor) {
+  accessor.SetToGlobalHeap(register_num_, ResourceType::Srv, handle_);
 }
 
 //ヒープに追加する
-void Texture2D::SetToHeap(DirectX12Device& device, u32 overwrite_register_num) {
-  device.GetHeapManager().SetHandleToLocalHeap(
-      overwrite_register_num, ResourceType::Srv, handle_.cpu_handle_);
+void Texture2D::SetToHeap(IDirectXAccessor& accessor,
+                          u32 overwrite_register_num) {
+  accessor.SetToGlobalHeap(overwrite_register_num, ResourceType::Srv, handle_);
 }
 
 //テクスチャバッファを初期化する
-bool Texture2D::InitTexBuffer(DirectX12Device& device, const Desc& desc) {
+bool Texture2D::InitTexBuffer(IDirectXAccessor& accessor, const Desc& desc) {
   const CommittedResource::TextureBufferDesc buffer_desc{
       desc.name, desc.format, desc.width, desc.height};
 
-  if (!texture_.InitAsTex2D(device, buffer_desc)) {
+  if (!texture_.InitAsTex2D(accessor, buffer_desc)) {
     return false;
   }
 
   const u64 immediate_size =
       GetRequiredIntermediateSize(texture_.GetResource(), 0, 1);
-  if (!texture_immediate_.InitAsBuffer(device, immediate_size,
+  if (!texture_immediate_.InitAsBuffer(accessor, immediate_size,
                                        L"Immediate" + desc.name)) {
     return false;
   }
@@ -112,8 +116,8 @@ bool Texture2D::InitTexBuffer(DirectX12Device& device, const Desc& desc) {
   srv_view.Format = desc.format;
   srv_view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
   srv_view.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-  device.GetDevice()->CreateShaderResourceView(texture_.GetResource(),
-                                               &srv_view, handle_.cpu_handle_);
+  accessor.GetDevice()->CreateShaderResourceView(
+      texture_.GetResource(), &srv_view, handle_.cpu_handle_);
 
   return true;
 }  // namespace buffer

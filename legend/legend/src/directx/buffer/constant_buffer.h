@@ -35,6 +35,9 @@ class ConstantBuffer {
    * @brief コピーコンストラクタ
    */
   ConstantBuffer(const ConstantBuffer& other);
+  /**
+   * @brief コピー演算子
+   */
   ConstantBuffer& operator=(const ConstantBuffer& other);
   /**
    * @brief ムーブコンストラクタ
@@ -159,6 +162,7 @@ inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
   return *this;
 }
 
+//リセット
 template <class T>
 inline void ConstantBuffer<T>::Reset() {
   WriteEnd();
@@ -170,6 +174,7 @@ inline void ConstantBuffer<T>::Reset() {
   register_num_ = 0;
 }
 
+//初期化
 template <class T>
 inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
                                     u32 register_num,
@@ -177,8 +182,10 @@ inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
                                     const std::wstring& name) {
   Reset();
 
+  //バッファは一定の大きさにアラインメントされている必要があるのでアラインメントの計算をする
   buffer_aligned_size_ = math::util::AlignPow2(
       sizeof(T), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+
   if (!resource_.InitAsBuffer(accessor, buffer_aligned_size_, name)) {
     return false;
   }

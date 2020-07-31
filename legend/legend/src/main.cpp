@@ -84,9 +84,9 @@ class MyApp final : public device::Application {
     }
     ImGui::End();
     if (ImGui::Begin("Debug")) {
-      ImGui::Text(
-          "TotalTime: %f",
-          game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
+      ImGui::Text("TotalTime: %f", game::GameDevice::GetInstance()
+                                       ->GetFPSCounter()
+                                       .GetTotalSeconds<float>());
       ImGui::Text("FrameRate: %.1f",
                   game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
     }

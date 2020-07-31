@@ -248,6 +248,7 @@
     <ClInclude Include="src\math\math_util.h" />
     <ClInclude Include="src\math\matrix_4x4.h" />
     <ClInclude Include="src\math\quaternion.h" />
+    <ClInclude Include="src\math\rect.h" />
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />

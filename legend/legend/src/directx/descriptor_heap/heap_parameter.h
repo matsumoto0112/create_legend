@@ -41,6 +41,7 @@ enum class LocalHeapID : u32 {
   MULTI_RENDER_TARGET_TEST_SCENE,
   PHYSICS_TEST,
   SOUND_TEST,
+  ENEMY_MOVE_TEST,
   SPRITE_RENDER_TEST,
 };
 
@@ -64,6 +65,8 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
     case LocalHeapID::PHYSICS_TEST:
       return 100;
     case LocalHeapID::SOUND_TEST:
+      return 100;
+    case LocalHeapID::ENEMY_MOVE_TEST:
       return 100;
     case LocalHeapID::SPRITE_RENDER_TEST:
       return 2000;

@@ -18,7 +18,7 @@ Texture2D::Texture2D()
       handle_{} {}
 
 //デストラクタ
-Texture2D::~Texture2D() {D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_STREAM_OUT}
+Texture2D::~Texture2D() {}
 
 //初期化
 bool Texture2D::Init(IDirectXAccessor& accessor, const Desc& desc) {

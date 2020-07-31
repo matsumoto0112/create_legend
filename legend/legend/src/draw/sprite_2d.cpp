@@ -52,6 +52,7 @@ bool Sprite2D::Init(
   transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
 
   this->scale_ = math::Vector2::kUnitVector;
+  this->z_order_ = 0.0f;
   this->rotate_ = 0.0f;
   return true;
 }

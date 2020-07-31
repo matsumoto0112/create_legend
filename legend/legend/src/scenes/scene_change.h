@@ -17,6 +17,7 @@ enum class SceneType {
   INPUT_TEST,
   PHYSICS_TEST,
   MULTI_RENDER_TARGET_TEST,
+  ENEMY_MOVE_VIEWER,
 };
 
 class ISceneChange {

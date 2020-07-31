@@ -1,5 +1,6 @@
 #include "src/scenes/scene_manager.h"
 
+#include "src/scenes/debugscene/enemy_move_viewer.h"
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/physics_test.h"
@@ -75,6 +76,10 @@ bool SceneManager::Update() {
       case SceneType::MULTI_RENDER_TARGET_TEST:
         current_scene_ =
             std::make_unique<debugscene::MultiRenderTargetTest>(this);
+        break;
+      case SceneType::ENEMY_MOVE_VIEWER:
+        current_scene_ =
+            std::make_unique<debugscene::EnemyMoveViewer>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

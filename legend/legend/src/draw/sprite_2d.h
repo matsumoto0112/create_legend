@@ -28,9 +28,9 @@ class Sprite2D {
   ~Sprite2D();
   /**
    * @brief 初期化
-   * @param filepath ファイルへのパス
+   * @param texture 使用するテクスチャ
    */
-  bool Init(const std::filesystem::path& filepath,
+  bool Init(std::shared_ptr<directx::buffer::Texture2D> texture,
             directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id);
   /**
    * @brief テクスチャから初期化

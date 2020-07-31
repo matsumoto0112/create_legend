@@ -116,10 +116,18 @@ void RenderResourceManager::WriteRenderTargetInfoToPipeline(
 void RenderResourceManager::WriteDepthStencilTargetInfoToPipeline(
     IDirectXAccessor& accessor, DepthStencilTargetID unique_id,
     shader::GraphicsPipelineState* pipeline) {
-  MY_ASSERTION(util::Exist(depth_stencil_targets_, unique_id),
-               L"未登録のデプス・ステンシルが選択されました。");
+  if (unique_id == DepthStencilTargetID::None) {
+    pipeline->SetDSVFormat(DXGI_FORMAT::DXGI_FORMAT_UNKNOWN);
+    CD3DX12_DEPTH_STENCIL_DESC sd(D3D12_DEFAULT);
+    sd.DepthEnable = false;
+    sd.StencilEnable = false;
+    pipeline->SetDepthStencilState(sd);
+  } else {
+    MY_ASSERTION(util::Exist(depth_stencil_targets_, unique_id),
+                 L"未登録のデプス・ステンシルが選択されました。");
 
-  depth_stencil_targets_.at(unique_id).WriteInfoToPipelineState(pipeline);
+    depth_stencil_targets_.at(unique_id).WriteInfoToPipelineState(pipeline);
+  }
 }
 
 //レンダーターゲットをシェーダーリソースとして利用する
@@ -197,6 +205,8 @@ void RenderResourceManager::SetRenderTargetsToCommandList(
         util::Exist(depth_stencil_targets_, current_depth_stencil_target_id_),
         L"未登録のデプス・ステンシルターゲットIDが選択されました。");
 
+    depth_stencil_targets_.at(current_depth_stencil_target_id_)
+        .PrepareToSetCommandList(accessor);
     D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle =
         depth_stencil_targets_.at(current_depth_stencil_target_id_)
             .GetCPUHandle();

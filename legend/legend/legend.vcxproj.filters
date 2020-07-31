@@ -7,7 +7,6 @@
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
-    <ClCompile Include="src\directx\shader\pixel_shader.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\math\int_vector_2.cpp" />
     <ClCompile Include="src\math\vector_2.cpp" />
@@ -82,6 +81,13 @@
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\directx\shader\shader_base.cpp" />
+    <ClCompile Include="src\util\resource\vertex_shader.cpp" />
+    <ClCompile Include="src\util\resource\resource.cpp" />
+    <ClCompile Include="src\util\resource\pixel_shader.cpp" />
+    <ClCompile Include="src\util\resource\pipeline.cpp" />
+    <ClCompile Include="src\util\resource\model.cpp" />
+    <ClCompile Include="src\util\resource\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -198,6 +204,15 @@
     <ClInclude Include="src\physics\capsule.h" />
     <ClInclude Include="src\player\player.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
+    <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\util\resource\pixel_shader.h" />
+    <ClInclude Include="src\util\resource\resource_manager.h" />
+    <ClInclude Include="src\util\resource\vertex_shader.h" />
+    <ClInclude Include="src\util\resource\resource.h" />
+    <ClInclude Include="src\util\resource\pipeline.h" />
+    <ClInclude Include="src\util\resource\model.h" />
+    <ClInclude Include="src\util\resource\texture.h" />
+    <ClInclude Include="src\util\resource\resource_id.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

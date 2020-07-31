@@ -14,18 +14,12 @@ Sprite2D::~Sprite2D() {}
 
 //‰Šú‰»
 bool Sprite2D::Init(
-    const std::filesystem::path& filepath,
+    std::shared_ptr<directx::buffer::Texture2D> texture,
     directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id) {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  texture_ = std::make_shared<directx::buffer::Texture2D>();
-  if (!texture_->InitAndWrite(
-          device, directx::shader::TextureRegisterID::Albedo, filepath,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::GLOBAL_ID))) {
-    return false;
-  }
+  this->texture_ = texture;
 
   if (!transform_constant_buffer_.Init(
           device, directx::shader::ConstantBufferRegisterID::Transform,

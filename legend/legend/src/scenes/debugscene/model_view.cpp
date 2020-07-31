@@ -1,20 +1,15 @@
 #include "src/scenes/debugscene/model_view.h"
 
-#include "src/directx/render_target/render_target_id.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
-#include "src/directx/vertex.h"
 #include "src/game/game_device.h"
-#include "src/libs/stb_image.h"
-#include "src/util/loader/glb_loader.h"
 #include "src/util/path.h"
+#include "src/util/resource/pixel_shader.h"
+#include "src/util/resource/vertex_shader.h"
 
 namespace legend {
 namespace scenes {
 namespace debugscene {
-
-//モデル名
-const std::wstring ModelView::MODEL_NAME = L"1000cmObject";
 
 //コンストラクタ
 ModelView::ModelView(ISceneChange* scene_change)
@@ -29,13 +24,47 @@ bool ModelView::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / (MODEL_NAME + L".glb");
-  if (!model_.Init(model_path)) {
-    MY_LOG(L"モデルの読み込みに失敗しました。");
+  //このシーンで使用するシェーダーを事前に読み込んでおく
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  if (!resource.GetVertexShader().Load(
+          util::resource::id::VertexShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_vs.cso")) {
     return false;
   }
+  if (!resource.GetPixelShader().Load(
+          util::resource::id::PixelShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_ps.cso")) {
+    return false;
+  }
+
+  //モデルデータを読み込む
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / "1000cmObject.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
+                                model_path)) {
+    return false;
+  }
+
+  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
+  gps->Init(device);
+  gps->SetVertexShader(resource.GetVertexShader().Get(
+      util::resource::id::VertexShader::MODEL_VIEW));
+  gps->SetPixelShader(resource.GetPixelShader().Get(
+      util::resource::id::PixelShader::MODEL_VIEW));
+  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
+  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
+  gps->SetRootSignature(device.GetDefaultRootSignature());
+  gps->SetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+  gps->CreatePipelineState(device);
+  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
+                                  gps);
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -63,51 +92,37 @@ bool ModelView::Initialize() {
     }
   }
 
-  //パイプライン作成
-  {
-    if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-      return false;
-    }
-
-    const std::filesystem::path path = util::Path::GetInstance()->shader();
-    const std::filesystem::path vertex_shader_path =
-        path / L"modelview" / L"model_view_vs.cso";
-    auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-    if (!vertex_shader->Init(
-            game::GameDevice::GetInstance()->GetDevice(), vertex_shader_path,
-            directx::input_element::GetElementDescs<directx::Vertex>())) {
-      return false;
-    }
-
-    const std::filesystem::path pixel_shader_path =
-        path / L"modelview" / L"model_view_ps.cso";
-    auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-    if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                            pixel_shader_path)) {
-      return false;
-    }
-
-    pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-    pipeline_state_.SetVertexShader(vertex_shader);
-    pipeline_state_.SetPixelShader(pixel_shader);
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-        device, directx::render_target::RenderTargetID::BACK_BUFFER,
-        &pipeline_state_);
-    pipeline_state_.SetBlendDesc(
-        directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-
-    if (!pipeline_state_.CreatePipelineState(
-            game::GameDevice::GetInstance()->GetDevice())) {
-      return false;
-    }
-  }
-
   return true;
-}  // namespace scenes
+}
 
 //更新
 bool ModelView::Update() {
   if (ImGui::Begin("Transform")) {
+    //カメラ座標
+    math::Vector3 camera_position = camera_.GetPosition();
+    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
+    camera_.SetPosition(camera_position);
+    //カメラ回転角
+    math::Vector3 camera_rotation =
+        math::Quaternion::ToEular(camera_.GetRotation()) *
+        math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
+    camera_.SetRotation(
+        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
+
+    //カメラの上方向ベクトルを変更する
+    if (ImGui::Button("X_UP")) {
+      camera_.SetUpVector(math::Vector3::kRightVector);
+    }
+    if (ImGui::Button("Y_UP")) {
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("Z_UP")) {
+      camera_.SetUpVector(math::Vector3::kForwardVector);
+    }
+    float fov = camera_.GetFov() * math::util::RAD_2_DEG;
+    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
+    camera_.SetFov(fov * math::util::DEG_2_RAD);
   }
   ImGui::End();
   return true;
@@ -119,15 +134,35 @@ void ModelView::Draw() {
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
+  device.GetRenderResourceManager().SetDepthStencilTargetID(
+      directx::render_target::DepthStencilTargetID::Depth);
+  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
+  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
 
-  pipeline_state_.SetGraphicsCommandList(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      ->SetGraphicsCommandList(device);
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
-  model_.Draw();
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetModel()
+      .Get(util::resource::ModelID::OBJECT_1000CM)
+      ->Draw();
 }
 
 void ModelView::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  resource.GetVertexShader().Unload(
+      util::resource::id::VertexShader::MODEL_VIEW);
+  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
+  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
+  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
 }
 
 }  // namespace debugscene

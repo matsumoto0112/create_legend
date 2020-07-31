@@ -7,6 +7,7 @@
  */
 
 #include "src/directx/directx_accessor.h"
+#include "src/directx/shader/shader_base.h"
 
 namespace legend {
 namespace directx {
@@ -14,7 +15,7 @@ namespace shader {
 /**
  * @brief 頂点シェーダー
  */
-class VertexShader {
+class VertexShader final : public ShaderBase {
  public:
   /**
    * @brief コンストラクタ
@@ -34,11 +35,15 @@ class VertexShader {
   bool Init(IDirectXAccessor& accessor, const std::filesystem::path& filepath,
             const std::vector<D3D12_INPUT_ELEMENT_DESC>& elements);
   /**
-   * @brief シェーダーコードとして返す
+   * @brief 初期化
+   * @param accessor DirectX12デバイスアクセサ
+   * @param filepath シェーダーファイルパス
+   * @return 初期化に成功したらtrueを返す
+   * @details
+   * シェーダーリフレクションによって入力レイアウトを解析するので読み取れない種類があったら上の入力エレメントを直接渡すほうを使用する
    */
-  CD3DX12_SHADER_BYTECODE GetShaderBytecode() const {
-    return CD3DX12_SHADER_BYTECODE{shader_code_.data(), shader_code_.size()};
-  }
+  bool Init(IDirectXAccessor& accessor,
+            const std::filesystem::path& filepath) override;
   /**
    * @brief 入力レイアウトを返す
    */
@@ -48,12 +53,10 @@ class VertexShader {
   }
 
  private:
-  //! シェーダーファイル
-  ComPtr<ID3DBlob> vertex_shader_;
-
-  std::vector<u8> shader_code_;
   //! 入力レイアウト
   std::vector<D3D12_INPUT_ELEMENT_DESC> elements_;
+  //! シェーダーリフレクションデータ
+  ComPtr<ID3D12ShaderReflection> shader_refrection_;
 };
 
 }  // namespace shader

@@ -12,9 +12,7 @@ namespace debugscene {
 SpriteRenderTest::SpriteRenderTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-SpriteRenderTest::~SpriteRenderTest() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+SpriteRenderTest::~SpriteRenderTest() {}
 
 bool SpriteRenderTest::Initialize() {
   const std::filesystem::path font =
@@ -26,6 +24,13 @@ bool SpriteRenderTest::Initialize() {
                     name, 128)) {
     return false;
   }
+
+  game::GameDevice::GetInstance()->GetResource().GetTexture().Load(
+      util::resource::id::Texture::TEX,
+      util::Path::GetInstance()->texture() / "tex.png",
+      directx::shader::TextureRegisterID::Albedo,
+      directx::descriptor_heap::heap_parameter::LocalHeapID::
+          SPRITE_RENDER_TEST);
   return true;
 }
 
@@ -35,11 +40,12 @@ bool SpriteRenderTest::Update() {
 
     //ボタンを押すとスプライトを追加する
     if (ImGui::Button("Add Sprite")) {
-      const std::filesystem::path texture_path =
-          util::Path::GetInstance()->texture() / "tex.png";
       draw::Sprite2D sprite;
-      if (!sprite.Init(texture_path, directx::descriptor_heap::heap_parameter::
-                                         LocalHeapID::SPRITE_RENDER_TEST)) {
+      if (!sprite.Init(
+              game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
+                  util::resource::id::Texture::TEX),
+              directx::descriptor_heap::heap_parameter::LocalHeapID::
+                  SPRITE_RENDER_TEST)) {
         return false;
       }
 
@@ -93,6 +99,9 @@ void SpriteRenderTest::Draw() {
 }
 
 void SpriteRenderTest::Finalize() {
+  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
+  game::GameDevice::GetInstance()->GetResource().GetTexture().Unload(
+      util::resource::id::Texture::TEX);
   game::GameDevice::GetInstance()
       ->GetDevice()
       .GetHeapManager()

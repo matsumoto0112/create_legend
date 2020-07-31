@@ -94,12 +94,10 @@ class Player {
   physics::BoundingBox& GetOBB();
 
  private:
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
   //Õ“Ë”»’è—p‚Ì’¼•û‘Ì
   physics::BoundingBox obb_;
 
-  util::Transform transfrom_;
+  util::Transform transform_;
 
   //! ‘¬“x
   math::Vector3 velocity_;

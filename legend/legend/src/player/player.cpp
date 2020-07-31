@@ -4,11 +4,11 @@ namespace legend {
 namespace player {
 //コンストラクタ
 Player::Player()
-    : transfrom_(),
+    : transform_(),
       velocity_(math::Vector3::kZeroVector),
       min_power_(0),
       max_power_(1) {
-  transfrom_.SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
+  transform_.SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
   obb_ = physics::BoundingBox();
   obb_.SetLength(2, 1, 2);
   is_move_ = false;
@@ -22,16 +22,16 @@ Player::Player()
 
 Player::Player(math::Vector3 position, math::Quaternion rotation,
                math::Vector3 scale, float min_power, float max_power)
-    : transfrom_(),
+    : transform_(),
       velocity_(math::Vector3::kZeroVector),
       min_power_(min_power),
       max_power_(max_power) {
-  transfrom_.SetPosition(position);
-  transfrom_.SetRotation(rotation);
-  transfrom_.SetScale(scale);
-  obb_ = physics::BoundingBox(transfrom_.GetPosition(),
-                              transfrom_.GetRotation().ToEular(),
-                              transfrom_.GetScale());
+  transform_.SetPosition(position);
+  transform_.SetRotation(rotation);
+  transform_.SetScale(scale);
+  obb_ = physics::BoundingBox(transform_.GetPosition(),
+                              transform_.GetRotation().ToEular(),
+                              transform_.GetScale());
   obb_.SetLength(2, 1, 2);
   is_move_ = false;
   impulse_ = min_power_;
@@ -58,8 +58,8 @@ bool Player::Initilaize(directx::DirectX12Device& device) {
 bool Player::Update() {
   obb_.Update();
 
-  update_time_ = static_cast<float>(
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds());
+  update_time_ =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
   if (is_input_ && input_velocity_.Magnitude() <= 0.1f) {
     is_move_ = true;
@@ -102,14 +102,14 @@ void Player::Move() {
   //移動処理
   math::Vector3 v = math::Vector3(x, 0, z);
   math::Vector3 position =
-      transfrom_.GetPosition() + v * impulse_ * power_ * update_time_;
+      transform_.GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
   Deceleration(2);
 }
 
 void Player::SetPosition(math::Vector3 position) {
-  transfrom_.SetPosition(position);
+  transform_.SetPosition(position);
   obb_.SetPosition(position);
 }
 
@@ -211,13 +211,13 @@ void Player::Deceleration(float deceleration_rate) {
 }
 
 //座標の取得
-math::Vector3 Player::GetPosition() const { return transfrom_.GetPosition(); }
+math::Vector3 Player::GetPosition() const { return transform_.GetPosition(); }
 
 //移動量の取得
 math::Vector3 Player::GetVelocity() const { return velocity_; }
 
 math::Quaternion Player::GetRotation() const {
-  return transfrom_.GetRotation();
+  return transform_.GetRotation();
 }
 
 float Player::GetImpulse() const { return impulse_; }

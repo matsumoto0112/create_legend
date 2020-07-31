@@ -18,7 +18,7 @@ Player::Player()
   is_set_power_ = false;
   up_power_ = true;
   is_input_ = false;
-  change_time_ = 0;
+  velocity_update_time_ = 0;
 }
 
 Player::Player(math::Vector3 position, math::Quaternion rotation,
@@ -41,7 +41,7 @@ Player::Player(math::Vector3 position, math::Quaternion rotation,
   is_set_power_ = false;
   up_power_ = true;
   is_input_ = false;
-  change_time_ = 0;
+  velocity_update_time_ = 0;
 }
 
 //デストラクタ
@@ -126,8 +126,8 @@ void Player::SetVelocity() {
   input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
   input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
 
-  change_time_ += update_time_;
-  if (change_time_ < time || is_move_) return;
+  velocity_update_time_ += update_time_;
+  if (velocity_update_time_ < change_time_ || is_move_) return;
 
   //左スティックの傾きに合わせて値を入れる
   velocity_.x = input_velocity_.x;
@@ -139,7 +139,7 @@ void Player::SetVelocity() {
   while (stick_velocities_.size() > max_stick_velocity_num_) {
     stick_velocities_.erase(stick_velocities_.begin());
   }
-  change_time_ = 0;
+  velocity_update_time_ = 0;
 }
 
 //パワーの設定
@@ -187,7 +187,7 @@ void Player::ResetParameter() {
   input_velocity_ = math::Vector3::kZeroVector;
   stick_velocities_.clear();
   is_move_ = false;
-  change_time_ = 0;
+  velocity_update_time_ = 0;
 }
 
 //減速

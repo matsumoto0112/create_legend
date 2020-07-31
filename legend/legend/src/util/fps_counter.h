@@ -50,7 +50,10 @@ class FPSCounter {
   /**
    * @brief 前フレームからの差分時間（秒）を取得する
    */
-  double GetDeltaSeconds() const { return TicksToSeconds(delta_ticks_); }
+  template <typename T = double>
+  T GetDeltaSeconds() const {
+    return static_cast<T>(TicksToSeconds(delta_ticks_));
+  }
   /**
    * @brief 前フレームのフレームレートを取得する
    */

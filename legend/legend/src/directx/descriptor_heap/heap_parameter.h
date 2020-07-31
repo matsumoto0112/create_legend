@@ -42,6 +42,7 @@ enum class LocalHeapID : u32 {
   PHYSICS_TEST,
   SOUND_TEST,
   SPRITE_RENDER_TEST,
+  PLAYER_MOVE_VIEWER,
 };
 
 namespace local {

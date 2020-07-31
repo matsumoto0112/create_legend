@@ -5,6 +5,7 @@
 #include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
+#include "src/scenes/debugscene/player_move_viewer.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/title.h"
 
@@ -75,6 +76,9 @@ bool SceneManager::Update() {
       case SceneType::MULTI_RENDER_TARGET_TEST:
         current_scene_ =
             std::make_unique<debugscene::MultiRenderTargetTest>(this);
+      case SceneType::PLAYER_MOVE_VIEWER:
+        current_scene_ =
+            std::make_unique<debugscene::PlayerMoveViewer>(this);
         break;
       default:
         MY_ASSERTION(false, L"存在しないシーンが選択されました。");

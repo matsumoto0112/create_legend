@@ -16,6 +16,12 @@ class Sphere {
    */
   Sphere();
   /**
+   * @brief コンストラクタ
+   * @param 座標
+   * @param 回転量
+   */
+  Sphere(math::Vector3 position, math::Vector3 rotation);
+  /**
    * @brief デストラクタ
    */
   ~Sphere();

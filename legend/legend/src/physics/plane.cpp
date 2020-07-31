@@ -8,23 +8,70 @@ namespace legend {
 namespace physics {
 //コンストラクタ
 Plane::Plane()
-    : position_(math::Vector3::kZeroVector),
-      normal_(math::Vector3::kUpVector) {}
+    : position_(math::Vector3::kZeroVector), normal_(math::Vector3::kUpVector) {
+  right_ = (normal_ == math::Vector3::kRightVector ||
+            normal_ == math::Vector3::kLeftVector)
+               ? 0
+               : position_.x + 1;
+  left_ = (normal_ == math::Vector3::kRightVector ||
+           normal_ == math::Vector3::kLeftVector)
+              ? 0
+              : position_.x - 1;
+  forward_ = (normal_ == math::Vector3::kForwardVector ||
+              normal_ == math::Vector3::kBackwardVector)
+                 ? 0
+                 : position_.z - 1;
+  back_ = (normal_ == math::Vector3::kForwardVector ||
+           normal_ == math::Vector3::kBackwardVector)
+              ? 0
+              : position_.z + 1;
+  up_ = (normal_ == math::Vector3::kUpVector ||
+         normal_ == math::Vector3::kDownVector)
+            ? 0
+            : position_.y + 1;
+  down_ = (normal_ == math::Vector3::kUpVector ||
+           normal_ == math::Vector3::kDownVector)
+              ? 0
+              : position_.y - 1;
+}
+
+Plane::Plane(math::Vector3 position, math::Vector3 normal)
+    : position_(position), normal_(normal) {
+  right_ = (normal_ == math::Vector3::kRightVector ||
+            normal_ == math::Vector3::kLeftVector)
+               ? 0
+               : position_.x + 1;
+  left_ = (normal_ == math::Vector3::kRightVector ||
+           normal_ == math::Vector3::kLeftVector)
+              ? 0
+              : position_.x - 1;
+  forward_ = (normal_ == math::Vector3::kForwardVector ||
+              normal_ == math::Vector3::kBackwardVector)
+                 ? 0
+                 : position_.z - 1;
+  back_ = (normal_ == math::Vector3::kForwardVector ||
+           normal_ == math::Vector3::kBackwardVector)
+              ? 0
+              : position_.z + 1;
+  up_ = (normal_ == math::Vector3::kUpVector ||
+         normal_ == math::Vector3::kDownVector)
+            ? 0
+            : position_.y + 1;
+  down_ = (normal_ == math::Vector3::kUpVector ||
+           normal_ == math::Vector3::kDownVector)
+              ? 0
+              : position_.y - 1;
+}
 
 Plane::~Plane() {}
 
 //初期化
 bool Plane::Initialize(directx::DirectX12Device& device) {
-  float front = GetPosition().z - 1;
-  float back = GetPosition().z + 1;
-  float left = GetPosition().x - 1;
-  float right = GetPosition().x + 1;
-
   const std::vector<directx::PhysicsVertex> vertices{
-      {{left, 0, front}},
-      {{right, 0, front}},
-      {{right, 0, back}},
-      {{left, 0, back}},
+      {{left_, down_, forward_}},
+      {{right_, down_, forward_}},
+      {{right_, up_, back_}},
+      {{left_, up_, back_}},
   };
 
   //頂点バッファ作成
@@ -53,7 +100,7 @@ bool Plane::Initialize(directx::DirectX12Device& device) {
     return false;
   }
 
-  math::Vector3 position = math::Vector3::kZeroVector;
+  math::Vector3 position = GetPosition();
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateTranslate(position);
   transform_constant_buffer_.UpdateStaging();
@@ -151,8 +198,8 @@ math::Vector3 Plane::GetPosition() const { return position_; }
 math::Vector3 Plane::GetNormal() const { return normal_; }
 
 //距離を取得
-float Plane::GetDistance() const {
-  return math::Vector3::Dot(position_, GetNormal());
+float Plane::GetDistance(math::Vector3 position) const {
+  return math::util::Abs(math::Vector3::Dot(position, GetNormal()));
 }
 }  // namespace physics
 }  // namespace legend

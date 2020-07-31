@@ -14,6 +14,12 @@ Sphere::Sphere()
       scale_(0.1f),
       radius_(2) {}
 
+Sphere::Sphere(math::Vector3 position, math::Vector3 rotation)
+    : position_(position),
+    rotation_(rotation),
+    scale_(0.1f),
+    radius_(2) {}
+
 //デストラクタ
 Sphere::~Sphere() {}
 

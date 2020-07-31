@@ -14,8 +14,8 @@ struct Transform {
   math::Matrix4x4 world;
 };
 struct WorldContext {
-    math::Matrix4x4 view;
-    math::Matrix4x4 projection;
+  math::Matrix4x4 view;
+  math::Matrix4x4 projection;
 };
 
 /**
@@ -29,6 +29,14 @@ class BoundingBox {
    * @brief コンストラクタ
    */
   BoundingBox();
+  /**
+   * @brief コンストラクタ
+   * @param 座標
+   * @param 回転
+   * @param スケール
+   */
+  BoundingBox(math::Vector3 position, math::Vector3 rotation,
+              math::Vector3 scale);
   /**
    * @brief デストラクタ
    */

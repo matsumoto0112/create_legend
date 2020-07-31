@@ -23,6 +23,22 @@ BoundingBox::BoundingBox()
   lengthes_[2] = 1.0f;
 }
 
+BoundingBox::BoundingBox(math::Vector3 position, math::Vector3 rotation,
+                         math::Vector3 scale)
+    : position_(position),
+      rotation_(rotation),
+      scale_(scale),
+      directions_(3),
+      lengthes_(3) {
+  directions_[0] = math::Vector3::kRightVector;
+  directions_[1] = math::Vector3::kUpVector;
+  directions_[2] = math::Vector3::kForwardVector;
+
+  lengthes_[0] = 1.0f;
+  lengthes_[1] = 1.0f;
+  lengthes_[2] = 1.0f;
+}
+
 BoundingBox::~BoundingBox() {}
 
 //èâä˙âª

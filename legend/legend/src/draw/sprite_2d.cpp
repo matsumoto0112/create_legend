@@ -3,6 +3,14 @@
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 
+namespace {
+legend::directx::constant_buffer_structure::UVRect Convert(
+    const legend::math::Rect& rect) {
+  return legend::directx::constant_buffer_structure::UVRect{
+      rect.GetLeft(), rect.GetTop(), rect.GetWidth(), rect.GetHeight()};
+}
+}  // namespace
+
 namespace legend {
 namespace draw {
 
@@ -27,34 +35,15 @@ bool Sprite2D::Init(
           L"Sprite_TransformConstantBuffer")) {
     return false;
   }
-
-  this->content_size_ =
-      math::Vector2(static_cast<float>(texture_->GetWidth()),
-                    static_cast<float>(texture_->GetHeight()));
-  this->scale_ = math::Vector2::kUnitVector;
-  this->position_ = math::Vector2::kZeroVector;
-  transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
-
-  this->scale_ = math::Vector2::kUnitVector;
-  this->rotate_ = 0.0f;
-  return true;
-}
-
-//èâä˙âª
-bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
-  this->texture_ = texture;
-
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
-  if (!transform_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Sprite_TransformConstantBuffer")) {
+  if (!uv_rect_constant_buffer_.Init(
+          device, directx ::shader::ConstantBufferRegisterID::UV_RECT,
+          device.GetLocalHeapHandle(cbv_heap_id),
+          L"Sprite_UVRectConstantBuffer")) {
     return false;
   }
 
+  this->rect_ = math::Rect(0.0f, 0.0f, 1.0f, 1.0f);
+  uv_rect_constant_buffer_.GetStagingRef() = Convert(rect_);
   this->content_size_ =
       math::Vector2(static_cast<float>(texture_->GetWidth()),
                     static_cast<float>(texture_->GetHeight()));
@@ -64,7 +53,6 @@ bool Sprite2D::Init(std::shared_ptr<directx::buffer::Texture2D> texture) {
 
   this->scale_ = math::Vector2::kUnitVector;
   this->rotate_ = 0.0f;
-  this->z_order_ = 0.0f;
   return true;
 }
 
@@ -82,6 +70,10 @@ void Sprite2D::SetToCommandList() {
           math::Vector3(position_.x, position_.y, z_order_));
   transform_constant_buffer_.UpdateStaging();
   transform_constant_buffer_.SetToHeap(device);
+
+  uv_rect_constant_buffer_.GetStagingRef() = Convert(rect_);
+  uv_rect_constant_buffer_.UpdateStaging();
+  uv_rect_constant_buffer_.SetToHeap(device);
 }
 
 }  // namespace draw

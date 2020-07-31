@@ -16,6 +16,7 @@ namespace ConstantBufferRegisterID {
 enum Enum : u32 {
   Transform = 0,     //! トランスフォーム情報
   WorldContext = 1,  //! ビュー、プロジェクション情報
+  UV_RECT = 2,
 };
 }  // namespace ConstantBufferRegisterID
 

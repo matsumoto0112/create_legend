@@ -3,6 +3,15 @@
 
 #include "../defines/global.hlsli"
 
+struct UVRect{
+    float left;
+    float top;
+    float width;
+    float height;
+};
+
+ConstantBuffer<UVRect> g_uv_rect : register(b2);
+
 struct VS_Input {
     float3 position : POSITION;
     float2 uv : TEXCOORD0;
@@ -20,7 +29,7 @@ VS_Output VS_Main(const VS_Input input) {
     output.position = mul(float4(input.position,1.0),g_transform.world);
     output.position = mul(output.position,g_world_context.view);
     output.position = mul(output.position,g_world_context.projection);
-    output.uv = input.uv;
+    output.uv = input.uv * float2(g_uv_rect.width, g_uv_rect.height) + float2(g_uv_rect.left, g_uv_rect.top);
 
     return output;
 }

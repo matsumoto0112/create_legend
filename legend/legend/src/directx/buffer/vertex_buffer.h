@@ -12,7 +12,9 @@
 namespace legend {
 namespace directx {
 namespace buffer {
+
 /**
+ * @class VertexBuffer
  * @brief 頂点バッファ
  */
 class VertexBuffer {

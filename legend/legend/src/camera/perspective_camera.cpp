@@ -7,7 +7,16 @@ namespace legend {
 namespace camera {
 
 //コンストラクタ
-PerspectiveCamera::PerspectiveCamera() {}
+PerspectiveCamera::PerspectiveCamera()
+    : name_(L""),
+      position_(math::Vector3::kZeroVector),
+      rotation_(math::Quaternion::kIdentity),
+      up_vector_(math::Vector3::kUpVector),
+      fov_(90.0f),
+      aspect_ratio_(1.0f),
+      near_z_(0.1f),
+      far_z_(300.0f),
+      world_context_constant_buffer_() {}
 
 //デストラクタ
 PerspectiveCamera::~PerspectiveCamera() {}
@@ -61,6 +70,7 @@ void PerspectiveCamera::UpdateConstantBufferStaging() {
   const math::Vector3 forward_vector =
       rotation_ * math::Vector3::kForwardVector;
   const math::Vector3 lookat = position_ + forward_vector;
+
   world_context_constant_buffer_.GetStagingRef().view =
       math::Matrix4x4::CreateView(position_, lookat, up_vector_);
   world_context_constant_buffer_.GetStagingRef().projection =

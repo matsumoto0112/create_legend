@@ -31,7 +31,12 @@ namespace directx {
 namespace buffer {
 
 //コンストラクタ
-IndexBuffer::IndexBuffer() : resource_(), index_buffer_view_{}, index_num_(0) {}
+IndexBuffer::IndexBuffer()
+    : resource_(),
+      index_buffer_view_{},
+      index_num_(0),
+      primitive_toporogy_(
+          D3D12_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED) {}
 
 //デストラクタ
 IndexBuffer::~IndexBuffer() {}

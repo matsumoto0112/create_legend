@@ -32,32 +32,19 @@ bool PlayerMoveViewer::Update() {
     return false;
   }
 
-  math::Vector3 velocity = player_.GetVelocity();
-  player_.SetPower();
-  float impulse = player_.GetImpulse();
-  if (ImGui::Begin("PlayerVelocity")) {
-    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
-    if (ImGui::Button("Velocity_X_Plus")) {
-      velocity.x += 0.1f;
-    }
-    if (ImGui::Button("Velocity_X_Minus")) {
-      velocity.x -= 0.1f;
-    }
-    if (ImGui::Button("Velocity_Z_Plus")) {
-      velocity.z += 0.1f;
-    }
-    if (ImGui::Button("Velocity_Z_Minus")) {
-      velocity.z -= 0.1f;
-    }
+  player_.SetVelocity();
+  player_.SetImpulse();
 
+  math::Vector3 velocity = player_.GetVelocity();
+  float impulse = player_.GetImpulse();
+  if (ImGui::Begin("Player")) {
+    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
     ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
     math::Vector3 position = player_.GetPosition();
     ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
   }
   ImGui::End();
 
-   player_.SetVelocity();
-  //player_.SetVelocity(velocity);
   player_.Move();
 
   if (physics::Collision::GetInstance()->Collision_OBB_Plane(player_.GetOBB(),

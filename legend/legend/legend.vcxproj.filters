@@ -88,6 +88,7 @@
     <ClCompile Include="src\util\resource\pipeline.cpp" />
     <ClCompile Include="src\util\resource\model.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
+    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="src\util\resource\model.h" />
     <ClInclude Include="src\util\resource\texture.h" />
     <ClInclude Include="src\util\resource\resource_id.h" />
+    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\math\rect.h" />
   </ItemGroup>
   <ItemGroup>

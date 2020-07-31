@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\audio\xaudio2_callback.h" />

@@ -1,5 +1,5 @@
 #ifndef LEGEND_DIRECTX_SHADER_SHADER_REGISTER_ID_H_
-#define LEGEND_DIRECTX_SHADE_SHADER_REGISTER_ID_H_
+#define LEGEND_DIRECTX_SHADER_SHADER_REGISTER_ID_H_
 
 /**
  * @file shader_register_id.h
@@ -16,6 +16,7 @@ namespace ConstantBufferRegisterID {
 enum Enum : u32 {
   Transform = 0,     //! トランスフォーム情報
   WorldContext = 1,  //! ビュー、プロジェクション情報
+  UV_RECT = 2,
 };
 }  // namespace ConstantBufferRegisterID
 

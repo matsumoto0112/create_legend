@@ -34,7 +34,9 @@ bool TextureChar::Init(
 
   texture->WriteResource(game::GameDevice::GetInstance()->GetDevice(),
                          data.data());
-  if (!Sprite2D::Init(texture)) {
+  if (!Sprite2D::Init(
+          texture,
+          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     return false;
   }
   return true;

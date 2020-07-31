@@ -16,6 +16,7 @@ namespace legend {
 namespace camera {
 
 /**
+ * @class PerspectiveCamera
  * @brief パースペクティブカメラクラス
  */
 class PerspectiveCamera {
@@ -96,7 +97,6 @@ class PerspectiveCamera {
   }
   /**
    * @brief 上方向ベクトルを取得する
-   * @return
    */
   inline math::Vector3 GetUpVector() const { return up_vector_; }
   /**

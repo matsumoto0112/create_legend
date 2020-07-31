@@ -9,6 +9,7 @@
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/constant_buffer_structure.h"
+#include "src/math/rect.h"
 
 namespace legend {
 namespace draw {
@@ -32,11 +33,6 @@ class Sprite2D {
    */
   bool Init(std::shared_ptr<directx::buffer::Texture2D> texture,
             directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id);
-  /**
-   * @brief テクスチャから初期化
-   * @param texture 設定するテクスチャ
-   */
-  bool Init(std::shared_ptr<directx::buffer::Texture2D> texture);
 
  public:
   /**
@@ -79,6 +75,9 @@ class Sprite2D {
    * @brief 回転角度を取得する
 =  */
   inline float GetRotate() const { return rotate_; }
+
+  inline void SetRect(const math::Rect& rect) { this->rect_ = rect; }
+  inline const math::Rect& GetRect() const { return rect_; }
   /**
    * @brief コマンドリストに積む
    */
@@ -100,6 +99,9 @@ class Sprite2D {
       transform_constant_buffer_;
   //! テクスチャ
   std::shared_ptr<directx::buffer::Texture2D> texture_;
+  math::Rect rect_;
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::UVRect>
+      uv_rect_constant_buffer_;
 };
 }  // namespace draw
 }  // namespace legend

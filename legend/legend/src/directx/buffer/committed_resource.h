@@ -11,6 +11,7 @@
 namespace legend {
 namespace directx {
 namespace buffer {
+
 /**
  * @class CommittedResource
  * @brief CreateCommittedResourceで作成されるリソース管理クラス

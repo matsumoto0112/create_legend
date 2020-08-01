@@ -8,12 +8,9 @@ namespace legend {
 namespace physics {
 
 //コンストラクタ
-BoundingBox::BoundingBox()
-    : position_(math::Vector3::kZeroVector),
-      rotation_(math::Vector3::kZeroVector),
-      scale_(math::Vector3(0.1f, 0.1f, 0.1f)),
-      directions_(3),
-      lengthes_(3) {
+BoundingBox::BoundingBox() : transform_(), directions_(3), lengthes_(3) {
+  SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
+
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
   directions_[2] = math::Vector3::kForwardVector;
@@ -23,13 +20,13 @@ BoundingBox::BoundingBox()
   lengthes_[2] = 1.0f;
 }
 
-BoundingBox::BoundingBox(math::Vector3 position, math::Vector3 rotation,
+BoundingBox::BoundingBox(math::Vector3 position, math::Quaternion rotation,
                          math::Vector3 scale)
-    : position_(position),
-      rotation_(rotation),
-      scale_(scale),
-      directions_(3),
-      lengthes_(3) {
+    : transform_(), directions_(3), lengthes_(3) {
+  SetPosition(position);
+  SetRotation(rotation);
+  SetScale(scale);
+
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
   directions_[2] = math::Vector3::kForwardVector;
@@ -173,7 +170,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
 //更新
 void BoundingBox::Update() {
   math::Vector3 position = GetPosition();
-  math::Vector3 rotate = GetRotation();
+  math::Vector3 rotate = GetRotation().ToEular() * math::util::RAD_2_DEG;
   math::Vector3 scale = GetScale();
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
@@ -232,13 +229,17 @@ float BoundingBox::GetLengthByScale(i32 length_num) const {
 }
 
 //現在の位置を取得
-math::Vector3 BoundingBox::GetPosition() const { return position_; }
+math::Vector3 BoundingBox::GetPosition() const {
+  return transform_.GetPosition();
+}
 
 //現在の回転量を取得
-math::Vector3 BoundingBox::GetRotation() const { return rotation_; }
+math::Quaternion BoundingBox::GetRotation() const {
+  return transform_.GetRotation();
+}
 
 //現在のスケールを取得
-math::Vector3 BoundingBox::GetScale() const { return scale_; }
+math::Vector3 BoundingBox::GetScale() const { return transform_.GetScale(); }
 
 //分離軸Xを取得
 math::Vector3 BoundingBox::GetAxisX() const { return axis_x; }
@@ -266,24 +267,29 @@ void BoundingBox::SetLength(float length_x, float length_y, float length_z) {
 }
 
 //中心座標の更新
-void BoundingBox::SetPosition(math::Vector3 position) { position_ = position; }
+void BoundingBox::SetPosition(math::Vector3 position) {
+  transform_.SetPosition(position);
+}
 
 //回転量の設定
-void BoundingBox::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
+void BoundingBox::SetRotation(math::Quaternion rotate) {
+  transform_.SetRotation(rotate);
+}
 
 //スケールの設定
-void BoundingBox::SetScale(math::Vector3 scale) { scale_ = scale; }
+void BoundingBox::SetScale(math::Vector3 scale) { transform_.SetScale(scale); }
 
 //分離軸の更新
 void BoundingBox::SetAxis() {
-  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(rotation_);
+  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
+      GetRotation().ToEular() * math::util::RAD_2_DEG);
 
-  axis_x =
-      math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) * scale_.x;
-  axis_y =
-      math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) * scale_.y;
-  axis_z =
-      math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) * scale_.z;
+  axis_x = math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) *
+           GetScale().x;
+  axis_y = math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) *
+           GetScale().y;
+  axis_z = math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) *
+           GetScale().z;
 }
 
 }  // namespace physics

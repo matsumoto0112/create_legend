@@ -10,15 +10,12 @@ namespace physics {
 //コンストラクタ
 Sphere::Sphere()
     : position_(math::Vector3::kZeroVector),
-      rotation_(math::Vector3::kZeroVector),
+      rotation_(math::Quaternion::kIdentity),
       scale_(0.1f),
       radius_(2) {}
 
-Sphere::Sphere(math::Vector3 position, math::Vector3 rotation)
-    : position_(position),
-    rotation_(rotation),
-    scale_(0.1f),
-    radius_(2) {}
+Sphere::Sphere(math::Vector3 position, math::Quaternion rotation)
+    : position_(position), rotation_(rotation), scale_(0.1f), radius_(2) {}
 
 //デストラクタ
 Sphere::~Sphere() {}
@@ -158,7 +155,7 @@ bool Sphere::Initialize(directx::DirectX12Device& device) {
 
 void Sphere::Update() {
   math::Vector3 position = GetPosition();
-  math::Vector3 rotate = GetRotation();
+  math::Vector3 rotate = GetRotation().ToEular() * math::util::RAD_2_DEG;
   math::Vector3 scale = math::Vector3(GetRadius(), GetRadius(), GetRadius());
   transform_constant_buffer_.GetStagingRef().world =
       math::Matrix4x4::CreateScale(scale) *
@@ -181,7 +178,7 @@ void Sphere::Draw(directx::DirectX12Device& device) {
 math::Vector3 Sphere::GetPosition() const { return position_; }
 
 //回転量の取得
-math::Vector3 Sphere::GetRotation() const { return rotation_; }
+math::Quaternion Sphere::GetRotation() const { return rotation_; }
 
 //スケールの取得
 float Sphere::GetScale() const { return scale_; }
@@ -196,7 +193,7 @@ float Sphere::GetSquareRadius() const { return GetRadius() * GetRadius(); }
 void Sphere::SetPosition(math::Vector3 position) { position_ = position; }
 
 //回転量の設定
-void Sphere::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
+void Sphere::SetRotation(math::Quaternion rotate) { rotation_ = rotate; }
 
 //スケールの設定
 void Sphere::SetScale(float scale) { scale_ = scale; }

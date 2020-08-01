@@ -123,8 +123,8 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   //•½–Ê‚Ì–@ü‚É‘Î‚·‚éOBB‚ÌË‰eü‚Ì’·‚³‚ğZo
   //‹ßÚ‹——£
   float proximity_distance = 0;
-  math::Matrix4x4 rotate_matrix =
-      math::Matrix4x4::CreateRotation(obb.GetRotation());
+  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
+      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
 
   for (i32 i = 0; i < 3; i++) {
     math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
@@ -184,8 +184,8 @@ bool Collision::Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb) {
   vertices[6] = {right, up, back};
   vertices[7] = {right, up, front};
 
-  math::Matrix4x4 rotate_matrix =
-      math::Matrix4x4::CreateRotation(obb.GetRotation());
+  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
+      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
   for (i32 i = 0; i < vertices.size(); i++) {
     vertices[i] = math::Matrix4x4::MultiplyCoord(vertices[i], rotate_matrix);
   }

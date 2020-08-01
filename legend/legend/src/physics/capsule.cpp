@@ -6,6 +6,7 @@ namespace physics {
 Capsule::Capsule()
     : start_position_(math::Vector3::kZeroVector),
       end_position_(math::Vector3::kForwardVector),
+      rotation_(math::Quaternion::kIdentity),
       radius_(2),
       scale_(0.1f) {}
 
@@ -13,6 +14,7 @@ Capsule::Capsule()
 Capsule::Capsule(math::Vector3 end_position, float radius, float scale)
     : start_position_(math::Vector3::kZeroVector),
       end_position_(end_position),
+      rotation_(math::Quaternion::kIdentity),
       radius_(radius),
       scale_(scale) {}
 
@@ -21,6 +23,7 @@ Capsule::Capsule(math::Vector3 start_position, math::Vector3 end_position,
                  float radius, float scale)
     : start_position_(start_position),
       end_position_(end_position),
+      rotation_(math::Quaternion::kIdentity),
       radius_(radius),
       scale_(scale) {}
 
@@ -44,7 +47,7 @@ void Capsule::SetEndPosition(math::Vector3 position) {
 }
 
 //回転量の設定
-void Capsule::SetRotation(math::Vector3 rotate) { rotation_ = rotate; }
+void Capsule::SetRotation(math::Quaternion rotate) { rotation_ = rotate; }
 
 //スケールの設定
 void Capsule::SetScale(float scale) { scale_ = scale; }
@@ -59,7 +62,7 @@ math::Vector3 Capsule::GetStartPosition() { return start_position_; }
 math::Vector3 Capsule::GetEndPosition() { return end_position_; }
 
 //回転量の取得
-math::Vector3 Capsule::GetRotation() { return rotation_; }
+math::Quaternion Capsule::GetRotation() { return rotation_; }
 
 //スケールの取得
 float Capsule::GetScale() { return scale_; }

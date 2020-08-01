@@ -52,7 +52,7 @@ class Capsule {
   /**
    * @brief 回転量の設定
    */
-  void SetRotation(math::Vector3 rotate);
+  void SetRotation(math::Quaternion rotate);
   /**
    * @brief スケールの設定
    */
@@ -72,7 +72,7 @@ class Capsule {
   /**
    * @brief 回転量の取得
    */
-  math::Vector3 GetRotation();
+  math::Quaternion GetRotation();
   /**
    * @briefスケールの取得
    */
@@ -92,7 +92,7 @@ class Capsule {
   //! 終点
   math::Vector3 end_position_;
   //! 回転量
-  math::Vector3 rotation_;
+  math::Quaternion rotation_;
   //! スケール
   float scale_;
   //! 半径

@@ -30,9 +30,7 @@ Player::Player(math::Vector3 position, math::Quaternion rotation,
   transform_.SetPosition(position);
   transform_.SetRotation(rotation);
   transform_.SetScale(scale);
-  obb_ = physics::BoundingBox(transform_.GetPosition(),
-                              transform_.GetRotation().ToEular(),
-                              transform_.GetScale());
+  obb_ = physics::BoundingBox(position, rotation, scale);
   obb_.SetLength(2, 1, 2);
   is_move_ = false;
   impulse_ = min_power_;
@@ -133,8 +131,8 @@ void Player::SetVelocity() {
   input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
   input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
 
-   velocity_update_time_ += update_time_;
-   if (velocity_update_time_ < change_time_) return;
+  velocity_update_time_ += update_time_;
+  if (velocity_update_time_ < change_time_) return;
 
   //左スティックの傾きに合わせて値を入れる
   velocity_.x = input_velocity_.x;

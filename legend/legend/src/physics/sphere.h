@@ -20,7 +20,7 @@ class Sphere {
    * @param 座標
    * @param 回転量
    */
-  Sphere(math::Vector3 position, math::Vector3 rotation);
+  Sphere(math::Vector3 position, math::Quaternion rotation);
   /**
    * @brief デストラクタ
    */
@@ -44,7 +44,7 @@ class Sphere {
   /**
    * @brief 回転量の取得
    */
-  math::Vector3 GetRotation() const;
+  math::Quaternion GetRotation() const;
   /**
    * @brief スケールの取得
    */
@@ -64,7 +64,7 @@ class Sphere {
   /**
    * @brief 回転量の設定
    */
-  void SetRotation(math::Vector3 rotate);
+  void SetRotation(math::Quaternion rotate);
   /**
    * @brief スケールの設定
    */
@@ -78,7 +78,7 @@ class Sphere {
   //!中心座標
   math::Vector3 position_;
   //!回転
-  math::Vector3 rotation_;
+  math::Quaternion rotation_;
   //!スケール
   float scale_;
   //!半径

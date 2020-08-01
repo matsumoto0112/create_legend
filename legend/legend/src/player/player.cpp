@@ -63,7 +63,8 @@ bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  if (is_input_ && input_velocity_.Magnitude() <= 0.1f) {
+  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+  if (is_input_ && input.GetGamepad()->GetStickLeft().Magnitude() <= 0.4f) {
     is_move_ = true;
   }
 
@@ -78,11 +79,14 @@ void Player::Move() {
   if (!is_move_) return;
 
   math::Vector3 velocity = math::Vector3::kZeroVector;
-
-  if (velocity.Magnitude() < stick_velocities_.front().Magnitude())
-    velocity = stick_velocities_.front();
-  stick_velocities_.erase(stick_velocities_.begin());
-
+  while (stick_velocities_.size() > 0) {
+    if (velocity.Magnitude() < stick_velocities_.front().Magnitude()) {
+      velocity = stick_velocities_.front();
+      stick_velocities_.erase(stick_velocities_.begin());
+      continue;
+    }
+    stick_velocities_.erase(stick_velocities_.begin());
+  }
   //移動速度がゼロだったらreturn
   if (velocity == math::Vector3::kZeroVector) {
     ResetParameter();
@@ -98,8 +102,8 @@ void Player::Move() {
   float z = velocity.z / length;
 
   //減速計算
-  deceleration_x_ = x / (length * length) * update_time_;
-  deceleration_z_ = z / (length * length) * update_time_;
+  deceleration_x_ = x / (length * length);
+  deceleration_z_ = z / (length * length);
 
   //移動処理
   math::Vector3 v = math::Vector3(x, 0, z);
@@ -107,7 +111,7 @@ void Player::Move() {
       transform_.GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
-  Deceleration(10);
+  Deceleration(2);
 }
 
 void Player::SetPosition(math::Vector3 position) {
@@ -119,6 +123,8 @@ void Player::SetPosition(math::Vector3 position) {
 void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
 
 void Player::SetVelocity() {
+  if (is_move_) return;
+
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
   //ゲームパッドが一つだけ接続されている間
 
@@ -126,8 +132,8 @@ void Player::SetVelocity() {
   input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
   input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
 
-  velocity_update_time_ += update_time_;
-  if (velocity_update_time_ < change_time_ || is_move_) return;
+   velocity_update_time_ += update_time_;
+   if (velocity_update_time_ < change_time_) return;
 
   //左スティックの傾きに合わせて値を入れる
   velocity_.x = input_velocity_.x;

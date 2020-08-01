@@ -103,7 +103,7 @@ class Player {
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;
   //! 前フレームの速度
-  math::Vector3 before_velocity_;
+  math::Vector3 change_amount_velocity_;
   std::vector<math::Vector3> stick_velocities_;
   //! リストの最大値
   const i32 max_stick_velocity_num_ = 10;

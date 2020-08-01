@@ -63,9 +63,10 @@ bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  if (is_input_ && input.GetGamepad()->GetStickLeft().Magnitude() <= 0.4f) {
-    is_move_ = true;
+  if (is_input_ &&
+      math::Vector3(change_amount_velocity_ - input_velocity_).Magnitude() >=
+      1.0f) {
+      is_move_ = true;
   }
 
   return true;
@@ -140,7 +141,7 @@ void Player::SetVelocity() {
   velocity_.z = input_velocity_.z;
   if (velocity_.Magnitude() >= 0.1f) is_input_ = true;
 
-  before_velocity_ = velocity_;
+  change_amount_velocity_ = velocity_;
   stick_velocities_.push_back(velocity_);
   while (stick_velocities_.size() > max_stick_velocity_num_) {
     stick_velocities_.erase(stick_velocities_.begin());
@@ -188,7 +189,7 @@ void Player::ResetParameter() {
   is_set_power_ = false;
   impulse_ = 0;
   up_power_ = true;
-  before_velocity_ = math::Vector3::kZeroVector;
+  change_amount_velocity_ = math::Vector3::kZeroVector;
   deceleration_x_ = deceleration_z_ = 0;
   input_velocity_ = math::Vector3::kZeroVector;
   stick_velocities_.clear();
@@ -214,7 +215,7 @@ void Player::Deceleration(float deceleration_rate) {
     velocity_.z -= z;
   }
 
-  before_velocity_ = velocity_;
+  change_amount_velocity_ = velocity_;
   stick_velocities_.push_back(velocity_);
   while (stick_velocities_.size() > max_stick_velocity_num_) {
     stick_velocities_.erase(stick_velocities_.begin());

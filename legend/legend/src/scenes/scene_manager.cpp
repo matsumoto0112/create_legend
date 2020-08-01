@@ -4,9 +4,9 @@
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/physics_test.h"
+#include "src/scenes/debugscene/player_move_viewer.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
-#include "src/scenes/debugscene/player_move_viewer.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/title.h"
 
@@ -54,41 +54,33 @@ bool SceneManager::Update() {
   if (next_scene_ != SceneType::NONE) {
     current_scene_->Finalize();
 
-    //シーン遷移は現状、この方法でしか分からない
-    switch (next_scene_) {
-      case SceneType::TITLE:
-        current_scene_ = std::make_unique<Title>(this);
-        break;
-      case SceneType::GAMEOVER:
-        current_scene_ = std::make_unique<GameOver>(this);
-        break;
-      case SceneType::MODEL_VIEW:
-        current_scene_ = std::make_unique<debugscene::ModelView>(this);
-        break;
-      case SceneType::SOUND_TEST:
-        current_scene_ = std::make_unique<debugscene::SoundTest>(this);
-        break;
-      case SceneType::PHYSICS_TEST:
-        current_scene_ = std::make_unique<debugscene::PhysicsTest>(this);
-        break;
-      case SceneType::SPRITE_TEST:
-        current_scene_ = std::make_unique<debugscene::SpriteRenderTest>(this);
-        break;
-      case SceneType::MULTI_RENDER_TARGET_TEST:
-        current_scene_ =
-            std::make_unique<debugscene::MultiRenderTargetTest>(this);
-      case SceneType::PLAYER_MOVE_VIEWER:
-        current_scene_ =
-            std::make_unique<debugscene::PlayerMoveViewer>(this);
-        break;
-      case SceneType::ENEMY_MOVE_VIEWER:
-        current_scene_ =
-            std::make_unique<debugscene::EnemyMoveViewer>(this);
-        break;
-      default:
-        MY_ASSERTION(false, L"存在しないシーンが選択されました。");
-        break;
-    }
+    auto CreateScene = [&](SceneType type) -> std::unique_ptr<Scene> {
+      switch (type) {
+        case SceneType::TITLE:
+          return std::make_unique<Title>(this);
+        case SceneType::GAMEOVER:
+          return std::make_unique<GameOver>(this);
+        case SceneType::MODEL_VIEW:
+          return std::make_unique<debugscene::ModelView>(this);
+        case SceneType::SOUND_TEST:
+          return std::make_unique<debugscene::SoundTest>(this);
+        case SceneType::PHYSICS_TEST:
+          return std::make_unique<debugscene::PhysicsTest>(this);
+        case SceneType::SPRITE_TEST:
+          return std::make_unique<debugscene::SpriteRenderTest>(this);
+        case SceneType::MULTI_RENDER_TARGET_TEST:
+          return std::make_unique<debugscene::MultiRenderTargetTest>(this);
+        case SceneType::PLAYER_MOVE_VIEWER:
+          return std::make_unique<debugscene::PlayerMoveViewer>(this);
+        case SceneType::ENEMY_MOVE_VIEWER:
+          return std::make_unique<debugscene::EnemyMoveViewer>(this);
+        default:
+          MY_ASSERTION(false, L"存在しないシーンが選択されました。");
+          return nullptr;
+      }
+    };
+
+    current_scene_ = CreateScene(next_scene_);
 
     current_scene_type_ = next_scene_;
     next_scene_ = SceneType::NONE;

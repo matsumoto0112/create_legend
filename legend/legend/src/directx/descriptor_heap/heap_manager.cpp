@@ -140,6 +140,11 @@ bool HeapManager::AddLocalHeap(IDirectXAccessor& accessor,
   wss << L"LocalHeap_" << static_cast<u32>(id);
   const DescriptorHeap::Desc desc{
       wss.str(), heap_parameter::local::GetDefinedLocalDescriptorNum(id)};
+
+  if (desc.descriptor_num == heap_parameter::local::UNDEFINED_DESCRIPTOR_NUM) {
+    return false;
+  }
+
   return local_heaps_[id].Init(accessor, desc);
 }
 

@@ -96,7 +96,6 @@ class Player {
    * @brief 直方体の取得
    */
   physics::BoundingBox& GetOBB();
-  camera::PerspectiveCamera& GetCamera();
 
  private:
   //衝突判定用の直方体
@@ -107,8 +106,6 @@ class Player {
       transform_cb_;
   //! トランスフォーム
   util::Transform transform_;
-  //! メインカメラ
-  camera::PerspectiveCamera camera_;
 
   //! 速度
   math::Vector3 velocity_;

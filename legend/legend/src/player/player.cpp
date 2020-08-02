@@ -14,7 +14,7 @@ Player::Player()
       velocity_(math::Vector3::kZeroVector),
       min_power_(0),
       max_power_(1) {
-  transform_.SetScale(math::Vector3::kUnitVector * 20);
+  transform_.SetScale(math::Vector3::kUnitVector);
   obb_ = physics::BoundingBox();
   obb_.SetLength(1, 1, 2);
   is_move_ = false;
@@ -128,10 +128,6 @@ bool Player::Initilaize(directx::DirectX12Device& device) {
       const math::IntVector2 screen_size =
           game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
       const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-      if (!camera_.Init(L"MainCamera", camera_position, camera_rotation,
-          math::util::DEG_2_RAD * 50.0f, aspect_ratio)) {
-          return false;
-      }
   }
 
   return true;
@@ -170,7 +166,6 @@ void Player::Draw(directx::DirectX12Device& device) {
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(device);
-   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
   game::GameDevice::GetInstance()
       ->GetResource()
@@ -341,11 +336,6 @@ float Player::GetImpulse() const { return impulse_; }
 physics::BoundingBox& Player::GetOBB() {
   physics::BoundingBox& obb = obb_;
   return obb;
-}
-camera::PerspectiveCamera& Player::GetCamera()
-{
-    camera::PerspectiveCamera& camera = camera_;
-    return camera;
 }
 }  // namespace player
 }  // namespace legend

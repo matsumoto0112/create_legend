@@ -14,9 +14,9 @@ Player::Player()
       velocity_(math::Vector3::kZeroVector),
       min_power_(0),
       max_power_(1) {
-  transform_.SetScale(math::Vector3::kUnitVector);
+  transform_.SetScale(math::Vector3(8, 6, 7.5f));
   obb_ = physics::BoundingBox();
-  obb_.SetLength(1, 1, 2);
+  obb_.SetLength(1, 0.5f, 2);
   is_move_ = false;
   impulse_ = min_power_;
   deceleration_x_ = deceleration_z_ = 0;
@@ -61,7 +61,7 @@ Player::~Player() {
 
 //初期化
 bool Player::Initilaize(directx::DirectX12Device& device) {
-   if (!obb_.Initialize(device)) {
+  if (!obb_.Initialize(device)) {
     return false;
   }
 
@@ -119,17 +119,6 @@ bool Player::Initilaize(directx::DirectX12Device& device) {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  //カメラの初期化
-  {
-      const math::Vector3 camera_position = math::Vector3(0, 10, -10);
-      const math::Quaternion camera_rotation =
-          math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f,
-          0.0f);
-      const math::IntVector2 screen_size =
-          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-      const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-  }
-
   return true;
 }
 
@@ -154,7 +143,7 @@ bool Player::Update() {
 
 //描画
 void Player::Draw(directx::DirectX12Device& device) {
-   obb_.Draw(device);
+  obb_.Draw(device);
 
   device.GetRenderResourceManager().SetDepthStencilTargetID(
       directx::render_target::DepthStencilTargetID::Depth);
@@ -207,8 +196,7 @@ void Player::Move() {
 
   //移動処理
   math::Vector3 v = math::Vector3(x, 0, z);
-  math::Vector3 position =
-      GetPosition() + v * impulse_ * power_ * update_time_;
+  math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
   Deceleration(2);
@@ -221,6 +209,14 @@ void Player::SetPosition(math::Vector3 position) {
 
 //速度の設定
 void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
+
+void Player::SetRotation() {
+  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+  math::Quaternion rotation = transform_.GetRotation();
+  rotation.y += input.GetGamepad()->GetStickRight().x;
+  transform_.SetRotation(rotation);
+  obb_.SetRotation(rotation);
+}
 
 void Player::SetVelocity() {
   if (is_move_) return;
@@ -258,8 +254,7 @@ void Player::SetImpulse() {
   if (is_set_power_ || !is_input_) return;
 
   //左スティックの傾きが0.1以下かつ、方向入力していたらパワー調整を完了にする
-  if (math::util::Abs(input.GetGamepad()->GetStickLeft().Magnitude()) <= 0.1f &&
-      is_input_) {
+  if (input.GetGamepad()->GetStickLeft().Magnitude() <= 0.1f && is_input_) {
     is_set_power_ = true;
     return;
   }

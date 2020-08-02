@@ -33,6 +33,7 @@ bool PlayerMoveViewer::Update() {
   }
 
   player_.SetVelocity();
+  //player_.SetRotation();
   player_.SetImpulse();
 
   math::Vector3 velocity = player_.GetVelocity();

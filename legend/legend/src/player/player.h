@@ -60,6 +60,10 @@ class Player {
    */
   void SetVelocity(math::Vector3 velocity);
   /**
+   * @brief ‰ñ“]—Ê‚Ìİ’è
+   */
+  void SetRotation();
+  /**
    * @brief ˆÚ“®—Ê‚Ìİ’è
    */
   void SetVelocity();

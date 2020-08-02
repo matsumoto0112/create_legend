@@ -76,24 +76,18 @@ class SwapChain {
    * @brief 現在のレンダーターゲットを取得する
    */
   const render_target::RenderTarget& GetRenderTarget() const {
-    return render_targets_[frame_index_];
+    return render_targets_[GetCurrentFrameIndex()];
   }
   /**
    * @brief 現在のフレームインデックスを取得する
    */
-  u32 GetCurrentFrameIndex() const { return frame_index_; };
-  /**
-   * @brief フレームインデックスを更新する
-   */
-  void UpdateCurrentFrameIndex();
+  u32 GetCurrentFrameIndex() const;
 
  private:
   //! スワップチェイン
   ComPtr<IDXGISwapChain3> swap_chain_;
   //! レンダーターゲット
   std::vector<render_target::RenderTarget> render_targets_;
-  //! 現在フレームのインデックス
-  u32 frame_index_;
   //テアリングが許可されているか
   bool allow_tearing_;
   D3D12_VIEWPORT viewport_;

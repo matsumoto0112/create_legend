@@ -181,7 +181,6 @@ bool DirectX12Device::MoveToNextFrame() {
     return false;
   }
 
-  render_resource_manager_.UpdateCurrentFrameIndex();
   frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {

@@ -73,7 +73,6 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
     }
   }
 
-  this->frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
   this->viewport_ =
       CD3DX12_VIEWPORT(0.0f, 0.0f, screen_width * 1.0f, screen_height * 1.0f);
   this->scissor_rect_ = CD3DX12_RECT(0, 0, screen_width, screen_height);
@@ -82,12 +81,12 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
 
 //バックバッファをクリアする
 void SwapChain::ClearBackBuffer(IDirectXAccessor& accessor) {
-  render_targets_[frame_index_].ClearRenderTarget(accessor);
+  render_targets_[GetCurrentFrameIndex()].ClearRenderTarget(accessor);
 }
 
 //描画開始
 void SwapChain::DrawBegin(IDirectXAccessor& accessor) {
-  render_targets_[frame_index_].Transition(
+  render_targets_[GetCurrentFrameIndex()].Transition(
       accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
   SetViewport(accessor);
   SetScissorRect(accessor);
@@ -95,7 +94,7 @@ void SwapChain::DrawBegin(IDirectXAccessor& accessor) {
 
 //描画を終了する
 void SwapChain::DrawEnd(IDirectXAccessor& accessor) {
-  render_targets_[frame_index_].DrawEnd(accessor);
+  render_targets_[GetCurrentFrameIndex()].DrawEnd(accessor);
 }
 
 //バックバッファを表示する
@@ -123,9 +122,8 @@ void SwapChain::SetScissorRect(IDirectXAccessor& accessor) const {
   accessor.GetCommandList()->RSSetScissorRects(1, &scissor_rect_);
 }
 
-//現在のフレームインデックスを更新する
-void SwapChain::UpdateCurrentFrameIndex() {
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+u32 SwapChain::GetCurrentFrameIndex() const {
+  return swap_chain_->GetCurrentBackBufferIndex();
 }
 
 }  // namespace device

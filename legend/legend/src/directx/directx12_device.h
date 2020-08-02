@@ -133,13 +133,11 @@ class DirectX12Device : public IDirectXAccessor {
   //! コマンドキュー
   ComPtr<ID3D12CommandQueue> command_queue_;
   //! バッファインデックス
-  i32 frame_index_;
+  u32 frame_index_;
   //! コマンドアロケータ
   std::array<device::CommandList, FRAME_COUNT> command_lists_;
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
-  //!< 現在のレンダーターゲットの状態
-  D3D12_RESOURCE_STATES current_resource_state_;
   //! フェンス値
   std::array<u64, FRAME_COUNT> fence_values_;
   //! フェンスイベント

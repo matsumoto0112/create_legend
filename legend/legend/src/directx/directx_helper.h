@@ -39,6 +39,18 @@ inline std::wstring HrToWString(HRESULT hr) {
 }
 
 /**
+ * @brief HRESULT型が成功しているか判定し、失敗していたらログを出力するする
+ * @return 成功していたらtrueを返す
+ */
+inline bool Succeeded(HRESULT hr) {
+  if (SUCCEEDED(hr)) {
+    return true;
+  }
+  MY_LOG(L"HRESULT of %s", HrToWString(hr));
+  return false;
+}
+
+/**
  * @brief DXRをサポートしているか
  * @param adapter 現在有効なアダプター
  * @return サポートしていればtrueを返す

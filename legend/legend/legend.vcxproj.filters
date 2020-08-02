@@ -89,6 +89,7 @@
     <ClCompile Include="src\util\resource\model.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
+    <ClCompile Include="src\draw\particle_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\math\rect.h" />
+    <ClInclude Include="src\draw\particle_system.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -226,6 +228,7 @@
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
+    <None Include="assets\shaders\particle\simple_particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -238,6 +241,8 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
+    <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
+    <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

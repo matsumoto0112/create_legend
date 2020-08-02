@@ -2,10 +2,14 @@
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/draw/particle_system.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/vertex_shader.h"
+namespace {
+legend::draw::ParticleSystem particle_;
+}  // namespace
 
 namespace legend {
 namespace scenes {
@@ -37,6 +41,15 @@ bool ModelView::Initialize() {
           util::resource::id::PixelShader::MODEL_VIEW,
           util::Path::GetInstance()->shader() / "modelview" /
               "model_view_ps.cso")) {
+    return false;
+  }
+
+  if (!resource.GetTexture().Load(
+          util::resource::id::Texture::TEX,
+          util::Path::GetInstance()->texture() / "tex.png",
+          directx::shader::TextureRegisterID::Albedo,
+          directx::descriptor_heap::heap_parameter::LocalHeapID::
+              MODEL_VIEW_SCENE)) {
     return false;
   }
 
@@ -92,6 +105,11 @@ bool ModelView::Initialize() {
     }
   }
 
+  if (!particle_.Init(util::resource::id::Texture::TEX)) {
+    return false;
+  }
+
+  device.WaitForGPU();
   return true;
 }
 
@@ -125,6 +143,8 @@ bool ModelView::Update() {
     camera_.SetFov(fov * math::util::DEG_2_RAD);
   }
   ImGui::End();
+
+  particle_.Update(camera_.GetRotation() * math::Vector3::kForwardVector);
   return true;
 }
 
@@ -151,6 +171,8 @@ void ModelView::Draw() {
       .GetModel()
       .Get(util::resource::ModelID::OBJECT_1000CM)
       ->Draw();
+
+  particle_.Render();
 }
 
 void ModelView::Finalize() {
@@ -163,6 +185,7 @@ void ModelView::Finalize() {
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
   resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
+  resource.GetTexture().Unload(util::resource::id::Texture::TEX);
 }
 
 }  // namespace debugscene

@@ -2,6 +2,8 @@
 #define LEGEND_PHYSICS_PLANE_H_
 
 #include "src/physics/bounding_box.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/draw/model.h"
 
 namespace legend {
 namespace physics {
@@ -68,12 +70,9 @@ class Plane {
   float up_;
   float down_;
 
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  //! トランスフォーム転送用コンスタントバッファ
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
 };
 
 }  // namespace physics

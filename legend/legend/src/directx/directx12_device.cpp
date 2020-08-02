@@ -84,6 +84,7 @@ bool DirectX12Device::Present() {
     return false;
   }
 
+  WaitForGPU();
   return true;
 }
 
@@ -115,8 +116,6 @@ bool DirectX12Device::ExecuteCommandList() {
   ID3D12CommandList* command_lists[] = {
       command_lists_[frame_index_].GetCommandList()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
-
-  // WaitForGPU();
   return true;
 }
 

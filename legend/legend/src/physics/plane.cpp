@@ -76,23 +76,8 @@ Plane::~Plane() {
 }
 
 //初期化
-bool Plane::Initialize(directx::DirectX12Device& device) {
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
-    return false;
-  }
-
+bool Plane::Initialize(directx::DirectX12Device& device,
+                       util::resource::Resource& resource) {
   //モデルデータを読み込む
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / "desk.glb";

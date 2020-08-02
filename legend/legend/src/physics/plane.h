@@ -1,9 +1,9 @@
 #ifndef LEGEND_PHYSICS_PLANE_H_
 #define LEGEND_PHYSICS_PLANE_H_
 
-#include "src/physics/bounding_box.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/draw/model.h"
+#include "src/physics/bounding_box.h"
 
 namespace legend {
 namespace physics {
@@ -31,7 +31,8 @@ class Plane {
   /**
    * @brief èâä˙âª
    */
-  bool Initialize(directx::DirectX12Device& device);
+  bool Initialize(directx::DirectX12Device& device,
+                  util::resource::Resource& resource);
   /**
    * @brief ï`âÊ
    */

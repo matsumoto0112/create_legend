@@ -60,24 +60,9 @@ Player::~Player() {
 }
 
 //初期化
-bool Player::Initilaize(directx::DirectX12Device& device) {
+bool Player::Initilaize(directx::DirectX12Device& device,
+                        util::resource::Resource& resource) {
   if (!obb_.Initialize(device)) {
-    return false;
-  }
-
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
     return false;
   }
 

@@ -1,5 +1,7 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
+
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -15,11 +17,27 @@ bool PlayerMoveViewer::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
-  if (!player_.Initilaize(device)) {
+  //このシーンで使用するシェーダーを事前に読み込んでおく
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  if (!resource.GetVertexShader().Load(
+          util::resource::id::VertexShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_vs.cso")) {
+    return false;
+  }
+  if (!resource.GetPixelShader().Load(
+          util::resource::id::PixelShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_ps.cso")) {
     return false;
   }
 
-  if (!plane_.Initialize(device)) {
+  if (!player_.Initilaize(device, resource)) {
+    return false;
+  }
+
+  if (!plane_.Initialize(device, resource)) {
     return false;
   }
 
@@ -33,7 +51,7 @@ bool PlayerMoveViewer::Update() {
   }
 
   player_.SetVelocity();
-  //player_.SetRotation();
+  // player_.SetRotation();
   player_.SetImpulse();
 
   math::Vector3 velocity = player_.GetVelocity();
@@ -45,7 +63,7 @@ bool PlayerMoveViewer::Update() {
     ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
   }
   ImGui::End();
-  //if (ImGui::Begin("Camera")) {
+  // if (ImGui::Begin("Camera")) {
   //  //カメラ座標
   //  math::Vector3 camera_position = player_.GetCamera().GetPosition();
   //  ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
@@ -72,7 +90,7 @@ bool PlayerMoveViewer::Update() {
   //  ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
   //  player_.GetCamera().SetFov(fov * math::util::DEG_2_RAD);
   //}
-  //ImGui::End();
+  // ImGui::End();
 
   player_.Move();
 

@@ -38,7 +38,8 @@ class Player {
   /**
    * @brief ‰Šú‰»
    */
-  bool Initilaize(directx::DirectX12Device& device);
+  bool Initilaize(directx::DirectX12Device& device,
+                  util::resource::Resource& resource);
   /**
    * @brief XV
    */

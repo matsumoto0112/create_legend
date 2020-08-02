@@ -1,5 +1,11 @@
 #include "src/player/player.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
+#include "src/util/path.h"
+#include "src/util/resource/pixel_shader.h"
+#include "src/util/resource/vertex_shader.h"
+
 namespace legend {
 namespace player {
 //コンストラクタ
@@ -8,9 +14,9 @@ Player::Player()
       velocity_(math::Vector3::kZeroVector),
       min_power_(0),
       max_power_(1) {
-  transform_.SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
+  transform_.SetScale(math::Vector3(8, 6, 7.5f));
   obb_ = physics::BoundingBox();
-  obb_.SetLength(2, 1, 2);
+  obb_.SetLength(1, 0.5f, 2);
   is_move_ = false;
   impulse_ = min_power_;
   deceleration_x_ = deceleration_z_ = 0;
@@ -31,7 +37,7 @@ Player::Player(math::Vector3 position, math::Quaternion rotation,
   transform_.SetRotation(rotation);
   transform_.SetScale(scale);
   obb_ = physics::BoundingBox(position, rotation, scale);
-  obb_.SetLength(2, 1, 2);
+  obb_.SetLength(1, 1, 2);
   is_move_ = false;
   impulse_ = min_power_;
   deceleration_x_ = deceleration_z_ = 0;
@@ -43,13 +49,75 @@ Player::Player(math::Vector3 position, math::Quaternion rotation,
 }
 
 //デストラクタ
-Player::~Player() {}
+Player::~Player() {
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  resource.GetVertexShader().Unload(
+      util::resource::id::VertexShader::MODEL_VIEW);
+  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
+  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
+  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
+}
 
 //初期化
 bool Player::Initilaize(directx::DirectX12Device& device) {
   if (!obb_.Initialize(device)) {
     return false;
   }
+
+  //このシーンで使用するシェーダーを事前に読み込んでおく
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
+  if (!resource.GetVertexShader().Load(
+          util::resource::id::VertexShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_vs.cso")) {
+    return false;
+  }
+  if (!resource.GetPixelShader().Load(
+          util::resource::id::PixelShader::MODEL_VIEW,
+          util::Path::GetInstance()->shader() / "modelview" /
+              "model_view_ps.cso")) {
+    return false;
+  }
+
+  //モデルデータを読み込む
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / "eraser_01.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
+                                model_path)) {
+    return false;
+  }
+
+  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
+  gps->Init(device);
+  gps->SetVertexShader(resource.GetVertexShader().Get(
+      util::resource::id::VertexShader::MODEL_VIEW));
+  gps->SetPixelShader(resource.GetPixelShader().Get(
+      util::resource::id::PixelShader::MODEL_VIEW));
+  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
+  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
+      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
+  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
+      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
+  gps->SetRootSignature(device.GetDefaultRootSignature());
+  gps->SetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+  gps->CreatePipelineState(device);
+  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
+                                  gps);
+
+  //トランスフォームバッファを作成する
+  if (!transform_cb_.Init(
+          device, directx::shader::ConstantBufferRegisterID::Transform,
+          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
+                                        LocalHeapID::MODEL_VIEW_SCENE),
+          L"Transform ConstantBuffer")) {
+    return false;
+  }
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
 
   return true;
 }
@@ -63,15 +131,37 @@ bool Player::Update() {
 
   if (is_input_ &&
       math::Vector3(change_amount_velocity_ - input_velocity_).Magnitude() >=
-      1.0f) {
-      is_move_ = true;
+          1.0f) {
+    is_move_ = true;
   }
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
 
   return true;
 }
 
 //描画
-void Player::Draw(directx::DirectX12Device& device) { obb_.Draw(device); }
+void Player::Draw(directx::DirectX12Device& device) {
+  obb_.Draw(device);
+
+  device.GetRenderResourceManager().SetDepthStencilTargetID(
+      directx::render_target::DepthStencilTargetID::Depth);
+  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
+  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
+
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      ->SetGraphicsCommandList(device);
+  transform_cb_.SetToHeap(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetModel()
+      .Get(util::resource::ModelID::OBJECT_1000CM)
+      ->Draw();
+}
 
 //移動
 void Player::Move() {
@@ -106,8 +196,7 @@ void Player::Move() {
 
   //移動処理
   math::Vector3 v = math::Vector3(x, 0, z);
-  math::Vector3 position =
-      transform_.GetPosition() + v * impulse_ * power_ * update_time_;
+  math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
   Deceleration(2);
@@ -120,6 +209,14 @@ void Player::SetPosition(math::Vector3 position) {
 
 //速度の設定
 void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
+
+void Player::SetRotation() {
+  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+  math::Quaternion rotation = transform_.GetRotation();
+  rotation.y += input.GetGamepad()->GetStickRight().x;
+  transform_.SetRotation(rotation);
+  obb_.SetRotation(rotation);
+}
 
 void Player::SetVelocity() {
   if (is_move_) return;
@@ -157,8 +254,7 @@ void Player::SetImpulse() {
   if (is_set_power_ || !is_input_) return;
 
   //左スティックの傾きが0.1以下かつ、方向入力していたらパワー調整を完了にする
-  if (math::util::Abs(input.GetGamepad()->GetStickLeft().Magnitude()) <= 0.1f &&
-      is_input_) {
+  if (input.GetGamepad()->GetStickLeft().Magnitude() <= 0.1f && is_input_) {
     is_set_power_ = true;
     return;
   }

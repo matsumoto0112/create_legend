@@ -139,7 +139,7 @@ class DirectX12Device : public IDirectXAccessor {
   //! コマンドフェンス
   ComPtr<ID3D12Fence> fence_;
   //! フェンス値
-  std::array<u64, FRAME_COUNT> fence_values_;
+  u64 fence_values_;
   //! フェンスイベント
   Microsoft::WRL::Wrappers::Event fence_event_;
   //! ディスクリプタヒープ管理

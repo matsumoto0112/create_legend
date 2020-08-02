@@ -90,11 +90,11 @@ bool DirectX12Device::Present() {
 
 void DirectX12Device::WaitForGPU() noexcept {
   if (command_queue_ && fence_ && fence_event_.IsValid()) {
-    u64 value = fence_values_[frame_index_];
+    u64 value = fence_values_;
     if (SUCCEEDED(command_queue_->Signal(fence_.Get(), value))) {
       if (SUCCEEDED(fence_->SetEventOnCompletion(value, fence_event_.Get()))) {
         WaitForSingleObjectEx(fence_event_.Get(), INFINITE, FALSE);
-        fence_values_[frame_index_]++;
+        fence_values_++;
       }
     }
   }
@@ -161,12 +161,12 @@ bool DirectX12Device::CreateDevice() {
 
   //同期用のフェンス作成
   if (!directx_helper::Succeeded(device_->CreateFence(
-          fence_values_[frame_index_], D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
+          fence_values_, D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
           IID_PPV_ARGS(&fence_)))) {
     return false;
   }
 
-  fence_values_[frame_index_]++;
+  fence_values_++;
   fence_event_.Attach(CreateEventW(nullptr, false, false, nullptr));
   if (!fence_event_.IsValid()) {
     MY_LOG(L"CreateEventW failed");
@@ -176,7 +176,7 @@ bool DirectX12Device::CreateDevice() {
   return true;
 }
 bool DirectX12Device::MoveToNextFrame() {
-  const u64 fence_value = fence_values_[frame_index_];
+  const u64 fence_value = fence_values_;
   if (!directx_helper::Succeeded(
           command_queue_->Signal(fence_.Get(), fence_value))) {
     return false;
@@ -184,14 +184,14 @@ bool DirectX12Device::MoveToNextFrame() {
 
   frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
-  if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
-    if (!directx_helper::Succeeded(fence_->SetEventOnCompletion(
-            fence_values_[frame_index_], fence_event_.Get()))) {
+  if (fence_->GetCompletedValue() < fence_values_) {
+    if (!directx_helper::Succeeded(
+            fence_->SetEventOnCompletion(fence_values_, fence_event_.Get()))) {
       return false;
     }
     WaitForSingleObjectEx(fence_event_.Get(), INFINITE, false);
   }
-  fence_values_[frame_index_] = fence_value + 1;
+  fence_values_ = fence_value + 1;
 
   return true;
 }

@@ -1,13 +1,13 @@
 #include "src/directx/directx12_device.h"
 
+#include "src/directx/directx_helper.h"
+
 namespace legend {
 namespace directx {
 //コンストラクタ
 DirectX12Device::DirectX12Device()
     : target_window_(),
-      render_target_screen_size_(math::IntVector2::kZeroVector),
-      current_resource_state_(
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON) {}
+      render_target_screen_size_(math::IntVector2::kZeroVector) {}
 
 //デストラクタ
 DirectX12Device::~DirectX12Device() { WaitForGPU(); }
@@ -50,11 +50,13 @@ bool DirectX12Device::InitAfter() {
 }
 
 bool DirectX12Device::Prepare() {
-  if (FAILED(command_lists_[frame_index_].GetCommandAllocator()->Reset())) {
+  if (!directx_helper::Succeeded(
+          command_lists_[frame_index_].GetCommandAllocator()->Reset())) {
     return false;
   }
-  if (FAILED(command_lists_[frame_index_].GetCommandList()->Reset(
-          command_lists_[frame_index_].GetCommandAllocator(), nullptr))) {
+  if (!directx_helper::Succeeded(
+          command_lists_[frame_index_].GetCommandList()->Reset(
+              command_lists_[frame_index_].GetCommandAllocator(), nullptr))) {
     return false;
   }
 
@@ -105,7 +107,8 @@ void DirectX12Device::SetToGlobalHeap(
 }
 
 bool DirectX12Device::ExecuteCommandList() {
-  if (FAILED(command_lists_[frame_index_].GetCommandList()->Close())) {
+  if (!directx_helper::Succeeded(
+          command_lists_[frame_index_].GetCommandList()->Close())) {
     return false;
   }
 
@@ -113,14 +116,14 @@ bool DirectX12Device::ExecuteCommandList() {
       command_lists_[frame_index_].GetCommandList()};
   command_queue_->ExecuteCommandLists(ARRAYSIZE(command_lists), command_lists);
 
-  WaitForGPU();
+  // WaitForGPU();
   return true;
 }
 
 bool DirectX12Device::CreateDevice() {
-  if (FAILED(D3D12CreateDevice(adapter_.GetAdapter(),
-                               device::defines::MIN_FEATURE_LEVEL,
-                               IID_PPV_ARGS(&device_)))) {
+  if (!directx_helper::Succeeded(D3D12CreateDevice(
+          adapter_.GetAdapter(), device::defines::MIN_FEATURE_LEVEL,
+          IID_PPV_ARGS(&device_)))) {
     return false;
   }
 
@@ -128,9 +131,8 @@ bool DirectX12Device::CreateDevice() {
   D3D12_COMMAND_QUEUE_DESC queue_desc = {};
   queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
   queue_desc.Type = D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
-  if (FAILED(device_->CreateCommandQueue(&queue_desc,
-                                         IID_PPV_ARGS(&command_queue_)))) {
-    MY_LOG(L"CreateCommandQueue failed");
+  if (!directx_helper::Succeeded(device_->CreateCommandQueue(
+          &queue_desc, IID_PPV_ARGS(&command_queue_)))) {
     return false;
   }
 
@@ -159,10 +161,9 @@ bool DirectX12Device::CreateDevice() {
   }
 
   //同期用のフェンス作成
-  if (FAILED(device_->CreateFence(fence_values_[frame_index_],
-                                  D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
-                                  IID_PPV_ARGS(&fence_)))) {
-    MY_LOG(L"CreateFence failed");
+  if (!directx_helper::Succeeded(device_->CreateFence(
+          fence_values_[frame_index_], D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
+          IID_PPV_ARGS(&fence_)))) {
     return false;
   }
 
@@ -177,15 +178,16 @@ bool DirectX12Device::CreateDevice() {
 }
 bool DirectX12Device::MoveToNextFrame() {
   const u64 fence_value = fence_values_[frame_index_];
-  if (FAILED(command_queue_->Signal(fence_.Get(), fence_value))) {
+  if (!directx_helper::Succeeded(
+          command_queue_->Signal(fence_.Get(), fence_value))) {
     return false;
   }
 
   frame_index_ = render_resource_manager_.GetCurrentFrameIndex();
 
   if (fence_->GetCompletedValue() < fence_values_[frame_index_]) {
-    if (FAILED(fence_->SetEventOnCompletion(fence_values_[frame_index_],
-                                            fence_event_.Get()))) {
+    if (!directx_helper::Succeeded(fence_->SetEventOnCompletion(
+            fence_values_[frame_index_], fence_event_.Get()))) {
       return false;
     }
     WaitForSingleObjectEx(fence_event_.Get(), INFINITE, false);

@@ -1,6 +1,10 @@
 #ifndef LEGEND_PLAYER_PLAYER_H_
 #define LEGEND_PLAYER_PLAYER_H_
 
+#include "src/camera/perspective_camera.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/draw/model.h"
 #include "src/physics/collision.h"
 #include "src/util/transform.h"
 
@@ -92,12 +96,19 @@ class Player {
    * @brief 直方体の取得
    */
   physics::BoundingBox& GetOBB();
+  camera::PerspectiveCamera& GetCamera();
 
  private:
   //衝突判定用の直方体
   physics::BoundingBox obb_;
 
+  //! トランスフォーム転送用コンスタントバッファ
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
+  //! トランスフォーム
   util::Transform transform_;
+  //! メインカメラ
+  camera::PerspectiveCamera camera_;
 
   //! 速度
   math::Vector3 velocity_;

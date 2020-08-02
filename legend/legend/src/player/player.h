@@ -1,6 +1,10 @@
 #ifndef LEGEND_PLAYER_PLAYER_H_
 #define LEGEND_PLAYER_PLAYER_H_
 
+#include "src/camera/perspective_camera.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/draw/model.h"
 #include "src/physics/collision.h"
 #include "src/util/transform.h"
 
@@ -56,6 +60,10 @@ class Player {
    */
   void SetVelocity(math::Vector3 velocity);
   /**
+   * @brief 回転量の設定
+   */
+  void SetRotation();
+  /**
    * @brief 移動量の設定
    */
   void SetVelocity();
@@ -97,6 +105,10 @@ class Player {
   //衝突判定用の直方体
   physics::BoundingBox obb_;
 
+  //! トランスフォーム転送用コンスタントバッファ
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
+  //! トランスフォーム
   util::Transform transform_;
 
   //! 速度

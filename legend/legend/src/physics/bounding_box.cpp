@@ -93,9 +93,7 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   math::Vector3 rotate = math::Vector3::kZeroVector;
   math::Vector3 scale = math::Vector3::kUnitVector;
   transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale) *
-      math::Matrix4x4::CreateRotation(rotate) *
-      math::Matrix4x4::CreateTranslate(position);
+      transform_.CreateWorldMatrix();
   transform_constant_buffer_.UpdateStaging();
 
   if (!world_constant_buffer_.Init(
@@ -173,9 +171,7 @@ void BoundingBox::Update() {
   math::Vector3 rotate = GetRotation().ToEular() * math::util::RAD_2_DEG;
   math::Vector3 scale = GetScale();
   transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale) *
-      math::Matrix4x4::CreateRotation(rotate) *
-      math::Matrix4x4::CreateTranslate(position);
+      transform_.CreateWorldMatrix();
   transform_constant_buffer_.UpdateStaging();
 }
 

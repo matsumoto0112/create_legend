@@ -4,58 +4,30 @@
 
 namespace legend {
 namespace player {
-//コンストラクタ
-Player::Player()
-    : transform_(),
-      velocity_(math::Vector3::kZeroVector),
-      min_power_(0),
-      max_power_(1) {
-  transform_.SetScale(math::Vector3::kUnitVector);
-  obb_ = physics::BoundingBox();
-  obb_.SetLength(1.0f, 0.5f, 2.0f);
-  is_move_ = false;
-  impulse_ = min_power_;
-  deceleration_x_ = deceleration_z_ = 0;
-  input_velocity_ = math::Vector3::kZeroVector;
-  is_set_power_ = false;
-  up_power_ = true;
-  is_input_ = false;
-  velocity_update_time_ = 0;
-}
 
-Player::Player(math::Vector3 position, math::Quaternion rotation,
-               math::Vector3 scale, float min_power, float max_power)
-    : transform_(),
-      velocity_(math::Vector3::kZeroVector),
-      min_power_(min_power),
-      max_power_(max_power) {
-  transform_.SetPosition(position);
-  transform_.SetRotation(rotation);
-  transform_.SetScale(scale);
-  obb_ = physics::BoundingBox(position, rotation, scale);
-  obb_.SetLength(1, 1, 2);
-  is_move_ = false;
-  impulse_ = min_power_;
-  deceleration_x_ = deceleration_z_ = 0;
-  input_velocity_ = math::Vector3::kZeroVector;
-  is_set_power_ = false;
-  up_power_ = true;
-  is_input_ = false;
-  velocity_update_time_ = 0;
-}
+//コンストラク
+Player::Player() : actor::Actor<physics::BoundingBox>() {}
 
 //デストラクタ
 Player::~Player() {}
 
 //初期化
-bool Player::Initilaize(directx::DirectX12Device& device,
-                        util::resource::Resource& resource) {
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::ERASER, model_path)) {
-    return false;
-  }
+bool Player::Initilaize(const InitializeParameter& parameter, float min_power,
+    float max_power) {
+  this->transform_ = parameter.transform;
+  this->collision_ = physics::BoundingBox();
+  this->collision_.SetLength(parameter.bouding_box_length.x,
+                             parameter.bouding_box_length.y,
+                             parameter.bouding_box_length.z);
+
+  up_power_ = true;
+  min_power_ = min_power;
+  max_power_ = max_power;
+
+  directx::DirectX12Device& device =
+      game::GameDevice::GetInstance()->GetDevice();
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -68,6 +40,8 @@ bool Player::Initilaize(directx::DirectX12Device& device,
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
+
+  model_ = resource.GetModel().Get(util::resource::ModelID::ERASER);
 
   return true;
 }
@@ -92,16 +66,6 @@ bool Player::Update() {
   Move();
 
   return true;
-}
-
-//描画
-void Player::Draw(directx::DirectX12Device& device) {
-  transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::ERASER)
-      ->Draw();
 }
 
 //移動
@@ -145,7 +109,7 @@ void Player::Move() {
 
 void Player::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  obb_.SetPosition(position);
+  collision_.SetPosition(position);
 }
 
 //速度の設定
@@ -156,7 +120,7 @@ void Player::SetRotation() {
   math::Quaternion rotation = transform_.GetRotation();
   rotation.y += input.GetGamepad()->GetStickRight().x;
   transform_.SetRotation(rotation);
-  obb_.SetRotation(rotation);
+  collision_.SetRotation(rotation);
 }
 
 void Player::SetVelocity() {
@@ -188,8 +152,6 @@ void Player::SetVelocity() {
 //パワーの設定
 void Player::SetImpulse() {
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  //ゲームパッドが一つだけ接続されている間
-  if (input.GetGamepad()->GetCount() != 1) return;
 
   //パワー調整を終えたらreturn
   if (is_set_power_ || !is_input_) return;
@@ -275,10 +237,5 @@ math::Quaternion Player::GetRotation() const {
 }
 
 float Player::GetImpulse() const { return impulse_; }
-
-physics::BoundingBox& Player::GetOBB() {
-  physics::BoundingBox& obb = obb_;
-  return obb;
-}
 }  // namespace player
 }  // namespace legend

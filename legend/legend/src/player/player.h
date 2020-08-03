@@ -1,6 +1,7 @@
 #ifndef LEGEND_PLAYER_PLAYER_H_
 #define LEGEND_PLAYER_PLAYER_H_
 
+#include "src/actor/actor.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
@@ -13,22 +14,21 @@ namespace player {
  * @class Player
  * @brief プレイヤーのクラス
  */
-class Player {
+class Player : public actor::Actor<physics::BoundingBox> {
+ public:
+  /**
+   * @brief 初期化パラメータ
+   */
+  struct InitializeParameter {
+    util::Transform transform;
+    math::Vector3 bouding_box_length;
+  };
+
  public:
   /**
    * @brief コンストラクタ
    */
   Player();
-  /**
-   * @brief コンストラクタ
-   * @param 座標
-   * @param 回転
-   * @param スケール
-   * @param 力の最低値
-   * @param 力の最大値
-   */
-  Player(math::Vector3 position, math::Quaternion rotation, math::Vector3 scale,
-         float min_power, float max_power);
   /**
    * @brief デストラクタ
    */
@@ -36,16 +36,12 @@ class Player {
   /**
    * @brief 初期化
    */
-  bool Initilaize(directx::DirectX12Device& device,
-                  util::resource::Resource& resource);
+  virtual bool Initilaize(const InitializeParameter& parameter, float min_power,
+                          float max_power);
   /**
    * @brief 更新
    */
   bool Update();
-  /**
-   * @brief 描画
-   */
-  void Draw(directx::DirectX12Device& device);
   /**
    * @brief 移動
    */
@@ -99,21 +95,8 @@ class Player {
    * @brief 加える力の取得
    */
   float GetImpulse() const;
-  /**
-   * @brief 直方体の取得
-   */
-  physics::BoundingBox& GetOBB();
 
  private:
-  //衝突判定用の直方体
-  physics::BoundingBox obb_;
-
-  //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
-  //! トランスフォーム
-  util::Transform transform_;
-
   //! 速度
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;

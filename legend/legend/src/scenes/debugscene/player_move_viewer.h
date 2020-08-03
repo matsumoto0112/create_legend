@@ -3,7 +3,7 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/player/player.h"
-#include "src/physics/plane.h"
+#include "src/object/desk.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -42,7 +42,8 @@ class PlayerMoveViewer : public Scene {
   camera::PerspectiveCamera camera_;
   //! ƒvƒŒƒCƒ„[
   player::Player player_;
-  physics::Plane plane_;
+  //! Š÷
+  object::Desk desk_;
 };
 
 }  // namespace debugscene

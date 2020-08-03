@@ -33,7 +33,7 @@ Player::Player(math::Vector3 position, math::Quaternion rotation,
   transform_.SetRotation(rotation);
   transform_.SetScale(scale);
   obb_ = physics::BoundingBox(position, rotation, scale);
-   obb_.SetLength(1, 1, 2);
+  obb_.SetLength(1, 1, 2);
   is_move_ = false;
   impulse_ = min_power_;
   deceleration_x_ = deceleration_z_ = 0;
@@ -50,10 +50,6 @@ Player::~Player() {}
 //初期化
 bool Player::Initilaize(directx::DirectX12Device& device,
                         util::resource::Resource& resource) {
-  //if (!obb_.Initialize(device)) {
-  //  return false;
-  //}
-
   //モデルデータを読み込む
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / "eraser_01.glb";
@@ -78,8 +74,6 @@ bool Player::Initilaize(directx::DirectX12Device& device,
 
 //更新
 bool Player::Update() {
-  //obb_.Update();
-
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
@@ -92,18 +86,16 @@ bool Player::Update() {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-   SetVelocity();
-   SetImpulse();
+  SetVelocity();
+  SetImpulse();
 
-   Move();
+  Move();
 
   return true;
 }
 
 //描画
 void Player::Draw(directx::DirectX12Device& device) {
-  //obb_.Draw(device);
-
   transform_cb_.SetToHeap(device);
   game::GameDevice::GetInstance()
       ->GetResource()
@@ -222,6 +214,13 @@ void Player::SetImpulse() {
       up_power_ = true;
     }
   }
+}
+
+//重力による移動
+void Player::UpdateGravity(const float gravity) {
+  math::Vector3 position =
+      GetPosition() + math::Vector3(0, gravity, 0) * update_time_;
+  SetPosition(position);
 }
 
 //移動に必要なパラメータを初期化

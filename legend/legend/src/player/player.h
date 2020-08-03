@@ -71,6 +71,10 @@ class Player {
    */
   void SetImpulse();
   /**
+   * @brief 重力による移動
+   */
+  void UpdateGravity(const float gravity);
+  /**
    * @brief 移動に必要なパラメータの初期化
    */
   void ResetParameter();

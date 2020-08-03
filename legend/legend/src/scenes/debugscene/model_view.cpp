@@ -2,14 +2,10 @@
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
-#include "src/draw/particle_system.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/vertex_shader.h"
-namespace {
-legend::draw::ParticleSystem particle_;
-}  // namespace
 
 namespace legend {
 namespace scenes {
@@ -105,10 +101,6 @@ bool ModelView::Initialize() {
     }
   }
 
-  if (!particle_.Init(util::resource::id::Texture::TEX)) {
-    return false;
-  }
-
   device.WaitForGPU();
   return true;
 }
@@ -143,8 +135,6 @@ bool ModelView::Update() {
     camera_.SetFov(fov * math::util::DEG_2_RAD);
   }
   ImGui::End();
-
-  particle_.Update(camera_.GetRotation() * math::Vector3::kForwardVector);
   return true;
 }
 
@@ -171,8 +161,6 @@ void ModelView::Draw() {
       .GetModel()
       .Get(util::resource::ModelID::OBJECT_1000CM)
       ->Draw();
-
-  particle_.Render();
 }
 
 void ModelView::Finalize() {

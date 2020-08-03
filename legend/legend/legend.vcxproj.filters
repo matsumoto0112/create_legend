@@ -89,7 +89,9 @@
     <ClCompile Include="src\util\resource\model.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
-    <ClCompile Include="src\draw\particle_system.cpp" />
+    <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
+    <ClCompile Include="src\draw\particle\particle_manager.cpp" />
+    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -217,7 +219,9 @@
     <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\math\rect.h" />
-    <ClInclude Include="src\draw\particle_system.h" />
+    <ClInclude Include="src\draw\particle\particle_emitter.h" />
+    <ClInclude Include="src\draw\particle\particle_manager.h" />
+    <ClInclude Include="src\draw\particle\smoke_particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

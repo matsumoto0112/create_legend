@@ -126,7 +126,13 @@ bool EnemyMoveViewer::Update() {
   }
   ImGui::End();
 
-  //transform_
+  float speed = 0.1f;
+  auto pos = transform_.GetPosition();
+  auto h = game::GameDevice::GetInstance()->GetInput().GetHorizontal();
+  auto v = game::GameDevice::GetInstance()->GetInput().GetVertical();
+  auto mov = (math::Vector3(h, 0, v)).Normalized();
+
+  transform_.SetPosition(pos + mov * speed/* *game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds()*/);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 

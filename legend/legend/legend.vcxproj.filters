@@ -87,6 +87,7 @@
     <ClCompile Include="src\util\resource\model.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
+    <ClCompile Include="src\enemy\enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\math\rect.h" />
+    <ClInclude Include="src\enemy\enemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

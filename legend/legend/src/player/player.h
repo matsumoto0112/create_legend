@@ -57,7 +57,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief ‰ñ“]—Ê‚Ìİ’è
    */
-  void SetRotation();
+  void SetRotation(math::Quaternion rotation);
   /**
    * @brief ˆÚ“®—Ê‚Ìİ’è
    */

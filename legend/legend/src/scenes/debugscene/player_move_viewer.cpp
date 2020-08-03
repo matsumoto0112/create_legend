@@ -87,8 +87,8 @@ bool PlayerMoveViewer::Initialize() {
     desc_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desc_parameter.bounding_box_length = math::Vector3(2.0f, 0.5f, 0.5f);
-    if (!desk_.Init(desc_parameter)) {
+    desc_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
+    if (!desk_.Init(desc_parameter, math::Vector3::kUpVector)) {
       return false;
     }
   }
@@ -145,19 +145,26 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  math::Vector3 position = player_.GetPosition();
-  math::Vector3 velocity = player_.GetVelocity();
-  float impulse = player_.GetImpulse();
   if (ImGui::Begin("Player")) {
+    math::Vector3 position = player_.GetPosition();
+    math::Vector3 velocity = player_.GetVelocity();
+    float impulse = player_.GetImpulse();
     ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
     ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
     ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
+
+    math::Vector3 rotation = math::Quaternion::ToEular(player_.GetRotation()) *
+                             math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
+    player_.SetRotation(
+        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
   }
   ImGui::End();
 
-  if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
+  if (physics::Collision::GetInstance()->Collision_OBB_Desk(
+          player_.GetCollisionRef(), desk_)) {
     MY_LOG(L"Á‚µƒSƒ€‚ÆŠ÷‚ªÕ“Ë‚µ‚Ü‚µ‚½");
+    player_.SetPosition(player_.GetCollisionRef().GetPosition());
   } else {
     player_.UpdateGravity(-9.8f);
   }

@@ -11,12 +11,13 @@ Desk::Desk() : actor::Actor<physics::BoundingBox>() {}
 //デストラクタ
 Desk::~Desk() {}
 
-bool Desk::Init(const InitializeParameter& parameter) {
+bool Desk::Init(const InitializeParameter& parameter, math::Vector3 normal) {
   this->transform_ = parameter.transform;
   this->collision_ = physics::BoundingBox();
   this->collision_.SetLength(parameter.bounding_box_length.x,
                              parameter.bounding_box_length.y,
                              parameter.bounding_box_length.z);
+  SetNormal(normal);
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -57,6 +58,9 @@ void Desk::SetRotation(math::Quaternion rotation) {
 //スケールの設定
 void Desk::SetScale(math::Vector3 scale) { transform_.SetScale(scale); }
 
+//法線ベクトルの設定
+void Desk::SetNormal(math::Vector3 normal) { normal_ = normal; }
+
 //座標の取得
 math::Vector3 Desk::GetPosition() { return transform_.GetPosition(); }
 
@@ -65,6 +69,9 @@ math::Quaternion Desk::GetRotation() { return transform_.GetRotation(); }
 
 //スケールの取得
 math::Vector3 Desk::GetScale() { return transform_.GetScale(); }
+
+//法線ベクトルの取得
+math::Vector3 Desk::GetNormal() { return normal_; }
 
 }  // namespace object
 }  // namespace legend

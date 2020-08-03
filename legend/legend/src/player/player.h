@@ -1,11 +1,9 @@
 #ifndef LEGEND_PLAYER_PLAYER_H_
 #define LEGEND_PLAYER_PLAYER_H_
 
-#include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/draw/model.h"
-#include "src/physics/collision.h"
+#include "src/physics/bounding_box.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -38,7 +36,8 @@ class Player {
   /**
    * @brief 初期化
    */
-  bool Initilaize(directx::DirectX12Device& device);
+  bool Initilaize(directx::DirectX12Device& device,
+                  util::resource::Resource& resource);
   /**
    * @brief 更新
    */
@@ -114,7 +113,6 @@ class Player {
   //! 速度
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;
-  //! 前フレームの速度
   math::Vector3 change_amount_velocity_;
   std::vector<math::Vector3> stick_velocities_;
   //! リストの最大値

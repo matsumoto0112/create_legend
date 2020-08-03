@@ -21,6 +21,8 @@ enum class ModelID {
   CHECK_XYZ,
   KARI,
   OBJECT_1000CM,
+  ERASER,
+  DESK,
 };
 
 /**

@@ -44,6 +44,7 @@ enum class LocalHeapID : u32 {
   ENEMY_MOVE_TEST,
   SPRITE_RENDER_TEST,
   PLAYER_MOVE_VIEWER,
+  MAIN_SCENE_1,
 };
 
 namespace local {

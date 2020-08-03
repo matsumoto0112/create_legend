@@ -8,6 +8,7 @@
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/game_over.h"
+#include "src/scenes/mainscene/main_scene_1.h"
 #include "src/scenes/title.h"
 
 namespace legend {
@@ -74,6 +75,8 @@ bool SceneManager::Update() {
           return std::make_unique<debugscene::PlayerMoveViewer>(this);
         case SceneType::ENEMY_MOVE_VIEWER:
           return std::make_unique<debugscene::EnemyMoveViewer>(this);
+        case SceneType::MAIN_SCENE_1:
+          return std::make_unique<mainscene::MainScene1>(this);
         default:
           MY_ASSERTION(false, L"存在しないシーンが選択されました。");
           return nullptr;

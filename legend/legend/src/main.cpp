@@ -14,6 +14,7 @@ static const LocalHeapID USE_HEAP_IDS[] = {
     LocalHeapID::PHYSICS_TEST,
     LocalHeapID::ENEMY_MOVE_TEST,
     LocalHeapID::PLAYER_MOVE_VIEWER,
+    LocalHeapID::MAIN_SCENE_1,
 };
 }  // namespace
 
@@ -77,6 +78,7 @@ class MyApp final : public device::Application {
           scenes::SceneType::MULTI_RENDER_TARGET_TEST,
           scenes::SceneType::ENEMY_MOVE_VIEWER,
           scenes::SceneType::PLAYER_MOVE_VIEWER,
+          scenes::SceneType::MAIN_SCENE_1,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

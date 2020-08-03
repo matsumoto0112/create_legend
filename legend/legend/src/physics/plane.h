@@ -1,7 +1,10 @@
 #ifndef LEGEND_PHYSICS_PLANE_H_
 #define LEGEND_PHYSICS_PLANE_H_
 
-#include "src/physics/bounding_box.h"
+#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/draw/model.h"
+#include "src/util/resource/resource.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace physics {
@@ -29,7 +32,8 @@ class Plane {
   /**
    * @brief 初期化
    */
-  bool Initialize(directx::DirectX12Device& device);
+  bool Initialize(directx::DirectX12Device& device,
+                  util::resource::Resource& resource);
   /**
    * @brief 描画
    */
@@ -56,8 +60,7 @@ class Plane {
   float GetDistance(math::Vector3 position) const;
 
  private:
-  //! 位置
-  math::Vector3 position_;
+  util::Transform transform_;
   //! 法線ベクトル
   math::Vector3 normal_;
 
@@ -68,12 +71,9 @@ class Plane {
   float up_;
   float down_;
 
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  //! トランスフォーム転送用コンスタントバッファ
+  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+      transform_cb_;
 };
 
 }  // namespace physics

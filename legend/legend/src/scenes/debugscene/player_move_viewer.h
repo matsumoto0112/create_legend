@@ -1,7 +1,9 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
 #define LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
 
+#include "src/camera/perspective_camera.h"
 #include "src/player/player.h"
+#include "src/physics/plane.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -36,6 +38,9 @@ class PlayerMoveViewer : public Scene {
   void Finalize() override;
 
  private:
+  //! メインカメラ
+  camera::PerspectiveCamera camera_;
+  //! プレイヤー
   player::Player player_;
   physics::Plane plane_;
 };

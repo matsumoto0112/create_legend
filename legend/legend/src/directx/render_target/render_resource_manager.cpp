@@ -242,11 +242,6 @@ bool RenderResourceManager::IsRegisterdDepthStencilTargetID(
 //バックバッファを表示する
 bool RenderResourceManager::Present() { return swap_chain_.Present(); }
 
-//フレームのインデックスを更新する
-void RenderResourceManager::UpdateCurrentFrameIndex() {
-  swap_chain_.UpdateCurrentFrameIndex();
-}
-
 //現在のフレームインデックスを取得する
 u32 RenderResourceManager::GetCurrentFrameIndex() const {
   return swap_chain_.GetCurrentFrameIndex();

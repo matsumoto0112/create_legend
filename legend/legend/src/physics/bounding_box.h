@@ -5,7 +5,7 @@
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/game/game_device.h"
-#include "src/math/matrix_4x4.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace physics {
@@ -14,8 +14,8 @@ struct Transform {
   math::Matrix4x4 world;
 };
 struct WorldContext {
-    math::Matrix4x4 view;
-    math::Matrix4x4 projection;
+  math::Matrix4x4 view;
+  math::Matrix4x4 projection;
 };
 
 /**
@@ -29,6 +29,14 @@ class BoundingBox {
    * @brief コンストラクタ
    */
   BoundingBox();
+  /**
+   * @brief コンストラクタ
+   * @param 座標
+   * @param 回転
+   * @param スケール
+   */
+  BoundingBox(math::Vector3 position, math::Quaternion rotation,
+              math::Vector3 scale);
   /**
    * @brief デストラクタ
    */
@@ -69,7 +77,7 @@ class BoundingBox {
   /**
    * @brief 現在の角度を取得
    */
-  math::Vector3 GetRotation() const;
+  math::Quaternion GetRotation() const;
   /**
    * @brief 現在のスケールを取得
    */
@@ -110,7 +118,7 @@ class BoundingBox {
    * @brief 回転角度の更新
    * @param 角度
    */
-  void SetRotation(math::Vector3 rotate);
+  void SetRotation(math::Quaternion rotate);
   /**
    * @brief 拡大縮小の更新
    * @param スケール
@@ -122,12 +130,8 @@ class BoundingBox {
   void SetAxis();
 
  private:
-  //!中心座標
-  math::Vector3 position_;
-  //!角度
-  math::Vector3 rotation_;
-  //!スケール
-  math::Vector3 scale_;
+  //! トランスフォーム
+  util::Transform transform_;
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
   //!各軸方向の長さ(半径)

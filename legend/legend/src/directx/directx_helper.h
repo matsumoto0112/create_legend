@@ -21,6 +21,8 @@ constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
       return 4;
     case DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT:
       return 4;
+    case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT:
+      return sizeof(float);
     default:
       MY_LOG(L"未定義のフォーマットが選択されました。");
       return UINT_MAX;
@@ -34,6 +36,18 @@ inline std::wstring HrToWString(HRESULT hr) {
   wchar_t buf[64] = {};
   swprintf_s(buf, 64, L"HRESULT of 0x%08X", static_cast<u32>(hr));
   return std::wstring(buf);
+}
+
+/**
+ * @brief HRESULT型が成功しているか判定し、失敗していたらログを出力するする
+ * @return 成功していたらtrueを返す
+ */
+inline bool Succeeded(HRESULT hr) {
+  if (SUCCEEDED(hr)) {
+    return true;
+  }
+  MY_LOG(L"HRESULT of %s", HrToWString(hr));
+  return false;
 }
 
 /**

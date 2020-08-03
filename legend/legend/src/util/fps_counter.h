@@ -35,7 +35,10 @@ class FPSCounter {
   /**
    * @brief アプリケーション開始時から現在までに経過した秒数を取得する
    */
-  double GetTotalSeconds() const { return TicksToSeconds(total_ticks_); }
+  template <typename T = double>
+  T GetTotalSeconds() const {
+    return static_cast<T>(TicksToSeconds(total_ticks_));
+  }
   /**
    * @brief アプリケーション開始時から現在までに経過したフレーム数を取得する
    */
@@ -47,11 +50,17 @@ class FPSCounter {
   /**
    * @brief 前フレームからの差分時間（秒）を取得する
    */
-  double GetDeltaSeconds() const { return TicksToSeconds(delta_ticks_); }
+  template <typename T = double>
+  T GetDeltaSeconds() const {
+    return static_cast<T>(TicksToSeconds(delta_ticks_));
+  }
   /**
    * @brief 前フレームのフレームレートを取得する
    */
-  double GetFPS() const { return 1.0 / GetDeltaSeconds(); }
+  template <typename T = double>
+  T GetFPS() const {
+    return static_cast<T>(1.0 / GetDeltaSeconds());
+  }
 
  public:
   /**

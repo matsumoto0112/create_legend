@@ -79,6 +79,8 @@
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
+    <ClCompile Include="src\player\player.cpp" />
+    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\util\resource\vertex_shader.cpp" />
     <ClCompile Include="src\util\resource\resource.cpp" />
@@ -202,6 +204,8 @@
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\capsule.h" />
+    <ClInclude Include="src\player\player.h" />
+    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\directx\shader\shader_base.h" />
     <ClInclude Include="src\util\resource\pixel_shader.h" />
     <ClInclude Include="src\util\resource\resource_manager.h" />

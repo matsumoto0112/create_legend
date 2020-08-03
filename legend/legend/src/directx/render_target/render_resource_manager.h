@@ -171,10 +171,6 @@ class RenderResourceManager {
    */
   bool Present();
   /**
-   * @brief 現在フレームのインデックスを更新する
-   */
-  void UpdateCurrentFrameIndex();
-  /**
    * @brief 現在フレームのインデックスを取得する
    */
   u32 GetCurrentFrameIndex() const;

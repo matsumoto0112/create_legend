@@ -43,9 +43,14 @@ enum class LocalHeapID : u32 {
   SOUND_TEST,
   ENEMY_MOVE_TEST,
   SPRITE_RENDER_TEST,
+  PLAYER_MOVE_VIEWER,
 };
 
 namespace local {
+
+//未定義の時のディスクリプタ割り当て数
+constexpr u32 UNDEFINED_DESCRIPTOR_NUM = UINT_LEAST32_MAX;
+
 /**
  * @brief 定義済みのローカルIDに対応したディスクリプタ数を取得する
  */
@@ -70,12 +75,14 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
       return 100;
     case LocalHeapID::SPRITE_RENDER_TEST:
       return 2000;
+    case LocalHeapID::PLAYER_MOVE_VIEWER:
+      return 100;
     default:
       MY_LOG(L"未定義のIDが選択されました。");
       break;
   }
 
-  return 0;
+  return UNDEFINED_DESCRIPTOR_NUM;
 }
 }  // namespace local
 }  // namespace heap_parameter

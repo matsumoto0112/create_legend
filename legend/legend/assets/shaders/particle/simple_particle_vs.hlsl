@@ -1,0 +1,11 @@
+#ifndef LEGEND_ASSETS_SHADERS_PARTICLE_SIMPLE_PARTICLE_VS_HLSL_
+#define LEGEND_ASSETS_SHADERS_PARTICLE_SIMPLE_PARTICLE_VS_HLSL_
+
+#include "simple_particle.hlsli"
+
+VS_Output main(const VS_Input input)
+{
+	return VS_Main(input);
+}
+
+#endif //! LEGEND_ASSETS_SHADERS_PARTICLE_SIMPLE_PARTICLE_VS_HLSL_

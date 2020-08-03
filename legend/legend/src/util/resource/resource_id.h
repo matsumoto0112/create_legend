@@ -24,6 +24,7 @@ enum class Pipeline {
   MODEL_VIEW,
   MULTI_RENDER_TARGET_TEST,
   MULTI_RENDER_TARGET_TEST_PP,
+  SIMPLE_PARTICLE,
 };
 
 /**
@@ -35,6 +36,7 @@ enum class VertexShader {
   MULTI_RENDER_TARGET_TEST_PP,
   MULTI_RENDER_TARGET_TEST,
   OBB,
+  SIMPLE_PARTICLE,
 };
 
 /**
@@ -46,6 +48,7 @@ enum class PixelShader {
   MULTI_RENDER_TARGET_TEST_PP,
   MULTI_RENDER_TARGET_TEST,
   OBB,
+  SIMPLE_PARTICLE,
 };
 
 }  // namespace id

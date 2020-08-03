@@ -40,6 +40,15 @@ bool ModelView::Initialize() {
     return false;
   }
 
+  if (!resource.GetTexture().Load(
+          util::resource::id::Texture::TEX,
+          util::Path::GetInstance()->texture() / "tex.png",
+          directx::shader::TextureRegisterID::Albedo,
+          directx::descriptor_heap::heap_parameter::LocalHeapID::
+              MODEL_VIEW_SCENE)) {
+    return false;
+  }
+
   //モデルデータを読み込む
   const std::filesystem::path model_path =
       util::Path::GetInstance()->model() / "eraser_fragment_01.glb";
@@ -92,6 +101,7 @@ bool ModelView::Initialize() {
     }
   }
 
+  device.WaitForGPU();
   return true;
 }
 
@@ -163,6 +173,7 @@ void ModelView::Finalize() {
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
   resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
+  resource.GetTexture().Unload(util::resource::id::Texture::TEX);
 }
 
 }  // namespace debugscene

@@ -3,7 +3,8 @@
 
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/draw/model.h"
-#include "src/physics/bounding_box.h"
+#include "src/util/resource/resource.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace physics {
@@ -59,8 +60,7 @@ class Plane {
   float GetDistance(math::Vector3 position) const;
 
  private:
-  //! 位置
-  math::Vector3 position_;
+  util::Transform transform_;
   //! 法線ベクトル
   math::Vector3 normal_;
 

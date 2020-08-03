@@ -1,8 +1,7 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 #define LEGEND_SCENES_DEBUGSCENE_PHYSICS_TEST_H_
 
-#include "src/directx/shader/graphics_pipeline_state.h"
-#include "src/directx/shader/root_signature.h"
+#include "src/camera/perspective_camera.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/plane.h"
 #include "src/physics/ray.h"
@@ -45,6 +44,8 @@ class PhysicsTest : public Scene {
   void Finalize() override;
 
  private:
+  //! ƒƒCƒ“ƒJƒƒ‰
+  camera::PerspectiveCamera camera_;
   //! ’¼•û‘Ì
   std::vector<physics::BoundingBox> obbs_;
   //! ¶¬”

@@ -224,6 +224,7 @@
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />
     <ClInclude Include="src\draw\particle\smoke_particle.h" />
+    <ClInclude Include="src\actor\actor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

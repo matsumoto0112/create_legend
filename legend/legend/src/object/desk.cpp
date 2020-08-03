@@ -1,39 +1,28 @@
 #include "src/object/desk.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/game/game_device.h"
 
 namespace legend {
 namespace object {
 
 //コンストラク
-Desk::Desk() : transform_() {
-  obb_ = physics::BoundingBox();
-  obb_.SetLength(2, 0.5f, 0.5f);
-}
-
-//コンストラク
-Desk::Desk(math::Vector3 position, math::Quaternion rotation,
-           math::Vector3 scale)
-    : transform_() {
-  SetPosition(position);
-  SetRotation(rotation);
-  SetScale(scale);
-  obb_ = physics::BoundingBox(position, rotation, scale);
-  obb_.SetLength(2, 0.5f, 0.5f);
-}
+Desk::Desk() : actor::Actor<physics::BoundingBox>() {}
 
 //デストラクタ
 Desk::~Desk() {}
 
-//初期化
-bool Desk::Initialize(directx::DirectX12Device& device,
-                      util::resource::Resource& resource) {
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::DESK, model_path)) {
-    return false;
-  }
+bool Desk::Init(const InitializeParameter& parameter) {
+  this->transform_ = parameter.transform;
+  this->collision_ = physics::BoundingBox();
+  this->collision_.SetLength(parameter.bounding_box_length.x,
+                             parameter.bounding_box_length.y,
+                             parameter.bounding_box_length.z);
+
+  directx::DirectX12Device& device =
+      game::GameDevice::GetInstance()->GetDevice();
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -47,32 +36,23 @@ bool Desk::Initialize(directx::DirectX12Device& device,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
+  model_ = resource.GetModel().Get(util::resource::ModelID::DESK);
   return true;
 }
 
 //更新
 bool Desk::Update() { return true; }
 
-//描画
-void Desk::Draw(directx::DirectX12Device& device) {
-  transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::DESK)
-      ->Draw();
-}
-
 //座標の設定
 void Desk::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  obb_.SetPosition(position);
+  collision_.SetPosition(position);
 }
 
 //回転の設定
 void Desk::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  obb_.SetRotation(rotation);
+  collision_.SetRotation(rotation);
 }
 
 //スケールの設定
@@ -87,10 +67,5 @@ math::Quaternion Desk::GetRotation() { return transform_.GetRotation(); }
 //スケールの取得
 math::Vector3 Desk::GetScale() { return transform_.GetScale(); }
 
-//直方体の取得
-physics::BoundingBox& Desk::GetOBB() {
-  physics::BoundingBox& obb = obb_;
-  return obb;
-}
 }  // namespace object
 }  // namespace legend

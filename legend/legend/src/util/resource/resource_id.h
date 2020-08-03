@@ -10,6 +10,17 @@ namespace resource {
 namespace id {
 
 /**
+ * @brief モデルID
+ */
+enum class Model {
+  CHECK_XYZ,
+  KARI,
+  OBJECT_1000CM,
+  ERASER,
+  DESK,
+};
+
+/**
  * @brief テクスチャID
  */
 enum class Texture {

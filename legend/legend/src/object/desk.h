@@ -1,6 +1,7 @@
 #ifndef LEGEND_OBJECT_DESK_H_
 #define LEGEND_OBJECT_DESK_H_
 
+#include "src/actor/actor.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
@@ -9,36 +10,31 @@
 namespace legend {
 namespace object {
 
-class Desk {
+class Desk : public actor::Actor<physics::BoundingBox> {
+ public:
+  /**
+   * @brief 机の初期化パラメータ
+   */
+  struct InitializeParameter {
+    util::Transform transform;
+    math::Vector3 bounding_box_length;
+  };
+
  public:
   /**
    * @brief コンストラクタ
    */
   Desk();
   /**
-   * @brief コンストラクタ
-   * @param 座標
-   * @param 回転
-   * @param スケール
-   */
-  Desk(math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-  /**
    * @brief デストラクタ
    */
   ~Desk();
-  /**
-   * @brief 初期化
-   */
-  bool Initialize(directx::DirectX12Device& device,
-      util::resource::Resource& resource);
+
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
-  bool Update();
-  /**
-   * @brief 描画
-   */
-  void Draw(directx::DirectX12Device& device);
+  bool Update() override;
   /**
    * @brief 座標の設定
    */
@@ -63,19 +59,8 @@ class Desk {
    * @brief スケールの設定
    */
   math::Vector3 GetScale();
-  /**
-   * @brief 直方体の取得
-   */
-  physics::BoundingBox& GetOBB();
 
  private:
-  //! 衝突判定用の直方体
-  physics::BoundingBox obb_;
-  //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
-  //! トランスフォーム
-  util::Transform transform_;
 };
 
 }  // namespace object

@@ -180,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />
     <ClInclude Include="src\draw\particle\smoke_particle.h" />

@@ -35,6 +35,14 @@ bool PlayerMoveViewer::Initialize() {
               "model_view_ps.cso")) {
     return false;
   }
+
+  //モデルデータを読み込む
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / "desk.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::DESK, model_path)) {
+    return false;
+  }
+
   auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
   gps->Init(device);
   gps->SetVertexShader(resource.GetVertexShader().Get(
@@ -57,8 +65,17 @@ bool PlayerMoveViewer::Initialize() {
     return false;
   }
 
-  if (!desk_.Initialize(device, resource)) {
-    return false;
+  //机の初期化
+  {
+    //本来はステージデータから読み込む
+    object::Desk::InitializeParameter desc_parameter;
+    desc_parameter.transform =
+        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                        math::Vector3::kUnitVector);
+    desc_parameter.bounding_box_length = math::Vector3(2.0f, 0.5f, 0.5f);
+    if (!desk_.Init(desc_parameter)) {
+      return false;
+    }
   }
 
   //カメラの初期化
@@ -123,8 +140,8 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_.GetOBB(),
-                                                           desk_.GetOBB())) {
+  if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+          player_.GetOBB(), desk_.GetCollisionRef())) {
     MY_LOG(L"消しゴムと机が衝突しました");
   } else {
     player_.UpdateGravity(-9.8f);
@@ -150,7 +167,7 @@ void PlayerMoveViewer::Draw() {
   camera_.RenderStart();
 
   player_.Draw(device);
-  desk_.Draw(device);
+  desk_.Draw();
 }
 
 //終了

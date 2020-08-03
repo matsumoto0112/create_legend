@@ -30,7 +30,7 @@ class Desk : public actor::Actor<physics::BoundingBox> {
    */
   ~Desk();
 
-  virtual bool Init(const InitializeParameter& parameter);
+  virtual bool Init(const InitializeParameter& parameter, math::Vector3 normal);
   /**
    * @brief 更新
    */
@@ -48,6 +48,10 @@ class Desk : public actor::Actor<physics::BoundingBox> {
    */
   void SetScale(math::Vector3 scale);
   /**
+   * @brief 法線ベクトルの設定
+   */
+  void SetNormal(math::Vector3 normal);
+  /**
    * @brief 座標の取得
    */
   math::Vector3 GetPosition();
@@ -59,8 +63,13 @@ class Desk : public actor::Actor<physics::BoundingBox> {
    * @brief スケールの設定
    */
   math::Vector3 GetScale();
+  /**
+   * @brief 法線ベクトルの取得
+   */
+  math::Vector3 GetNormal();
 
  private:
+  math::Vector3 normal_;
 };
 
 }  // namespace object

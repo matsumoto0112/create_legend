@@ -6,6 +6,7 @@
 #include "src/physics/plane.h"
 #include "src/physics/ray.h"
 #include "src/physics/sphere.h"
+#include "src/object/desk.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -37,6 +38,12 @@ class Collision : public util::Singleton<Collision> {
    * @param •½–Ê
    */
   bool Collision_OBB_Plane(BoundingBox& obb, Plane& plane);
+  /**
+   * @brief Á‚µƒSƒ€‚ÆŠ÷‚ÌÕ“Ë”»’è
+   * @param Á‚µƒSƒ€
+   * @param Š÷
+   */
+  bool Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk);
   /**
    * @brief ‹…‚Æ’¼•û‘Ì‚ÌÕ“Ë”»’è
    * @param ‹…

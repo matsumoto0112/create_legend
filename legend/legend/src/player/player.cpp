@@ -115,10 +115,7 @@ void Player::SetPosition(math::Vector3 position) {
 //‘¬“x‚ÌÝ’è
 void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
 
-void Player::SetRotation() {
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  math::Quaternion rotation = transform_.GetRotation();
-  rotation.y += input.GetGamepad()->GetStickRight().x;
+void Player::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
   collision_.SetRotation(rotation);
 }

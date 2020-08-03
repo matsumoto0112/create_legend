@@ -165,6 +165,61 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   return true;
 }
 
+bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
+  //‹ßÚ‹——£
+  float proximity_distance = 0;
+  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
+      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
+
+  math::Vector3 normal = desk.GetNormal();
+  for (i32 i = 0; i < 3; i++) {
+    math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
+    proximity_distance += fabs(math::Vector3::Dot(
+        math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
+  }
+
+  //Á‚µƒSƒ€‚ÆŠ÷‚Ì‹——£‚ğZo
+  float distance =
+      math::Vector3::Dot(obb.GetPosition() - desk.GetPosition(), normal);
+
+  physics::BoundingBox desk_obb = desk.GetCollisionRef();
+  if (math::util::Abs(obb.GetPosition().x) >
+          math::util::Abs(desk_obb.GetPosition().x +
+                          desk_obb.GetLengthByScale(0)) ||
+      math::util::Abs(obb.GetPosition().z) >
+          math::util::Abs(desk_obb.GetPosition().z +
+                          desk_obb.GetLengthByScale(2))) {
+    MY_LOG(L"Š÷‚ÌŠO‚É‚¢‚Ü‚·");
+    return false;
+  }
+
+  if (math::util::Abs(distance) - proximity_distance > 0) {
+    MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
+    return false;
+  }
+
+  //–ß‚µ‹——£
+  float return_distance = 0;
+  if (distance > 0) {
+    return_distance = proximity_distance - fabs(distance);
+  } else {
+    return_distance = proximity_distance + fabs(distance);
+  }
+
+  //À•W‚ÌC³
+  math::Vector3 return_vector = math::Vector3::kZeroVector;
+  if (normal.x > 0) {
+    return_vector = math::Vector3(return_distance, 0, 0) + obb.GetPosition();
+  } else if (normal.y > 0) {
+    return_vector = math::Vector3(0, return_distance, 0) + obb.GetPosition();
+  } else if (normal.z > 0) {
+    return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
+  }
+  obb.SetPosition(return_vector);
+
+  return true;
+}
+
 //‹…‚Æ’¼•û‘Ì‚ÌÕ“Ë”»’è
 bool Collision::Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb) {
   float left = obb.GetPosition().x - obb.GetLengthByScale(0);

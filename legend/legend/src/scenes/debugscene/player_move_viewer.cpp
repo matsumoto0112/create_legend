@@ -37,9 +37,16 @@ bool PlayerMoveViewer::Initialize() {
   }
 
   //モデルデータを読み込む
-  const std::filesystem::path model_path =
+  const std::filesystem::path player_model_path =
+      util::Path::GetInstance()->model() / "eraser_01.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::ERASER,
+                                player_model_path)) {
+    return false;
+  }
+  const std::filesystem::path desk_model_path =
       util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::DESK, model_path)) {
+  if (!resource.GetModel().Load(util::resource::ModelID::DESK,
+                                desk_model_path)) {
     return false;
   }
 
@@ -61,8 +68,16 @@ bool PlayerMoveViewer::Initialize() {
   resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
                                   gps);
 
-  if (!player_.Initilaize(device, resource)) {
-    return false;
+  //プレイヤーの初期化
+  {
+    player::Player::InitializeParameter player_parameter;
+    player_parameter.transform =
+        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                        math::Vector3::kUnitVector);
+    player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+    if (!player_.Initilaize(player_parameter, 0, 1)) {
+      return false;
+    }
   }
 
   //机の初期化
@@ -130,18 +145,18 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
+  math::Vector3 position = player_.GetPosition();
   math::Vector3 velocity = player_.GetVelocity();
   float impulse = player_.GetImpulse();
   if (ImGui::Begin("Player")) {
     ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
     ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
-    math::Vector3 position = player_.GetPosition();
     ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
   }
   ImGui::End();
 
   if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-          player_.GetOBB(), desk_.GetCollisionRef())) {
+          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
     MY_LOG(L"消しゴムと机が衝突しました");
   } else {
     player_.UpdateGravity(-9.8f);
@@ -166,7 +181,7 @@ void PlayerMoveViewer::Draw() {
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
 
-  player_.Draw(device);
+  player_.Draw();
   desk_.Draw();
 }
 

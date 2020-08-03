@@ -1,7 +1,6 @@
 #include "src/object/desk.h"
 
 #include "src/directx/shader/shader_register_id.h"
-#include "src/game/game_device.h"
 
 namespace legend {
 namespace object {

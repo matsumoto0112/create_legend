@@ -57,13 +57,13 @@ bool PlayerMoveViewer::Initialize() {
     return false;
   }
 
-  if (!plane_.Initialize(device, resource)) {
+  if (!desk_.Initialize(device, resource)) {
     return false;
   }
 
   //ƒJƒƒ‰‚Ì‰Šú‰»
   {
-    const math::Vector3 camera_position = math::Vector3(0, 10, -10);
+    const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -123,10 +123,11 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  if (physics::Collision::GetInstance()->Collision_OBB_Plane(player_.GetOBB(),
-                                                             plane_)) {
-    MY_LOG(L"‰Ÿ‚µ–ß‚µ");
-    player_.SetPosition(player_.GetOBB().GetPosition());
+  if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_.GetOBB(),
+                                                           desk_.GetOBB())) {
+    MY_LOG(L"Á‚µƒSƒ€‚ÆŠ÷‚ªÕ“Ë‚µ‚Ü‚µ‚½");
+  } else {
+    player_.UpdateGravity(-9.8f);
   }
 
   return true;
@@ -149,7 +150,7 @@ void PlayerMoveViewer::Draw() {
   camera_.RenderStart();
 
   player_.Draw(device);
-  plane_.Draw(device);
+  desk_.Draw(device);
 }
 
 //I—¹

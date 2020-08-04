@@ -142,6 +142,11 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
     return false;
   }
 
+  if (obb.GetIsTrigger()) {
+    //トリガーならばここまで
+    return true;
+  }
+
   //戻し距離
   float return_distance = 0;
   if (distance > 0) {
@@ -178,11 +183,12 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
         math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
   }
 
-  //消しゴムと机の距離を算出
-  float distance =
-      math::Vector3::Dot(obb.GetPosition() - desk.GetPosition(), normal);
-
   physics::BoundingBox desk_obb = desk.GetCollisionRef();
+  math::Vector3 desk_pos =
+      desk_obb.GetPosition() + math::Vector3(0, desk_obb.GetLengthByScale(1), 0);
+  //消しゴムと机の表面との距離を算出
+  float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
+
   if (math::util::Abs(obb.GetPosition().x) >
           math::util::Abs(desk_obb.GetPosition().x +
                           desk_obb.GetLengthByScale(0)) ||
@@ -196,6 +202,11 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
   if (math::util::Abs(distance) - proximity_distance > 0) {
     MY_LOG(L"衝突しませんでした");
     return false;
+  }
+
+  if (obb.GetIsTrigger()) {
+    //トリガーならばここまで
+    return true;
   }
 
   //戻し距離

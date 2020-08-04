@@ -159,6 +159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
@@ -286,6 +287,8 @@
     <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="src\util\debug.h" />

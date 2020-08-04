@@ -16,6 +16,8 @@ MainScene1::~MainScene1() {
 
 //初期化
 bool MainScene1::Initialize() {
+  turn_ = system::Turn::PLAYER_TURN;
+
   //カメラの初期化
   {
     const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
@@ -35,6 +37,25 @@ bool MainScene1::Initialize() {
 
 //更新
 bool MainScene1::Update() {
+  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+
+  switch (turn_) {
+    case legend::system::Turn::PLAYER_TURN:
+      if (input.GetGamepad()->GetButtonDown(input::joy_code::X)) {
+        turn_ = system::Turn::ENEMY_TURN;
+      }
+      MY_LOG(L"PLAYERTURN");
+      break;
+    case legend::system::Turn::ENEMY_TURN:
+      if (input.GetGamepad()->GetButtonDown(input::joy_code::X)) {
+        turn_ = system::Turn::PLAYER_TURN;
+      }
+      MY_LOG(L"ENEMYTURN");
+      break;
+    default:
+      break;
+  }
+
   if (ImGui::Begin("Camera")) {
     //カメラ座標
     math::Vector3 camera_position = camera_.GetPosition();
@@ -71,12 +92,12 @@ bool MainScene1::Update() {
 void MainScene1::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
-  //device.GetRenderResourceManager().SetDepthStencilTargetID(
+  // device.GetRenderResourceManager().SetDepthStencilTargetID(
   //    directx::render_target::DepthStencilTargetID::Depth);
-  //device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  //device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
+  // device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
+  // device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
 
-  //game::GameDevice::GetInstance()
+  // game::GameDevice::GetInstance()
   //    ->GetResource()
   //    .GetPipeline()
   //    .Get(util::resource::id::Pipeline::MODEL_VIEW)

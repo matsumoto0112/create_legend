@@ -8,8 +8,13 @@ namespace legend {
 namespace physics {
 
 //コンストラクタ
-BoundingBox::BoundingBox() : transform_(), directions_(3), lengthes_(3) {
-  SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
+BoundingBox::BoundingBox()
+    : transform_(),
+      directions_(3),
+      lengthes_(3),
+      is_trigger_(false),
+      is_on_ground_(true) {
+  //SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
 
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
@@ -22,7 +27,11 @@ BoundingBox::BoundingBox() : transform_(), directions_(3), lengthes_(3) {
 
 BoundingBox::BoundingBox(math::Vector3 position, math::Quaternion rotation,
                          math::Vector3 scale)
-    : transform_(), directions_(3), lengthes_(3) {
+    : transform_(),
+      directions_(3),
+      lengthes_(3),
+      is_trigger_(false),
+      is_on_ground_(true) {
   SetPosition(position);
   SetRotation(rotation);
   SetScale(scale);
@@ -246,6 +255,12 @@ math::Vector3 BoundingBox::GetAxisY() const { return axis_y; }
 //分離軸Zを取得
 math::Vector3 BoundingBox::GetAxisZ() const { return axis_z; }
 
+//トリガー判定の取得
+bool BoundingBox::GetIsTrigger() const { return is_trigger_; }
+
+//接地判定の取得
+bool BoundingBox::GetOnGround() const { return is_on_ground_; }
+
 //各方向ベクトルの設定
 void BoundingBox::SetDirection(math::Vector3 direction_x,
                                math::Vector3 direction_y,
@@ -287,6 +302,12 @@ void BoundingBox::SetAxis() {
   axis_z = math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) *
            GetScale().z;
 }
+
+//トリガー設定
+void BoundingBox::SetIsTrigger(bool trigger) { is_trigger_ = trigger; }
+
+//接地判定の設定
+void BoundingBox::SetOnGround(bool is_ground) { is_on_ground_ = is_ground; }
 
 }  // namespace physics
 }  // namespace legend

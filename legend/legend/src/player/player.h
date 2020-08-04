@@ -22,6 +22,8 @@ class Player : public actor::Actor<physics::BoundingBox> {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bouding_box_length;
+    float min_power;
+    float max_power;
   };
 
  public:
@@ -36,8 +38,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief 初期化
    */
-  virtual bool Initilaize(const InitializeParameter& parameter, float min_power,
-                          float max_power);
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
@@ -69,7 +70,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief 重力による移動
    */
-  void UpdateGravity(const float gravity);
+  void UpdateGravity(float gravity);
   /**
    * @brief 移動に必要なパラメータの初期化
    */

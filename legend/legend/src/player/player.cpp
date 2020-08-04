@@ -12,17 +12,18 @@ Player::Player() : actor::Actor<physics::BoundingBox>() {}
 Player::~Player() {}
 
 //èâä˙âª
-bool Player::Initilaize(const InitializeParameter& parameter, float min_power,
-    float max_power) {
+bool Player::Init(const InitializeParameter& parameter) {
   this->transform_ = parameter.transform;
-  this->collision_ = physics::BoundingBox();
+  this->collision_ =
+      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
+                           transform_.GetScale() * 0.1f);
   this->collision_.SetLength(parameter.bouding_box_length.x,
                              parameter.bouding_box_length.y,
                              parameter.bouding_box_length.z);
+  min_power_ = parameter.min_power;
+  max_power_ = parameter.max_power;
 
   up_power_ = true;
-  min_power_ = min_power;
-  max_power_ = max_power;
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -104,6 +105,8 @@ void Player::Move() {
   math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
+  //ê›íuÇµÇƒÇ¢Ç»ÇØÇÍÇŒÇ±Ç±Ç‹Ç≈
+  if (!collision_.GetOnGround()) return;
   Deceleration(2);
 }
 
@@ -176,7 +179,7 @@ void Player::SetImpulse() {
 }
 
 //èdóÕÇ…ÇÊÇÈà⁄ìÆ
-void Player::UpdateGravity(const float gravity) {
+void Player::UpdateGravity(float gravity) {
   math::Vector3 position =
       GetPosition() + math::Vector3(0, gravity, 0) * update_time_;
   SetPosition(position);

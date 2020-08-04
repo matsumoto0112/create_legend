@@ -11,13 +11,15 @@ Desk::Desk() : actor::Actor<physics::BoundingBox>() {}
 //デストラクタ
 Desk::~Desk() {}
 
-bool Desk::Init(const InitializeParameter& parameter, math::Vector3 normal) {
+bool Desk::Init(const InitializeParameter& parameter) {
   this->transform_ = parameter.transform;
-  this->collision_ = physics::BoundingBox();
+  this->collision_ =
+      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
+                           transform_.GetScale() * 0.1f);
   this->collision_.SetLength(parameter.bounding_box_length.x,
                              parameter.bounding_box_length.y,
                              parameter.bounding_box_length.z);
-  SetNormal(normal);
+  SetNormal(parameter.normal);
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();

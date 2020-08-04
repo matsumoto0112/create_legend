@@ -3,6 +3,7 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/scenes/scene.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
@@ -41,6 +42,7 @@ class MainScene1 : public Scene {
 
  private:
   camera::PerspectiveCamera camera_;
+  system::Turn turn_;
 };
 
 }  // namespace mainscene

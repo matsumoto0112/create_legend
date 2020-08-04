@@ -75,7 +75,9 @@ bool PlayerMoveViewer::Initialize() {
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
     player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
-    if (!player_.Initilaize(player_parameter, 0, 1)) {
+    player_parameter.min_power = 0;
+    player_parameter.max_power = 1;
+    if (!player_.Init(player_parameter)) {
       return false;
     }
   }
@@ -83,12 +85,13 @@ bool PlayerMoveViewer::Initialize() {
   //机の初期化
   {
     //本来はステージデータから読み込む
-    object::Desk::InitializeParameter desc_parameter;
-    desc_parameter.transform =
+    object::Desk::InitializeParameter desk_parameter;
+    desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desc_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
-    if (!desk_.Init(desc_parameter, math::Vector3::kUpVector)) {
+    desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
+    desk_parameter.normal = math::Vector3::kUpVector;
+    if (!desk_.Init(desk_parameter)) {
       return false;
     }
   }

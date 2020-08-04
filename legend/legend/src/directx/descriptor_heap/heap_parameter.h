@@ -78,6 +78,8 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
       return 2000;
     case LocalHeapID::PLAYER_MOVE_VIEWER:
       return 100;
+    case LocalHeapID::MAIN_SCENE_1:
+      return 100;
     default:
       MY_LOG(L"–¢’è‹`‚ÌID‚ª‘I‘ğ‚³‚ê‚Ü‚µ‚½B");
       break;

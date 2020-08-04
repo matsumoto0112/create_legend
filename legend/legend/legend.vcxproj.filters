@@ -93,6 +93,7 @@
     <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
     <ClCompile Include="src\draw\particle\particle_manager.cpp" />
     <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="src\draw\particle\particle_manager.h" />
     <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\util\timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

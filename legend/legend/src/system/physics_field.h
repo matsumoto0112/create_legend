@@ -50,15 +50,28 @@ class PhysicsField {
    * @brief 机のあたり判定の登録
    */
   void AddDesk(object::Desk desk);
+  /**
+   * @brief 重力落下
+   */
+  void UpdateGravity(float gravity);
+  /**
+   * @brief 減衰処理
+   */
+  void Deceleration(float deceleration_rate);
 
  private:
   Turn turn_;
+  TurnSystem current_turn_;
 
   player::Player player_;
   // std::vector<エネミー> enemies_;
   std::vector<object::Desk> desks_;
 
+  //重力
   float gravity_;
+
+  //更新時間(deltaTime)
+  float update_time_;
 };
 
 }  // namespace system

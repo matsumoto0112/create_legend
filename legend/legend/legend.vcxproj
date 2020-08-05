@@ -160,6 +160,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\system\physics_field.cpp" />
+    <ClCompile Include="src\system\turn_system.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />

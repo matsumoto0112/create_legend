@@ -96,6 +96,7 @@
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
     <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
+    <ClCompile Include="src\system\turn_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

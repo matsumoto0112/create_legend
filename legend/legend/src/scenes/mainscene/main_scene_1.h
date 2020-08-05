@@ -1,25 +1,31 @@
-#ifndef LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
-#define LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
+#ifndef LEGEND_SCENES_MAINSCENE_MAIN_SCENE_1_H_
+#define LEGEND_SCENES_MAINSCENE_MAIN_SCENE_1_H_
 
 #include "src/camera/perspective_camera.h"
 #include "src/object/desk.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
+#include "src/system/turn_system.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace scenes {
-namespace debugscene {
+namespace mainscene {
 
-class PlayerMoveViewer : public Scene {
+/**
+ * @class MainScene1
+ * @brief メインシーンその1
+ */
+class MainScene1 : public Scene {
  public:
   /**
    * @brief コンストラクタ
    */
-  PlayerMoveViewer(ISceneChange* scene_change);
+  MainScene1(ISceneChange* scene_change);
   /**
    * @brief デストラクタ
    */
-  ~PlayerMoveViewer();
+  ~MainScene1();
   /**
    * @brief 初期化
    */
@@ -38,16 +44,17 @@ class PlayerMoveViewer : public Scene {
   void Finalize() override;
 
  private:
-  //! メインカメラ
   camera::PerspectiveCamera camera_;
-  //! プレイヤー
-  player::Player player_;
-  //! 机
-  object::Desk desk_;
+  //system::Turn turn_;
+  system::PhysicsField physics_field_;
+  ////! プレイヤー
+  //player::Player player_;
+  ////! 机
+  //object::Desk desk_;
 };
 
-}  // namespace debugscene
+}  // namespace mainscene
 }  // namespace scenes
 }  // namespace legend
 
-#endif  //! LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
+#endif  //! LEGEND_SCENES_MAINSCENE_MAIN_SCENE_1_H_

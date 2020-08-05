@@ -1,26 +1,22 @@
-#include "src/scenes/debugscene/model_view.h"
+#include "src/scenes/mainscene/main_scene_1.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
-#include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
-#include "src/util/path.h"
-#include "src/util/resource/pixel_shader.h"
-#include "src/util/resource/vertex_shader.h"
 
 namespace legend {
 namespace scenes {
-namespace debugscene {
+namespace mainscene {
 
 //コンストラクタ
-ModelView::ModelView(ISceneChange* scene_change)
-    : Scene(scene_change), transform_() {}
+MainScene1::MainScene1(ISceneChange* scene_change) : Scene(scene_change) {}
 
-ModelView::~ModelView() {
+//デストラクタ
+MainScene1::~MainScene1() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 
 //初期化
-bool ModelView::Initialize() {
+bool MainScene1::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -40,20 +36,17 @@ bool ModelView::Initialize() {
     return false;
   }
 
-  if (!resource.GetTexture().Load(
-          util::resource::id::Texture::TEX,
-          util::Path::GetInstance()->texture() / "tex.png",
-          directx::shader::TextureRegisterID::Albedo,
-          directx::descriptor_heap::heap_parameter::LocalHeapID::
-              MODEL_VIEW_SCENE)) {
+  //モデルデータを読み込む
+  const std::filesystem::path player_model_path =
+      util::Path::GetInstance()->model() / "eraser_01.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::ERASER,
+                                player_model_path)) {
     return false;
   }
-
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "eraser_fragment_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
-                                model_path)) {
+  const std::filesystem::path desk_model_path =
+      util::Path::GetInstance()->model() / "desk.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::DESK,
+                                desk_model_path)) {
     return false;
   }
 
@@ -75,21 +68,37 @@ bool ModelView::Initialize() {
   resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
                                   gps);
 
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::MODEL_VIEW_SCENE),
-          L"Transform ConstantBuffer")) {
-    return false;
+  //プレイヤーの初期化
+  {
+    player::Player::InitializeParameter player_parameter;
+    player_parameter.transform =
+        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                        math::Vector3::kUnitVector);
+    player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+    player_parameter.min_power = 0;
+    player_parameter.max_power = 1;
+    if (!physics_field_.PlayerInit(player_parameter)) {
+      return false;
+    }
   }
 
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
+  //机の初期化
+  {
+    //本来はステージデータから読み込む
+    object::Desk::InitializeParameter desk_parameter;
+    desk_parameter.transform =
+        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                        math::Vector3::kUnitVector);
+    desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
+    desk_parameter.normal = math::Vector3::kUpVector;
+    if (!physics_field_.DeskInit(desk_parameter)) {
+      return false;
+    }
+  }
 
   //カメラの初期化
   {
-    const math::Vector3 camera_position = math::Vector3(0, 10, -10);
+    const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -101,13 +110,16 @@ bool ModelView::Initialize() {
     }
   }
 
-  device.WaitForGPU();
   return true;
 }
 
 //更新
-bool ModelView::Update() {
-  if (ImGui::Begin("Transform")) {
+bool MainScene1::Update() {
+  if (!physics_field_.Update()) {
+    return false;
+  }
+
+  if (ImGui::Begin("Camera")) {
     //カメラ座標
     math::Vector3 camera_position = camera_.GetPosition();
     ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
@@ -135,13 +147,12 @@ bool ModelView::Update() {
     camera_.SetFov(fov * math::util::DEG_2_RAD);
   }
   ImGui::End();
+
   return true;
 }
 
 //描画
-void ModelView::Draw() {
-  Scene::Draw();
-
+void MainScene1::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
   device.GetRenderResourceManager().SetDepthStencilTargetID(
@@ -155,15 +166,11 @@ void ModelView::Draw() {
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
-  transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::OBJECT_1000CM)
-      ->Draw();
+  physics_field_.Draw();
 }
 
-void ModelView::Finalize() {
+//終了
+void MainScene1::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 
   util::resource::Resource& resource =
@@ -172,10 +179,9 @@ void ModelView::Finalize() {
       util::resource::id::VertexShader::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
-  resource.GetTexture().Unload(util::resource::id::Texture::TEX);
+  resource.GetModel().Unload(util::resource::ModelID::ERASER);
+  resource.GetModel().Unload(util::resource::ModelID::DESK);
 }
-
-}  // namespace debugscene
+}  // namespace mainscene
 }  // namespace scenes
 }  // namespace legend

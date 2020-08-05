@@ -4,62 +4,33 @@
 
 namespace legend {
 namespace player {
-//コンストラクタ
-Player::Player()
-    : transform_(),
-      velocity_(math::Vector3::kZeroVector),
-      min_power_(0),
-      max_power_(1) {
-  transform_.SetScale(math::Vector3::kUnitVector);
-  obb_ = physics::BoundingBox();
-  obb_.SetLength(1.0f, 0.5f, 2.0f);
-  is_move_ = false;
-  impulse_ = min_power_;
-  deceleration_x_ = deceleration_z_ = 0;
-  input_velocity_ = math::Vector3::kZeroVector;
-  is_set_power_ = false;
-  up_power_ = true;
-  is_input_ = false;
-  velocity_update_time_ = 0;
-}
 
-Player::Player(math::Vector3 position, math::Quaternion rotation,
-               math::Vector3 scale, float min_power, float max_power)
-    : transform_(),
-      velocity_(math::Vector3::kZeroVector),
-      min_power_(min_power),
-      max_power_(max_power) {
-  transform_.SetPosition(position);
-  transform_.SetRotation(rotation);
-  transform_.SetScale(scale);
-  obb_ = physics::BoundingBox(position, rotation, scale);
-   obb_.SetLength(1, 1, 2);
-  is_move_ = false;
-  impulse_ = min_power_;
-  deceleration_x_ = deceleration_z_ = 0;
-  input_velocity_ = math::Vector3::kZeroVector;
-  is_set_power_ = false;
-  up_power_ = true;
-  is_input_ = false;
-  velocity_update_time_ = 0;
-}
+//コンストラク
+Player::Player() : actor::Actor<physics::BoundingBox>() {}
 
 //デストラクタ
 Player::~Player() {}
 
 //初期化
-bool Player::Initilaize(directx::DirectX12Device& device,
-                        util::resource::Resource& resource) {
-  //if (!obb_.Initialize(device)) {
-  //  return false;
-  //}
+bool Player::Init(const InitializeParameter& parameter) {
+  this->transform_ = parameter.transform;
+  this->collision_ =
+      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
+                           transform_.GetScale() * 0.1f);
+  this->collision_.SetLength(parameter.bouding_box_length.x,
+                             parameter.bouding_box_length.y,
+                             parameter.bouding_box_length.z);
+  min_power_ = parameter.min_power;
+  max_power_ = parameter.max_power;
 
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::ERASER, model_path)) {
-    return false;
-  }
+  up_power_ = true;
+  is_set_power_ = false;
+  move_end_ = false;
+
+  directx::DirectX12Device& device =
+      game::GameDevice::GetInstance()->GetDevice();
+  util::resource::Resource& resource =
+      game::GameDevice::GetInstance()->GetResource();
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
@@ -73,13 +44,13 @@ bool Player::Initilaize(directx::DirectX12Device& device,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
+  model_ = resource.GetModel().Get(util::resource::ModelID::ERASER);
+
   return true;
 }
 
 //更新
 bool Player::Update() {
-  //obb_.Update();
-
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
@@ -92,24 +63,12 @@ bool Player::Update() {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-   SetVelocity();
-   SetImpulse();
+  SetVelocity();
+  SetImpulse();
 
-   Move();
+  Move();
 
   return true;
-}
-
-//描画
-void Player::Draw(directx::DirectX12Device& device) {
-  //obb_.Draw(device);
-
-  transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::ERASER)
-      ->Draw();
 }
 
 //移動
@@ -128,6 +87,7 @@ void Player::Move() {
   //移動速度がゼロだったらreturn
   if (velocity == math::Vector3::kZeroVector) {
     ResetParameter();
+    move_end_ = true;
     return;
   }
 
@@ -148,23 +108,22 @@ void Player::Move() {
   math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
+  //設置していなければここまで
+  if (!collision_.GetOnGround()) return;
   Deceleration(2);
 }
 
 void Player::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  obb_.SetPosition(position);
+  collision_.SetPosition(position);
 }
 
 //速度の設定
 void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
 
-void Player::SetRotation() {
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  math::Quaternion rotation = transform_.GetRotation();
-  rotation.y += input.GetGamepad()->GetStickRight().x;
+void Player::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  obb_.SetRotation(rotation);
+  collision_.SetRotation(rotation);
 }
 
 void Player::SetVelocity() {
@@ -196,8 +155,6 @@ void Player::SetVelocity() {
 //パワーの設定
 void Player::SetImpulse() {
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  //ゲームパッドが一つだけ接続されている間
-  if (input.GetGamepad()->GetCount() != 1) return;
 
   //パワー調整を終えたらreturn
   if (is_set_power_ || !is_input_) return;
@@ -224,6 +181,13 @@ void Player::SetImpulse() {
   }
 }
 
+//重力による移動
+void Player::UpdateGravity(float gravity) {
+  math::Vector3 position =
+      GetPosition() + math::Vector3(0, gravity, 0) * update_time_;
+  SetPosition(position);
+}
+
 //移動に必要なパラメータを初期化
 void Player::ResetParameter() {
   if (velocity_.Magnitude() != 0.0f) return;
@@ -239,6 +203,9 @@ void Player::ResetParameter() {
   is_move_ = false;
   velocity_update_time_ = 0;
 }
+
+//移動終了判定のリセット
+void Player::ResetMoveEnd() { move_end_ = false; }
 
 //減速
 void Player::Deceleration(float deceleration_rate) {
@@ -277,9 +244,6 @@ math::Quaternion Player::GetRotation() const {
 
 float Player::GetImpulse() const { return impulse_; }
 
-physics::BoundingBox& Player::GetOBB() {
-  physics::BoundingBox& obb = obb_;
-  return obb;
-}
+bool Player::GetMoveEnd() const { return move_end_; }
 }  // namespace player
 }  // namespace legend

@@ -1,6 +1,7 @@
 #ifndef LEGEND_PLAYER_PLAYER_H_
 #define LEGEND_PLAYER_PLAYER_H_
 
+#include "src/actor/actor.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
@@ -13,22 +14,23 @@ namespace player {
  * @class Player
  * @brief プレイヤーのクラス
  */
-class Player {
+class Player : public actor::Actor<physics::BoundingBox> {
+ public:
+  /**
+   * @brief 初期化パラメータ
+   */
+  struct InitializeParameter {
+    util::Transform transform;
+    math::Vector3 bouding_box_length;
+    float min_power;
+    float max_power;
+  };
+
  public:
   /**
    * @brief コンストラクタ
    */
   Player();
-  /**
-   * @brief コンストラクタ
-   * @param 座標
-   * @param 回転
-   * @param スケール
-   * @param 力の最低値
-   * @param 力の最大値
-   */
-  Player(math::Vector3 position, math::Quaternion rotation, math::Vector3 scale,
-         float min_power, float max_power);
   /**
    * @brief デストラクタ
    */
@@ -36,16 +38,11 @@ class Player {
   /**
    * @brief 初期化
    */
-  bool Initilaize(directx::DirectX12Device& device,
-                  util::resource::Resource& resource);
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
   bool Update();
-  /**
-   * @brief 描画
-   */
-  void Draw(directx::DirectX12Device& device);
   /**
    * @brief 移動
    */
@@ -61,7 +58,7 @@ class Player {
   /**
    * @brief 回転量の設定
    */
-  void SetRotation();
+  void SetRotation(math::Quaternion rotation);
   /**
    * @brief 移動量の設定
    */
@@ -71,9 +68,17 @@ class Player {
    */
   void SetImpulse();
   /**
+   * @brief 重力による移動
+   */
+  void UpdateGravity(float gravity);
+  /**
    * @brief 移動に必要なパラメータの初期化
    */
   void ResetParameter();
+  /**
+   * @brief 移動終了判定の初期化
+   */
+  void ResetMoveEnd();
   /**
    * @brief 減速
    * @param 減速率(1より大きい値で)
@@ -96,20 +101,11 @@ class Player {
    */
   float GetImpulse() const;
   /**
-   * @brief 直方体の取得
+   * @brief 移動終了判定の取得
    */
-  physics::BoundingBox& GetOBB();
+  bool GetMoveEnd() const;
 
  private:
-  //衝突判定用の直方体
-  physics::BoundingBox obb_;
-
-  //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
-  //! トランスフォーム
-  util::Transform transform_;
-
   //! 速度
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;
@@ -141,7 +137,9 @@ class Player {
   //! ゲージが上昇かどうか
   bool up_power_;
   //! パワー設定終了か
-  bool is_set_power_ = false;
+  bool is_set_power_;
+  //! 移動終了判定
+  bool move_end_;
 
   //! 更新時間
   float update_time_;

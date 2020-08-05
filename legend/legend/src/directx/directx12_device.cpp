@@ -84,7 +84,7 @@ bool DirectX12Device::Present() {
     return false;
   }
 
-  WaitForGPU();
+  //WaitForGPU();
   return true;
 }
 

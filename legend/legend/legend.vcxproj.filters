@@ -91,6 +91,13 @@
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
+    <ClCompile Include="src\object\desk.cpp" />
+    <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
+    <ClCompile Include="src\draw\particle\particle_manager.cpp" />
+    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
+    <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
+    <ClCompile Include="src\system\physics_field.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -220,6 +227,15 @@
     <ClInclude Include="src\math\rect.h" />
     <ClInclude Include="src\enemy\enemy.h" />
     <ClInclude Include="src\enemy\enemy_manager.h" />
+    <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\draw\particle\particle_emitter.h" />
+    <ClInclude Include="src\draw\particle\particle_manager.h" />
+    <ClInclude Include="src\draw\particle\smoke_particle.h" />
+    <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
+    <ClInclude Include="src\system\turn_system.h" />
+    <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\util\timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -230,6 +246,7 @@
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
+    <None Include="assets\shaders\particle\simple_particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -242,6 +259,8 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
+    <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
+    <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

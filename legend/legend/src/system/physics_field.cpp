@@ -45,6 +45,9 @@ bool PhysicsField::DeskInit(object::Desk::InitializeParameter parameter) {
 //更新
 bool PhysicsField::Update() {
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+  update_time_ =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
   switch (turn_) {
     case legend::system::Turn::PLAYER_TURN:
       if (!player_.Update()) {
@@ -59,6 +62,7 @@ bool PhysicsField::Update() {
     case legend::system::Turn::ENEMY_TURN:
       if (input.GetGamepad()->GetButtonDown(input::joy_code::X)) {
         turn_ = system::Turn::PLAYER_TURN;
+        current_turn_.AddCurrentTurn();
       }
       MY_LOG(L"ENEMYTURN");
       break;
@@ -66,9 +70,8 @@ bool PhysicsField::Update() {
       break;
   }
 
-  if (!player_.GetCollisionRef().GetOnGround()) {
-    player_.UpdateGravity(gravity_);
-  }
+  Deceleration(2);
+  UpdateGravity(gravity_);
 
   //プレイヤーと各机との衝突判定を調べる
   for (i32 i = 0; i < desks_.size(); i++) {
@@ -117,5 +120,21 @@ void PhysicsField::Draw() {
 
 //机の登録
 void PhysicsField::AddDesk(object::Desk desk) { desks_.push_back(desk); }
+
+//重力落下
+void PhysicsField::UpdateGravity(float gravity) {
+  math::Vector3 g = math::Vector3(0, gravity, 0);
+
+  //プレイヤーの重力落下処理
+  if (!player_.GetCollisionRef().GetOnGround()) {
+    math::Vector3 player_pos = player_.GetPosition() + g * update_time_;
+    player_.SetPosition(player_pos);
+  }
+}
+void PhysicsField::Deceleration(float deceleration_rate) {
+  if (player_.GetCollisionRef().GetOnGround()) {
+    player_.Deceleration(deceleration_rate);
+  }
+}
 }  // namespace system
 }  // namespace legend

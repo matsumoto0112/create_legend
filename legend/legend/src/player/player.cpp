@@ -108,9 +108,9 @@ void Player::Move() {
   math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
-  //ê›íuÇµÇƒÇ¢Ç»ÇØÇÍÇŒÇ±Ç±Ç‹Ç≈
-  if (!collision_.GetOnGround()) return;
-  Deceleration(2);
+  ////ê›íuÇµÇƒÇ¢Ç»ÇØÇÍÇŒÇ±Ç±Ç‹Ç≈
+  //if (!collision_.GetOnGround()) return;
+  //Deceleration(2);
 }
 
 void Player::SetPosition(math::Vector3 position) {

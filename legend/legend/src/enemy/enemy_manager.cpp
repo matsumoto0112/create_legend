@@ -23,7 +23,7 @@ bool EnemyManager::Initilaize() {
 }
 
 bool EnemyManager::Update() {
-	// “G’Ç‰Á
+  // “G’Ç‰Á
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
     Add();
@@ -32,17 +32,19 @@ bool EnemyManager::Update() {
     auto z = game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
     math::Vector3 position(x, 0.0f, z);
     enemy->SetPosition(position);
-  } 
+  }
   // “Gíœ
-  else if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()
+  else if (game::GameDevice::GetInstance()
+               ->GetInput()
+               .GetKeyboard()
                ->GetKeyDown(input::key_code::D)) {
-    Destroy(
-        game::GameDevice::GetInstance()->GetRandom().Range(0, static_cast<i32>(enemys_.size())));
+    Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
+        0, static_cast<i32>(enemys_.size())));
   }
 
   // “Gs“®
   if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-                 input::input_code::Pause)) {
+          input::input_code::Pause)) {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
       action_enemy_index_ = -1;
       move_timer_ = 0.0f;
@@ -59,12 +61,12 @@ bool EnemyManager::Update() {
   }
   // “GÄn“®
   else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-          input::input_code::Decide)) {
+               input::input_code::Decide)) {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
       action_enemy_index_ = 0;
       move_timer_ = 0.0f;
     }
-  } 
+  }
   // “Gs“®
   EnemyAction();
 
@@ -110,7 +112,7 @@ void EnemyManager::Add() {
 }
 
 void EnemyManager::Destroy(i32 index) {
-  if (index < 0 || enemys_.size() <= index) {
+  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
     return;
   }
 

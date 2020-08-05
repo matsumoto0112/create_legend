@@ -24,6 +24,8 @@ bool Player::Init(const InitializeParameter& parameter) {
   max_power_ = parameter.max_power;
 
   up_power_ = true;
+  is_set_power_ = false;
+  move_end_ = false;
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -85,6 +87,7 @@ void Player::Move() {
   //移動速度がゼロだったらreturn
   if (velocity == math::Vector3::kZeroVector) {
     ResetParameter();
+    move_end_ = true;
     return;
   }
 
@@ -201,6 +204,9 @@ void Player::ResetParameter() {
   velocity_update_time_ = 0;
 }
 
+//移動終了判定のリセット
+void Player::ResetMoveEnd() { move_end_ = false; }
+
 //減速
 void Player::Deceleration(float deceleration_rate) {
   float x = deceleration_x_ * deceleration_rate * update_time_;
@@ -237,5 +243,7 @@ math::Quaternion Player::GetRotation() const {
 }
 
 float Player::GetImpulse() const { return impulse_; }
+
+bool Player::GetMoveEnd() const { return move_end_; }
 }  // namespace player
 }  // namespace legend

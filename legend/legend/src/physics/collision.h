@@ -43,7 +43,7 @@ class Collision : public util::Singleton<Collision> {
    * @param Á‚µƒSƒ€
    * @param Š÷
    */
-  bool Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk);
+  bool Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb);
   /**
    * @brief ‹…‚Æ’¼•û‘Ì‚ÌÕ“Ë”»’è
    * @param ‹…

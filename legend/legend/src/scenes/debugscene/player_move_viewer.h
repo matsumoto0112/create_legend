@@ -2,8 +2,8 @@
 #define LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
 
 #include "src/camera/perspective_camera.h"
-#include "src/player/player.h"
 #include "src/object/desk.h"
+#include "src/player/player.h"
 #include "src/scenes/scene.h"
 
 namespace legend {

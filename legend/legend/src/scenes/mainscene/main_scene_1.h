@@ -2,8 +2,11 @@
 #define LEGEND_SCENES_MAINSCENE_MAIN_SCENE_1_H_
 
 #include "src/camera/perspective_camera.h"
+#include "src/object/desk.h"
+#include "src/player/player.h"
 #include "src/scenes/scene.h"
 #include "src/system/turn_system.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace scenes {
@@ -42,7 +45,12 @@ class MainScene1 : public Scene {
 
  private:
   camera::PerspectiveCamera camera_;
-  system::Turn turn_;
+  //system::Turn turn_;
+  system::PhysicsField physics_field_;
+  ////! ÉvÉåÉCÉÑÅ[
+  //player::Player player_;
+  ////! ä˜
+  //object::Desk desk_;
 };
 
 }  // namespace mainscene

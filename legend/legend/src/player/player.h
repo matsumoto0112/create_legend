@@ -76,6 +76,10 @@ class Player : public actor::Actor<physics::BoundingBox> {
    */
   void ResetParameter();
   /**
+   * @brief 移動終了判定の初期化
+   */
+  void ResetMoveEnd();
+  /**
    * @brief 減速
    * @param 減速率(1より大きい値で)
    */
@@ -96,6 +100,10 @@ class Player : public actor::Actor<physics::BoundingBox> {
    * @brief 加える力の取得
    */
   float GetImpulse() const;
+  /**
+   * @brief 移動終了判定の取得
+   */
+  bool GetMoveEnd() const;
 
  private:
   //! 速度
@@ -129,7 +137,9 @@ class Player : public actor::Actor<physics::BoundingBox> {
   //! ゲージが上昇かどうか
   bool up_power_;
   //! パワー設定終了か
-  bool is_set_power_ = false;
+  bool is_set_power_;
+  //! 移動終了判定
+  bool move_end_;
 
   //! 更新時間
   float update_time_;

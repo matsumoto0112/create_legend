@@ -118,6 +118,7 @@ bool PlayerMoveViewer::Update() {
   if (!player_.Update()) {
     return false;
   }
+  player_.UpdateGravity(-9.8f);
 
   if (ImGui::Begin("Camera")) {
     //ƒJƒƒ‰À•W
@@ -164,12 +165,10 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  if (physics::Collision::GetInstance()->Collision_OBB_Desk(
-          player_.GetCollisionRef(), desk_)) {
+  if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
+          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
     MY_LOG(L"Á‚µƒSƒ€‚ÆŠ÷‚ªÕ“Ë‚µ‚Ü‚µ‚½");
     player_.SetPosition(player_.GetCollisionRef().GetPosition());
-  } else {
-    player_.UpdateGravity(-9.8f);
   }
 
   return true;

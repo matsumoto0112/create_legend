@@ -144,6 +144,7 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
 
   if (obb.GetIsTrigger()) {
     //トリガーならばここまで
+    MY_LOG(L"トリガー判定です");
     return true;
   }
 
@@ -170,22 +171,21 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   return true;
 }
 
-bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
+bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //近接距離
   float proximity_distance = 0;
   math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
       obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
 
-  math::Vector3 normal = desk.GetNormal();
+  math::Vector3 normal = math::Vector3::kUpVector;
   for (i32 i = 0; i < 3; i++) {
     math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
     proximity_distance += fabs(math::Vector3::Dot(
         math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
   }
 
-  physics::BoundingBox desk_obb = desk.GetCollisionRef();
-  math::Vector3 desk_pos =
-      desk_obb.GetPosition() + math::Vector3(0, desk_obb.GetLengthByScale(1), 0);
+  math::Vector3 desk_pos = desk_obb.GetPosition() +
+                           math::Vector3(0, desk_obb.GetLengthByScale(1), 0);
   //消しゴムと机の表面との距離を算出
   float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
 
@@ -196,16 +196,19 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
           math::util::Abs(desk_obb.GetPosition().z +
                           desk_obb.GetLengthByScale(2))) {
     MY_LOG(L"机の外にいます");
+    obb.SetOnGround(false);
     return false;
   }
 
   if (math::util::Abs(distance) - proximity_distance > 0) {
     MY_LOG(L"衝突しませんでした");
+    obb.SetOnGround(false);
     return false;
   }
 
   if (obb.GetIsTrigger()) {
     //トリガーならばここまで
+    MY_LOG(L"トリガー判定です");
     return true;
   }
 
@@ -227,6 +230,7 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
     return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
   }
   obb.SetPosition(return_vector);
+  obb.SetOnGround(true);
 
   return true;
 }

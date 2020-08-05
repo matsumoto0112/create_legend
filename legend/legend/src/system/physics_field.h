@@ -1,37 +1,64 @@
 #ifndef LEGEND_SYSTEM_PHYSICS_FIELD_H_
 #define LEGEND_SYSTEM_PHYSICS_FIELD_H_
 
-#include "src/actor/actor.h"
 #include "src/object/desk.h"
 #include "src/player/player.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace system {
-namespace id {
-enum class Object {
-  PLAYER,
-  ENEMY,
-  DESK,
-};
-}
 
 /**
  * @class PhysicsField
- * @brief フィールド上のOBB管理クラス
+ * @brief フィールドの管理クラス
  */
 class PhysicsField {
  public:
-  //重力
-  static const float gravity;
-
- public:
+  /**
+   * @brief コンストラクタ
+   */
   PhysicsField();
+  /**
+   * @brief デストラクタ
+   */
   ~PhysicsField();
+  /**
+   * @brief プレイヤーの初期化
+   */
+  bool PlayerInit(player::Player::InitializeParameter parameter);
+  /**
+   * @brief エネミーの初期化
+   */
+  // bool EnemyInit(エネミー::InitializeParameter parameter);
+  /**
+   * @brief 机の初期化
+   */
+  bool DeskInit(object::Desk::InitializeParameter parameter);
+  /**
+   * @brief 更新
+   */
   bool Update();
-  void AddCollision(id::Object object_id, physics::BoundingBox add_obb);
+  /**
+   * @brief 描画
+   */
+  void Draw();
+  /**
+   * @brief エネミーあたり判定の登録
+   */
+  // void AddEnemy(エネミー enemy);
+  /**
+   * @brief 机のあたり判定の登録
+   */
+  void AddDesk(object::Desk desk);
 
  private:
-  std::map<id::Object, physics::BoundingBox> obbs_;
+  Turn turn_;
+
+  player::Player player_;
+  // std::vector<エネミー> enemies_;
+  std::vector<object::Desk> desks_;
+
+  float gravity_;
 };
 
 }  // namespace system

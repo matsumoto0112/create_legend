@@ -18,6 +18,7 @@ class Desk : public actor::Actor<physics::BoundingBox> {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bounding_box_length;
+    math::Vector3 normal;
   };
 
  public:
@@ -30,7 +31,7 @@ class Desk : public actor::Actor<physics::BoundingBox> {
    */
   ~Desk();
 
-  virtual bool Init(const InitializeParameter& parameter, math::Vector3 normal);
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief çXêV
    */

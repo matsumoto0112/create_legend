@@ -142,6 +142,12 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
     return false;
   }
 
+  if (obb.GetIsTrigger()) {
+    //ÉgÉäÉKÅ[Ç»ÇÁÇŒÇ±Ç±Ç‹Ç≈
+    MY_LOG(L"ÉgÉäÉKÅ[îªíËÇ≈Ç∑");
+    return true;
+  }
+
   //ñﬂÇµãóó£
   float return_distance = 0;
   if (distance > 0) {
@@ -165,24 +171,24 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   return true;
 }
 
-bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
+bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //ãﬂê⁄ãóó£
   float proximity_distance = 0;
   math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
       obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
 
-  math::Vector3 normal = desk.GetNormal();
+  math::Vector3 normal = math::Vector3::kUpVector;
   for (i32 i = 0; i < 3; i++) {
     math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
     proximity_distance += fabs(math::Vector3::Dot(
         math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
   }
 
-  //è¡ÇµÉSÉÄÇ∆ä˜ÇÃãóó£ÇéZèo
-  float distance =
-      math::Vector3::Dot(obb.GetPosition() - desk.GetPosition(), normal);
+  math::Vector3 desk_pos = desk_obb.GetPosition() +
+                           math::Vector3(0, desk_obb.GetLengthByScale(1), 0);
+  //è¡ÇµÉSÉÄÇ∆ä˜ÇÃï\ñ Ç∆ÇÃãóó£ÇéZèo
+  float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
 
-  physics::BoundingBox desk_obb = desk.GetCollisionRef();
   if (math::util::Abs(obb.GetPosition().x) >
           math::util::Abs(desk_obb.GetPosition().x +
                           desk_obb.GetLengthByScale(0)) ||
@@ -190,12 +196,20 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
           math::util::Abs(desk_obb.GetPosition().z +
                           desk_obb.GetLengthByScale(2))) {
     MY_LOG(L"ä˜ÇÃäOÇ…Ç¢Ç‹Ç∑");
+    obb.SetOnGround(false);
     return false;
   }
 
   if (math::util::Abs(distance) - proximity_distance > 0) {
     MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
+    obb.SetOnGround(false);
     return false;
+  }
+
+  if (obb.GetIsTrigger()) {
+    //ÉgÉäÉKÅ[Ç»ÇÁÇŒÇ±Ç±Ç‹Ç≈
+    MY_LOG(L"ÉgÉäÉKÅ[îªíËÇ≈Ç∑");
+    return true;
   }
 
   //ñﬂÇµãóó£
@@ -216,6 +230,7 @@ bool Collision::Collision_OBB_Desk(BoundingBox& obb, object::Desk& desk) {
     return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
   }
   obb.SetPosition(return_vector);
+  obb.SetOnGround(true);
 
   return true;
 }

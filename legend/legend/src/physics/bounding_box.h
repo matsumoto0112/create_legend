@@ -95,6 +95,14 @@ class BoundingBox {
    */
   math::Vector3 GetAxisZ() const;
   /**
+   * @brief トリガー判定の取得
+   */
+  bool GetIsTrigger() const;
+  /**
+   * @brief 接地判定の取得
+   */
+  bool GetOnGround() const;
+  /**
    * @brief 各方向ベクトルの設定
    * @param X方向
    * @param Y方向
@@ -128,6 +136,14 @@ class BoundingBox {
    * @brief 分離軸の更新
    */
   void SetAxis();
+  /**
+   * @brief トリガー設定
+   */
+  void SetIsTrigger(bool trigger);
+  /**
+   * @brief 接地判定の設定
+   */
+  void SetOnGround(bool is_ground);
 
  private:
   //! トランスフォーム
@@ -142,6 +158,11 @@ class BoundingBox {
   math::Vector3 axis_y;
   //!分離軸Z
   math::Vector3 axis_z;
+
+  //! トリガーかどうか
+  bool is_trigger_;
+  //! 接地判定
+  bool is_on_ground_;
 
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;

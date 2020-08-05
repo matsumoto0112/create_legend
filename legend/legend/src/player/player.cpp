@@ -12,17 +12,20 @@ Player::Player() : actor::Actor<physics::BoundingBox>() {}
 Player::~Player() {}
 
 //初期化
-bool Player::Initilaize(const InitializeParameter& parameter, float min_power,
-    float max_power) {
+bool Player::Init(const InitializeParameter& parameter) {
   this->transform_ = parameter.transform;
-  this->collision_ = physics::BoundingBox();
+  this->collision_ =
+      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
+                           transform_.GetScale() * 0.1f);
   this->collision_.SetLength(parameter.bouding_box_length.x,
                              parameter.bouding_box_length.y,
                              parameter.bouding_box_length.z);
+  min_power_ = parameter.min_power;
+  max_power_ = parameter.max_power;
 
   up_power_ = true;
-  min_power_ = min_power;
-  max_power_ = max_power;
+  is_set_power_ = false;
+  move_end_ = false;
 
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
@@ -84,6 +87,7 @@ void Player::Move() {
   //移動速度がゼロだったらreturn
   if (velocity == math::Vector3::kZeroVector) {
     ResetParameter();
+    move_end_ = true;
     return;
   }
 
@@ -104,6 +108,8 @@ void Player::Move() {
   math::Vector3 position = GetPosition() + v * impulse_ * power_ * update_time_;
   SetPosition(position);
 
+  //設置していなければここまで
+  if (!collision_.GetOnGround()) return;
   Deceleration(2);
 }
 
@@ -176,7 +182,7 @@ void Player::SetImpulse() {
 }
 
 //重力による移動
-void Player::UpdateGravity(const float gravity) {
+void Player::UpdateGravity(float gravity) {
   math::Vector3 position =
       GetPosition() + math::Vector3(0, gravity, 0) * update_time_;
   SetPosition(position);
@@ -197,6 +203,9 @@ void Player::ResetParameter() {
   is_move_ = false;
   velocity_update_time_ = 0;
 }
+
+//移動終了判定のリセット
+void Player::ResetMoveEnd() { move_end_ = false; }
 
 //減速
 void Player::Deceleration(float deceleration_rate) {
@@ -234,5 +243,7 @@ math::Quaternion Player::GetRotation() const {
 }
 
 float Player::GetImpulse() const { return impulse_; }
+
+bool Player::GetMoveEnd() const { return move_end_; }
 }  // namespace player
 }  // namespace legend

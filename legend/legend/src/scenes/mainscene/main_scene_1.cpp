@@ -1,22 +1,22 @@
-#include "src/scenes/debugscene/player_move_viewer.h"
+#include "src/scenes/mainscene/main_scene_1.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
-#include "src/physics/collision.h"
+#include "src/game/game_device.h"
 
 namespace legend {
 namespace scenes {
-namespace debugscene {
+namespace mainscene {
+
 //コンストラクタ
-PlayerMoveViewer::PlayerMoveViewer(ISceneChange* scene_change)
-    : Scene(scene_change) {}
+MainScene1::MainScene1(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //デストラクタ
-PlayerMoveViewer::~PlayerMoveViewer() {
+MainScene1::~MainScene1() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 
 //初期化
-bool PlayerMoveViewer::Initialize() {
+bool MainScene1::Initialize() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -77,7 +77,7 @@ bool PlayerMoveViewer::Initialize() {
     player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
-    if (!player_.Init(player_parameter)) {
+    if (!physics_field_.PlayerInit(player_parameter)) {
       return false;
     }
   }
@@ -91,7 +91,7 @@ bool PlayerMoveViewer::Initialize() {
                         math::Vector3::kUnitVector);
     desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
     desk_parameter.normal = math::Vector3::kUpVector;
-    if (!desk_.Init(desk_parameter)) {
+    if (!physics_field_.DeskInit(desk_parameter)) {
       return false;
     }
   }
@@ -114,11 +114,10 @@ bool PlayerMoveViewer::Initialize() {
 }
 
 //更新
-bool PlayerMoveViewer::Update() {
-  if (!player_.Update()) {
+bool MainScene1::Update() {
+  if (!physics_field_.Update()) {
     return false;
   }
-  player_.UpdateGravity(-9.8f);
 
   if (ImGui::Begin("Camera")) {
     //カメラ座標
@@ -149,33 +148,11 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  if (ImGui::Begin("Player")) {
-    math::Vector3 position = player_.GetPosition();
-    math::Vector3 velocity = player_.GetVelocity();
-    float impulse = player_.GetImpulse();
-    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
-    ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
-    ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
-
-    math::Vector3 rotation = math::Quaternion::ToEular(player_.GetRotation()) *
-                             math::util::RAD_2_DEG;
-    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
-    player_.SetRotation(
-        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
-  }
-  ImGui::End();
-
-  if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
-          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
-    MY_LOG(L"消しゴムと机が衝突しました");
-    player_.SetPosition(player_.GetCollisionRef().GetPosition());
-  }
-
   return true;
 }
 
 //描画
-void PlayerMoveViewer::Draw() {
+void MainScene1::Draw() {
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
   device.GetRenderResourceManager().SetDepthStencilTargetID(
@@ -189,13 +166,11 @@ void PlayerMoveViewer::Draw() {
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
-
-  player_.Draw();
-  desk_.Draw();
+  physics_field_.Draw();
 }
 
 //終了
-void PlayerMoveViewer::Finalize() {
+void MainScene1::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 
   util::resource::Resource& resource =
@@ -207,6 +182,6 @@ void PlayerMoveViewer::Finalize() {
   resource.GetModel().Unload(util::resource::ModelID::ERASER);
   resource.GetModel().Unload(util::resource::ModelID::DESK);
 }
-}  // namespace debugscene
+}  // namespace mainscene
 }  // namespace scenes
 }  // namespace legend

@@ -22,6 +22,8 @@ class Player : public actor::Actor<physics::BoundingBox> {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bouding_box_length;
+    float min_power;
+    float max_power;
   };
 
  public:
@@ -36,8 +38,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief 初期化
    */
-  virtual bool Initilaize(const InitializeParameter& parameter, float min_power,
-                          float max_power);
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
@@ -69,11 +70,15 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief 重力による移動
    */
-  void UpdateGravity(const float gravity);
+  void UpdateGravity(float gravity);
   /**
    * @brief 移動に必要なパラメータの初期化
    */
   void ResetParameter();
+  /**
+   * @brief 移動終了判定の初期化
+   */
+  void ResetMoveEnd();
   /**
    * @brief 減速
    * @param 減速率(1より大きい値で)
@@ -95,6 +100,10 @@ class Player : public actor::Actor<physics::BoundingBox> {
    * @brief 加える力の取得
    */
   float GetImpulse() const;
+  /**
+   * @brief 移動終了判定の取得
+   */
+  bool GetMoveEnd() const;
 
  private:
   //! 速度
@@ -128,7 +137,9 @@ class Player : public actor::Actor<physics::BoundingBox> {
   //! ゲージが上昇かどうか
   bool up_power_;
   //! パワー設定終了か
-  bool is_set_power_ = false;
+  bool is_set_power_;
+  //! 移動終了判定
+  bool move_end_;
 
   //! 更新時間
   float update_time_;

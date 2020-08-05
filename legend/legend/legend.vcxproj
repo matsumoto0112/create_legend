@@ -149,6 +149,7 @@
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_change.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
@@ -158,6 +159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
@@ -278,6 +280,7 @@
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
@@ -285,6 +288,8 @@
     <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="src\util\debug.h" />

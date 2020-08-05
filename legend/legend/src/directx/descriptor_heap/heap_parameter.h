@@ -44,6 +44,7 @@ enum class LocalHeapID : u32 {
   ENEMY_MOVE_TEST,
   SPRITE_RENDER_TEST,
   PLAYER_MOVE_VIEWER,
+  MAIN_SCENE_1,
 };
 
 namespace local {
@@ -76,6 +77,8 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
     case LocalHeapID::SPRITE_RENDER_TEST:
       return 2000;
     case LocalHeapID::PLAYER_MOVE_VIEWER:
+      return 100;
+    case LocalHeapID::MAIN_SCENE_1:
       return 100;
     default:
       MY_LOG(L"ñ¢íËã`ÇÃIDÇ™ëIëÇ≥ÇÍÇ‹ÇµÇΩÅB");

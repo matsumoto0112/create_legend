@@ -36,7 +36,8 @@ class Enemy {
   /**
    * @brief 初期化
    */
-  bool Initilaize(directx::DirectX12Device& device);
+  bool Initilaize(directx::DirectX12Device& device,
+                  util::resource::Resource& resource);
   /**
    * @brief 更新
    */
@@ -62,14 +63,6 @@ class Enemy {
    */
   void SetRotation();
   /**
-   * @brief 移動量の設定
-   */
-  void SetVelocity();
-  /**
-   * @brief 加える力の設定
-   */
-  void SetImpulse();
-  /**
    * @brief 移動に必要なパラメータの初期化
    */
   void ResetParameter();
@@ -90,10 +83,6 @@ class Enemy {
    * @brief 回転の取得
    */
   math::Quaternion GetRotation() const;
-  /**
-   * @brief 加える力の取得
-   */
-  float GetImpulse() const;
   /**
    * @brief 直方体の取得
    */
@@ -119,8 +108,8 @@ class Enemy {
 
   //! 移動に加える力
   const float power_ = 10;
-  //! 実際に加える力の加減
-  float impulse_;
+  ////! 実際に加える力の加減
+  //float impulse_;
 
   //! 更新時間
   float update_time_;

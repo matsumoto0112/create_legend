@@ -13,6 +13,7 @@
 #include "src/draw/model.h"
 #include "src/scenes/scene.h"
 #include "src/util/transform.h"
+#include "src/enemy/enemy_manager.h"
 
 namespace legend {
 namespace scenes {
@@ -54,10 +55,13 @@ class EnemyMoveViewer : public Scene {
   //! トランスフォーム転送用コンスタントバッファ
   directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
       transform_cb_;
-  //! モデルのトランスフォーム
-  util::Transform transform_;
+  ////! モデルのトランスフォーム
+  //util::Transform transform_;
   //! メインカメラ
   camera::PerspectiveCamera camera_;
+  //! 敵管理システム
+  enemy::EnemyManager enemy_manager_;
+  physics::Plane plane_;
 };
 
 }  // namespace debugscene

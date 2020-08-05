@@ -13,7 +13,7 @@ namespace debugscene {
 
 //コンストラクタ
 EnemyMoveViewer::EnemyMoveViewer(ISceneChange* scene_change)
-    : Scene(scene_change), transform_() {}
+    : Scene(scene_change) {}
 
 EnemyMoveViewer::~EnemyMoveViewer() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
@@ -39,12 +39,10 @@ bool EnemyMoveViewer::Initialize() {
               "model_view_ps.cso")) {
     return false;
   }
-
   //モデルデータを読み込む
   const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "1000cmObject.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
-                                model_path)) {
+      util::Path::GetInstance()->model() / "eraser_01.glb";
+  if (!resource.GetModel().Load(util::resource::ModelID::ERASER, model_path)) {
     return false;
   }
 
@@ -66,17 +64,9 @@ bool EnemyMoveViewer::Initialize() {
   resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
                                   gps);
 
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::MODEL_VIEW_SCENE),
-          L"Transform ConstantBuffer")) {
+  if (!enemy_manager_.Initilaize()) {
     return false;
   }
-
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
 
   //カメラの初期化
   {
@@ -126,15 +116,16 @@ bool EnemyMoveViewer::Update() {
   }
   ImGui::End();
 
-  float speed = 0.1f;
-  auto pos = transform_.GetPosition();
-  auto h = game::GameDevice::GetInstance()->GetInput().GetHorizontal();
-  auto v = game::GameDevice::GetInstance()->GetInput().GetVertical();
-  auto mov = (math::Vector3(h, 0, v)).Normalized();
+  //float speed = 0.1f;
+  //auto pos = transform_.GetPosition();
+  //auto h = game::GameDevice::GetInstance()->GetInput().GetHorizontal();
+  //auto v = game::GameDevice::GetInstance()->GetInput().GetVertical();
+  //auto mov = (math::Vector3(h, 0, v)).Normalized();
+  //transform_.SetPosition(pos + mov * speed/* *game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds()*/);
+  //transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  //transform_cb_.UpdateStaging();
 
-  transform_.SetPosition(pos + mov * speed/* *game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds()*/);
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
+  enemy_manager_.Update();
 
   return true;
 }
@@ -157,11 +148,13 @@ void EnemyMoveViewer::Draw() {
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
   transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::OBJECT_1000CM)
-      ->Draw();
+  //game::GameDevice::GetInstance()
+  //    ->GetResource()
+  //    .GetModel()
+  //    .Get(util::resource::ModelID::OBJECT_1000CM)
+  //    ->Draw();
+
+  enemy_manager_.Draw();
 }
 
 void EnemyMoveViewer::Finalize() {
@@ -173,7 +166,7 @@ void EnemyMoveViewer::Finalize() {
       util::resource::id::VertexShader::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
+  resource.GetModel().Unload(util::resource::ModelID::ERASER);
 }
 
 }  // namespace debugscene

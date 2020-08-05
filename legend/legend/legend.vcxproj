@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
@@ -176,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\enemy\enemy_manager.h" />
     <ClInclude Include="src\enemy\enemy.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\audio\audio_manager.h" />

@@ -175,6 +175,7 @@
     <ClCompile Include="src\util\resource\resource.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
     <ClCompile Include="src\util\resource\vertex_shader.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\window\window.cpp" />
     <ClCompile Include="src\window\window_procedure.cpp" />
@@ -311,6 +312,7 @@
     <ClInclude Include="src\util\stl_extend.h" />
     <ClInclude Include="src\util\string_util.h" />
     <ClInclude Include="src\util\loader\texture_loader.h" />
+    <ClInclude Include="src\util\timer.h" />
     <ClInclude Include="src\util\transform.h" />
     <ClInclude Include="src\util\typedef.h" />
     <ClInclude Include="src\window\window.h" />

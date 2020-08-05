@@ -98,6 +98,8 @@
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
     <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
+    <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
+    <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -236,6 +238,8 @@
     <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\system\physics_field.h" />
     <ClInclude Include="src\util\timer.h" />
+    <ClInclude Include="src\stage_generate\StageGenerator.h" />
+    <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

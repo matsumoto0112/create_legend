@@ -7,6 +7,7 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
+#include "src/scenes/debugscene/stage_generate_test.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/title.h"
 
@@ -74,6 +75,8 @@ bool SceneManager::Update() {
           return std::make_unique<debugscene::PlayerMoveViewer>(this);
         case SceneType::ENEMY_MOVE_VIEWER:
           return std::make_unique<debugscene::EnemyMoveViewer>(this);
+        case SceneType::STAGE_GENERATE_TEST:
+          return std::make_unique<debugscene::StageGenerateTest>(this);
         default:
           MY_ASSERTION(false, L"存在しないシーンが選択されました。");
           return nullptr;

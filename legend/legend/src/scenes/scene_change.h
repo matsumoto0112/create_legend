@@ -19,6 +19,7 @@ enum class SceneType {
   MULTI_RENDER_TARGET_TEST,
   PLAYER_MOVE_VIEWER,
   ENEMY_MOVE_VIEWER,
+  STAGE_GENERATE_TEST,
 };
 
 class ISceneChange {

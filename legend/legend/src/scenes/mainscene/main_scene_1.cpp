@@ -17,6 +17,10 @@ MainScene1::~MainScene1() {
 
 //初期化
 bool MainScene1::Initialize() {
+  turn_ = system::Turn::PLAYER_TURN;
+  current_turn_ = system::TurnSystem();
+  physics_field_.Init();
+
   directx::DirectX12Device& device =
       game::GameDevice::GetInstance()->GetDevice();
 
@@ -77,9 +81,10 @@ bool MainScene1::Initialize() {
     player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
-    if (!physics_field_.PlayerInit(player_parameter)) {
+    if (!player_.Init(player_parameter)) {
       return false;
     }
+    physics_field_.SetPlayer(player_.GetCollisionRef());
   }
 
   //机の初期化
@@ -91,9 +96,10 @@ bool MainScene1::Initialize() {
                         math::Vector3::kUnitVector);
     desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
     desk_parameter.normal = math::Vector3::kUpVector;
-    if (!physics_field_.DeskInit(desk_parameter)) {
+    if (!desk_.Init(desk_parameter)) {
       return false;
     }
+    physics_field_.AddDesk(desk_.GetCollisionRef());
   }
 
   //カメラの初期化
@@ -115,9 +121,32 @@ bool MainScene1::Initialize() {
 
 //更新
 bool MainScene1::Update() {
-  if (!physics_field_.Update()) {
+  if (!UpdateTurn()) {
     return false;
   }
+  if (!physics_field_.Update(player_.GetVelocity(), player_.GetIsMove(),
+                             player_.GetImpulse(), player_.GetPower())) {
+    return false;
+  }
+  player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
+  if (player_.GetIsMove())
+    player_.SetVelocity(physics_field_.GetPlayerVelocity());
+
+  if (ImGui::Begin("Player")) {
+    math::Vector3 position = player_.GetPosition();
+    math::Vector3 velocity = player_.GetVelocity();
+    float impulse = player_.GetImpulse();
+    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
+    ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
+    ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
+
+    math::Vector3 rotation = math::Quaternion::ToEular(player_.GetRotation()) *
+                             math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
+    player_.SetRotation(
+        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
+  }
+  ImGui::End();
 
   if (ImGui::Begin("Camera")) {
     //カメラ座標
@@ -166,7 +195,8 @@ void MainScene1::Draw() {
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(device);
   camera_.RenderStart();
-  physics_field_.Draw();
+  player_.Draw();
+  desk_.Draw();
 }
 
 //終了
@@ -181,6 +211,32 @@ void MainScene1::Finalize() {
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
   resource.GetModel().Unload(util::resource::ModelID::ERASER);
   resource.GetModel().Unload(util::resource::ModelID::DESK);
+}
+
+//ターン別の更新処理
+bool MainScene1::UpdateTurn() {
+  switch (turn_) {
+    case legend::system::Turn::PLAYER_TURN:
+      if (!player_.Update()) {
+        return false;
+      }
+      if (player_.GetMoveEnd()) {
+        turn_ = system::Turn::ENEMY_TURN;
+        player_.ResetMoveEnd();
+      }
+      MY_LOG(L"PLAYER TURN");
+      break;
+    case legend::system::Turn::ENEMY_TURN:
+      turn_ = system::Turn::PLAYER_TURN;
+      current_turn_.AddCurrentTurn();
+      MY_LOG(L"ENEMY TURN");
+      break;
+    default:
+      break;
+  }
+
+  physics_field_.SetPlayer(player_.GetCollisionRef());
+  return true;
 }
 }  // namespace mainscene
 }  // namespace scenes

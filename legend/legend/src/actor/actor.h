@@ -42,13 +42,6 @@ class Actor {
    * @brief コリジョンを取得する
    */
   T& GetCollisionRef() { return collision_; }
-  /**
-   * @brief 座標の再設定
-   * @param 座標
-   */
-  virtual void SetPosition(math::Vector3 position) {
-    transform_.SetPosition(position);
-  }
 
  protected:
   //! トランスフォーム

@@ -118,7 +118,6 @@ bool PlayerMoveViewer::Update() {
   if (!player_.Update()) {
     return false;
   }
-  player_.UpdateGravity(-9.8f);
 
   if (ImGui::Begin("Camera")) {
     //ƒJƒƒ‰À•W

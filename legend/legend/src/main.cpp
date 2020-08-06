@@ -1,55 +1,50 @@
-#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/game/application.h"
-#include "src/game/game_device.h"
-#include "src/scenes/scene_manager.h"
-#include "src/scenes/scene_names.h"
-#include "src/window/window.h"
 
-namespace {
-using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
-static const LocalHeapID USE_HEAP_IDS[] = {
-    LocalHeapID::MODEL_VIEW_SCENE,
-    LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE,
-    LocalHeapID::SPRITE_RENDER_TEST,
-    LocalHeapID::PHYSICS_TEST,
-    LocalHeapID::ENEMY_MOVE_TEST,
-    LocalHeapID::PLAYER_MOVE_VIEWER,
-    LocalHeapID::MAIN_SCENE_1,
-};
-}  // namespace
+// namespace {
+// using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
+// static const LocalHeapID USE_HEAP_IDS[] = {
+//    LocalHeapID::MODEL_VIEW_SCENE,
+//    LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE,
+//    LocalHeapID::SPRITE_RENDER_TEST,
+//    LocalHeapID::PHYSICS_TEST,
+//    LocalHeapID::ENEMY_MOVE_TEST,
+//    LocalHeapID::PLAYER_MOVE_VIEWER,
+//    LocalHeapID::MAIN_SCENE_1,
+//};
+//}  // namespace
 
 namespace legend {
 class MyApp final : public device::Application {
  public:
-  MyApp() : Application(), scene_manager_() {}
+  MyApp() : Application() {}
   ~MyApp() {}
   bool Init() override {
     if (!Application::Init()) {
       return false;
     }
 
-    //directx::DirectX12Device& device =
+    // directx::DirectX12Device& device =
     //    game::GameDevice::GetInstance()->GetDevice();
     ////使用するローカルヒープを追加する
-    //directx::descriptor_heap::HeapManager& heap_manager =
+    // directx::descriptor_heap::HeapManager& heap_manager =
     //    device.GetHeapManager();
 
-    //for (auto&& id : USE_HEAP_IDS) {
+    // for (auto&& id : USE_HEAP_IDS) {
     //  if (!heap_manager.AddLocalHeap(device, id)) {
     //    return false;
     //  }
     //}
 
-    //const math::IntVector2 screen_size =
+    // const math::IntVector2 screen_size =
     //    game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    //if (!device.GetRenderResourceManager().CreateDepthStencil(
+    // if (!device.GetRenderResourceManager().CreateDepthStencil(
     //        device, directx::render_target::DepthStencilTargetID::Depth,
     //        DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, screen_size.x, screen_size.y,
     //        1.0f, 0, L"DepthStencil")) {
     //  return false;
     //}
 
-    //if (!scene_manager_.Initialize()) {
+    // if (!scene_manager_.Initialize()) {
     //  return false;
     //}
 
@@ -59,11 +54,11 @@ class MyApp final : public device::Application {
     if (!Application::Update()) {
       return false;
     }
-    //if (!scene_manager_.Update()) {
+    // if (!scene_manager_.Update()) {
     //  return false;
     //}
 
-    //if (ImGui::Begin("Scenes")) {
+    // if (ImGui::Begin("Scenes")) {
     //  ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
     //                                      scene_manager_.GetCurrentSceneType()))
     //                  .c_str());
@@ -87,15 +82,15 @@ class MyApp final : public device::Application {
     //    }
     //  }
     //}
-    //ImGui::End();
-    //if (ImGui::Begin("Debug")) {
+    // ImGui::End();
+    // if (ImGui::Begin("Debug")) {
     //  ImGui::Text(
     //      "TotalTime: %f",
     //      game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
     //  ImGui::Text("FrameRate: %.1f",
     //              game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
     //}
-    //ImGui::End();
+    // ImGui::End();
     return true;
   }
 
@@ -104,16 +99,16 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    //scene_manager_.Draw();
+    // scene_manager_.Draw();
     return true;
   }
   void Destroy() override {
     Application::Destroy();
-    //scene_manager_.Finalize();
+    // scene_manager_.Finalize();
   }
 
  private:
-  scenes::SceneManager scene_manager_;
+  // scenes::SceneManager scene_manager_;
 };
 }  // namespace legend
 

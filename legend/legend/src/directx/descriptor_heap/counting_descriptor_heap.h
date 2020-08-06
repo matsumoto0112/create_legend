@@ -9,6 +9,7 @@
  */
 
 #include "src/directx/descriptor_heap/descriptor_heap.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -29,11 +30,12 @@ class CountingDescriptorHeap {
   ~CountingDescriptorHeap();
   /**
    * @brief 初期化
-   * @param accessor DirectX12アクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param desc ヒープ作成ディスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const DescriptorHeap::Desc& desc);
+  bool Init(device::IDirectXAccessor& accessor,
+            const DescriptorHeap::Desc& desc);
   /**
    * @brief CPU,GPUハンドルを取得する
    * @param index ハンドルインデックス

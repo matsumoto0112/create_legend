@@ -7,13 +7,10 @@
  */
 
 #include "src/audio/audio_manager.h"
-#include "src/device.h"
-#include "src/directx/directx12_device.h"
-#include "src/draw/sprite_renderer.h"
+#include "src/directx/device/directx_device.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
 #include "src/util/random.h"
-#include "src/util/resource/resource.h"
 #include "src/util/singleton.h"
 #include "src/window/window.h"
 
@@ -70,7 +67,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   util::FPSCounter fps_counter_;
 
   std::unique_ptr<window::Window> window_;
-  std::unique_ptr<TestDevice> test_device_;
+  std::unique_ptr<directx::device::DirectXDevice> device_;
   //! “ü—ÍŠÇ—
   std::unique_ptr<input::InputManager> input_manager_;
   //! ‰¹‹¿ŠÇ—

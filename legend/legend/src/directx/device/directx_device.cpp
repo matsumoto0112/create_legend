@@ -152,15 +152,17 @@ bool DirectXDevice::Prepare() {
   if (current_resource_->fence_value_ > last_completed_fence) {
     HANDLE event_handle = CreateEvent(nullptr, false, false, nullptr);
     if (!event_handle) {
-      return;
+      return false;
     }
     if (!Succeeded(fence_->SetEventOnCompletion(current_resource_->fence_value_,
                                                 event_handle))) {
-      return;
+      return false;
     }
     WaitForSingleObject(event_handle, INFINITE);
     CloseHandle(event_handle);
   }
+
+  return true;
 }
 
 bool DirectXDevice::Present() {
@@ -174,7 +176,7 @@ bool DirectXDevice::Present() {
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET));
   if (!Succeeded(
           current_resource_->command_lists_[PRE_COMMAND_LIST_ID].Close())) {
-    return;
+    return false;
   }
 
   constexpr float clear_color[] = {0.2f, 0.2f, 0.2f, 1.0f};
@@ -185,7 +187,7 @@ bool DirectXDevice::Present() {
       ->ClearRenderTargetView(rtv_handle, clear_color, 0, nullptr);
   if (!Succeeded(
           current_resource_->command_lists_[MID_COMMAND_LIST_ID].Close())) {
-    return;
+    return false;
   }
 
   current_resource_->command_lists_[POST_COMMAND_LIST_ID]
@@ -197,7 +199,7 @@ bool DirectXDevice::Present() {
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT));
   if (!Succeeded(
           current_resource_->command_lists_[POST_COMMAND_LIST_ID].Close())) {
-    return;
+    return false;
   }
 
   command_queue_->ExecuteCommandLists(
@@ -209,6 +211,8 @@ bool DirectXDevice::Present() {
   current_resource_->fence_value_ = fence_value_;
   command_queue_->Signal(fence_.Get(), fence_value_);
   fence_value_++;
+
+  return true;
 }
 
 void DirectXDevice::Destroy() {

@@ -12,7 +12,7 @@ CountingDescriptorHeap::CountingDescriptorHeap()
 CountingDescriptorHeap::~CountingDescriptorHeap() {}
 
 //‰Šú‰»
-bool CountingDescriptorHeap::Init(IDirectXAccessor& accessor,
+bool CountingDescriptorHeap::Init(device::IDirectXAccessor& accessor,
                                   const DescriptorHeap::Desc& desc) {
   if (!this->heap_.Init(accessor, desc)) {
     return false;

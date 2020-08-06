@@ -25,8 +25,8 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
   window_->Create();
   // DirectX12デバイス
 
-  test_device_ = std::make_unique<TestDevice>();
-  if (!test_device_->Init(WINDOW_WIDTH, WINDOW_HEIGHT, window_->GetHWND())) {
+  device_ = std::make_unique<directx::device::DirectXDevice>();
+  if (!device_->Init(WINDOW_WIDTH, WINDOW_HEIGHT, window_->GetHWND())) {
     return false;
   }
 
@@ -49,12 +49,17 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
 
 bool GameDevice::BeginFrame() {
   fps_counter_.Update();
-  test_device_->Update();
+  if (!device_->Prepare()) {
+    return false;
+  }
+
   return true;
 }
 
 bool GameDevice::EndFrame() {
-  test_device_->Render();
+  if (!device_->Present()) {
+    return false;
+  }
 
   return true;
 }

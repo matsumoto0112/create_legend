@@ -15,6 +15,7 @@
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 #include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/device/command_list.h"
+#include "src/directx/shader/shader_resource_type.h"
 
 namespace legend {
 namespace directx {
@@ -39,10 +40,10 @@ class HeapManager {
   ~HeapManager();
   /**
    * @brief 初期化
-   * @param accessor DirectX12アクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor);
+  bool Init(device::IDirectXAccessor& accessor);
   /**
    * @brief フレーム開始時に呼ぶ
    */
@@ -50,15 +51,16 @@ class HeapManager {
 
   void SetGraphicsCommandList(device::CommandList& command_list) const;
 
-  void SetHandleToLocalHeap(u32 register_num, ResourceType type,
+  void SetHandleToLocalHeap(u32 register_num, shader::ResourceType type,
                             DescriptorHandle handle);
 
   void UpdateGlobalHeap(ID3D12Device* device,
                         device::CommandList& command_list);
-  bool AddLocalHeap(IDirectXAccessor& accessor,
+  bool AddLocalHeap(device::IDirectXAccessor& accessor,
                     heap_parameter::LocalHeapID heap_id);
 
   void RemoveLocalHeap(heap_parameter::LocalHeapID heap_id);
+
  public:
   /**
    * @brief レンダーターゲットヒープを取得する

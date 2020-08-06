@@ -7,7 +7,6 @@
  */
 
 #include "src/directx/device/dxgi_adapter.h"
-#include "src/directx/directx_accessor.h"
 #include "src/directx/render_target/render_target.h"
 #include "src/window/window.h"
 
@@ -37,7 +36,7 @@ class SwapChain {
    * @param command_queue コマンドキュー
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
+  bool Init(ID3D12Device& accessor, DXGIAdapter& adapter,
             window::Window& target_window, DXGI_FORMAT format,
             u32 back_buffer_count, ID3D12CommandQueue* command_queue);
   /**

@@ -7,8 +7,6 @@
  * @details コンパイル時に決定できる、基本的に変更しない情報を定義する
  */
 
-#include "src/util/stl_extend.h"
-
 namespace legend {
 namespace directx {
 namespace descriptor_heap {
@@ -56,7 +54,6 @@ constexpr u32 UNDEFINED_DESCRIPTOR_NUM = UINT_LEAST32_MAX;
  * @brief 定義済みのローカルIDに対応したディスクリプタ数を取得する
  */
 inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
-  using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
   switch (id) {
     case LocalHeapID::GLOBAL_ID:
       return 20000;

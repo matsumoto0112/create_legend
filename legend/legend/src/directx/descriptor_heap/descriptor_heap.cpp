@@ -1,6 +1,7 @@
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 
 #include "src/directx/directx_helper.h"
+#include "src/util/stl_extend.h"
 
 namespace {
 
@@ -43,7 +44,8 @@ DescriptorHeap::DescriptorHeap() : heap_(nullptr), heap_size_(0) {}
 DescriptorHeap::~DescriptorHeap() {}
 
 //‰Šú‰»
-bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc) {
+bool DescriptorHeap::Init(device::IDirectXAccessor& accessor,
+                          const Desc& desc) {
   this->heap_.Reset();
   this->heap_size_ = 0;
   MY_ASSERTION(util::Exist(HEAP_TYPES, desc.type),
@@ -59,14 +61,14 @@ bool DescriptorHeap::Init(IDirectXAccessor& device, const Desc& desc) {
   heap_desc.Type = heap_type;
   heap_desc.Flags = heap_flags;
   heap_desc.NodeMask = 0;
-  if (Failed(device.GetDevice()->CreateDescriptorHeap(&heap_desc,
-                                                      IID_PPV_ARGS(&heap_)))) {
+  if (Failed(accessor.GetDevice()->CreateDescriptorHeap(
+          &heap_desc, IID_PPV_ARGS(&heap_)))) {
     return false;
   }
   heap_->SetName(desc.name.c_str());
 
   this->heap_size_ =
-      device.GetDevice()->GetDescriptorHandleIncrementSize(heap_type);
+      accessor.GetDevice()->GetDescriptorHandleIncrementSize(heap_type);
   return true;
 }
 

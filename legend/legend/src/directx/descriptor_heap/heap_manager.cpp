@@ -1,6 +1,7 @@
 #include "src/directx/descriptor_heap/heap_manager.h"
 
 #include "src/directx/shader/root_parameter_index.h"
+#include "src/util/stl_extend.h"
 
 namespace legend {
 namespace directx {
@@ -13,13 +14,13 @@ HeapManager::HeapManager() {}
 HeapManager::~HeapManager() {}
 
 //初期化
-bool HeapManager::Init(IDirectXAccessor& device) {
+bool HeapManager::Init(device::IDirectXAccessor& accessor) {
   //グローバルヒープ
   {
     const DescriptorHeap::Desc global_desc{
         L"GlobalHeap", heap_parameter::GLOBAL_HEAP_DESCRIPTOR_NUM,
         DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::SHADER_VISIBLE};
-    if (!global_heap_.Init(device, global_desc)) {
+    if (!global_heap_.Init(accessor, global_desc)) {
       return false;
     }
   }
@@ -33,7 +34,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
                                           DescriptorHeapType::CBV_SRV_UAV,
                                           DescriptorHeapFlag::NONE};
     if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(
-            device, local_desc)) {
+            accessor, local_desc)) {
       return false;
     }
   }
@@ -43,7 +44,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
     const DescriptorHeap::Desc rtv_desc{
         L"RTVHeap", heap_parameter::RTV_HEAP_DESCRIPTOR_NUM,
         DescriptorHeapType::RTV, DescriptorHeapFlag::NONE};
-    if (!rtv_heap_.Init(device, rtv_desc)) {
+    if (!rtv_heap_.Init(accessor, rtv_desc)) {
       return false;
     }
   }
@@ -53,7 +54,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
     const DescriptorHeap::Desc dsv_desc{
         L"DSVHeap", heap_parameter::DSV_HEAP_DESCRIPTOR_NUM,
         DescriptorHeapType::DSV, DescriptorHeapFlag::NONE};
-    if (!dsv_heap_.Init(device, dsv_desc)) {
+    if (!dsv_heap_.Init(accessor, dsv_desc)) {
       return false;
     }
   }
@@ -63,7 +64,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   //デフォルトのコンスタントバッファ用ハンドルを作成
   this->default_handle_.default_cbv_handle_ =
       local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
-  device.GetDevice()->CreateConstantBufferView(
+  accessor.GetDevice()->CreateConstantBufferView(
       nullptr, default_handle_.default_cbv_handle_.cpu_handle_);
 
   this->default_handle_.default_srv_handle_ =
@@ -79,7 +80,7 @@ bool HeapManager::Init(IDirectXAccessor& device) {
   null_srv_desc.Texture2D.MostDetailedMip = 0;
   null_srv_desc.Texture2D.ResourceMinLODClamp = 0.0f;
 
-  device.GetDevice()->CreateShaderResourceView(
+  accessor.GetDevice()->CreateShaderResourceView(
       nullptr, &null_srv_desc, default_handle_.default_srv_handle_.cpu_handle_);
   return true;
 }
@@ -92,7 +93,8 @@ void HeapManager::SetGraphicsCommandList(
   command_list.GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
 
-void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
+void HeapManager::SetHandleToLocalHeap(u32 register_num,
+                                       shader::ResourceType type,
                                        DescriptorHandle handle) {
   //必要に応じて配列を拡張しつつ、ハンドルをセットする
   //レジスター番号に合わせてハンドルをセットする
@@ -108,12 +110,12 @@ void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
 
   //種類に応じて追加先を変える
   switch (type) {
-    case ResourceType::Cbv:
+    case shader::ResourceType::CBV:
       SetToHandlesAndAppendIfNeed(register_num,
                                   &current_local_handles_.cbv_handles_,
                                   handle.cpu_handle_);
       break;
-    case ResourceType::Srv:
+    case shader::ResourceType::SRV:
       SetToHandlesAndAppendIfNeed(register_num,
                                   &current_local_handles_.srv_handles_,
                                   handle.cpu_handle_);
@@ -161,7 +163,7 @@ void HeapManager::UpdateGlobalHeap(ID3D12Device* device,
                           current_local_handles_.srv_handles_);
 }
 
-bool HeapManager::AddLocalHeap(IDirectXAccessor& accessor,
+bool HeapManager::AddLocalHeap(device::IDirectXAccessor& accessor,
                                heap_parameter::LocalHeapID heap_id) {
   if (util::Exist(local_heaps_, heap_id)) {
     MY_LOG(L"すでに追加済みのヒープIDが追加されようとしました。 %d",

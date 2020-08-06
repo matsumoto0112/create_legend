@@ -241,6 +241,11 @@ descriptor_heap::DescriptorHandle DirectXDevice::GetDSVHandle() {
   return heap_manager_.GetDsvHeap()->GetHandle();
 }
 
+void DirectXDevice::RegisterHandle(u32 register_num, shader::ResourceType type,
+                                   descriptor_heap::DescriptorHandle handle) {
+  heap_manager_.RegisterHandle(register_num, type, handle);
+}
+
 }  // namespace device
 }  // namespace directx
 }  // namespace legend

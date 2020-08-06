@@ -41,8 +41,10 @@ class DirectXDevice : public IDirectXAccessor {
   ID3D12Device* GetDevice() const override { return device_.Get(); }
   descriptor_heap::DescriptorHandle GetRTVHandle() override;
   descriptor_heap::DescriptorHandle GetDSVHandle() override;
+  void RegisterHandle(u32 register_num, shader::ResourceType type,
+                      descriptor_heap::DescriptorHandle handle);
 
- //private:
+  // private:
   directx::device::DXGIAdapter adapter_;
 
   ComPtr<ID3D12Device> device_;

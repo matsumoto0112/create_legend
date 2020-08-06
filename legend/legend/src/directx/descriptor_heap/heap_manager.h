@@ -51,8 +51,8 @@ class HeapManager {
 
   void SetGraphicsCommandList(device::CommandList& command_list) const;
 
-  void SetHandleToLocalHeap(u32 register_num, shader::ResourceType type,
-                            DescriptorHandle handle);
+  void RegisterHandle(u32 register_num, shader::ResourceType type,
+                      DescriptorHandle handle);
 
   void UpdateGlobalHeap(ID3D12Device* device,
                         device::CommandList& command_list);
@@ -60,6 +60,8 @@ class HeapManager {
                     heap_parameter::LocalHeapID heap_id);
 
   void RemoveLocalHeap(heap_parameter::LocalHeapID heap_id);
+
+  DescriptorHandle GetLocalHeap(heap_parameter::LocalHeapID heap_id);
 
  public:
   /**

@@ -7,8 +7,6 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/descriptor_heap/descriptor_handle.h"
-#include "src/directx/directx_accessor.h"
 #include "src/math/math_util.h"
 
 namespace legend {
@@ -58,7 +56,7 @@ class ConstantBuffer {
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, u32 register_num,
+  bool Init(device::IDirectXAccessor& accessor, u32 register_num,
             descriptor_heap::DescriptorHandle handle, const std::wstring& name);
 
   /**
@@ -73,7 +71,7 @@ class ConstantBuffer {
    * @brief ヒープに自身を追加する
    * @param accessor DirectX12デバイスアクセサ
    */
-  void SetToHeap(IDirectXAccessor& accessor) const;
+  void SetToHeap(device::IDirectXAccessor& accessor) const;
 
  private:
   /**
@@ -176,7 +174,7 @@ inline void ConstantBuffer<T>::Reset() {
 
 //初期化
 template <class T>
-inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
+inline bool ConstantBuffer<T>::Init(device::IDirectXAccessor& accessor,
                                     u32 register_num,
                                     descriptor_heap::DescriptorHandle handle,
                                     const std::wstring& name) {
@@ -186,7 +184,10 @@ inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
   buffer_aligned_size_ = math::util::AlignPow2(
       sizeof(T), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
-  if (!resource_.InitAsBuffer(accessor, buffer_aligned_size_, name)) {
+  const CommittedResource::BufferDesc desc{
+      name, buffer_aligned_size_,
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
+  if (!resource_.InitAsBuffer(accessor, desc)) {
     return false;
   }
 
@@ -231,9 +232,10 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 
 //ヒープにセットする
 template <class T>
-inline void ConstantBuffer<T>::SetToHeap(IDirectXAccessor& accessor) const {
-  accessor.SetToGlobalHeap(this->register_num_, ResourceType::Cbv,
-                           this->resource_handle_);
+inline void ConstantBuffer<T>::SetToHeap(
+    device::IDirectXAccessor& accessor) const {
+  accessor.RegisterHandle(this->register_num_, shader::ResourceType::CBV,
+                          this->resource_handle_);
 }
 
 }  // namespace buffer

@@ -93,9 +93,8 @@ void HeapManager::SetGraphicsCommandList(
   command_list.GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
 
-void HeapManager::SetHandleToLocalHeap(u32 register_num,
-                                       shader::ResourceType type,
-                                       DescriptorHandle handle) {
+void HeapManager::RegisterHandle(u32 register_num, shader::ResourceType type,
+                                 DescriptorHandle handle) {
   //必要に応じて配列を拡張しつつ、ハンドルをセットする
   //レジスター番号に合わせてハンドルをセットする
   auto SetToHandlesAndAppendIfNeed =
@@ -193,6 +192,12 @@ void HeapManager::RemoveLocalHeap(heap_parameter::LocalHeapID heap_id) {
   }
 
   local_heaps_.erase(heap_id);
+}
+
+DescriptorHandle HeapManager::GetLocalHeap(
+    heap_parameter::LocalHeapID heap_id) {
+  MY_ASSERTION(util::Exist(local_heaps_, heap_id), L"heap_idが無効です。");
+  return local_heaps_.at(heap_id).GetHandle();
 }
 
 ////ヒープをコピーしコマンドリストにセットする

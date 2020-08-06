@@ -58,6 +58,8 @@
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
+    <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -150,6 +152,11 @@
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\directx\shader\shader_base.h" />
     <ClInclude Include="src\directx\shader\pixel_shader.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
+    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
+    <ClInclude Include="src\directx\shader\shader_register_id.h" />
+    <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

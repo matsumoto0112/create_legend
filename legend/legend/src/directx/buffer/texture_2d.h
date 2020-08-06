@@ -7,7 +7,8 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/directx_accessor.h"
+#include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -53,7 +54,7 @@ class Texture2D {
    * @param desc テクスチャデスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const Desc& desc);
+  bool Init(device::IDirectXAccessor& accessor, const Desc& desc);
   /**
    * @brief テクスチャを読み込みつつ初期化する
    * @param accessor DirectX12デバイスアクセサ
@@ -62,41 +63,40 @@ class Texture2D {
    * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
    */
-  bool InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
+  bool InitAndWrite(device::IDirectXAccessor& accessor,
+                    device::CommandList& command_list, u32 register_num,
                     const std::filesystem::path& filename,
                     const descriptor_heap::DescriptorHandle& handle);
-  /**
-   * @brief テクスチャを書き込みつつ初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param register_num シェーダーのレジスター番号
-   * @param format テクスチャのフォーマット
-   * @param data テクスチャデータ
-   * @param handle テクスチャハンドル
-   * @param filename ファイル名
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool InitAndWrite(IDirectXAccessor& accessor, u32 register_num,
-                    DXGI_FORMAT format, const std::vector<u8>& data,
-                    const descriptor_heap::DescriptorHandle& handle,
-                    const std::wstring& name);
+  ///**
+  // * @brief テクスチャを書き込みつつ初期化する
+  // * @param accessor DirectX12デバイスアクセサ
+  // * @param register_num シェーダーのレジスター番号
+  // * @param format テクスチャのフォーマット
+  // * @param data テクスチャデータ
+  // * @param handle テクスチャハンドル
+  // * @param filename ファイル名
+  // * @return 初期化に成功したらtrueを返す
+  // */
+  // bool InitAndWrite(device::IDirectXAccessor& accessor, u32 register_num,
+  //                  DXGI_FORMAT format, const std::vector<u8>& data,
+  //                  const descriptor_heap::DescriptorHandle& handle,
+  //                  const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
-   * @param accessor DirectX12デバイスアクセサ
-   * @param data テクスチャデータ
    */
-  void WriteResource(IDirectXAccessor& accessor, const void* data);
+  void WriteResource(device::CommandList& command_list, const void* data);
 
   /**
    * @brief ヒープに自身を追加する
    * @param accessor DirectX12デバイスアクセサ
    */
-  void SetToHeap(IDirectXAccessor& accessor);
-  /**
-   * @brief レジスター番号を指定してヒープに自身を追加する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param overwrite_register_num 上書きするレジスター番号
-   */
-  void SetToHeap(IDirectXAccessor& accessor, u32 overwrite_register_num);
+  void SetToHeap(device::IDirectXAccessor& accessor);
+  ///**
+  // * @brief レジスター番号を指定してヒープに自身を追加する
+  // * @param accessor DirectX12デバイスアクセサ
+  // * @param overwrite_register_num 上書きするレジスター番号
+  // */
+  // void SetToHeap(IDirectXAccessor& accessor, u32 overwrite_register_num);
 
  public:
   /**
@@ -109,13 +109,13 @@ class Texture2D {
   inline u32 GetHeight() const { return height_; }
 
  private:
-  /**
-   * @brief テクスチャバッファを初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param desc テクスチャデスク
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool InitTexBuffer(IDirectXAccessor& accessor, const Desc& desc);
+  // /**
+  //  * @brief テクスチャバッファを初期化する
+  //  * @param accessor DirectX12デバイスアクセサ
+  //  * @param desc テクスチャデスク
+  //  * @return 初期化に成功したらtrueを返す
+  //  */
+  bool InitTexBuffer(device::IDirectXAccessor& accessor, const Desc& desc);
 
  private:
   //! テクスチャデータ

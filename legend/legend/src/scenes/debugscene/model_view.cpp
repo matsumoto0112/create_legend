@@ -25,16 +25,17 @@ bool ModelView::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   {
-    struct Position {
+    struct Vert {
       math::Vector3 position;
+      math::Vector2 uv;
     };
-    const std::vector<Position> vertices{
-        {math::Vector3{0.0f, 1.0f, 0.0f}},
-        {math::Vector3{1.0f, 0.0f, 0.0f}},
-        {math::Vector3{-1.0f, 0.0f, 0.0f}},
+    const std::vector<Vert> vertices{
+        {math::Vector3{0.0f, 1.0f, 0.0f}, math::Vector2{0.5f, 0.0f}},
+        {math::Vector3{1.0f, 0.0f, 0.0f}, math::Vector2{1.0f, 0.5f}},
+        {math::Vector3{-1.0f, 0.0f, 0.0f}, math::Vector2{0.0f, 0.5f}},
     };
     const u32 vertex_num = static_cast<u32>(vertices.size());
-    const u32 vertex_size = sizeof(Position);
+    const u32 vertex_size = sizeof(Vert);
     if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
                              L"VertexBuffer")) {
       return false;
@@ -94,12 +95,60 @@ bool ModelView::Initialize() {
     pso_desc.SampleDesc.Count = 1;
     pso_desc.SampleMask = UINT_MAX;
     pso_desc.VS = vs.GetShaderBytecode();
-    if (directx::directx_helper::Failed(
-            device.GetDevice()->CreateGraphicsPipelineState(
-                &pso_desc, IID_PPV_ARGS(&pipeline_)))) {
+    if (!pipeline_.Init(device, pso_desc)) {
       return false;
     }
   }
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device.GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
+  {
+    if (!albedo_.InitAndWrite(device, command_list, 0,
+                              util::Path::GetInstance()->texture() / "tex.png",
+                              device.heap_manager_.GetLocalHeap(
+                                  directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID))) {
+      return false;
+    }
+  }
+
+  if (!cb_.Init(
+          device, 0,
+          device.heap_manager_.GetLocalHeap(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"ConstantBuffer")) {
+    return false;
+  }
+
+  if (!command_list.Close()) {
+    return false;
+  }
+
+  ID3D12CommandList* pp_command_list[] = {command_list.GetCommandList()};
+  device.command_queue_->ExecuteCommandLists(_countof(pp_command_list),
+                                             pp_command_list);
+
+  HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
+  if (!fence_event) {
+    return false;
+  }
+
+  const UINT64 fence_to_wait_for = device.fence_value_;
+  if (FAILED(device.command_queue_->Signal(device.fence_.Get(),
+                                           fence_to_wait_for))) {
+    return false;
+  }
+  device.fence_value_++;
+
+  if (FAILED(device.fence_->SetEventOnCompletion(fence_to_wait_for,
+                                                 fence_event))) {
+    return false;
+  }
+  WaitForSingleObject(fence_event, INFINITE);
 
   return true;
 }
@@ -109,6 +158,12 @@ bool ModelView::Update() {
   if (!Scene::Update()) {
     return false;
   }
+
+  static float m = 0.0f;
+  m += 0.0001f;
+  if (m > 1.0f) m -= 1.0f;
+  cb_.GetStagingRef().mul = m;
+  cb_.UpdateStaging();
 
   return true;
 }
@@ -120,7 +175,11 @@ void ModelView::Draw() {
   directx::device::CommandList& command_list =
       device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
   root_signature_.SetGraphicsCommandList(command_list);
-  command_list.GetCommandList()->SetPipelineState(pipeline_.Get());
+  pipeline_.SetGraphicsCommandList(command_list);
+  device.heap_manager_.SetGraphicsCommandList(command_list);
+  albedo_.SetToHeap(device);
+  cb_.SetToHeap(device);
+  device.heap_manager_.UpdateGlobalHeap(device.GetDevice(), command_list);
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.Draw(command_list);

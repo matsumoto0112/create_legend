@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\device\directx_device.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
@@ -145,7 +147,9 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\buffer\vertex_buffer.h" />
     <ClInclude Include="src\directx\device\directx_device.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
@@ -168,11 +172,14 @@
     <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
     <ClInclude Include="src\directx\shader\pixel_shader.h" />
     <ClInclude Include="src\directx\shader\root_parameter_index.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\directx\shader\shader_register_id.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />

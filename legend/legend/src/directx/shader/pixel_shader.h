@@ -6,7 +6,6 @@
  * @brief ピクセルシェーダー定義
  */
 
-#include "src/directx/directx_accessor.h"
 #include "src/directx/shader/shader_base.h"
 
 namespace legend {

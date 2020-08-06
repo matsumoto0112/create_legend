@@ -58,6 +58,7 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
     return false;
   }
 
+  ComPtr<ID3D12CommandAllocator> command_allocator_;
   if (!Succeeded(device_->CreateCommandAllocator(
           D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
           IID_PPV_ARGS(&command_allocator_)))) {
@@ -137,10 +138,6 @@ bool DirectXDevice::Prepare() {
     CloseHandle(event_handle);
   }
 
-  return true;
-}
-
-bool DirectXDevice::Present() {
   current_resource_->Ready();
 
   //•`‰æ€”õ
@@ -168,7 +165,19 @@ bool DirectXDevice::Present() {
   current_resource_->command_lists_[MID_COMMAND_LIST_ID]
       .GetCommandList()
       ->OMSetRenderTargets(1, rtv_handle, FALSE, dsv_handle);
+  current_resource_->command_lists_[MID_COMMAND_LIST_ID]
+      .GetCommandList()
+      ->RSSetViewports(
+          1, &swap_chain_.render_targets_[frame_index_].GetViewport());
+  current_resource_->command_lists_[MID_COMMAND_LIST_ID]
+      .GetCommandList()
+      ->RSSetScissorRects(
+          1, &swap_chain_.render_targets_[frame_index_].GetScissorRect());
 
+  return true;
+}
+
+bool DirectXDevice::Present() {
   if (!Succeeded(
           current_resource_->command_lists_[MID_COMMAND_LIST_ID].Close())) {
     return false;

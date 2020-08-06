@@ -1,180 +1,132 @@
 #include "src/scenes/debugscene/model_view.h"
 
-#include "src/directx/shader/alpha_blend_desc.h"
-#include "src/directx/shader/shader_register_id.h"
+#include "src/directx/directx_helper.h"
+#include "src/directx/shader/pixel_shader.h"
+#include "src/directx/shader/vertex_shader.h"
+#include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
-#include "src/util/resource/pixel_shader.h"
-#include "src/util/resource/vertex_shader.h"
 
 namespace legend {
 namespace scenes {
 namespace debugscene {
 
 //コンストラクタ
-ModelView::ModelView(ISceneChange* scene_change)
-    : Scene(scene_change), transform_() {}
+ModelView::ModelView(ISceneChange* scene_change) : Scene(scene_change) {}
 
-ModelView::~ModelView() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+ModelView::~ModelView() {}
 
 //初期化
 bool ModelView::Initialize() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
+  if (!Scene::Initialize()) {
     return false;
   }
 
-  if (!resource.GetTexture().Load(
-          util::resource::id::Texture::TEX,
-          util::Path::GetInstance()->texture() / "tex.png",
-          directx::shader::TextureRegisterID::Albedo,
-          directx::descriptor_heap::heap_parameter::LocalHeapID::
-              MODEL_VIEW_SCENE)) {
-    return false;
-  }
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "eraser_fragment_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::OBJECT_1000CM,
-                                model_path)) {
-    return false;
-  }
-
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  gps->Init(device);
-  gps->SetVertexShader(resource.GetVertexShader().Get(
-      util::resource::id::VertexShader::MODEL_VIEW));
-  gps->SetPixelShader(resource.GetPixelShader().Get(
-      util::resource::id::PixelShader::MODEL_VIEW));
-  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
-  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
-  gps->SetRootSignature(device.GetDefaultRootSignature());
-  gps->SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-  gps->CreatePipelineState(device);
-  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
-                                  gps);
-
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::MODEL_VIEW_SCENE),
-          L"Transform ConstantBuffer")) {
-    return false;
-  }
-
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
-
-  //カメラの初期化
   {
-    const math::Vector3 camera_position = math::Vector3(0, 10, -10);
-    const math::Quaternion camera_rotation =
-        math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
-    const math::IntVector2 screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-    if (!camera_.Init(L"MainCamera", camera_position, camera_rotation,
-                      math::util::DEG_2_RAD * 50.0f, aspect_ratio)) {
+    struct Position {
+      math::Vector3 position;
+    };
+    const std::vector<Position> vertices{
+        {math::Vector3{0.0f, 1.0f, 0.0f}},
+        {math::Vector3{1.0f, 0.0f, 0.0f}},
+        {math::Vector3{-1.0f, 0.0f, 0.0f}},
+    };
+    const u32 vertex_num = static_cast<u32>(vertices.size());
+    const u32 vertex_size = sizeof(Position);
+    if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
+                             L"VertexBuffer")) {
+      return false;
+    }
+    if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
       return false;
     }
   }
 
-  device.WaitForGPU();
+  {
+    const std::vector<u32> indices = {
+        0,
+        1,
+        2,
+    };
+    const u32 index_num = static_cast<u32>(indices.size());
+    const u32 index_size = sizeof(u32);
+    if (!index_buffer_.Init(device, index_num, index_size,
+                            directx::PrimitiveTopology::TriangleList,
+                            L"IndexBuffer")) {
+      return true;
+    }
+    if (!index_buffer_.WriteBufferResource(indices.data())) {
+      return false;
+    }
+  }
+
+  if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
+    return false;
+  }
+
+  {
+    const std::filesystem::path shader = util::Path::GetInstance()->shader();
+    directx::shader::VertexShader vs;
+    if (!vs.Init(device, shader / "default" / "default_vs.cso")) {
+      return false;
+    }
+    directx::shader::PixelShader ps;
+    if (!ps.Init(device, shader / "default" / "default_ps.cso")) {
+      return false;
+    }
+
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
+    pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+    pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
+    pso_desc.InputLayout = vs.GetInputLayout();
+    pso_desc.NodeMask = 0;
+    pso_desc.NumRenderTargets = 1;
+    pso_desc.PrimitiveTopologyType =
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.PS = ps.GetShaderBytecode();
+    pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+    pso_desc.SampleDesc.Count = 1;
+    pso_desc.SampleMask = UINT_MAX;
+    pso_desc.VS = vs.GetShaderBytecode();
+    if (directx::directx_helper::Failed(
+            device.GetDevice()->CreateGraphicsPipelineState(
+                &pso_desc, IID_PPV_ARGS(&pipeline_)))) {
+      return false;
+    }
+  }
+
   return true;
 }
 
 //更新
 bool ModelView::Update() {
-  if (ImGui::Begin("Transform")) {
-    //カメラ座標
-    math::Vector3 camera_position = camera_.GetPosition();
-    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
-    camera_.SetPosition(camera_position);
-    //カメラ回転角
-    math::Vector3 camera_rotation =
-        math::Quaternion::ToEular(camera_.GetRotation()) *
-        math::util::RAD_2_DEG;
-    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
-    camera_.SetRotation(
-        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
-
-    //カメラの上方向ベクトルを変更する
-    if (ImGui::Button("X_UP")) {
-      camera_.SetUpVector(math::Vector3::kRightVector);
-    }
-    if (ImGui::Button("Y_UP")) {
-      camera_.SetUpVector(math::Vector3::kUpVector);
-    }
-    if (ImGui::Button("Z_UP")) {
-      camera_.SetUpVector(math::Vector3::kForwardVector);
-    }
-    float fov = camera_.GetFov() * math::util::RAD_2_DEG;
-    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
-    camera_.SetFov(fov * math::util::DEG_2_RAD);
+  if (!Scene::Update()) {
+    return false;
   }
-  ImGui::End();
+
   return true;
 }
 
 //描画
 void ModelView::Draw() {
-  Scene::Draw();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::Depth);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
-
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(device);
-  camera_.RenderStart();
-  transform_cb_.SetToHeap(device);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetModel()
-      .Get(util::resource::ModelID::OBJECT_1000CM)
-      ->Draw();
+  directx::device::CommandList& command_list =
+      device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
+  root_signature_.SetGraphicsCommandList(command_list);
+  command_list.GetCommandList()->SetPipelineState(pipeline_.Get());
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.Draw(command_list);
 }
 
-void ModelView::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource::id::VertexShader::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::OBJECT_1000CM);
-  resource.GetTexture().Unload(util::resource::id::Texture::TEX);
-}
+void ModelView::Finalize() {}
 
 }  // namespace debugscene
 }  // namespace scenes

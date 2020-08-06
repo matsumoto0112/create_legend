@@ -10,13 +10,15 @@ VertexBuffer::VertexBuffer() : resource_{}, vertex_buffer_view_{} {}
 //デストラクタ
 VertexBuffer::~VertexBuffer() {}
 
-//初期化
-bool VertexBuffer::Init(DirectX12Device& device, u32 vertex_size,
+bool VertexBuffer::Init(device::IDirectXAccessor& accessor, u32 vertex_size,
                         u32 vertex_num, const std::wstring& name) {
   vertex_buffer_view_ = {};
 
   const u32 buffer_size = vertex_size * vertex_num;
-  if (!resource_.InitAsBuffer(device, buffer_size, name)) {
+  CommittedResource::BufferDesc desc{
+      name, buffer_size,
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
+  if (!resource_.InitAsBuffer(accessor, desc)) {
     return false;
   }
 
@@ -24,12 +26,16 @@ bool VertexBuffer::Init(DirectX12Device& device, u32 vertex_size,
       resource_.GetResource()->GetGPUVirtualAddress();
   vertex_buffer_view_.SizeInBytes = buffer_size;
   vertex_buffer_view_.StrideInBytes = vertex_size;
+
   return true;
 }
 
-//コマンドリストにセットする
-void VertexBuffer::SetGraphicsCommandList(DirectX12Device& device) {
-  device.GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
+bool VertexBuffer::WriteBufferResource(const void* data) {
+  return resource_.WriteResource(data);
+}
+
+void VertexBuffer::SetGraphicsCommandList(device::CommandList& command_list) {
+  command_list.GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
 }
 
 }  // namespace buffer

@@ -34,8 +34,8 @@ enum Enum : u32 {
  */
 namespace SamplerRegisterID {
 enum Enum : u32 {
-  Linear = 0,
-  Point = 1,
+  WARP = 0,
+  CLAMP = 1,
 };
 }  // namespace SamplerRegisterID
 

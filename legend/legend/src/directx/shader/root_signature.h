@@ -10,7 +10,8 @@
  最大限の速度を出すためならば、シェーダーごとにチューニングしたルートシグネチャを作るほうが良いが、その分作成時間・メモリを消費する。
  */
 
-#include "src/directx/directx_accessor.h"
+#include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -34,7 +35,8 @@ class RootSignature {
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const std::wstring& name);
+  bool InitByDefault(device::IDirectXAccessor& accessor,
+                     const std::wstring& name);
   /**
    * @brief ルートシグネチャを取得する
    */
@@ -44,9 +46,8 @@ class RootSignature {
 
   /**
    * @brief コマンドリストにセットする
-   * @param accessor DirectX12デバイスアクセサ
    */
-  void SetGraphicsCommandList(IDirectXAccessor& accessor);
+  void SetGraphicsCommandList(device::CommandList& command_list);
 
  private:
   //! ルートシグネチャ
@@ -56,4 +57,5 @@ class RootSignature {
 }  // namespace shader
 }  // namespace directx
 }  // namespace legend
+
 #endif  //! LEGEND_DIRECTX_SHADER_ROOT_SIGNATURE_H_

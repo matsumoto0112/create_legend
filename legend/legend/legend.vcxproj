@@ -82,6 +82,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
+    <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
     <ClCompile Include="src\directx\device\directx_device.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -91,6 +93,10 @@
     <ClCompile Include="src\directx\frame_resource.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
+    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
+    <ClCompile Include="src\directx\shader\shader_base.cpp" />
+    <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -115,6 +121,9 @@
     <ClCompile Include="src\math\vector_2.cpp" />
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
+    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\scene.cpp" />
+    <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -136,10 +145,13 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
+    <ClInclude Include="src\directx\buffer\index_buffer.h" />
+    <ClInclude Include="src\directx\buffer\vertex_buffer.h" />
     <ClInclude Include="src\directx\device\directx_device.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\audio\xaudio2_callback.h" />
+    <None Include="assets\shaders\default\default.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
@@ -156,6 +168,12 @@
     <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\shader\pixel_shader.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
+    <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -193,6 +211,11 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
+    <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\scene.h" />
+    <ClInclude Include="src\scenes\scene_change.h" />
+    <ClInclude Include="src\scenes\scene_manager.h" />
+    <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\color_4.h" />
@@ -226,6 +249,14 @@
     <None Include="src\.clang-format" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="assets\shaders\default\default_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\default\default_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

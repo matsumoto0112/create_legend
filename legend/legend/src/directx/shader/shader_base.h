@@ -5,7 +5,7 @@
  * @file shader_base.h
  */
 
-#include "src/directx/directx_accessor.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -14,7 +14,7 @@ class ShaderBase {
  public:
   ShaderBase(){};
   virtual ~ShaderBase() = default;
-  virtual bool Init(IDirectXAccessor& accessor,
+  virtual bool Init(device::IDirectXAccessor& accessor,
                     const std::filesystem::path& filepath);
   /**
    * @brief シェーダーコードとして返す

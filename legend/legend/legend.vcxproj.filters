@@ -49,6 +49,15 @@
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
+    <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
+    <ClCompile Include="src\scenes\scene_manager.cpp" />
+    <ClCompile Include="src\scenes\scene.cpp" />
+    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
+    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
+    <ClCompile Include="src\directx\shader\shader_base.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -128,6 +137,19 @@
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\buffer\vertex_buffer.h" />
+    <ClInclude Include="src\directx\buffer\index_buffer.h" />
+    <ClInclude Include="src\scenes\scene_manager.h" />
+    <ClInclude Include="src\scenes\scene.h" />
+    <ClInclude Include="src\scenes\scene_change.h" />
+    <ClInclude Include="src\scenes\task.h" />
+    <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
+    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\shader\vertex_shader.h" />
+    <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\directx\shader\pixel_shader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -139,6 +161,7 @@
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
+    <None Include="assets\shaders\default\default.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -153,6 +176,8 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
     <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
+    <FxCompile Include="assets\shaders\default\default_vs.hlsl" />
+    <FxCompile Include="assets\shaders\default\default_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

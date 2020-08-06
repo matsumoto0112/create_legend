@@ -42,11 +42,10 @@ class DirectXDevice : public IDirectXAccessor {
   descriptor_heap::DescriptorHandle GetRTVHandle() override;
   descriptor_heap::DescriptorHandle GetDSVHandle() override;
 
- private:
+ //private:
   directx::device::DXGIAdapter adapter_;
 
   ComPtr<ID3D12Device> device_;
-  ComPtr<ID3D12CommandAllocator> command_allocator_;
   ComPtr<ID3D12CommandQueue> command_queue_;
   SwapChain swap_chain_;
 

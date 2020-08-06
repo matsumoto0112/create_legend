@@ -14,23 +14,12 @@ Application::~Application() {}
 void Application::Run() {
   setlocale(LC_ALL, "");
 
-  // util::debug::Assertion(main_window_ != nullptr,
-  //                       L"ウィンドウが登録されていません。");
-
-  // main_window_->SetWindowProc(window::procedure::WindowProcdures);
-  // main_window_->SetWindowProcCallBack(this);
-  // main_window_->Create();
-
   if (!this->Init()) {
     Destroy();
     return;
   }
 
-  // if (!game::GameDevice::GetInstance()->GetDevice().InitAfter()) {
-  //  Finalize();
-  //  return;
-  //}
-  // main_window_->Show(SW_SHOW);
+  game::GameDevice::GetInstance()->GetWindow().Show(SW_SHOW);
 
   tagMSG msg = {};
   while (msg.message != WM_QUIT) {
@@ -101,9 +90,6 @@ bool Application::Init() {
 
   return true;
 }
-
-////終了処理
-// void Application::Finalize() { game::GameDevice::GetInstance()->Finalize(); }
 
 //更新
 bool Application::Update() {

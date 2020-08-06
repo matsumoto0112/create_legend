@@ -1,5 +1,5 @@
 #include "src/game/application.h"
-
+#include "src/scenes/scene_manager.h"
 // namespace {
 // using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
 // static const LocalHeapID USE_HEAP_IDS[] = {
@@ -44,9 +44,9 @@ class MyApp final : public device::Application {
     //  return false;
     //}
 
-    // if (!scene_manager_.Initialize()) {
-    //  return false;
-    //}
+    if (!scene_manager_.Initialize()) {
+      return false;
+    }
 
     return true;
   }
@@ -54,9 +54,9 @@ class MyApp final : public device::Application {
     if (!Application::Update()) {
       return false;
     }
-    // if (!scene_manager_.Update()) {
-    //  return false;
-    //}
+    if (!scene_manager_.Update()) {
+      return false;
+    }
 
     // if (ImGui::Begin("Scenes")) {
     //  ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
@@ -99,16 +99,16 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    // scene_manager_.Draw();
+    scene_manager_.Draw();
     return true;
   }
   void Destroy() override {
+    scene_manager_.Finalize();
     Application::Destroy();
-    // scene_manager_.Finalize();
   }
 
  private:
-  // scenes::SceneManager scene_manager_;
+  scenes::SceneManager scene_manager_;
 };
 }  // namespace legend
 

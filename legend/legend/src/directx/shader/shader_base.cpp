@@ -6,7 +6,7 @@ namespace legend {
 namespace directx {
 namespace shader {
 
-bool ShaderBase::Init(IDirectXAccessor& accessor,
+bool ShaderBase::Init(device::IDirectXAccessor& accessor,
                       const std::filesystem::path& filepath) {
   this->shader_code_ = util::byte_reader::Read(filepath);
   if (this->shader_code_.empty()) {

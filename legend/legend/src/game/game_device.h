@@ -36,6 +36,7 @@ class GameDevice : public util::Singleton<GameDevice> {
    */
   window::Window& GetWindow() const { return *window_; }
 
+  directx::device::DirectXDevice& GetDevice() { return *device_; }
   /**
    * @brief FPSカウンターを取得する
    */

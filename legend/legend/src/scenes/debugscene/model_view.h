@@ -7,12 +7,10 @@
  パラメータとしてモデルの座標、回転、スケーリング、カメラの座標、回転、fovが操作できる
  */
 
-#include "src/camera/perspective_camera.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
-#include "src/draw/model.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/scenes/scene.h"
-#include "src/util/transform.h"
 
 namespace legend {
 namespace scenes {
@@ -51,13 +49,10 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
-  //! モデルのトランスフォーム
-  util::Transform transform_;
-  //! メインカメラ
-  camera::PerspectiveCamera camera_;
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
+  directx::shader::RootSignature root_signature_;
+  ComPtr<ID3D12PipelineState> pipeline_;
 };
 
 }  // namespace debugscene

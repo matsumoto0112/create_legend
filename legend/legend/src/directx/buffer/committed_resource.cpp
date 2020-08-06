@@ -49,9 +49,9 @@ bool CommittedResource::InitAsBuffer(device::IDirectXAccessor& accessor,
 
   resource_->SetName(desc.name.c_str());
 
-  this->buffer_size_ = buffer_size_;
+  this->buffer_size_ = desc.buffer_size;
   this->current_state_ = desc.init_states;
-  return false;
+  return true;
 }
 
 bool CommittedResource::InitAsTex2D(device::IDirectXAccessor& accessor,

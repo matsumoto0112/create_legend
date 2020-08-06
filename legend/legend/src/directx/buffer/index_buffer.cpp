@@ -24,6 +24,18 @@ D3D12_PRIMITIVE_TOPOLOGY Convert(legend::directx::PrimitiveTopology topology) {
                L"未定義のトポロジーが選択されました。");
   return dict.at(topology);
 }
+
+DXGI_FORMAT CalcFormatFromIndexSize(legend::u32 index_size) {
+  switch (index_size) {
+    case sizeof(legend::u16):
+      return DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
+    case sizeof(legend::u32):
+      return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+    default:
+      return DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
+      break;
+  }
+}
 }  // namespace
 
 namespace legend {
@@ -41,17 +53,20 @@ IndexBuffer::IndexBuffer()
 //デストラクタ
 IndexBuffer::~IndexBuffer() {}
 
-//初期化
-bool IndexBuffer::Init(IDirectXAccessor& accessor, u32 index_num,
-                       PrimitiveTopology topology, const std::wstring& name) {
-  this->index_buffer_view_ = {};
-  this->index_num_ = index_num;
-  this->primitive_toporogy_ = Convert(topology);
+bool IndexBuffer::Init(device::IDirectXAccessor& accessor, u32 index_num,
+                       u32 index_size, PrimitiveTopology topology,
+                       const std::wstring& name) {
+  index_buffer_view_ = {};
+  index_num_ = index_num;
+  primitive_toporogy_ = Convert(topology);
 
-  constexpr DXGI_FORMAT index_format = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
-  const u32 index_buffer_size = index_num * sizeof(Index);
+  const DXGI_FORMAT index_format = CalcFormatFromIndexSize(index_size);
+  const u32 index_buffer_size = index_num * index_size;
 
-  if (!resource_.InitAsBuffer(accessor, index_buffer_size, name)) {
+  CommittedResource::BufferDesc desc{
+      name, index_buffer_size,
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
+  if (!resource_.InitAsBuffer(accessor, desc)) {
     return false;
   }
 
@@ -59,35 +74,20 @@ bool IndexBuffer::Init(IDirectXAccessor& accessor, u32 index_num,
       resource_.GetResource()->GetGPUVirtualAddress();
   index_buffer_view_.Format = index_format;
   index_buffer_view_.SizeInBytes = index_buffer_size;
-
   return true;
 }
 
-//初期化と書き込み
-bool IndexBuffer::InitAndWrite(IDirectXAccessor& accessor,
-                               const std::vector<Index>& indices,
-                               PrimitiveTopology topology,
-                               const std::wstring& name) {
-  if (!Init(accessor, static_cast<u32>(indices.size()), topology, name))
-    return false;
-
-  return WriteBufferResource(indices);
+bool IndexBuffer::WriteBufferResource(const void* data) {
+  return resource_.WriteResource(data);
 }
 
-//バッファにリソース書き込み
-bool IndexBuffer::WriteBufferResource(const std::vector<u16>& indices) {
-  return resource_.WriteResource(indices.data());
+void IndexBuffer::SetGraphicsCommandList(device::CommandList& command_list) {
+  command_list.GetCommandList()->IASetIndexBuffer(&index_buffer_view_);
+  command_list.GetCommandList()->IASetPrimitiveTopology(primitive_toporogy_);
 }
 
-//コマンドリストにセットする
-void IndexBuffer::SetGraphicsCommandList(IDirectXAccessor& accessor) {
-  accessor.GetCommandList()->IASetIndexBuffer(&index_buffer_view_);
-  accessor.GetCommandList()->IASetPrimitiveTopology(primitive_toporogy_);
-}
-
-//描画指令を出す
-void IndexBuffer::Draw(IDirectXAccessor& accessor) {
-  accessor.GetCommandList()->DrawIndexedInstanced(index_num_, 1, 0, 0, 0);
+void IndexBuffer::Draw(device::CommandList& command_list) {
+  command_list.GetCommandList()->DrawIndexedInstanced(index_num_, 1, 0, 0, 0);
 }
 
 }  // namespace buffer

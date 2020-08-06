@@ -196,19 +196,18 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
   render_targets_.resize(frame_count);
 
   for (UINT i = 0; i < frame_count; i++) {
-    if (Failed(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&render_targets_[i])))) {
+    ComPtr<ID3D12Resource> res;
+    if (Failed(swap_chain_->GetBuffer(i, IID_PPV_ARGS(&res)))) {
       return false;
     }
-    accessor.GetDevice()->CreateRenderTargetView(
-        render_targets_[i].Get(), nullptr, accessor.GetRTVHandle().cpu_handle_);
+
     std::wstringstream wss;
     wss << L"RenderTarget [" << i << L"]";
-    render_targets_[i]->SetName(wss.str().c_str());
+    if (!render_targets_[i].InitFromBuffer(
+            accessor, res, util::Color4(0.2f, 0.3f, 0.5f, 1.0f), wss.str())) {
+      return false;
+    }
   }
-
-  viewport_ = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width),
-                               static_cast<float>(height));
-  scissor_rect_ = CD3DX12_RECT(0, 0, width, height);
 
   return true;
 }

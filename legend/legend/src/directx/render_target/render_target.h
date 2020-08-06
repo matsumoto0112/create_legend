@@ -7,9 +7,7 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/descriptor_heap/descriptor_handle.h"
-#include "src/directx/directx_accessor.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/device/directx_accessor.h"
 #include "src/util/color_4.h"
 
 namespace legend {
@@ -21,6 +19,15 @@ namespace render_target {
  */
 class RenderTarget {
  public:
+  struct RenderTargetDesc {
+    std::wstring name;
+    u32 width;
+    u32 height;
+    DXGI_FORMAT format;
+    util::Color4 clear_color;
+  };
+
+ public:
   /**
    * @brief コンストラクタ
    */
@@ -31,51 +38,23 @@ class RenderTarget {
   ~RenderTarget();
   /**
    * @brief 初期化
-   * @param accessor DirextX12アクセサ
-   * @param format フォーマット
-   * @param width ターゲット幅
-   * @param height ターゲット高さ
-   * @param clear_color バッファのクリア色
-   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width,
-            u32 height, const util::Color4& clear_color,
-            const std::wstring& name);
-  /**
-   * @brief バッファから初期化する
-   * @param accessor DirextX12アクセサ
-   * @param buffer もととなるバッファ
-   * @param clear_color バッファのクリア色
-   * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
-   * @detials バックバッファに基本的に使う
-   */
-  bool InitFromBuffer(IDirectXAccessor& accessor, ComPtr<ID3D12Resource> buffer,
+  bool Init(device::IDirectXAccessor& accessor, const RenderTargetDesc& desc);
+  bool InitFromBuffer(device::IDirectXAccessor& accessor,
+                      ComPtr<ID3D12Resource> buffer,
                       const util::Color4& clear_color,
                       const std::wstring& name);
-  /**
-   * @brief レンダーターゲットの色をクリアする
-   * @param accessor DirextX12アクセサ
-   * @details レンダーターゲットにセットされていないときは無効
-   */
-  void ClearRenderTarget(IDirectXAccessor& accessor) const;
-  /**
-   * @brief 描画終了
-   * @param accessor DirextX12アクセサ
-   */
-  void DrawEnd(IDirectXAccessor& accessor);
-  /**
-   * @brief 状態を遷移させる
-   * @param accessor DirextX12アクセサ
-   * @param next_state 次の状態
-   */
-  void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
-  /**
-   * @brief パイプラインステートにRTV情報を書き込む
-   * @param pipeline 書き込む対象
-   */
-  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
+
+  void Transition(device::CommandList& command_list,
+                  D3D12_RESOURCE_STATES next_state);
+  void ClearRenderTarget(device::CommandList& command_list) const;
+  ///**
+  // * @brief パイプラインステートにRTV情報を書き込む
+  // * @param pipeline 書き込む対象
+  // */
+  // void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline)
+  // const;
 
  public:
   /**

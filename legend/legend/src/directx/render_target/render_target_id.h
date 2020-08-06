@@ -3,8 +3,9 @@
 
 /**
  * @file render_target_id.h
- *@brief レンダーターゲットを一意に特定するID定義
+ * @brief レンダーターゲットを一意に特定するID定義
  */
+
 namespace legend {
 namespace directx {
 namespace render_target {

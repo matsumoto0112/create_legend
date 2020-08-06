@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\device\directx_device.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
@@ -88,6 +89,8 @@
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\directx\frame_resource.cpp" />
+    <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -132,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\device\directx_device.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
     <ClInclude Include="src\audio\audio_type.h" />
@@ -148,6 +152,10 @@
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\directx\frame_resource.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
+    <ClInclude Include="src\directx\render_target\render_target.h" />
+    <ClInclude Include="src\directx\render_target\render_target_id.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />

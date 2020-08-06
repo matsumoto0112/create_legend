@@ -5,6 +5,7 @@
  * @file depth_stencil_target_id.h
  * @brief デプス・ステンシルターゲットを一意に特定するID定義
  */
+
 namespace legend {
 namespace directx {
 namespace render_target {
@@ -14,11 +15,13 @@ namespace render_target {
  */
 enum class DepthStencilTargetID {
   //! 使用しないときのデフォルトID
-  None,
+  NONE,
 
-  Depth,
+  DEPTH_ONLY,
 };
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend
+
 #endif  //! LEGEND_DIRECTX_RENDER_TARGET_DEPTH_STENCIL_TARGET_ID_H_

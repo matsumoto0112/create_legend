@@ -47,6 +47,17 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   }
   frame_index_ = swap_chain_.GetCurrentBackBufferIndex();
 
+  render_target::DepthStencil::DepthStencilDesc dsv_desc = {
+      L"DepthStencil",
+      DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT,
+      width,
+      height,
+      1.0f,
+      0};
+  if (!depth_stencil_.Init(*this, dsv_desc)) {
+    return false;
+  }
+
   if (!Succeeded(device_->CreateCommandAllocator(
           D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
           IID_PPV_ARGS(&command_allocator_)))) {
@@ -131,36 +142,46 @@ bool DirectXDevice::Prepare() {
 
 bool DirectXDevice::Present() {
   current_resource_->Ready();
-  current_resource_->command_lists_[PRE_COMMAND_LIST_ID]
-      .GetCommandList()
-      ->ResourceBarrier(
-          1, &CD3DX12_RESOURCE_BARRIER::Transition(
-                 swap_chain_.render_targets_[frame_index_].Get(),
-                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT,
-                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+  //•`‰æ€”õ
+  swap_chain_.render_targets_[frame_index_].Transition(
+      current_resource_->command_lists_[PRE_COMMAND_LIST_ID],
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
+  depth_stencil_.Transition(
+      current_resource_->command_lists_[PRE_COMMAND_LIST_ID],
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
   if (!Succeeded(
           current_resource_->command_lists_[PRE_COMMAND_LIST_ID].Close())) {
     return false;
   }
 
-  constexpr float clear_color[] = {0.2f, 0.2f, 0.2f, 1.0f};
-  D3D12_CPU_DESCRIPTOR_HANDLE rtv_handle =
-      heap_manager_.GetRtvHeap()->GetForceHandle(frame_index_).cpu_handle_;
+  //•`‰æˆ—‘z’è
+  swap_chain_.render_targets_[frame_index_].ClearRenderTarget(
+      current_resource_->command_lists_[MID_COMMAND_LIST_ID]);
+  depth_stencil_.ClearDepthStencil(
+      current_resource_->command_lists_[MID_COMMAND_LIST_ID]);
+
+  D3D12_CPU_DESCRIPTOR_HANDLE rtv_handle[] = {
+      swap_chain_.render_targets_[frame_index_].GetHandle().cpu_handle_};
+  D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle[] = {
+      depth_stencil_.GetHandle().cpu_handle_};
   current_resource_->command_lists_[MID_COMMAND_LIST_ID]
       .GetCommandList()
-      ->ClearRenderTargetView(rtv_handle, clear_color, 0, nullptr);
+      ->OMSetRenderTargets(1, rtv_handle, FALSE, dsv_handle);
+
   if (!Succeeded(
           current_resource_->command_lists_[MID_COMMAND_LIST_ID].Close())) {
     return false;
   }
 
-  current_resource_->command_lists_[POST_COMMAND_LIST_ID]
-      .GetCommandList()
-      ->ResourceBarrier(
-          1, &CD3DX12_RESOURCE_BARRIER::Transition(
-                 swap_chain_.render_targets_[frame_index_].Get(),
-                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET,
-                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT));
+  //•`‰æI—¹
+  swap_chain_.render_targets_[frame_index_].Transition(
+      current_resource_->command_lists_[POST_COMMAND_LIST_ID],
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT);
+  depth_stencil_.Transition(
+      current_resource_->command_lists_[POST_COMMAND_LIST_ID],
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_READ);
+
   if (!Succeeded(
           current_resource_->command_lists_[POST_COMMAND_LIST_ID].Close())) {
     return false;

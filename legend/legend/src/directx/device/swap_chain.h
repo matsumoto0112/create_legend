@@ -9,6 +9,7 @@
 #include "src/directx/device/command_list.h"
 #include "src/directx/device/directx_accessor.h"
 #include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/render_target/render_target.h"
 
 namespace legend {
 namespace directx {
@@ -39,7 +40,7 @@ class SwapChain {
 
  public:
   ComPtr<IDXGISwapChain3> swap_chain_;
-  std::vector<ComPtr<ID3D12Resource>> render_targets_;
+  std::vector<render_target::RenderTarget> render_targets_;
 
   D3D12_VIEWPORT viewport_;
   D3D12_RECT scissor_rect_;

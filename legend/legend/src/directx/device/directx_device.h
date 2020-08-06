@@ -11,6 +11,7 @@
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
 #include "src/directx/frame_resource.h"
+#include "src/directx/render_target/depth_stencil.h"
 
 namespace legend {
 namespace directx {
@@ -54,6 +55,8 @@ class DirectXDevice : public IDirectXAccessor {
   HANDLE fence_event_;
   ComPtr<ID3D12Fence> fence_;
   UINT64 fence_value_;
+
+  render_target::DepthStencil depth_stencil_;
 
   FrameResource resources_[FRAME_COUNT];
   FrameResource* current_resource_;

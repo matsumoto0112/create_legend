@@ -6,7 +6,8 @@
  * @brief バッファ管理クラス定義
  */
 
-#include "src/directx/directx_accessor.h"
+#include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -18,10 +19,17 @@ namespace buffer {
  */
 class CommittedResource {
  public:
+  struct BufferDesc {
+    //! リソース名
+    std::wstring name;
+    u64 buffer_size;
+    D3D12_RESOURCE_STATES init_states;
+  };
+
   /**
    * @brief テクスチャバッファデスク
    */
-  struct TextureBufferDesc {
+  struct Tex2DDesc {
     //! リソース名
     std::wstring name;
     //! テクスチャフォーマット
@@ -34,28 +42,7 @@ class CommittedResource {
     D3D12_RESOURCE_FLAGS flags;
     //! 初期化が必要な時の初期化値
     D3D12_CLEAR_VALUE clear_value;
-
-    /**
-     * @brief コンストラクタ
-     * @param name リソース名
-     * @param format テクスチャフォーマット
-     * @param width テクスチャ幅
-     * @param height テクスチャ高さ
-     * @param flags リソースの使用フラグ
-     * @param clear_value 初期化が必要な時の初期化値
-     */
-    TextureBufferDesc(const std::wstring& name = L"",
-                      DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN,
-                      u32 width = 0, u32 height = 0,
-                      D3D12_RESOURCE_FLAGS flags =
-                          D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_NONE,
-                      D3D12_CLEAR_VALUE clear_value = CD3DX12_CLEAR_VALUE())
-        : name(name),
-          format(format),
-          width(width),
-          height(height),
-          flags(flags),
-          clear_value(clear_value){};
+    D3D12_RESOURCE_STATES init_states;
   };
 
  public:
@@ -73,35 +60,24 @@ class CommittedResource {
   void Reset();
   /**
    * @brief バッファとして初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param buffer_size バッファのメモリサイズ
-   * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
    */
-  bool InitAsBuffer(IDirectXAccessor& accessor, u64 buffer_size,
-                    const std::wstring& name);
+  bool InitAsBuffer(device::IDirectXAccessor& accessor, const BufferDesc& desc);
   /**
    * @brief 2Dテクスチャとして初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param desc テクスチャデスク
-   * @return 初期化に成功したらtrueを返す
    */
-  bool InitAsTex2D(IDirectXAccessor& accessor, const TextureBufferDesc& desc);
+  bool InitAsTex2D(device::IDirectXAccessor& accessor, const Tex2DDesc& desc);
   /**
    * @brief バッファをコピーして初期化する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param buffer コピー元のバッファ
-   * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
    */
-  bool InitFromBuffer(IDirectXAccessor& accessor, ComPtr<ID3D12Resource> buffer,
+  bool InitFromBuffer(device::IDirectXAccessor& accessor,
+                      ComPtr<ID3D12Resource> buffer,
+                      D3D12_RESOURCE_STATES init_states,
                       const std::wstring& name);
   /**
    * @brief 状態を遷移させる
-   * @param accessor DirectX12デバイスアクセサ
-   * @param next_state 次の状態
    */
-  void Transition(IDirectXAccessor& accessor, D3D12_RESOURCE_STATES next_state);
+  void Transition(device::CommandList& command_list,
+                  D3D12_RESOURCE_STATES next_state);
 
   /**
    * @brief リソースを取得する
@@ -128,7 +104,7 @@ class CommittedResource {
    * @param row 1行のメモリサイズ (width * sizeof(Pixel))
    * @param slice 全体のメモリサイズ (row * height)
    */
-  static void UpdateSubresource(IDirectXAccessor& accessor,
+  static void UpdateSubresource(device::CommandList& command_list,
                                 CommittedResource* dest_resource,
                                 CommittedResource* immediate_resource,
                                 const void* data, u64 row, u64 slice);

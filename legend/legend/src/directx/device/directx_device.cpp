@@ -27,6 +27,10 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
     return false;
   }
 
+  if (!heap_manager_.Init(*this)) {
+    return false;
+  }
+
   D3D12_COMMAND_QUEUE_DESC queueDesc = {};
   queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
   queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -36,31 +40,12 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   }
   command_queue_->SetName(L"CommandQueue");
 
-  DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-  swapChainDesc.BufferCount = FRAME_COUNT;
-  swapChainDesc.Width = width;
-  swapChainDesc.Height = height;
-  swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-  swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-  swapChainDesc.SampleDesc.Count = 1;
-
-  ComPtr<IDXGISwapChain1> swapChain;
-  if (!Succeeded(adapter_.GetFactory()->CreateSwapChainForHwnd(
-          command_queue_.Get(), hwnd, &swapChainDesc, nullptr, nullptr,
-          &swapChain))) {
+  if (!swap_chain_.Init(*this, adapter_, FRAME_COUNT, width, height,
+                        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, hwnd,
+                        command_queue_.Get())) {
     return false;
   }
-
-  if (!Succeeded(adapter_.GetFactory()->MakeWindowAssociation(
-          hwnd, DXGI_MWA_NO_ALT_ENTER))) {
-    return false;
-  }
-
-  if (!Succeeded(swapChain.As(&swap_chain_))) {
-    return false;
-  }
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+  frame_index_ = swap_chain_.GetCurrentBackBufferIndex();
 
   if (!Succeeded(device_->CreateCommandAllocator(
           D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -68,27 +53,6 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
     return false;
   }
   command_allocator_->SetName(L"CommandAllocator");
-
-  viewport_ = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width),
-                               static_cast<float>(height));
-  scissor_rect_ = CD3DX12_RECT(0, 0, width, height);
-
-  if (!heap_manager_.Init(*this)) {
-    return false;
-  }
-
-  for (UINT i = 0; i < FRAME_COUNT; i++) {
-    if (!Succeeded(
-            swap_chain_->GetBuffer(i, IID_PPV_ARGS(&render_targets_[i])))) {
-      return false;
-    }
-    device_->CreateRenderTargetView(
-        render_targets_[i].Get(), nullptr,
-        heap_manager_.GetRtvHeap()->GetHandle().cpu_handle_);
-    std::wstringstream wss;
-    wss << L"RenderTarget [" << i << L"]";
-    render_targets_[i]->SetName(wss.str().c_str());
-  }
 
   ComPtr<ID3D12GraphicsCommandList> command_list;
   if (!Succeeded(device_->CreateCommandList(
@@ -171,7 +135,7 @@ bool DirectXDevice::Present() {
       .GetCommandList()
       ->ResourceBarrier(
           1, &CD3DX12_RESOURCE_BARRIER::Transition(
-                 render_targets_[frame_index_].Get(),
+                 swap_chain_.render_targets_[frame_index_].Get(),
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT,
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET));
   if (!Succeeded(
@@ -194,7 +158,7 @@ bool DirectXDevice::Present() {
       .GetCommandList()
       ->ResourceBarrier(
           1, &CD3DX12_RESOURCE_BARRIER::Transition(
-                 render_targets_[frame_index_].Get(),
+                 swap_chain_.render_targets_[frame_index_].Get(),
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET,
                  D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT));
   if (!Succeeded(
@@ -205,8 +169,10 @@ bool DirectXDevice::Present() {
   command_queue_->ExecuteCommandLists(
       static_cast<u32>(current_resource_->batch_submit_.size()),
       current_resource_->batch_submit_.data());
-  swap_chain_->Present(1, 0);
-  frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+  if (!swap_chain_.Present()) {
+    return false;
+  }
+  frame_index_ = swap_chain_.GetCurrentBackBufferIndex();
 
   current_resource_->fence_value_ = fence_value_;
   command_queue_->Signal(fence_.Get(), fence_value_);
@@ -237,30 +203,13 @@ void DirectXDevice::Destroy() {
   }
 }
 
-bool FrameResource::Init(ID3D12Device* device) { return true; }
-
-bool FrameResource::AddCommandList(ID3D12Device* device) {
-  auto& cmd_list = command_lists_.emplace_back();
-  if (!cmd_list.Init(device, nullptr)) {
-    return false;
-  }
-
-  cmd_list.Close();
-  batch_submit_.emplace_back(cmd_list.GetCommandList());
-  return true;
+descriptor_heap::DescriptorHandle DirectXDevice::GetRTVHandle() {
+  return heap_manager_.GetRtvHeap()->GetHandle();
 }
 
-bool FrameResource::Ready() {
-  for (auto&& cmd_list : command_lists_) {
-    if (!cmd_list.Reset()) {
-      return false;
-    }
-  }
-
-  return true;
+descriptor_heap::DescriptorHandle DirectXDevice::GetDSVHandle() {
+  return heap_manager_.GetDsvHeap()->GetHandle();
 }
-
-void FrameResource::Destroy() {}
 
 }  // namespace device
 }  // namespace directx

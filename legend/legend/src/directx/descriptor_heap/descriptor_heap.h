@@ -22,7 +22,7 @@ class DescriptorHeap {
   /**
    * @brief ディスクリプタヒープディスク
    */
-  struct Desc final {
+  struct Desc {
     //! ヒープ名
     std::wstring name;
     //! 使用するディスクリプタヒープの数

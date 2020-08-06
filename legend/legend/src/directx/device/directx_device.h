@@ -9,25 +9,12 @@
 #include "src/directx/device/command_list.h"
 #include "src/directx/device/directx_accessor.h"
 #include "src/directx/device/dxgi_adapter.h"
+#include "src/directx/device/swap_chain.h"
+#include "src/directx/frame_resource.h"
 
 namespace legend {
 namespace directx {
 namespace device {
-
-class FrameResource {
- public:
-  std::vector<ID3D12CommandList*> batch_submit_;
-
-  std::vector<directx::device::CommandList> command_lists_;
-
-  u64 fence_value_;
-
-  FrameResource() {}
-  bool Init(ID3D12Device* device);
-  bool AddCommandList(ID3D12Device* device);
-  bool Ready();
-  void Destroy();
-};
 
 class DirectXDevice : public IDirectXAccessor {
  public:
@@ -51,18 +38,16 @@ class DirectXDevice : public IDirectXAccessor {
 
  public:
   ID3D12Device* GetDevice() const override { return device_.Get(); }
+  descriptor_heap::DescriptorHandle GetRTVHandle() override;
+  descriptor_heap::DescriptorHandle GetDSVHandle() override;
 
  private:
   directx::device::DXGIAdapter adapter_;
 
   ComPtr<ID3D12Device> device_;
-  ComPtr<IDXGISwapChain3> swap_chain_;
   ComPtr<ID3D12CommandAllocator> command_allocator_;
   ComPtr<ID3D12CommandQueue> command_queue_;
-
-  D3D12_VIEWPORT viewport_;
-  D3D12_RECT scissor_rect_;
-  ComPtr<ID3D12Resource> render_targets_[FRAME_COUNT];
+  SwapChain swap_chain_;
 
   u32 frame_index_;
 

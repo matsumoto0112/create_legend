@@ -35,6 +35,7 @@ static const std::unordered_map<DescriptorHeapFlag, D3D12_DESCRIPTOR_HEAP_FLAGS>
 namespace legend {
 namespace directx {
 namespace descriptor_heap {
+
 using directx_helper::Failed;
 
 // コンストラクタ
@@ -61,10 +62,12 @@ bool DescriptorHeap::Init(device::IDirectXAccessor& accessor,
   heap_desc.Type = heap_type;
   heap_desc.Flags = heap_flags;
   heap_desc.NodeMask = 0;
+
   if (Failed(accessor.GetDevice()->CreateDescriptorHeap(
           &heap_desc, IID_PPV_ARGS(&heap_)))) {
     return false;
   }
+
   heap_->SetName(desc.name.c_str());
 
   this->heap_size_ =

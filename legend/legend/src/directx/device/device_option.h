@@ -1,11 +1,17 @@
 #ifndef LEGEND_DIRECTX_DEVICE_DEVICE_OPTION_H_
 #define LEGEND_DIRECTX_DEVICE_DEVICE_OPTION_H_
 
+/**
+ * @file device_option.h
+ * @brief
+ */
+
 #include "src/util/enum_util.h"
 
 namespace legend {
 namespace directx {
 namespace device {
+
 /**
  * @brief デバイスのオプション
  */
@@ -16,6 +22,7 @@ enum class DeviceOptionFlags {
 };
 
 namespace defines {
+
 //要求する最小機能レベル
 //今回のプロジェクトで要求する最小レベル
 constexpr D3D_FEATURE_LEVEL MIN_FEATURE_LEVEL =

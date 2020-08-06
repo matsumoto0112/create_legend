@@ -6,6 +6,9 @@ namespace legend {
 namespace directx {
 namespace device {
 
+using directx_helper::Failed;
+using directx_helper::Succeeded;
+
 //コンストラクタ
 DXGIAdapter::DXGIAdapter() {}
 
@@ -33,11 +36,9 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
 
     ComPtr<IDXGIInfoQueue> dxgi_info_queue;
     if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgi_info_queue)))) {
-      if (HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG,
-                                          IID_PPV_ARGS(&factory_));
-          FAILED(hr)) {
-        MY_LOG(L"CreateDXGIFactory2 failed.\n Reason : %s",
-               directx_helper::HrToWString(hr));
+      if (Failed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG,
+                                    IID_PPV_ARGS(&factory_)))) {
+        return false;
       }
       debug_dxgi = true;
       dxgi_info_queue->SetBreakOnSeverity(
@@ -55,9 +56,8 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
 #endif
   //デバッグ用DXGIを作成していなければここで作成する
   if (!debug_dxgi) {
-    if (HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory_)); FAILED(hr)) {
-      MY_LOG(L"CreateDXGIFactory1 failed.\nReason : %s",
-             directx_helper::HrToWString(hr));
+    if (Failed(CreateDXGIFactory1(IID_PPV_ARGS(&factory_)))) {
+      return false;
     }
   }
 
@@ -79,7 +79,7 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
 
   if (util::enum_util::IsBitpop(this->options_ &
                                 DeviceOptionFlags::USE_WARP_DEVICE)) {
-    if (FAILED(factory_->EnumWarpAdapter(IID_PPV_ARGS(&adapter_)))) {
+    if (Failed(factory_->EnumWarpAdapter(IID_PPV_ARGS(&adapter_)))) {
       return false;
     }
   } else {
@@ -105,7 +105,7 @@ bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
     }
 
     DXGI_ADAPTER_DESC1 desc;
-    if (FAILED(test_adapter->GetDesc1(&desc))) {
+    if (Failed(test_adapter->GetDesc1(&desc))) {
       return false;
     }
     if (desc.Flags & DXGI_ADAPTER_FLAG::DXGI_ADAPTER_FLAG_SOFTWARE) {
@@ -113,7 +113,7 @@ bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
     }
 
     //アダプターでデバイスを作成できればそのアダプターが有効である証となる
-    if (SUCCEEDED(D3D12CreateDevice(test_adapter.Get(),
+    if (Succeeded(D3D12CreateDevice(test_adapter.Get(),
                                     defines::MIN_FEATURE_LEVEL,
                                     __uuidof(ID3D12Device), nullptr))) {
       this->adapter_id_ = adapter_id;
@@ -126,7 +126,7 @@ bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
   //ラップデバイスの設定
 #if !defined(NDEBUG)
   if (!test_adapter && adapter_id_override == UINT_MAX) {
-    if (FAILED(factory_->EnumWarpAdapter(IID_PPV_ARGS(&test_adapter)))) {
+    if (Failed(factory_->EnumWarpAdapter(IID_PPV_ARGS(&test_adapter)))) {
       MY_LOG(
           L"WARP12 not available. Enable the 'Graphics Tools' optional "
           L"feature");

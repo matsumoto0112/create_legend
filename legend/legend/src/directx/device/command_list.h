@@ -25,10 +25,9 @@ class CommandList {
   /**
    * @brief 初期化
    * @param device デバイス
-   * @param command_queue コマンドキュー
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(ID3D12Device* device, ID3D12CommandQueue* command_queue);
+  bool Init(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type);
   /**
    * @brief コマンドリストを閉じる
    * @return 閉じることに成功したらtrueを返す

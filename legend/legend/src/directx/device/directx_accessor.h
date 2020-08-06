@@ -5,6 +5,8 @@
  * @file directx_accessor.h
  */
 
+#include "src/directx/descriptor_heap/descriptor_handle.h"
+
 namespace legend {
 namespace directx {
 namespace device {
@@ -22,6 +24,9 @@ class IDirectXAccessor {
    * @brief デバイスの取得
    */
   virtual ID3D12Device* GetDevice() const = 0;
+
+  virtual descriptor_heap::DescriptorHandle GetRTVHandle() = 0;
+  virtual descriptor_heap::DescriptorHandle GetDSVHandle() = 0;
 };
 
 }  // namespace device

@@ -8,7 +8,6 @@
  * 割り当てるたびにインデックスをインクリメントしていくので、ヒープの割り当てインデックスを外部で管理する必要のないヒープ
  */
 
-#include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
 
 namespace legend {

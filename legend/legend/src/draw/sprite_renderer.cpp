@@ -106,7 +106,7 @@ void SpriteRenderer::DrawItems() {
   for (auto&& sp : draw_items_) {
     if (!sp) continue;
     sp->SetToCommandList();
-    device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+  //  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
     index_buffer_.Draw(device);
   }
   draw_items_.clear();

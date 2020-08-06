@@ -17,66 +17,20 @@ namespace device {
  */
 class Application : public window::IWindowProcedureEventCallback {
  public:
-  /**
-   * @brief コンストラクタ
-   */
   Application();
-  /**
-   * @brief デストラクタ
-   */
   ~Application();
-  /**
-   * @brief アプリケーションで動かすウィンドウを登録する
-   */
-  void RegisterWindow(std::shared_ptr<window::Window> window);
-  /**
-   * @brief アプリケーションの実行
-   */
   void Run();
 
- public:
-  /**
-   * @brief ウィンドウ破壊時に呼ばれる
-   */
-  void Destroy() override;
-  /**
-   * @brief 描画イベント時に呼ばれる
-   */
-  void Paint() override;
-
-  /**
-   * @brief アプリケーション初期化
-   */
   virtual bool Init();
-  /**
-   * @brief アプリケーション終了処理
-   */
-  virtual void Finalize();
-  /**
-   * @brief 更新処理
-   */
   virtual bool Update();
-  /**
-   * @brief 描画処理
-   */
-  virtual bool Draw();
+  virtual bool Render();
+  virtual void Destroy();
+
+  virtual bool BeginFrame();
+  virtual bool EndFrame();
+  virtual void Paint() override;
 
  private:
-  /**
-   * @brief フレーム開始時イベント
-   */
-  bool FrameBegin();
-  /**
-   * @brief フレーム終了時イベント
-   */
-  bool FrameEnd();
-
- protected:
-  //! メインウィンドウ
-  std::shared_ptr<window::Window> main_window_;
-  //! Imgui管理
-  util::ImguiManager imgui_manager_;
-
  public:
   //コピー禁止、ムーブ禁止
   Application(const Application&) = delete;

@@ -116,11 +116,11 @@ void SpriteRenderTest::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
   game::GameDevice::GetInstance()->GetResource().GetTexture().Unload(
       util::resource::id::Texture::TEX);
-  game::GameDevice::GetInstance()
-      ->GetDevice()
-      .GetHeapManager()
-      .ResetLocalHeapAllocateCounter(directx::descriptor_heap::heap_parameter::
-                                         LocalHeapID::SPRITE_RENDER_TEST);
+  //game::GameDevice::GetInstance()
+  //    ->GetDevice()
+  //    .GetHeapManager()
+  //    .ResetLocalHeapAllocateCounter(directx::descriptor_heap::heap_parameter::
+  //                                       LocalHeapID::SPRITE_RENDER_TEST);
 }
 
 }  // namespace debugscene

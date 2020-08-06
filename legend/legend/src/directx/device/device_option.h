@@ -11,7 +11,8 @@ namespace device {
  */
 enum class DeviceOptionFlags {
   NONE,
-  TEARING,  //! テアリングサポート
+  TEARING,          //! テアリングサポート
+  USE_WARP_DEVICE,  //! WARPデバイスを使用する
 };
 
 namespace defines {

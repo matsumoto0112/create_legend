@@ -27,7 +27,7 @@ void ParticleEmitter::Render(directx::buffer::IndexBuffer& draw_index_buffer) {
   for (auto& cb : constant_buffers_) {
     cb.UpdateStaging();
     cb.SetToHeap(device);
-    device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+    //device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
     draw_index_buffer.Draw(device);
   }

@@ -35,6 +35,8 @@ class CommandList {
    */
   bool Close();
 
+  bool Reset();
+
  public:
   /**
    * @brief コマンドリストを取得する

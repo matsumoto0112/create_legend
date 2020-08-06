@@ -1,49 +1,36 @@
 #include "src/game/application.h"
 
-#include <Windows.h>
-
-#include <iostream>
-#include <locale>
-#include <string>
-#include <typeinfo>
-
 #include "src/game/game_device.h"
-#include "src/util/debug.h"
-#include "src/window/window_procedure.h"
 
 namespace legend {
 namespace device {
 
 //コンストラクタ
-Application::Application() : main_window_(nullptr) {}
+Application::Application() {}
 
 Application::~Application() {}
-
-//ウィンドウの登録
-void Application::RegisterWindow(std::shared_ptr<window::Window> window) {
-  main_window_ = window;
-}
 
 //アプリケーション実行
 void Application::Run() {
   setlocale(LC_ALL, "");
-  util::debug::Assertion(main_window_ != nullptr,
-                         L"ウィンドウが登録されていません。");
 
-  main_window_->SetWindowProc(window::procedure::WindowProcdures);
-  main_window_->SetWindowProcCallBack(this);
-  main_window_->Create();
+  // util::debug::Assertion(main_window_ != nullptr,
+  //                       L"ウィンドウが登録されていません。");
+
+  // main_window_->SetWindowProc(window::procedure::WindowProcdures);
+  // main_window_->SetWindowProcCallBack(this);
+  // main_window_->Create();
 
   if (!this->Init()) {
-    Finalize();
+    Destroy();
     return;
   }
 
-  if (!game::GameDevice::GetInstance()->GetDevice().InitAfter()) {
-    Finalize();
-    return;
-  }
-  main_window_->Show(SW_SHOW);
+  // if (!game::GameDevice::GetInstance()->GetDevice().InitAfter()) {
+  //  Finalize();
+  //  return;
+  //}
+  // main_window_->Show(SW_SHOW);
 
   tagMSG msg = {};
   while (msg.message != WM_QUIT) {
@@ -52,19 +39,34 @@ void Application::Run() {
       DispatchMessageW(&msg);
     }
   }
-  Finalize();
+  Destroy();
 }
 
 //破壊時
 void Application::Destroy() {}
 
+bool Application::BeginFrame() {
+  if (!game::GameDevice::GetInstance()->BeginFrame()) {
+    return false;
+  }
+  return true;
+}
+
+bool Application::EndFrame() {
+  if (!game::GameDevice::GetInstance()->EndFrame()) {
+    return false;
+  }
+  return true;
+}
+
 //描画
 void Application::Paint() {
   auto SendCloseMessage = [&]() {
-    SendMessage(main_window_->GetHWND(), WM_CLOSE, 0, 0);
+    HWND hwnd = game::GameDevice::GetInstance()->GetWindow().GetHWND();
+    SendMessageW(hwnd, WM_CLOSE, 0, 0);
   };
 
-  if (!this->FrameBegin()) {
+  if (!this->BeginFrame()) {
     SendCloseMessage();
     return;
   }
@@ -74,12 +76,12 @@ void Application::Paint() {
     return;
   }
 
-  if (!this->Draw()) {
+  if (!this->Render()) {
     SendCloseMessage();
     return;
   }
 
-  if (!this->FrameEnd()) {
+  if (!this->EndFrame()) {
     SendCloseMessage();
     return;
   }
@@ -87,47 +89,50 @@ void Application::Paint() {
 
 //初期化
 bool Application::Init() {
-  if (!game::GameDevice::GetInstance()->Init(main_window_)) {
+  if (!game::GameDevice::GetInstance()->Init(this)) {
     return false;
   }
-  if (!imgui_manager_.Init(
-          main_window_->GetHWND(),
-          game::GameDevice::GetInstance()->GetDevice().GetDevice(),
-          DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
-    return false;
-  }
+  // if (!imgui_manager_.Init(
+  //        main_window_->GetHWND(),
+  //        game::GameDevice::GetInstance()->GetDevice().GetDevice(),
+  //        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
+  //  return false;
+  //}
 
   return true;
 }
 
-//終了処理
-void Application::Finalize() {}
+////終了処理
+// void Application::Finalize() { game::GameDevice::GetInstance()->Finalize(); }
 
 //更新
 bool Application::Update() {
-  game::GameDevice::GetInstance()->Update();
-  if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-          input::input_code::End)) {
-    return false;
-  }
+  // game::GameDevice::GetInstance()->Update();
+  // if (game::GameDevice::GetInstance()->GetInput().GetCommand(
+  //        input::input_code::End)) {
+  //  return false;
+  //}
   return true;
 }
 
-//描画
-bool Application::Draw() { return true; }
+bool Application::Render() { return true; }
 
-bool Application::FrameBegin() {
-  if (!game::GameDevice::GetInstance()->GetDevice().Prepare()) return false;
-  imgui_manager_.BeginFrame();
-  return true;
-}
+////描画
+// bool Application::Draw() { return true; }
 
-bool Application::FrameEnd() {
-  imgui_manager_.EndFrame(
-      game::GameDevice::GetInstance()->GetDevice().GetCommandList());
-  if (!game::GameDevice::GetInstance()->GetDevice().Present()) return false;
-  return true;
-}
+// bool Application::FrameBegin() {
+//  // if (!game::GameDevice::GetInstance()->GetDevice().Prepare()) return
+//  false;
+//  // imgui_manager_.BeginFrame();
+//  return true;
+//}
+//
+// bool Application::FrameEnd() {
+//  // imgui_manager_.EndFrame(
+//  //    game::GameDevice::GetInstance()->GetDevice().GetCommandList());
+//  // if (!game::GameDevice::GetInstance()->GetDevice().Present()) return
+//  false; return true;
+//}
 
 }  // namespace device
 }  // namespace legend

@@ -28,30 +28,30 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    directx::DirectX12Device& device =
-        game::GameDevice::GetInstance()->GetDevice();
-    //使用するローカルヒープを追加する
-    directx::descriptor_heap::HeapManager& heap_manager =
-        device.GetHeapManager();
+    //directx::DirectX12Device& device =
+    //    game::GameDevice::GetInstance()->GetDevice();
+    ////使用するローカルヒープを追加する
+    //directx::descriptor_heap::HeapManager& heap_manager =
+    //    device.GetHeapManager();
 
-    for (auto&& id : USE_HEAP_IDS) {
-      if (!heap_manager.AddLocalHeap(device, id)) {
-        return false;
-      }
-    }
+    //for (auto&& id : USE_HEAP_IDS) {
+    //  if (!heap_manager.AddLocalHeap(device, id)) {
+    //    return false;
+    //  }
+    //}
 
-    const math::IntVector2 screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    if (!device.GetRenderResourceManager().CreateDepthStencil(
-            device, directx::render_target::DepthStencilTargetID::Depth,
-            DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, screen_size.x, screen_size.y,
-            1.0f, 0, L"DepthStencil")) {
-      return false;
-    }
+    //const math::IntVector2 screen_size =
+    //    game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    //if (!device.GetRenderResourceManager().CreateDepthStencil(
+    //        device, directx::render_target::DepthStencilTargetID::Depth,
+    //        DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, screen_size.x, screen_size.y,
+    //        1.0f, 0, L"DepthStencil")) {
+    //  return false;
+    //}
 
-    if (!scene_manager_.Initialize()) {
-      return false;
-    }
+    //if (!scene_manager_.Initialize()) {
+    //  return false;
+    //}
 
     return true;
   }
@@ -59,57 +59,57 @@ class MyApp final : public device::Application {
     if (!Application::Update()) {
       return false;
     }
-    if (!scene_manager_.Update()) {
-      return false;
-    }
+    //if (!scene_manager_.Update()) {
+    //  return false;
+    //}
 
-    if (ImGui::Begin("Scenes")) {
-      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
-                                          scene_manager_.GetCurrentSceneType()))
-                      .c_str());
+    //if (ImGui::Begin("Scenes")) {
+    //  ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
+    //                                      scene_manager_.GetCurrentSceneType()))
+    //                  .c_str());
 
-      constexpr scenes::SceneType SCENES[] = {
-          scenes::SceneType::TITLE,
-          scenes::SceneType::GAMEOVER,
-          scenes::SceneType::MODEL_VIEW,
-          scenes::SceneType::SOUND_TEST,
-          scenes::SceneType::PHYSICS_TEST,
-          scenes::SceneType::SPRITE_TEST,
-          scenes::SceneType::MULTI_RENDER_TARGET_TEST,
-          scenes::SceneType::ENEMY_MOVE_VIEWER,
-          scenes::SceneType::PLAYER_MOVE_VIEWER,
-          scenes::SceneType::MAIN_SCENE_1,
-          scenes::SceneType::STAGE_GENERATE_TEST,
-      };
-      for (auto&& scene : SCENES) {
-        if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
-          scene_manager_.ChangeScene(scene);
-        }
-      }
-    }
-    ImGui::End();
-    if (ImGui::Begin("Debug")) {
-      ImGui::Text(
-          "TotalTime: %f",
-          game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
-      ImGui::Text("FrameRate: %.1f",
-                  game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
-    }
-    ImGui::End();
+    //  constexpr scenes::SceneType SCENES[] = {
+    //      scenes::SceneType::TITLE,
+    //      scenes::SceneType::GAMEOVER,
+    //      scenes::SceneType::MODEL_VIEW,
+    //      scenes::SceneType::SOUND_TEST,
+    //      scenes::SceneType::PHYSICS_TEST,
+    //      scenes::SceneType::SPRITE_TEST,
+    //      scenes::SceneType::MULTI_RENDER_TARGET_TEST,
+    //      scenes::SceneType::ENEMY_MOVE_VIEWER,
+    //      scenes::SceneType::PLAYER_MOVE_VIEWER,
+    //      scenes::SceneType::MAIN_SCENE_1,
+    //      scenes::SceneType::STAGE_GENERATE_TEST,
+    //  };
+    //  for (auto&& scene : SCENES) {
+    //    if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
+    //      scene_manager_.ChangeScene(scene);
+    //    }
+    //  }
+    //}
+    //ImGui::End();
+    //if (ImGui::Begin("Debug")) {
+    //  ImGui::Text(
+    //      "TotalTime: %f",
+    //      game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
+    //  ImGui::Text("FrameRate: %.1f",
+    //              game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
+    //}
+    //ImGui::End();
     return true;
   }
 
-  bool Draw() override {
-    if (!Application::Draw()) {
+  bool Render() override {
+    if (!Application::Render()) {
       return false;
     }
 
-    scene_manager_.Draw();
+    //scene_manager_.Draw();
     return true;
   }
-  void Finalize() override {
-    Application::Finalize();
-    scene_manager_.Finalize();
+  void Destroy() override {
+    Application::Destroy();
+    //scene_manager_.Finalize();
   }
 
  private:
@@ -120,14 +120,7 @@ class MyApp final : public device::Application {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-  auto window = std::make_unique<legend::window::Window>();
-  window->SetScreenSize(legend::math::IntVector2(1280, 720));
-  window->SetWindowPosition(legend::math::IntVector2(0, 0));
-  window->SetWindowTitle(L"Legend");
-
   legend::MyApp app;
-  app.RegisterWindow(std::move(window));
-
   app.Run();
 
   return 0;

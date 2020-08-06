@@ -119,7 +119,7 @@ void Model::Draw() {
       game::GameDevice::GetInstance()->GetDevice();
 
   albedo_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
   vertex_buffer_.SetGraphicsCommandList(device);
   index_buffer_.SetGraphicsCommandList(device);

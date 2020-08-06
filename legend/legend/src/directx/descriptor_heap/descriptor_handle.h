@@ -14,7 +14,7 @@ namespace descriptor_heap {
  * @brief ディスクリプタハンドル構造体
  * @details 二つのハンドル CPU・GPUをまとめた構造体
  */
-struct DescriptorHandle {
+struct DescriptorHandle final {
   //! CPUハンドル
   D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle_;
   //! GPUハンドル

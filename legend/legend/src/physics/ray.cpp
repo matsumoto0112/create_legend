@@ -144,7 +144,7 @@ void Ray::Draw(directx::DirectX12Device& device) {
   pipeline_state_.SetGraphicsCommandList(device);
   world_constant_buffer_.SetToHeap(device);
   transform_constant_buffer_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
   vertex_buffer_.SetGraphicsCommandList(device);
   index_buffer_.SetGraphicsCommandList(device);
   index_buffer_.Draw(device);

@@ -33,9 +33,9 @@ constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
  * @brief HRESULT‚ğ•¶š—ñ‚É•ÏŠ·‚·‚é
  */
 inline std::wstring HrToWString(HRESULT hr) {
-  wchar_t buf[64] = {};
-  swprintf_s(buf, 64, L"HRESULT of 0x%08X", static_cast<u32>(hr));
-  return std::wstring(buf);
+  char buf[64] = {};
+  sprintf_s(buf, 64, "HRESULT of 0x%08X", static_cast<u32>(hr));
+  return util::string_util::String_2_WString(buf);
 }
 
 /**
@@ -46,7 +46,19 @@ inline bool Succeeded(HRESULT hr) {
   if (SUCCEEDED(hr)) {
     return true;
   }
-  MY_LOG(L"HRESULT of %s", HrToWString(hr));
+  MY_LOG(L"HRESULT of %s", HrToWString(hr).c_str());
+  return false;
+}
+
+/**
+ * @brief HRESULTŒ^‚ª¬Œ÷‚µ‚Ä‚¢‚é‚©”»’è‚µA¸”s‚µ‚Ä‚¢‚½‚çƒƒO‚ğo—Í‚·‚é‚·‚é
+ * @return ¸”s‚µ‚Ä‚¢‚½‚çtrue‚ğ•Ô‚·
+ */
+inline bool Failed(HRESULT hr) {
+  if (FAILED(hr)) {
+    MY_LOG(L"HRESULT of %s", HrToWString(hr).c_str());
+    return true;
+  }
   return false;
 }
 

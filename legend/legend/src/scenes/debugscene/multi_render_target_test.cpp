@@ -307,19 +307,19 @@ void MultiRenderTargetTest::Draw() {
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   post_process_local_cb_.SetToHeap(device);
-  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
 
   post_process_vertex_buffer_.SetGraphicsCommandList(device);
   post_process_index_buffer_.SetGraphicsCommandList(device);
   post_process_index_buffer_.Draw(device);
 }
 void MultiRenderTargetTest::Finalize() {
-  game::GameDevice::GetInstance()
-      ->GetDevice()
-      .GetHeapManager()
-      .ResetLocalHeapAllocateCounter(
-          directx::descriptor_heap::heap_parameter::LocalHeapID::
-              MULTI_RENDER_TARGET_TEST_SCENE);
+  //game::GameDevice::GetInstance()
+  //    ->GetDevice()
+  //    .GetHeapManager()
+  //    .ResetLocalHeapAllocateCounter(
+  //        directx::descriptor_heap::heap_parameter::LocalHeapID::
+  //            MULTI_RENDER_TARGET_TEST_SCENE);
 
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();

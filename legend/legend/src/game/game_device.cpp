@@ -42,12 +42,21 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
 
   //ƒŠƒ\[ƒXŠÇ—
   // ImGui
+  if (!imgui_manager_.Init(window_->GetHWND(), device_->GetDevice(),
+                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3, true)) {
+    return false;
+  }
 
   return true;
 }
 
 bool GameDevice::BeginFrame() {
   fps_counter_.Update();
+
+  imgui_manager_.BeginFrame();
+  input_manager_->Update();
+  audio_manager->Update();
+
   if (!device_->Prepare()) {
     return false;
   }
@@ -56,6 +65,9 @@ bool GameDevice::BeginFrame() {
 }
 
 bool GameDevice::EndFrame() {
+  imgui_manager_.EndFrame(
+      device_->current_resource_->command_lists_[device_->MID_COMMAND_LIST_ID]
+          .GetCommandList());
   if (!device_->Present()) {
     return false;
   }

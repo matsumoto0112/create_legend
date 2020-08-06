@@ -43,7 +43,8 @@ class DirectXDevice : public IDirectXAccessor {
   descriptor_heap::DescriptorHandle GetDSVHandle() override;
   void RegisterHandle(u32 register_num, shader::ResourceType type,
                       descriptor_heap::DescriptorHandle handle);
-
+  descriptor_heap::DescriptorHandle GetLocalHandle(
+      descriptor_heap::heap_parameter::LocalHeapID heap_id);
   // private:
   directx::device::DXGIAdapter adapter_;
 

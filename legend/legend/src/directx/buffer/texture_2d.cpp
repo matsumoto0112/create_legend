@@ -45,46 +45,23 @@ bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
   return true;
 }
 
-////初期化
-// bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
-//                             u32 register_num,
-//                             const std::filesystem::path& filename,
-//                             const descriptor_heap::DescriptorHandle& handle)
-//                             {
-//  //テクスチャを読み込む
-//  const util::loader::texture_loader::LoadedTextureData data =
-//      util::loader::texture_loader::Load(filename);
-//
-//  //バッファを初期化する
-//  const Desc desc{register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-//                  data.width,   data.height,
-//                  handle,       data.name};
-//  if (!InitTexBuffer(accessor, desc)) {
-//    return false;
-//  }
-//
-//  //テクスチャのピクセルデータを書き込む
-//  WriteResource(accessor, data.pixels.data());
-//  return true;
-//}
-//
-////初期化と書きこみ
-// bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
-//                             u32 register_num, DXGI_FORMAT format,
-//                             const std::vector<u8>& data,
-//                             const descriptor_heap::DescriptorHandle& handle,
-//                             const std::wstring& name) {
-//  const util::loader::texture_loader::LoadedTextureData loaded_data =
-//      util::loader::texture_loader::LoadFromMemory(data);
-//
-//  const Desc desc{register_num,       format, loaded_data.width,
-//                  loaded_data.height, handle, name};
-//  if (!Init(accessor, desc)) {
-//    return false;
-//  }
-//  WriteResource(accessor, loaded_data.pixels.data());
-//  return true;
-//}
+bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
+                             device::CommandList& command_list,
+                             u32 register_num, DXGI_FORMAT format,
+                             const std::vector<u8>& data,
+                             const descriptor_heap::DescriptorHandle& handle,
+                             const std::wstring& name) {
+  const util::loader::texture_loader::LoadedTextureData loaded_data =
+      util::loader::texture_loader::LoadFromMemory(data);
+
+  const Desc desc{register_num,       format, loaded_data.width,
+                  loaded_data.height, handle, name};
+  if (!Init(accessor, desc)) {
+    return false;
+  }
+  WriteResource(command_list, loaded_data.pixels.data());
+  return true;
+}
 
 void Texture2D::WriteResource(device::CommandList& command_list,
                               const void* data) {

@@ -1,5 +1,7 @@
 #include "src/game/application.h"
+#include "src/game/game_device.h"
 #include "src/scenes/scene_manager.h"
+
 // namespace {
 // using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
 // static const LocalHeapID USE_HEAP_IDS[] = {
@@ -82,15 +84,13 @@ class MyApp final : public device::Application {
     //    }
     //  }
     //}
-    // ImGui::End();
-    // if (ImGui::Begin("Debug")) {
-    //  ImGui::Text(
-    //      "TotalTime: %f",
-    //      game::GameDevice::GetInstance()->GetFPSCounter().GetTotalSeconds());
-    //  ImGui::Text("FrameRate: %.1f",
-    //              game::GameDevice::GetInstance()->GetFPSCounter().GetFPS());
-    //}
-    // ImGui::End();
+    //ImGui::End();
+    if (ImGui::Begin("Debug")) {
+      auto& fps = game::GameDevice::GetInstance()->GetFPSCounter();
+      ImGui::Text("TotalTime: %f", fps.GetTotalSeconds());
+      ImGui::Text("FrameRate: %.1f", fps.GetFPS());
+    }
+    ImGui::End();
     return true;
   }
 

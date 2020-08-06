@@ -63,6 +63,7 @@ class Resource {
   resource::Pipeline pipeline_;
   //! モデル管理
   resource::Model model_;
+  //! テクスチャ管理
   resource::Texture texture_;
 };
 

@@ -7,6 +7,8 @@
  */
 
 #include "src/directx/buffer/texture_2d.h"
+#include "src/directx/descriptor_heap/heap_parameter.h"
+#include "src/directx/device/command_list.h"
 #include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
@@ -52,8 +54,8 @@ class Texture
    * @param heap_id ローカルヒープのID
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(id::Texture key, const std::filesystem::path& filepath,
-            u32 register_num,
+  bool Load(directx::device::CommandList& command_list, id::Texture key,
+            const std::filesystem::path& filepath, u32 register_num,
             directx::descriptor_heap::heap_parameter::LocalHeapID heap_id);
 };
 

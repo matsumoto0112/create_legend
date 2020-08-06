@@ -67,20 +67,21 @@ class Texture2D {
                     device::CommandList& command_list, u32 register_num,
                     const std::filesystem::path& filename,
                     const descriptor_heap::DescriptorHandle& handle);
-  ///**
-  // * @brief テクスチャを書き込みつつ初期化する
-  // * @param accessor DirectX12デバイスアクセサ
-  // * @param register_num シェーダーのレジスター番号
-  // * @param format テクスチャのフォーマット
-  // * @param data テクスチャデータ
-  // * @param handle テクスチャハンドル
-  // * @param filename ファイル名
-  // * @return 初期化に成功したらtrueを返す
-  // */
-  // bool InitAndWrite(device::IDirectXAccessor& accessor, u32 register_num,
-  //                  DXGI_FORMAT format, const std::vector<u8>& data,
-  //                  const descriptor_heap::DescriptorHandle& handle,
-  //                  const std::wstring& name);
+  /**
+   * @brief テクスチャを書き込みつつ初期化する
+   * @param accessor DirectX12デバイスアクセサ
+   * @param register_num シェーダーのレジスター番号
+   * @param format テクスチャのフォーマット
+   * @param data テクスチャデータ
+   * @param handle テクスチャハンドル
+   * @param filename ファイル名
+   * @return 初期化に成功したらtrueを返す
+   */
+  bool InitAndWrite(device::IDirectXAccessor& accessor,
+                    device::CommandList& command_list, u32 register_num,
+                    DXGI_FORMAT format, const std::vector<u8>& data,
+                    const descriptor_heap::DescriptorHandle& handle,
+                    const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
    */

@@ -36,7 +36,9 @@ class ResourceManager {
    * @param filepath ファイルへのパス
    * @return 読み込みに成功したらtrueを返す
    */
-  virtual bool Load(TKey key, const std::filesystem::path& filepath) = 0;
+  virtual bool Load(TKey key, const std::filesystem::path& filepath) {
+    return false;
+  }
   /**
    * @brief リソースを登録する
    * @param key リソースを特定するキー

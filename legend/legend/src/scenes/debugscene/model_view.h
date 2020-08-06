@@ -7,13 +7,14 @@
  パラメータとしてモデルの座標、回転、スケーリング、カメラの座標、回転、fovが操作できる
  */
 
+#include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/index_buffer.h"
-#include "src/directx/buffer/texture_2d.h"
-#include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
+#include "src/draw/model.h"
 #include "src/scenes/scene.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace scenes {
@@ -52,16 +53,15 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
+  draw::Model model_;
+  camera::PerspectiveCamera camera_;
   directx::shader::RootSignature root_signature_;
   directx::shader::GraphicsPipelineState pipeline_;
-  directx::buffer::Texture2D albedo_;
 
-  struct CB_S {
-    float mul;
-  };
-  directx::buffer::ConstantBuffer<CB_S> cb_;
+  util::Transform transform_;
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
+      transform_cb_;
 };
 
 }  // namespace debugscene

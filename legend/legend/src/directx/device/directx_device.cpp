@@ -147,10 +147,6 @@ bool DirectXDevice::Prepare() {
   depth_stencil_.Transition(
       current_resource_->command_lists_[PRE_COMMAND_LIST_ID],
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
-  if (!Succeeded(
-          current_resource_->command_lists_[PRE_COMMAND_LIST_ID].Close())) {
-    return false;
-  }
 
   //•`‰æˆ—‘z’è
   swap_chain_.render_targets_[frame_index_].ClearRenderTarget(
@@ -178,6 +174,11 @@ bool DirectXDevice::Prepare() {
 }
 
 bool DirectXDevice::Present() {
+  if (!Succeeded(
+          current_resource_->command_lists_[PRE_COMMAND_LIST_ID].Close())) {
+    return false;
+  }
+
   if (!Succeeded(
           current_resource_->command_lists_[MID_COMMAND_LIST_ID].Close())) {
     return false;
@@ -244,6 +245,11 @@ descriptor_heap::DescriptorHandle DirectXDevice::GetDSVHandle() {
 void DirectXDevice::RegisterHandle(u32 register_num, shader::ResourceType type,
                                    descriptor_heap::DescriptorHandle handle) {
   heap_manager_.RegisterHandle(register_num, type, handle);
+}
+
+descriptor_heap::DescriptorHandle DirectXDevice::GetLocalHandle(
+    descriptor_heap::heap_parameter::LocalHeapID heap_id) {
+  return heap_manager_.GetLocalHeap(heap_id);
 }
 
 }  // namespace device

@@ -15,16 +15,15 @@ Model::Model() {}
 //デストラクタ
 Model::~Model() {}
 
-//初期化
-bool Model::Init(const std::filesystem::path& path) {
+bool Model::Init(const std::filesystem::path& path,
+                 directx::device::CommandList& command_list) {
   util::loader::GLBLoader loader;
   if (!loader.Load(path)) {
     MY_LOG(L"%sの読み込みに失敗しました", path.c_str());
+    return false;
   }
-
   this->model_name_ = path.filename().replace_extension();
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   const u32 vertex_num = loader.GetVertexNum();
   std::vector<directx::Vertex> vertices(vertex_num);
@@ -74,13 +73,17 @@ bool Model::Init(const std::filesystem::path& path) {
     }
   }();
 
-  vertex_buffer_.WriteBufferResource(vertices);
+  vertex_buffer_.WriteBufferResource(vertices.data());
 
   //インデックス配列
   const std::vector<u16> indices = loader.GetIndex();
-  if (!index_buffer_.InitAndWrite(device, indices,
-                                  directx::PrimitiveTopology::TriangleList,
-                                  model_name_ + L"_IndexBuffer")) {
+  const u32 index_num = static_cast<u32>(indices.size());
+  if (!index_buffer_.Init(device, index_num, sizeof(u16),
+                          directx::PrimitiveTopology::TriangleList,
+                          model_name_ + L"_IndexBuffer")) {
+    return false;
+  }
+  if (!index_buffer_.WriteBufferResource(indices.data())) {
     return false;
   }
 
@@ -88,42 +91,39 @@ bool Model::Init(const std::filesystem::path& path) {
   const std::vector<u8> albedo = loader.GetAlbedo();
   if (albedo.size() != 0) {
     if (!albedo_.InitAndWrite(
-            device, directx::shader::TextureRegisterID::Albedo,
+            device, command_list, directx::shader::TextureRegisterID::ALBEDO,
             DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, albedo,
-            device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                          LocalHeapID::GLOBAL_ID),
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
             model_name_ + L"_Albedo")) {
       return false;
     }
   } else {
     const std::vector<u8> tex_white = {0xff, 0xff, 0xff, 0xff};
     const directx::buffer::Texture2D::Desc desc{
-        directx::shader::TextureRegisterID::Albedo,
+        directx::shader::TextureRegisterID::ALBEDO,
         DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
         1,
         1,
-        device.GetLocalHeapHandle(
+        device.GetLocalHandle(
             directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
         model_name_ + L"_Albedo"};
     if (!albedo_.Init(device, desc)) {
       return false;
     }
-    albedo_.WriteResource(device, tex_white.data());
+    albedo_.WriteResource(command_list, tex_white.data());
   }
   return true;
 }
 
-//描画する
-void Model::Draw() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
+void Model::Draw(directx::device::CommandList& command_list) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   albedo_.SetToHeap(device);
-//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+  device.heap_manager_.UpdateGlobalHeap(device.GetDevice(), command_list);
 
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.Draw(command_list);
 }
 
 }  // namespace draw

@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
+    <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -139,6 +141,12 @@
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
     <ClCompile Include="src\util\random.cpp" />
+    <ClCompile Include="src\util\resource\model.cpp" />
+    <ClCompile Include="src\util\resource\pipeline.cpp" />
+    <ClCompile Include="src\util\resource\pixel_shader.cpp" />
+    <ClCompile Include="src\util\resource\resource.cpp" />
+    <ClCompile Include="src\util\resource\texture.cpp" />
+    <ClCompile Include="src\util\resource\vertex_shader.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\util\transform.cpp" />
     <ClCompile Include="src\window\window.cpp" />
@@ -146,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\directx\buffer\index_buffer.h" />
@@ -161,7 +170,7 @@
     </None>
     <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
     <ClInclude Include="src\directx\device\command_list.h" />
-    <ClInclude Include="src\directx\constant_buffer_structure.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer_structure.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
@@ -181,6 +190,7 @@
     <ClInclude Include="src\directx\shader\shader_base.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
+    <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -233,6 +243,14 @@
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\random.h" />
+    <ClInclude Include="src\util\resource\model.h" />
+    <ClInclude Include="src\util\resource\pipeline.h" />
+    <ClInclude Include="src\util\resource\pixel_shader.h" />
+    <ClInclude Include="src\util\resource\resource.h" />
+    <ClInclude Include="src\util\resource\resource_id.h" />
+    <ClInclude Include="src\util\resource\resource_manager.h" />
+    <ClInclude Include="src\util\resource\texture.h" />
+    <ClInclude Include="src\util\resource\vertex_shader.h" />
     <ClInclude Include="src\util\singleton.h" />
     <ClInclude Include="src\util\fps_counter.h" />
     <ClInclude Include="src\util\stl_extend.h" />

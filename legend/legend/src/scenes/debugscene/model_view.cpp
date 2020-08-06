@@ -2,6 +2,7 @@
 
 #include "src/directx/directx_helper.h"
 #include "src/directx/shader/pixel_shader.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/shader/vertex_shader.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
@@ -23,44 +24,17 @@ bool ModelView::Initialize() {
   }
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-  {
-    struct Vert {
-      math::Vector3 position;
-      math::Vector2 uv;
-    };
-    const std::vector<Vert> vertices{
-        {math::Vector3{0.0f, 1.0f, 0.0f}, math::Vector2{0.5f, 0.0f}},
-        {math::Vector3{1.0f, 0.0f, 0.0f}, math::Vector2{1.0f, 0.5f}},
-        {math::Vector3{-1.0f, 0.0f, 0.0f}, math::Vector2{0.0f, 0.5f}},
-    };
-    const u32 vertex_num = static_cast<u32>(vertices.size());
-    const u32 vertex_size = sizeof(Vert);
-    if (!vertex_buffer_.Init(device, vertex_size, vertex_num,
-                             L"VertexBuffer")) {
-      return false;
-    }
-    if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
-      return false;
-    }
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device.GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
   }
 
-  {
-    const std::vector<u32> indices = {
-        0,
-        1,
-        2,
-    };
-    const u32 index_num = static_cast<u32>(indices.size());
-    const u32 index_size = sizeof(u32);
-    if (!index_buffer_.Init(device, index_num, index_size,
-                            directx::PrimitiveTopology::TriangleList,
-                            L"IndexBuffer")) {
-      return true;
-    }
-    if (!index_buffer_.WriteBufferResource(indices.data())) {
-      return false;
-    }
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / "1000cmObject.glb";
+  if (!model_.Init(model_path, command_list)) {
+    return false;
   }
 
   if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
@@ -70,11 +44,11 @@ bool ModelView::Initialize() {
   {
     const std::filesystem::path shader = util::Path::GetInstance()->shader();
     directx::shader::VertexShader vs;
-    if (!vs.Init(device, shader / "default" / "default_vs.cso")) {
+    if (!vs.Init(device, shader / "modelview" / "model_view_vs.cso")) {
       return false;
     }
     directx::shader::PixelShader ps;
-    if (!ps.Init(device, shader / "default" / "default_ps.cso")) {
+    if (!ps.Init(device, shader / "modelview" / "model_view_ps.cso")) {
       return false;
     }
 
@@ -100,28 +74,25 @@ bool ModelView::Initialize() {
     }
   }
 
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          device.GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+  if (!transform_cb_.Init(
+          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Transform")) {
     return false;
   }
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+
   {
-    if (!albedo_.InitAndWrite(device, command_list, 0,
-                              util::Path::GetInstance()->texture() / "tex.png",
-                              device.heap_manager_.GetLocalHeap(
-                                  directx::descriptor_heap::heap_parameter::
-                                      LocalHeapID::GLOBAL_ID))) {
+    const math::Vector3 pos = math::Vector3(0.0f, 10.0f, -10.0f);
+    const math::Quaternion rot =
+        math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
+    const float fov = 50.0f * math::util::DEG_2_RAD;
+    const float aspect = 1280.0f / 720.0f;
+    if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect)) {
       return false;
     }
-  }
-
-  if (!cb_.Init(
-          device, 0,
-          device.heap_manager_.GetLocalHeap(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"ConstantBuffer")) {
-    return false;
   }
 
   if (!command_list.Close()) {
@@ -159,12 +130,6 @@ bool ModelView::Update() {
     return false;
   }
 
-  static float m = 0.0f;
-  m += 0.0001f;
-  if (m > 1.0f) m -= 1.0f;
-  cb_.GetStagingRef().mul = m;
-  cb_.UpdateStaging();
-
   return true;
 }
 
@@ -177,12 +142,9 @@ void ModelView::Draw() {
   root_signature_.SetGraphicsCommandList(command_list);
   pipeline_.SetGraphicsCommandList(command_list);
   device.heap_manager_.SetGraphicsCommandList(command_list);
-  albedo_.SetToHeap(device);
-  cb_.SetToHeap(device);
-  device.heap_manager_.UpdateGlobalHeap(device.GetDevice(), command_list);
-  vertex_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.Draw(command_list);
+  camera_.RenderStart();
+  transform_cb_.SetToHeap(device);
+  model_.Draw(command_list);
 }
 
 void ModelView::Finalize() {}

@@ -10,6 +10,7 @@
 #include "src/directx/device/directx_device.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
+#include "src/util/imgui_manager.h"
 #include "src/util/random.h"
 #include "src/util/singleton.h"
 #include "src/window/window.h"
@@ -75,6 +76,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   std::unique_ptr<audio::AudioManager> audio_manager;
   //! 乱数デバイス
   std::unique_ptr<util::Random> random_;
+  util::ImguiManager imgui_manager_;
 };
 
 }  // namespace game

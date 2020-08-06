@@ -11,11 +11,12 @@ Model::Model() {}
 Model::~Model() {}
 
 //“Ç‚İ‚İ
-bool Model::Load(ModelID key, const std::filesystem::path& filepath) {
+bool Model::Load(ModelID key, const std::filesystem::path& filepath,
+                 directx::device::CommandList& command_list) {
   MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚İ‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
 
   auto model = std::make_shared<draw::Model>();
-  if (!model->Init(filepath)) {
+  if (!model->Init(filepath, command_list)) {
     MY_LOG(L"ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½B");
     return false;
   }

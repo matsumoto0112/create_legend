@@ -45,7 +45,8 @@ class Model : public ResourceManager<ModelID, std::shared_ptr<draw::Model>> {
    * @param filepath ファイルへのパス
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(ModelID key, const std::filesystem::path& filepath) override;
+  bool Load(ModelID key, const std::filesystem::path& filepath,
+            directx::device::CommandList& command_list);
 };
 
 }  // namespace resource

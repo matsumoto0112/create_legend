@@ -158,7 +158,7 @@
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
-    <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
+    <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -295,7 +295,7 @@
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\scenes\title.h" />
-    <ClInclude Include="src\stage_generate\StageGenerator.h" />
+    <ClInclude Include="src\stage_generate\stage_generator.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\system\physics_field.h" />
     <ClInclude Include="src\system\turn_system.h" />

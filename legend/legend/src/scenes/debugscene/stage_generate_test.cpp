@@ -13,7 +13,16 @@ StageGenerateTest::~StageGenerateTest() {
   game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
 }
 bool StageGenerateTest::Initialize() { return true; }
-bool StageGenerateTest::Update() { return true; }
+bool StageGenerateTest::Update() {
+  if (ImGui::Begin("StageGenerateTest")) {
+    if (ImGui::Button("Load aaaa")) {
+      stage_generator_->LoadStageData(util::Path::GetInstance()->exe() /
+                                      L"assets" / L"stage" / L"aaaa.bin");
+    }
+  }
+  ImGui::End();
+  return true;
+}
 void StageGenerateTest::Draw() {}
 void StageGenerateTest::Finalize() {}
 }  // namespace debugscene

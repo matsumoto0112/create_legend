@@ -1,4 +1,4 @@
-#include "StageGenerator.h"
+#include "stage_generator.h"
 
 #include "src\\stdafx.h"
 

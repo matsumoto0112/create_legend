@@ -50,24 +50,27 @@ bool PhysicsField::Update(math::Vector3 player_vel, bool player_move,
     }
   }
 
-  //プレイヤーと各エネミーの衝突判定を調べる
-  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-    if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_obb_,
-                                                             enemy_obbs_[i])) {
-      MY_LOG(L"プレイヤー消しゴムとエネミー消しゴムが衝突しました");
-    }
-  }
-
-  //各敵同士の衝突判定を調べる
-  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-    for (i32 j = i; j < enemy_obbs_.size() - 1; j++) {
+  if (enemy_obbs_.size() >= 1) {
+    //プレイヤーと各エネミーの衝突判定を調べる
+    for (i32 i = 0; i < enemy_obbs_.size(); i++) {
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-              enemy_obbs_[i], enemy_obbs_[j])) {
-        MY_LOG(L"敵消しゴム同士で衝突しました");
+              player_obb_, enemy_obbs_[i])) {
+        MY_LOG(L"プレイヤー消しゴムとエネミー消しゴムが衝突しました");
       }
     }
-  }
 
+    //if (enemy_obbs_.size() >= 2) {
+    //  //各敵同士の衝突判定を調べる
+    //  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
+    //    for (i32 j = i + 1; j < enemy_obbs_.size(); j++) {
+    //      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+    //              enemy_obbs_[i], enemy_obbs_[j])) {
+    //        MY_LOG(L"敵消しゴム同士で衝突しました");
+    //      }
+    //    }
+    //  }
+    //}
+  }
   UpdateGravity(gravity_);
   return true;
 }

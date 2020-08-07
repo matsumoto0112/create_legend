@@ -59,8 +59,8 @@ bool PhysicsField::Update(math::Vector3 player_vel, bool player_move,
   }
 
   //Še“G“¯m‚ÌÕ“Ë”»’è‚ğ’²‚×‚é
-  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
-    for (i32 j = i; j < enemy_obbs_.size(); j++) {
+  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+    for (i32 j = i; j < enemy_obbs_.size() - 1; j++) {
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], enemy_obbs_[j])) {
         MY_LOG(L"“GÁ‚µƒSƒ€“¯m‚ÅÕ“Ë‚µ‚Ü‚µ‚½");

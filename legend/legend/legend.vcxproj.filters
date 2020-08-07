@@ -53,7 +53,6 @@
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
-    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
@@ -70,16 +69,29 @@
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
-    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
     <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\player\player.cpp" />
-    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\object\desk.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
+    <ClCompile Include="src\system\physics_field.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
+    <ClCompile Include="src\system\turn_system.cpp" />
+    <ClCompile Include="src\enemy\enemy.cpp" />
+    <ClCompile Include="src\enemy\enemy_manager.cpp" />
+    <ClCompile Include="src\physics\capsule.cpp" />
+    <ClCompile Include="src\physics\collision.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\sphere.cpp" />
+    <ClCompile Include="src\scenes\scene_names.cpp" />
+    <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
+    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\physics\collider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -163,7 +175,6 @@
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\task.h" />
-    <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />
     <ClInclude Include="src\directx\shader\root_parameter_index.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
@@ -188,17 +199,29 @@
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
-    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\draw\texture_char.h" />
     <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\player\player.h" />
-    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\object\desk.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\plane.h" />
+    <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\system\turn_system.h" />
+    <ClInclude Include="src\enemy\enemy.h" />
+    <ClInclude Include="src\enemy\enemy_manager.h" />
+    <ClInclude Include="src\physics\capsule.h" />
+    <ClInclude Include="src\physics\collision.h" />
+    <ClInclude Include="src\physics\ray.h" />
+    <ClInclude Include="src\physics\sphere.h" />
+    <ClInclude Include="src\scenes\scene_names.h" />
+    <ClInclude Include="src\stage_generate\StageGenerator.h" />
+    <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
+    <ClInclude Include="src\physics\collider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -189,10 +189,10 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //Á‚µƒSƒ€‚ÆŠ÷‚Ì•\–Ê‚Æ‚Ì‹——£‚ðŽZo
   float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
 
-  if (math::util::Abs(obb.GetPosition().x) >
+  if (math::util::Abs(obb.GetPosition().x + obb.GetLengthByScale(0)) >
           math::util::Abs(desk_obb.GetPosition().x +
                           desk_obb.GetLengthByScale(0)) ||
-      math::util::Abs(obb.GetPosition().z) >
+      math::util::Abs(obb.GetPosition().z + obb.GetLengthByScale(2)) >
           math::util::Abs(desk_obb.GetPosition().z +
                           desk_obb.GetLengthByScale(2))) {
     MY_LOG(L"Š÷‚ÌŠO‚É‚¢‚Ü‚·");

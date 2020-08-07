@@ -128,6 +128,7 @@ class GamePad {
  private:
   HWND hwnd_;        //!< ウィンドウハンドル
   i32 pad_count_ = 0;  //!< ゲームパッド数
+  float dead_zone_ = 0.0f;
 
   std::vector<JOYINFOEX> current_joys_;  //!< 現在のゲームパッドの状態
   std::vector<u64> previous_joys_;  //!< 前回のゲームパッドのボタン情報取得

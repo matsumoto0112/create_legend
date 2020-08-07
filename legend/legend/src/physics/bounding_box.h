@@ -1,29 +1,17 @@
 #ifndef LEGEND_PHYSICS_BOUNDING_BOX_H_
 #define LEGEND_PHYSICS_BOUNDING_BOX_H_
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/constant_buffer_structure.h"
-#include "src/directx/buffer/index_buffer.h"
-#include "src/directx/buffer/vertex_buffer.h"
-#include "src/util/transform.h"
+#include "src/physics/collider.h"
 
 namespace legend {
 namespace physics {
-
-struct Transform {
-  math::Matrix4x4 world;
-};
-struct WorldContext {
-  math::Matrix4x4 view;
-  math::Matrix4x4 projection;
-};
 
 /**
  * @class BoundingBox
  * @brief 直方体のクラス
  */
 
-class BoundingBox {
+class BoundingBox : public Collider {
  public:
   /**
    * @brief コンストラクタ
@@ -45,16 +33,11 @@ class BoundingBox {
    * @brief 初期化
    * @param デバイス
    */
-  bool Initialize();
+  bool Init() override;
   /**
    * @brief 更新
    */
-  void Update();
-  /**
-   * @brief 描画
-   * @param デバイス
-   */
-  void Draw();
+  void Update() override;
   /*
    * @brief 方向ベクトルを取得
    * @param 軸番号
@@ -146,8 +129,6 @@ class BoundingBox {
   void SetOnGround(bool is_ground);
 
  private:
-  //! トランスフォーム
-  util::Transform transform_;
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
   //!各軸方向の長さ(半径)
@@ -163,12 +144,6 @@ class BoundingBox {
   bool is_trigger_;
   //! 接地判定
   bool is_on_ground_;
-
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_constant_buffer_;
 };
 
 }  // namespace physics

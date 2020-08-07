@@ -107,6 +107,8 @@
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
     <ClCompile Include="src\draw\texture_string.cpp" />
+    <ClCompile Include="src\enemy\enemy.cpp" />
+    <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -133,17 +135,26 @@
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\object\desk.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
+    <ClCompile Include="src\physics\capsule.cpp" />
+    <ClCompile Include="src\physics\collider.cpp" />
+    <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
+    <ClCompile Include="src\scenes\scene_names.cpp" />
+    <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\system\physics_field.cpp" />
+    <ClCompile Include="src\system\turn_system.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
@@ -208,6 +219,8 @@
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\draw\texture_char.h" />
     <ClInclude Include="src\draw\texture_string.h" />
+    <ClInclude Include="src\enemy\enemy.h" />
+    <ClInclude Include="src\enemy\enemy_manager.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -247,7 +260,12 @@
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\object\desk.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
+    <ClInclude Include="src\physics\capsule.h" />
+    <ClInclude Include="src\physics\collider.h" />
+    <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
+    <ClInclude Include="src\physics\ray.h" />
+    <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\player\player.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
@@ -255,8 +273,12 @@
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
+    <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\task.h" />
+    <ClInclude Include="src\stage_generate\StageGenerator.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="src\util\debug.h" />

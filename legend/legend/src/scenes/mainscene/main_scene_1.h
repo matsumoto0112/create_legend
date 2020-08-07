@@ -5,8 +5,8 @@
 #include "src/object/desk.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
-#include "src/system/turn_system.h"
 #include "src/system/physics_field.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
@@ -42,15 +42,20 @@ class MainScene1 : public Scene {
    * @brief 終了
    */
   void Finalize() override;
+  /**
+   * @brief ターン別の更新処理
+   */
+  bool UpdateTurn();
 
  private:
   camera::PerspectiveCamera camera_;
-  //system::Turn turn_;
+  system::Turn turn_;
+  system::TurnSystem current_turn_;
   system::PhysicsField physics_field_;
-  ////! プレイヤー
-  //player::Player player_;
-  ////! 机
-  //object::Desk desk_;
+  //! プレイヤー
+  player::Player player_;
+  //! 机
+  object::Desk desk_;
 };
 
 }  // namespace mainscene

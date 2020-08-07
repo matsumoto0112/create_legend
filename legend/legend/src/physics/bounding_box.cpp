@@ -10,7 +10,7 @@ namespace physics {
 
 //コンストラクタ
 BoundingBox::BoundingBox()
-    : transform_(),
+    : Collider(util::Transform(), L"BoundingBox"),
       directions_(3),
       lengthes_(3),
       is_trigger_(false),
@@ -28,15 +28,11 @@ BoundingBox::BoundingBox()
 
 BoundingBox::BoundingBox(math::Vector3 position, math::Quaternion rotation,
                          math::Vector3 scale)
-    : transform_(),
+    : Collider(util::Transform(position, rotation, scale), L"BoundingBox"),
       directions_(3),
       lengthes_(3),
       is_trigger_(false),
       is_on_ground_(true) {
-  SetPosition(position);
-  SetRotation(rotation);
-  SetScale(scale);
-
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
   directions_[2] = math::Vector3::kForwardVector;
@@ -49,7 +45,7 @@ BoundingBox::BoundingBox(math::Vector3 position, math::Quaternion rotation,
 BoundingBox::~BoundingBox() {}
 
 //初期化
-bool BoundingBox::Initialize() {
+bool BoundingBox::Init() {
   //中心座標と各軸の長さから頂点座標を設定
   float left = GetPosition().x - GetLength(0);
   float right = GetPosition().x + GetLength(0);
@@ -69,14 +65,7 @@ bool BoundingBox::Initialize() {
       {{right, up, front}}     // 7
   };
 
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  //頂点バッファ作成
-  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
-                           static_cast<u32>(vertices.size()),
-                           L"BoundingBox_VertexBuffer")) {
-    return false;
-  }
-  if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
+  if (!InitVertexBuffer(vertices)) {
     return false;
   }
 
@@ -85,28 +74,13 @@ bool BoundingBox::Initialize() {
                                  4, 5, 5, 6, 6, 7,
 
                                  5, 1, 6, 2};
-  const u32 index_num = static_cast<u32>(indices.size());
-  //インデックスバッファ作成
-  if (!index_buffer_.Init(device, sizeof(u16), index_num,
-                          directx::PrimitiveTopology::LINE_LIST,
-                          L"Bounding_IndexBuffer")) {
+  if (!InitIndexBuffer(indices)) {
     return false;
   }
 
-  if (!transform_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
-                                    LocalHeapID::PHYSICS_TEST),
-          L"Transform ConstantBuffer")) {
+  if (!InitTransformConstantBuffer()) {
     return false;
   }
-
-  math::Vector3 position = math::Vector3::kZeroVector;
-  math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector;
-  transform_constant_buffer_.GetStagingRef().world =
-      transform_.CreateWorldMatrix();
-  transform_constant_buffer_.UpdateStaging();
 
   return true;
 }
@@ -119,22 +93,6 @@ void BoundingBox::Update() {
   transform_constant_buffer_.GetStagingRef().world =
       transform_.CreateWorldMatrix();
   transform_constant_buffer_.UpdateStaging();
-}
-
-//描画
-void BoundingBox::Draw() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-  resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::OBJECT_WIREFRAME)
-      ->SetGraphicsCommandList(command_list);
-
-  transform_constant_buffer_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
-  vertex_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.Draw(command_list);
 }
 
 //方向ベクトルを取得

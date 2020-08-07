@@ -55,7 +55,6 @@ class ModelView : public Scene {
  private:
   draw::Model model_;
   camera::PerspectiveCamera camera_;
-  directx::shader::RootSignature root_signature_;
   directx::shader::GraphicsPipelineState pipeline_;
 
   std::vector<util::Transform> transforms_;

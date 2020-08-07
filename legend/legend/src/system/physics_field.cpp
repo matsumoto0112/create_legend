@@ -6,116 +6,180 @@ namespace legend {
 namespace system {
 
 //コンストラクタ
-PhysicsField::PhysicsField() : turn_(Turn::PLAYER_TURN), gravity_(-9.8f) {}
+PhysicsField::PhysicsField() : gravity_(-9.8f) {}
 
 //デストラクタ
 PhysicsField::~PhysicsField() {}
 
-//プレイヤーの初期化
-bool PhysicsField::PlayerInit(player::Player::InitializeParameter parameter) {
-  if (!player_.Init(parameter)) {
-    return false;
-  }
+bool PhysicsField::Init() {
+  is_player_move_ = false;
+  player_velocity_ = math::Vector3::kZeroVector;
+  desk_obbs_.clear();
+  enemy_obbs_.clear();
 
-  return true;
-}
-
-//エネミーの初期化
-// bool PhysicsField::EnemYyInit(エネミー::InitializeParameter parameter) {
-//  エネミー enemy;
-//  if (!enemy.Init(parameter)) {
-//    return false;
-//  }
-//
-//  AddEnemy(enemy);
-//  return true;
-//}
-
-//机の初期化
-bool PhysicsField::DeskInit(object::Desk::InitializeParameter parameter) {
-  object::Desk desk;
-  if (!desk.Init(parameter)) {
-    return false;
-  }
-
-  AddDesk(desk);
   return true;
 }
 
 //更新
-bool PhysicsField::Update() {
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  switch (turn_) {
-    case legend::system::Turn::PLAYER_TURN:
-      if (!player_.Update()) {
-        return false;
-      }
-      if (player_.GetMoveEnd()) {
-        turn_ = system::Turn::ENEMY_TURN;
-        player_.ResetMoveEnd();
-      }
-      MY_LOG(L"PLAYERTURN");
-      break;
-    case legend::system::Turn::ENEMY_TURN:
-      if (input.GetGamepad()->GetButtonDown(input::joy_code::X)) {
-        turn_ = system::Turn::PLAYER_TURN;
-      }
-      MY_LOG(L"ENEMYTURN");
-      break;
-    default:
-      break;
-  }
+bool PhysicsField::Update(math::Vector3 player_vel, bool player_move,
+                          float player_impulse, float player_power) {
+  update_time_ =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  if (!player_.GetCollisionRef().GetOnGround()) {
-    player_.UpdateGravity(gravity_);
-  }
+  if (player_move)
+    PlayerMove(player_vel, player_impulse, player_power);
+  else
+    is_player_move_ = false;
 
   //プレイヤーと各机との衝突判定を調べる
-  for (i32 i = 0; i < desks_.size(); i++) {
+  for (i32 i = 0; i < desk_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
-            player_.GetCollisionRef(), desks_[i].GetCollisionRef())) {
+            player_obb_, desk_obbs_[i])) {
       MY_LOG(L"プレイヤー消しゴムと机が衝突しました");
-      player_.SetPosition(player_.GetCollisionRef().GetPosition());
       break;
     }
   }
 
-  if (ImGui::Begin("Player")) {
-    math::Vector3 position = player_.GetPosition();
-    math::Vector3 velocity = player_.GetVelocity();
-    float impulse = player_.GetImpulse();
-    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
-    ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
-    ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
-
-    math::Vector3 rotation = math::Quaternion::ToEular(player_.GetRotation()) *
-                             math::util::RAD_2_DEG;
-    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
-    player_.SetRotation(
-        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
+  //各エネミーと各机の衝突判定を調べる
+  for (i32 i = 0; i < desk_obbs_.size(); i++) {
+    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+      if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
+              enemy_obbs_[j], desk_obbs_[i])) {
+        MY_LOG(L"エネミー消しゴムと机が衝突しました");
+      }
+    }
   }
-  ImGui::End();
 
+  if (enemy_obbs_.size() >= 1) {
+    //プレイヤーと各エネミーの衝突判定を調べる
+    for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+              player_obb_, enemy_obbs_[i])) {
+        MY_LOG(L"プレイヤー消しゴムとエネミー消しゴムが衝突しました");
+      }
+    }
+
+    //if (enemy_obbs_.size() >= 2) {
+    //  //各敵同士の衝突判定を調べる
+    //  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
+    //    for (i32 j = i + 1; j < enemy_obbs_.size(); j++) {
+    //      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+    //              enemy_obbs_[i], enemy_obbs_[j])) {
+    //        MY_LOG(L"敵消しゴム同士で衝突しました");
+    //      }
+    //    }
+    //  }
+    //}
+  }
+  UpdateGravity(gravity_);
   return true;
 }
 
-void PhysicsField::Draw() {
-  player_.Draw();
-  for (i32 i = 0; i < desks_.size(); i++) {
-    desks_[i].Draw();
-  }
-  // for (i32 i = 0; i < enemies_.size(); i++) {
-  //    enemies_[i].Draw();
-  //}
+//プレイヤーあたり判定の登録
+void PhysicsField::SetPlayer(physics::BoundingBox player_obb) {
+  player_obb_ = player_obb;
 }
 
-////エネミーの登録
-// void PhysicsField::AddEnemy(エネミー enemy)
-//{
-//    enemies_.push_back(enemy);
-//}
+//エネミーあたり判定の登録
+void PhysicsField::AddEnemy(physics::BoundingBox enemy_obb) {
+  enemy_obbs_.push_back(enemy_obb);
+}
 
-//机の登録
-void PhysicsField::AddDesk(object::Desk desk) { desks_.push_back(desk); }
+//机あたり判定の登録
+void PhysicsField::AddDesk(physics::BoundingBox desk_obb) {
+  desk_obbs_.push_back(desk_obb);
+}
+
+//絵ねミあたり判定の削除
+void PhysicsField::RemoveEnemy(i32 index_num) {
+  if (index_num < 0 || enemy_obbs_.size() <= 0 ||
+      enemy_obbs_.size() < index_num)
+    return;
+
+  enemy_obbs_.erase(enemy_obbs_.begin() + index_num);
+}
+
+//机あたり判定の削除
+void PhysicsField::RemoveDesk(i32 index_num) {
+  if (index_num < 0 || desk_obbs_.size() <= 0 || desk_obbs_.size() < index_num)
+    return;
+
+  desk_obbs_.erase(desk_obbs_.begin() + index_num);
+}
+
+//重力落下
+void PhysicsField::UpdateGravity(float gravity) {
+  math::Vector3 g;
+
+  //プレイヤーの重力落下処理
+  if (!player_obb_.GetOnGround()) {
+    g = player_velocity_ + math::Vector3(0, gravity, 0);
+    math::Vector3 player_pos = player_obb_.GetPosition() + g * update_time_;
+    player_obb_.SetPosition(player_pos);
+  }
+}
+
+//移動
+void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
+                              float player_power) {
+  if (!is_player_move_) {
+    player_velocity_ = vel;
+    is_player_move_ = true;
+  }
+
+  float length = math::util::Sqrt(player_velocity_.x * player_velocity_.x +
+                                  player_velocity_.z * player_velocity_.z);
+
+  //実際に動く距離
+  float x = player_velocity_.x / length;
+  float z = player_velocity_.z / length;
+
+  math::Vector3 v = math::Vector3(x, 0, z);
+  math::Vector3 velocity = player_obb_.GetPosition() +
+                           v * update_time_ * player_impulse * player_power;
+  player_obb_.SetPosition(velocity);
+
+  //減速計算
+  float deceleration_x_ = x / (length * length);
+  float deceleration_z_ = z / (length * length);
+
+  if (player_obb_.GetOnGround())
+    Deceleration(player_velocity_, 2, deceleration_x_, deceleration_z_);
+}
+
+//減衰
+void PhysicsField::Deceleration(math::Vector3& vel, float deceleration_rate,
+                                float deceleration_x, float deceleration_z) {
+  float x = deceleration_x * deceleration_rate * update_time_;
+  float z = deceleration_z * deceleration_rate * update_time_;
+
+  if ((x <= vel.x && vel.x <= 0) || (0 <= vel.x && vel.x <= x)) {
+    vel.x = 0;
+  } else {
+    vel.x -= x;
+  }
+  if ((z <= vel.z && vel.z <= 0) || (0 <= vel.z && vel.z <= z)) {
+    vel.z = 0;
+  } else {
+    vel.z -= z;
+  }
+}
+
+//プレイヤーあたり判定の取得
+physics::BoundingBox PhysicsField::GetPlayerOBB() const { return player_obb_; }
+
+//机あたり判定の取得
+physics::BoundingBox PhysicsField::GetDeskOBB(i32 index_num) const {
+  return desk_obbs_[index_num];
+}
+
+//エネミーあたり判定の取得
+physics::BoundingBox PhysicsField::GetEnemyOBB(i32 index_num) const {
+  return enemy_obbs_[index_num];
+}
+math::Vector3 PhysicsField::GetPlayerVelocity() const {
+  return player_velocity_;
+}
+bool PhysicsField::GetPlayerMove() const { return is_player_move_; }
 }  // namespace system
 }  // namespace legend

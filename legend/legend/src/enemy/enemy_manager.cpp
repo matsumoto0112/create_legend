@@ -13,58 +13,48 @@ bool EnemyManager::Initilaize() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   for (i32 i = 0; i < max; i++) {
     Add();
-    auto enemy = enemys_[enemys_.size() - 1].get();
-    auto x = game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-    auto z = game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-    math::Vector3 position(x, 0.0f, z);
-    enemy->SetPosition(position);
   }
   return true;
 }
 
 bool EnemyManager::Update() {
-	// “G’Ç‰Á
+  // “G’Ç‰Á
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
     Add();
-    auto enemy = enemys_[enemys_.size() - 1].get();
-    auto x = game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-    auto z = game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-    math::Vector3 position(x, 0.0f, z);
-    enemy->SetPosition(position);
-  } 
+  }
   // “Gíœ
-  else if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()
+  else if (game::GameDevice::GetInstance()
+               ->GetInput()
+               .GetKeyboard()
                ->GetKeyDown(input::key_code::D)) {
-    Destroy(
-        game::GameDevice::GetInstance()->GetRandom().Range(0, static_cast<i32>(enemys_.size())));
+    if (0 < enemys_.size()) {
+      Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
+          0, static_cast<i32>(enemys_.size())));
+    }
   }
 
   // “Gs“®
   if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-                 input::input_code::Pause)) {
+          input::input_code::Pause)) {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
       action_enemy_index_ = -1;
       move_timer_ = 0.0f;
-      for (auto&& enemy : enemys_) {
-        auto x =
-            game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-        auto z =
-            game::GameDevice::GetInstance()->GetRandom().Range(-5.0f, 5.0f);
-        math::Vector3 position(x, 0.0f, z);
-        enemy->SetPosition(position);
+      for (i32 index = 0; index < enemys_.size();index++) {
+        auto enemy = enemys_[index].get();
+        SetPosition(enemy);
         enemy->SetVelocity(math::Vector3::kZeroVector);
       }
     }
   }
   // “GÄŽn“®
   else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-          input::input_code::Decide)) {
-    if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
+               input::input_code::Decide)) {
+    if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
       action_enemy_index_ = 0;
       move_timer_ = 0.0f;
     }
-  } 
+  }
   // “Gs“®
   EnemyAction();
 
@@ -75,9 +65,8 @@ bool EnemyManager::Update() {
 }
 
 void EnemyManager::Draw() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
   for (i32 i = 0; i < enemys_.size(); i++) {
-    enemys_[i]->Draw(device);
+    enemys_[i]->Draw();
   }
 }
 
@@ -102,15 +91,27 @@ void EnemyManager::EnemyAction() {
 }
 
 void EnemyManager::Add() {
+  if (enemy_max_count_ <= enemys_.size()) {
+    return;
+  }
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
-  enemy->Initilaize(device, resource);
+
+  auto paramater = enemy::Enemy::InitializeParameter();
+  paramater.transform =
+      util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                      math::Vector3::kUnitVector);
+  paramater.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+  enemy->Init(paramater);
+
   enemys_.emplace_back(std::move(enemy));
+  SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
 void EnemyManager::Destroy(i32 index) {
-  if (index < 0 || enemys_.size() <= index) {
+  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
     return;
   }
 
@@ -118,6 +119,13 @@ void EnemyManager::Destroy(i32 index) {
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;
   }
+}
+
+void EnemyManager::SetPosition(Enemy* enemy) {
+  auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
+  auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
+  math::Vector3 position(x, 0.0f, z);
+  enemy->SetPosition(position);
 }
 
 }  // namespace enemy

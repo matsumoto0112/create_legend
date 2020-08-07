@@ -42,12 +42,8 @@ bool ModelView::Initialize() {
   }
 
   const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "1000cmObject.glb";
+      util::Path::GetInstance()->model() / "desk.glb";
   if (!model_.Init(model_path, command_list)) {
-    return false;
-  }
-
-  if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
     return false;
   }
 
@@ -73,7 +69,8 @@ bool ModelView::Initialize() {
     pso_desc.NumRenderTargets = 1;
     pso_desc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.pRootSignature =
+        device.GetDefaultRootSignature()->GetRootSignature();
     pso_desc.PS = ps.GetShaderBytecode();
     pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -146,12 +143,7 @@ void ModelView::Draw() {
   auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
       device.GetCurrentFrameResource()->GetCommandList();
-  // render_resource_manager.SetDepthStencilTargetID(
-  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY);
-  // render_resource_manager.ClearCurrentDepthStencil(command_list);
-  // render_resource_manager.SetRenderTargets(command_list);
 
-  root_signature_.SetGraphicsCommandList(command_list);
   pipeline_.SetGraphicsCommandList(command_list);
   device.GetHeapManager().SetGraphicsCommandList(command_list);
   camera_.RenderStart();

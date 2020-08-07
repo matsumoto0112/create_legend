@@ -161,7 +161,6 @@ bool PlayerMoveViewer::Update() {
   if (!player_.Update()) {
     return false;
   }
-  player_.UpdateGravity(-9.8f);
 
   if (ImGui::Begin("Camera")) {
     //ƒJƒƒ‰À•W
@@ -221,19 +220,16 @@ bool PlayerMoveViewer::Update() {
 void PlayerMoveViewer::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  device.GetRenderResourceManager().SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::NONE, true);
   device.GetHeapManager().SetGraphicsCommandList(command_list);
 
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      .Get(MODEL_VIEW_MAT)
       ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
-  player_.Draw();
+  // player_.Draw();
   desk_.Draw();
 }
 

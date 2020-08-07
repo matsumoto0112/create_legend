@@ -1,7 +1,11 @@
 #ifndef LEGEND_PHYSICS_SPHERE_H_
 #define LEGEND_PHYSICS_SPHERE_H_
 
-#include "src/physics/bounding_box.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
+#include "src/math/quaternion.h"
 
 namespace legend {
 namespace physics {
@@ -28,7 +32,7 @@ class Sphere {
   /**
    * @brief 初期化
    */
-  bool Initialize(directx::DirectX12Device& device);
+  bool Initialize();
   /**
    * @brief 更新
    */
@@ -36,7 +40,7 @@ class Sphere {
   /**
    * @brief デストラクタ
    */
-  void Draw(directx::DirectX12Device& device);
+  void Draw();
   /**
    * @brief 座標の取得
    */
@@ -89,10 +93,9 @@ class Sphere {
 
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
+      transform_constant_buffer_;
 };
 
 }  // namespace physics

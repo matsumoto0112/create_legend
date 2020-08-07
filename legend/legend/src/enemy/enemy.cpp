@@ -35,7 +35,21 @@ bool Enemy::Init(const InitializeParameter& parameter) {
                              parameter.bouding_box_length.y,
                              parameter.bouding_box_length.z);
 
+  //トランスフォームバッファを作成する
+  if (!transform_cb_.Init(
+          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                    LocalHeapID::ENEMY_MOVE_TEST),
+          L"Transform ConstantBuffer")) {
+    return false;
+  }
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+
   model_ = resource.GetModel().Get(util::resource::id::Model::ERASER);
+
+  move_end_ = false;
 
   return true;
 }
@@ -47,8 +61,9 @@ bool Enemy::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  if (is_move_ && velocity_ == math::Vector3::kZeroVector) move_end_ = true;
   is_move_ = (0.01f < velocity_.Magnitude());
-  Move();
+  // Move();
 
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   // transform_cb_.UpdateStaging();
@@ -106,13 +121,13 @@ void Enemy::ResetParameter() {
 //   float x = deceleration_x_ * deceleration_rate * update_time_;
 //   float z = deceleration_z_ * deceleration_rate * update_time_;
 //
-//   if ((x <= velocity_.x && velocity_.x <= 0) ||
+//  if ((x <= velocity_.x && velocity_.x <= 0) ||
 //      (0 <= velocity_.x && velocity_.x <= x)) {
 //    velocity_.x = 0;
 //  } else {
 //    velocity_.x -= x;
 //  }
-//   if ((z <= velocity_.z && velocity_.z <= 0) ||
+//  if ((z <= velocity_.z && velocity_.z <= 0) ||
 //      (0 <= velocity_.z && velocity_.z <= z)) {
 //    velocity_.z = 0;
 //  } else {
@@ -127,6 +142,14 @@ math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }
 math::Vector3 Enemy::GetVelocity() const { return velocity_; }
 
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
+
+float Enemy::GetPower() const { return power_; }
+
+bool Enemy::GetIsMove() const { return is_move_; }
+
+bool Enemy::GetMoveEnd() const { return move_end_; }
+
+void Enemy::ResetMoveEnd() { move_end_ = false; }
 
 }  // namespace enemy
 }  // namespace legend

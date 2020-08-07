@@ -112,6 +112,7 @@ bool DirectXDevice::Prepare() {
 
   default_root_signature_->SetGraphicsCommandList(
       current_resource_->GetCommandList());
+  heap_manager_->SetGraphicsCommandList(current_resource_->GetCommandList());
   return true;
 }
 

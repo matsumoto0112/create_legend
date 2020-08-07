@@ -78,6 +78,11 @@ class Enemy : public actor::Actor<physics::BoundingBox> {
    */
   math::Quaternion GetRotation() const;
 
+  float GetPower() const;
+  bool GetIsMove() const;
+  bool GetMoveEnd() const;
+  void ResetMoveEnd();
+
  private:
 
   //! ‘¬“x
@@ -95,6 +100,8 @@ class Enemy : public actor::Actor<physics::BoundingBox> {
 
   //! XVŠÔ
   float update_time_;
+
+  bool move_end_;
 };
 
 }  // namespace enemy

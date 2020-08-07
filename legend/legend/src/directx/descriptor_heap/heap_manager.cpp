@@ -192,6 +192,7 @@ void HeapManager::RemoveLocalHeap(heap_parameter::LocalHeapID heap_id) {
   }
 
   local_heaps_.erase(heap_id);
+  MY_LOG(L"%d", local_heaps_.size());
 }
 
 DescriptorHandle HeapManager::GetLocalHeap(

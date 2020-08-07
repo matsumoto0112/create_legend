@@ -50,7 +50,7 @@ bool Collider::InitIndexBuffer(const std::vector<u16>& indices) {
   const u32 index_num = static_cast<u32>(indices.size());
   //インデックスバッファ作成
   if (!index_buffer_.Init(device, sizeof(u16), index_num,
-                          directx::PrimitiveTopology::LINE_LIST,
+                          directx::PrimitiveTopology::TRIANGLE_LIST,
                           name_ + L"_IndexBuffer")) {
     return false;
   }

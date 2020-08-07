@@ -142,8 +142,10 @@
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\player\player.cpp" />
+    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
@@ -269,8 +271,10 @@
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\player\player.h" />
+    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\scene.h" />

@@ -53,9 +53,7 @@ class ModelView : public Scene {
   void Finalize() override;
 
  private:
-  draw::Model model_;
   camera::PerspectiveCamera camera_;
-  directx::shader::GraphicsPipelineState pipeline_;
 
   std::vector<util::Transform> transforms_;
   std::vector<directx::buffer::ConstantBuffer<

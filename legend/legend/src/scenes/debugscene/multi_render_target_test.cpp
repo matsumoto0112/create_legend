@@ -125,17 +125,6 @@ bool MultiRenderTargetTest::Initialize() {
       }
     }
 
-    //デプス・ステンシルが登録済みでなければ登録する
-    if (!device.GetRenderResourceManager().IsRegisteredDepthStencilTarget(
-            DepthStencilTarget_ID::DEPTH_ONLY)) {
-      const directx::render_target::DepthStencil::DepthStencilDesc dsv_desc = {
-          L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, w, h, 1.0f, 0};
-      if (!device.GetRenderResourceManager().AddDepthStencil(
-              DepthStencilTarget_ID::DEPTH_ONLY, device, dsv_desc)) {
-        return false;
-      }
-    }
-
     if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
       return false;
     }

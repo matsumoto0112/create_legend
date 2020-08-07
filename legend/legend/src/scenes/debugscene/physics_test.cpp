@@ -11,9 +11,7 @@ namespace debugscene {
 PhysicsTest::PhysicsTest(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //デストラクタ
-PhysicsTest::~PhysicsTest() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+PhysicsTest::~PhysicsTest() {}
 
 //初期化
 bool PhysicsTest::Initialize() {
@@ -21,12 +19,16 @@ bool PhysicsTest::Initialize() {
   obbs_[0].SetLength(2, 1, 2);
   // obbs_[1].SetLength(1, 2, 1);
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
 
   //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
   if (!resource.GetVertexShader().Load(
           util::resource::id::VertexShader::MODEL_VIEW,
           util::Path::GetInstance()->shader() / "modelview" /
@@ -39,31 +41,64 @@ bool PhysicsTest::Initialize() {
               "model_view_ps.cso")) {
     return false;
   }
+
+  //モデルデータを読み込む
+  const std::filesystem::path model_path =
+      util::Path::GetInstance()->model() / "desk.glb";
+  if (!resource.GetModel().Load(util::resource::id::Model::DESK, model_path,
+                                command_list)) {
+    return false;
+  }
+
+  D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
+  pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+  pso_desc.BlendState.AlphaToCoverageEnable = true;
+  pso_desc.BlendState.RenderTarget[0] =
+      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+  pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+  pso_desc.InputLayout = resource.GetVertexShader()
+                             .Get(util::resource::id::VertexShader::MODEL_VIEW)
+                             ->GetInputLayout();
+  pso_desc.NumRenderTargets = 1;
+  pso_desc.PrimitiveTopologyType =
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+  pso_desc.pRootSignature =
+      device.GetDefaultRootSignature()->GetRootSignature();
+  pso_desc.PS = resource.GetPixelShader()
+                    .Get(util::resource::id::PixelShader::MODEL_VIEW)
+                    ->GetShaderBytecode();
+  pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  pso_desc.SampleDesc.Count = 1;
+  pso_desc.SampleMask = UINT_MAX;
+  pso_desc.VS = resource.GetVertexShader()
+                    .Get(util::resource::id::VertexShader::MODEL_VIEW)
+                    ->GetShaderBytecode();
   auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  gps->Init(device);
-  gps->SetVertexShader(resource.GetVertexShader().Get(
-      util::resource::id::VertexShader::MODEL_VIEW));
-  gps->SetPixelShader(resource.GetPixelShader().Get(
-      util::resource::id::PixelShader::MODEL_VIEW));
-  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
-  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
-  gps->SetRootSignature(device.GetDefaultRootSignature());
-  gps->SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-  gps->CreatePipelineState(device);
+  if (!gps->Init(device, pso_desc)) {
+    return false;
+  }
   resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
                                   gps);
 
+  auto gps_wire_frame =
+      std::make_shared<directx::shader::GraphicsPipelineState>();
+  pso_desc.RasterizerState.FillMode =
+      D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+  if (!gps_wire_frame->Init(device, pso_desc)) {
+    return false;
+  }
+  resource.GetPipeline().Register(
+      util::resource::id::Pipeline::OBJECT_WIREFRAME, gps_wire_frame);
+
   for (i32 i = 0; i < obb_num_; i++) {
-    if (!obbs_[i].Initialize(device)) {
+    if (!obbs_[i].Init()) {
       return false;
     }
   }
 
-  if (!plane_.Initialize(device, resource)) {
+  if (!plane_.Initialize()) {
     return false;
   }
 
@@ -89,6 +124,9 @@ bool PhysicsTest::Initialize() {
     }
   }
 
+  command_list.Close();
+  device.ExecuteCommandList({command_list});
+  device.WaitExecute();
   return true;
 }
 
@@ -203,40 +241,37 @@ bool PhysicsTest::Update() {
 void PhysicsTest::Draw() {
   Scene::Draw();
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::Depth);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
-
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  device.GetRenderResourceManager().SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(device);
+      ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
   for (i32 i = 0; i < obb_num_; i++) {
-    obbs_[i].Draw(device);
+    obbs_[i].DebugDraw();
   }
 
-  plane_.Draw(device);
+  plane_.Draw();
   // sphere_.Draw(device);
   // ray_.Draw(device);
 }
 
 //終了
 void PhysicsTest::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
   resource.GetVertexShader().Unload(
       util::resource::id::VertexShader::MODEL_VIEW);
   resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
   resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::DESK);
+  resource.GetPipeline().Unload(util::resource::id::Pipeline::OBJECT_WIREFRAME);
+  resource.GetModel().Unload(util::resource::id::Model::DESK);
 }
 }  // namespace debugscene
 }  // namespace scenes

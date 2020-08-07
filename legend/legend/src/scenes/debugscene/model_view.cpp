@@ -36,60 +36,6 @@ bool ModelView::Initialize() {
     return false;
   }
 
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
-
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!model_.Init(model_path, command_list)) {
-    return false;
-  }
-
-  {
-    const std::filesystem::path shader = util::Path::GetInstance()->shader();
-    directx::shader::VertexShader vs;
-    if (!vs.Init(device, shader / "modelview" / "model_view_vs.cso")) {
-      return false;
-    }
-    directx::shader::PixelShader ps;
-    if (!ps.Init(device, shader / "modelview" / "model_view_ps.cso")) {
-      return false;
-    }
-
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
-    pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-    pso_desc.InputLayout = vs.GetInputLayout();
-    pso_desc.NumRenderTargets = 1;
-    pso_desc.PrimitiveTopologyType =
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    pso_desc.pRootSignature =
-        device.GetDefaultRootSignature()->GetRootSignature();
-    pso_desc.PS = ps.GetShaderBytecode();
-    pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-    pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-    pso_desc.SampleDesc.Count = 1;
-    pso_desc.SampleMask = UINT_MAX;
-    pso_desc.VS = vs.GetShaderBytecode();
-    if (!pipeline_.Init(device, pso_desc)) {
-      return false;
-    }
-  }
-
-  {
-    directx::render_target::DepthStencil::DepthStencilDesc desc = {
-        L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, 1280, 720, 1.0f, 0};
-    if (!device.GetRenderResourceManager().AddDepthStencil(
-            directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
-            desc)) {
-      return false;
-    }
-  }
-
   transform_cb_.resize(OBJ_NUM);
   transforms_.resize(OBJ_NUM);
   for (u32 i = 0; i < OBJ_NUM; i++) {
@@ -115,13 +61,6 @@ bool ModelView::Initialize() {
     }
   }
 
-  if (!command_list.Close()) {
-    return false;
-  }
-
-  device.ExecuteCommandList({command_list});
-  device.WaitExecute();
-
   return true;
 }
 
@@ -131,17 +70,13 @@ bool ModelView::Update() {
     return false;
   }
 
-  transforms_[0].SetRotation(transforms_[0].GetRotation() *
-                             math::Quaternion::FromEular(0.0f, 0.001f, 0.0f));
-  transform_cb_[0].GetStagingRef().world = transforms_[0].CreateWorldMatrix();
-  transform_cb_[0].UpdateStaging();
   return true;
 }
 
 //•`‰æ
 void ModelView::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
       device.GetCurrentFrameResource()->GetCommandList();
@@ -149,17 +84,25 @@ void ModelView::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  pipeline_.SetGraphicsCommandList(command_list);
-  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  resource.GetPipeline()
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
   for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
+    transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
+    transform_cb_[i].UpdateStaging();
     transform_cb_[i].SetToHeap(device);
-    model_.Draw(command_list);
+    resource.GetModel()
+        .Get(util::resource::id::Model::DESK)
+        ->Draw(command_list);
   }
 }
 
-void ModelView::Finalize() {}
+void ModelView::Finalize() {
+  game::GameDevice::GetInstance()->GetDevice().GetHeapManager().RemoveLocalHeap(
+      directx::descriptor_heap::heap_parameter::LocalHeapID::MODEL_VIEW_SCENE);
+}
 
 }  // namespace debugscene
 }  // namespace scenes

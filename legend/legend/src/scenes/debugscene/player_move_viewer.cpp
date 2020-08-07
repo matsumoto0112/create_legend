@@ -41,83 +41,6 @@ bool PlayerMoveViewer::Initialize() {
       device, directx::descriptor_heap::heap_parameter::LocalHeapID::
                   PLAYER_MOVE_VIEWER);
 
-  {
-    directx::render_target::DepthStencil::DepthStencilDesc desc = {
-        L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, 1280, 720, 1.0f, 0};
-    if (!device.GetRenderResourceManager().AddDepthStencil(
-            directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
-            desc)) {
-      return false;
-    }
-  }
-
-  //このシーンで使用するリソースを事前に読み込む
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          MODEL_VIEW_VS, util::Path::GetInstance()->shader() / "modelview" /
-                             "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          MODEL_VIEW_PS, util::Path::GetInstance()->shader() / "modelview" /
-                             "model_view_ps.cso")) {
-    return false;
-  }
-
-  //モデルデータを読み込む
-  const std::filesystem::path player_model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::id::Model::ERASER,
-                                player_model_path, command_list)) {
-    return false;
-  }
-  const std::filesystem::path desk_model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::id::Model::DESK,
-                                desk_model_path, command_list)) {
-    return false;
-  }
-
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
-  pso_desc.BlendState.RenderTarget[0] =
-      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
-  pso_desc.BlendState.AlphaToCoverageEnable = true;
-  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-  pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-  pso_desc.InputLayout =
-      resource.GetVertexShader().Get(MODEL_VIEW_VS)->GetInputLayout();
-  pso_desc.NumRenderTargets = 1;
-  pso_desc.PrimitiveTopologyType =
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-  pso_desc.pRootSignature =
-      device.GetDefaultRootSignature()->GetRootSignature();
-  pso_desc.PS =
-      resource.GetPixelShader().Get(MODEL_VIEW_PS)->GetShaderBytecode();
-  pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  pso_desc.SampleDesc.Count = 1;
-  pso_desc.SampleMask = UINT_MAX;
-  pso_desc.VS =
-      resource.GetVertexShader().Get(MODEL_VIEW_VS)->GetShaderBytecode();
-  if (!gps->Init(device, pso_desc)) {
-    return false;
-  }
-  if (!resource.GetPipeline().Register(MODEL_VIEW_MAT, gps)) {
-    return false;
-  }
-
-  auto pp = std::make_shared<directx::shader::GraphicsPipelineState>();
-  pso_desc.RasterizerState.FillMode =
-      D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-  if (!pp->Init(device, pso_desc)) {
-    return false;
-  }
-  if (!resource.GetPipeline().Register(
-          util::resource::id::Pipeline::OBJECT_WIREFRAME, pp)) {
-    return false;
-  }
-
   //プレイヤーの初期化
   {
     player::Player::InitializeParameter player_parameter;
@@ -249,13 +172,12 @@ void PlayerMoveViewer::Draw() {
 
 //終了
 void PlayerMoveViewer::Finalize() {
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(MODEL_VIEW_VS);
-  resource.GetPixelShader().Unload(MODEL_VIEW_PS);
-  resource.GetPipeline().Unload(MODEL_VIEW_MAT);
-  resource.GetModel().Unload(PLAYER_MODEL);
-  resource.GetModel().Unload(DESK_MODEL);
+  auto& heap_manager =
+      game::GameDevice::GetInstance()->GetDevice().GetHeapManager();
+  heap_manager.RemoveLocalHeap(directx::descriptor_heap::heap_parameter::
+                                   LocalHeapID::PLAYER_MOVE_VIEWER);
+  heap_manager.RemoveLocalHeap(
+      directx::descriptor_heap::heap_parameter::LocalHeapID::PHYSICS_TEST);
 }
 }  // namespace debugscene
 }  // namespace scenes

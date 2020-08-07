@@ -31,8 +31,8 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
   }
 
   //“ü—Í
-
   input_manager_ = std::make_unique<input::InputManager>(window_->GetHWND());
+  random_ = std::make_unique<util::Random>();
 
   //ƒTƒEƒ“ƒh
   audio_manager = std::make_unique<audio::AudioManager>();

@@ -94,6 +94,8 @@
     <ClCompile Include="src\physics\collider.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
+    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -226,6 +228,8 @@
     <ClInclude Include="src\physics\collider.h" />
     <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\title.h" />
+    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
+    <ClInclude Include="src\scenes\debugscene\physics_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

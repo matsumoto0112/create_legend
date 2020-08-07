@@ -3,6 +3,7 @@
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
+#include "src/game/game_device.h"
 
 namespace legend {
 namespace physics {
@@ -14,7 +15,7 @@ BoundingBox::BoundingBox()
       lengthes_(3),
       is_trigger_(false),
       is_on_ground_(true) {
-  //SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
+  // SetScale(math::Vector3(0.1f, 0.1f, 0.1f));
 
   directions_[0] = math::Vector3::kRightVector;
   directions_[1] = math::Vector3::kUpVector;
@@ -48,7 +49,7 @@ BoundingBox::BoundingBox(math::Vector3 position, math::Quaternion rotation,
 BoundingBox::~BoundingBox() {}
 
 //初期化
-bool BoundingBox::Initialize(directx::DirectX12Device& device) {
+bool BoundingBox::Initialize() {
   //中心座標と各軸の長さから頂点座標を設定
   float left = GetPosition().x - GetLength(0);
   float right = GetPosition().x + GetLength(0);
@@ -68,13 +69,14 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
       {{right, up, front}}     // 7
   };
 
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   //頂点バッファ作成
   if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
                            static_cast<u32>(vertices.size()),
                            L"BoundingBox_VertexBuffer")) {
     return false;
   }
-  if (!vertex_buffer_.WriteBufferResource(vertices)) {
+  if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
     return false;
   }
 
@@ -83,17 +85,18 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
                                  4, 5, 5, 6, 6, 7,
 
                                  5, 1, 6, 2};
+  const u32 index_num = static_cast<u32>(indices.size());
   //インデックスバッファ作成
-  if (!index_buffer_.InitAndWrite(device, indices,
-                                  directx::PrimitiveTopology::LineList,
-                                  L"Bounding_IndexBuffer")) {
+  if (!index_buffer_.Init(device, sizeof(u16), index_num,
+                          directx::PrimitiveTopology::LINE_LIST,
+                          L"Bounding_IndexBuffer")) {
     return false;
   }
 
   if (!transform_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::PHYSICS_TEST),
+          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                    LocalHeapID::PHYSICS_TEST),
           L"Transform ConstantBuffer")) {
     return false;
   }
@@ -104,72 +107,6 @@ bool BoundingBox::Initialize(directx::DirectX12Device& device) {
   transform_constant_buffer_.GetStagingRef().world =
       transform_.CreateWorldMatrix();
   transform_constant_buffer_.UpdateStaging();
-
-  if (!world_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::WorldContext,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::PHYSICS_TEST),
-          L"WorldContext ConstantBuffer")) {
-    return false;
-  }
-
-  world_constant_buffer_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      math::Vector3(0, 1, -1), math::Vector3(0, 0, 0),
-      math::Vector3::kUpVector);
-  const float aspect = 1280.0f / 720.0f;
-  world_constant_buffer_.GetStagingRef().projection =
-      math::Matrix4x4::CreateProjection(45.0f, aspect, 0.1f, 100.0);
-  world_constant_buffer_.UpdateStaging();
-
-  std::filesystem::path path = util::Path::GetInstance()->shader();
-  std::filesystem::path vertex_shader_path = path / L"physics" / L"obb_vs.cso";
-  std::filesystem::path pixel_shader_path = path / L"physics" / L"obb_ps.cso";
-  std::vector<D3D12_INPUT_ELEMENT_DESC> elements{
-      {"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
-      {"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0,
-       D3D12_APPEND_ALIGNED_ELEMENT,
-       D3D12_INPUT_CLASSIFICATION::D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0}};
-
-  //頂点シェーダー
-  std::shared_ptr<directx::shader::VertexShader> vertex_shader =
-      std::make_shared<directx::shader::VertexShader>();
-  if (!vertex_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                           vertex_shader_path, elements)) {
-    return false;
-  }
-
-  //ピクセルシェーダー
-  std::shared_ptr<directx::shader::PixelShader> pixel_shader =
-      std::make_shared<directx::shader::PixelShader>();
-  if (!pixel_shader->Init(game::GameDevice::GetInstance()->GetDevice(),
-                          pixel_shader_path)) {
-    return false;
-  }
-
-  if (!pipeline_state_.Init(game::GameDevice::GetInstance()->GetDevice())) {
-    return false;
-  }
-
-  //パイプライン作成開始
-  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-  pipeline_state_.SetVertexShader(vertex_shader);
-  pipeline_state_.SetPixelShader(pixel_shader);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER,
-      &pipeline_state_);
-  pipeline_state_.SetBlendDesc(
-      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  pipeline_state_.SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
-
-  if (!pipeline_state_.CreatePipelineState(
-          game::GameDevice::GetInstance()->GetDevice())) {
-    return false;
-  }
 
   return true;
 }
@@ -185,14 +122,19 @@ void BoundingBox::Update() {
 }
 
 //描画
-void BoundingBox::Draw(directx::DirectX12Device& device) {
-  pipeline_state_.SetGraphicsCommandList(device);
-  world_constant_buffer_.SetToHeap(device);
+void BoundingBox::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  resource.GetPipeline()
+      .Get(util::resource::id::Pipeline::OBJECT_WIREFRAME)
+      ->SetGraphicsCommandList(command_list);
+
   transform_constant_buffer_.SetToHeap(device);
-//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.Draw(device);
+  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.Draw(command_list);
 }
 
 //方向ベクトルを取得

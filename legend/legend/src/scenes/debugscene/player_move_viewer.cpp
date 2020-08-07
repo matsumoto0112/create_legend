@@ -1,7 +1,7 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
-#include "src/physics/collision.h"
+//#include "src/physics/collision.h"
 
 namespace {
 namespace ResourceID = legend::util::resource::id;
@@ -33,6 +33,13 @@ bool PlayerMoveViewer::Initialize() {
   if (!command_list.Init(device, D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
+
+  device.GetHeapManager().AddLocalHeap(
+      device,
+      directx::descriptor_heap::heap_parameter::LocalHeapID::PHYSICS_TEST);
+  device.GetHeapManager().AddLocalHeap(
+      device, directx::descriptor_heap::heap_parameter::LocalHeapID::
+                  PLAYER_MOVE_VIEWER);
 
   //このシーンで使用するリソースを事前に読み込む
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -86,8 +93,18 @@ bool PlayerMoveViewer::Initialize() {
   if (!gps->Init(device, pso_desc)) {
     return false;
   }
-
   if (!resource.GetPipeline().Register(MODEL_VIEW_MAT, gps)) {
+    return false;
+  }
+
+  auto pp = std::make_shared<directx::shader::GraphicsPipelineState>();
+  pso_desc.RasterizerState.FillMode =
+      D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+  if (!pp->Init(device, pso_desc)) {
+    return false;
+  }
+  if (!resource.GetPipeline().Register(
+          util::resource::id::Pipeline::OBJECT_WIREFRAME, pp)) {
     return false;
   }
 
@@ -133,6 +150,7 @@ bool PlayerMoveViewer::Initialize() {
     }
   }
 
+  command_list.Close();
   device.ExecuteCommandList({command_list});
   device.WaitExecute();
   return true;
@@ -190,11 +208,11 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
-          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
-    MY_LOG(L"消しゴムと机が衝突しました");
-    player_.SetPosition(player_.GetCollisionRef().GetPosition());
-  }
+  // if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
+  //        player_.GetCollisionRef(), desk_.GetCollisionRef())) {
+  //  MY_LOG(L"消しゴムと机が衝突しました");
+  //  player_.SetPosition(player_.GetCollisionRef().GetPosition());
+  //}
 
   return true;
 }
@@ -205,7 +223,8 @@ void PlayerMoveViewer::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   device.GetRenderResourceManager().SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+      directx::render_target::DepthStencilTargetID::NONE, true);
+  device.GetHeapManager().SetGraphicsCommandList(command_list);
 
   game::GameDevice::GetInstance()
       ->GetResource()

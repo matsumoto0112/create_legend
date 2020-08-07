@@ -78,6 +78,8 @@
     <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\object\desk.cpp" />
+    <ClCompile Include="src\physics\bounding_box.cpp" />
+    <ClCompile Include="src\physics\plane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -195,6 +197,8 @@
     <ClInclude Include="src\player\player.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\physics\bounding_box.h" />
+    <ClInclude Include="src\physics\plane.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

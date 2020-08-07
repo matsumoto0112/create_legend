@@ -2,9 +2,9 @@
 #define LEGEND_PHYSICS_BOUNDING_BOX_H_
 
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/game/game_device.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -45,7 +45,7 @@ class BoundingBox {
    * @brief 初期化
    * @param デバイス
    */
-  bool Initialize(directx::DirectX12Device& device);
+  bool Initialize();
   /**
    * @brief 更新
    */
@@ -54,7 +54,7 @@ class BoundingBox {
    * @brief 描画
    * @param デバイス
    */
-  void Draw(directx::DirectX12Device& device);
+  void Draw();
   /*
    * @brief 方向ベクトルを取得
    * @param 軸番号
@@ -166,10 +166,9 @@ class BoundingBox {
 
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
+      transform_constant_buffer_;
 };
 
 }  // namespace physics

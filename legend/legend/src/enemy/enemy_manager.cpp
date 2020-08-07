@@ -1,4 +1,5 @@
 #include "enemy_manager.h"
+
 #include "src/game/game_device.h"
 
 namespace legend {
@@ -7,21 +8,21 @@ EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
-bool EnemyManager::Initilaize() {
+bool EnemyManager::Initilaize(system::PhysicsField* physics_field) {
   i32 max = 4;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   for (i32 i = 0; i < max; i++) {
-    Add();
+    Add(physics_field);
   }
   return true;
 }
 
-bool EnemyManager::Update() {
+bool EnemyManager::Update(system::PhysicsField* physics_field) {
   // “G’Ç‰Á
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
-    Add();
+    Add(physics_field);
   }
   // “Gíœ
   else if (game::GameDevice::GetInstance()
@@ -30,7 +31,8 @@ bool EnemyManager::Update() {
                ->GetKeyDown(input::key_code::D)) {
     if (0 < enemys_.size()) {
       Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
-          0, static_cast<i32>(enemys_.size())));
+                  0, static_cast<i32>(enemys_.size())),
+              physics_field);
     }
   }
 
@@ -40,7 +42,7 @@ bool EnemyManager::Update() {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
       action_enemy_index_ = -1;
       move_timer_ = 0.0f;
-      for (i32 index = 0; index < enemys_.size();index++) {
+      for (i32 index = 0; index < enemys_.size(); index++) {
         auto enemy = enemys_[index].get();
         SetPosition(enemy);
         enemy->SetVelocity(math::Vector3::kZeroVector);
@@ -90,7 +92,7 @@ void EnemyManager::EnemyAction() {
   }
 }
 
-void EnemyManager::Add() {
+void EnemyManager::Add(system::PhysicsField* physics_field) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
@@ -99,18 +101,23 @@ void EnemyManager::Add() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
 
+  auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
+  auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   auto paramater = enemy::Enemy::InitializeParameter();
   paramater.transform =
-      util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+      util::Transform(math::Vector3(x,0,z), math::Quaternion::kIdentity,
                       math::Vector3::kUnitVector);
   paramater.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
   enemy->Init(paramater);
+  if (physics_field != nullptr) {
+    physics_field->AddEnemy(enemy->GetCollisionRef());
+  }
 
   enemys_.emplace_back(std::move(enemy));
-  SetPosition(enemys_[enemys_.size() - 1].get());
+  //SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
-void EnemyManager::Destroy(i32 index) {
+void EnemyManager::Destroy(i32 index, system::PhysicsField* physics_field) {
   if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
     return;
   }
@@ -119,6 +126,10 @@ void EnemyManager::Destroy(i32 index) {
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;
   }
+
+  if (physics_field != nullptr) {
+    physics_field->RemoveEnemy(index);
+  }
 }
 
 void EnemyManager::SetPosition(Enemy* enemy) {
@@ -126,6 +137,48 @@ void EnemyManager::SetPosition(Enemy* enemy) {
   auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   math::Vector3 position(x, 0.0f, z);
   enemy->SetPosition(position);
+}
+
+Enemy* EnemyManager::GetLastEnemy() const {
+  return enemys_.at(enemys_.size() - 1).get();
+}
+
+void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    enemys_[i]->SetPosition(physics_field->GetEnemyOBB(i).GetPosition());
+  }
+}
+
+float EnemyManager::GetEnemyPower() const { return 1.0f; }
+
+i32 EnemyManager::GetEnemiesSize() const {
+  return static_cast<i32>(enemys_.size());
+}
+
+void EnemyManager::SetVelocity(system::PhysicsField* physics_field,
+                               i32 index_num) {
+  enemys_[index_num]->SetVelocity(physics_field->GetEnemyVelocity(index_num));
+}
+
+std::vector<math::Vector3> EnemyManager::GetVelocities() const {
+  std::vector<math::Vector3> velocities;
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    velocities.push_back(enemys_[i]->GetVelocity());
+  }
+
+  return velocities;
+}
+
+bool EnemyManager::LastEnemyMoveEnd() const
+{
+    bool end = false;
+    if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
+        end = true;
+        for (i32 i = 0; i < enemys_.size(); i++) {
+            enemys_[i]->ResetMoveEnd();
+        }
+    }
+    return end;
 }
 
 }  // namespace enemy

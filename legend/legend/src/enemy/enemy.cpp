@@ -13,12 +13,11 @@ Enemy::Enemy()
     : actor::Actor<physics::BoundingBox>(),
       velocity_(math::Vector3::kZeroVector) {
   is_move_ = false;
-  //deceleration_x_ = deceleration_z_ = 0;
+  // deceleration_x_ = deceleration_z_ = 0;
 }
 
 //デストラクタ
-Enemy::~Enemy() {
-}
+Enemy::~Enemy() {}
 
 //初期化
 bool Enemy::Init(const InitializeParameter& parameter) {
@@ -50,21 +49,24 @@ bool Enemy::Init(const InitializeParameter& parameter) {
 
   model_ = resource.GetModel().Get(util::resource::ModelID::ERASER);
 
+  move_end_ = false;
+
   return true;
 }
 
 //更新
 bool Enemy::Update() {
-  //obb_.Update();
+  // obb_.Update();
 
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  if (is_move_ && velocity_ == math::Vector3::kZeroVector) move_end_ = true;
   is_move_ = (0.01f < velocity_.Magnitude());
-  Move();
+  // Move();
 
-  //transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  //transform_cb_.UpdateStaging();
+  // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  // transform_cb_.UpdateStaging();
 
   return true;
 }
@@ -74,23 +76,23 @@ void Enemy::Move() {
   if (!is_move_) return;
 
   //移動距離を求める
-   float length =
+  float length =
       math::util::Sqrt(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
 
   //実際に動く距離
-   float x = -velocity_.x / length;
-   float z = -velocity_.z / length;
+  float x = -velocity_.x / length;
+  float z = -velocity_.z / length;
 
   ////減速計算
-  // deceleration_x_ = x / (length * length);
-  // deceleration_z_ = z / (length * length);
+  //deceleration_x_ = x / (length * length);
+  //deceleration_z_ = z / (length * length);
 
   //移動処理
-   math::Vector3 v = math::Vector3(x, 0, z);
-   math::Vector3 position = GetPosition() + v * power_ * update_time_;
-   SetPosition(position);
+  math::Vector3 v = math::Vector3(x, 0, z);
+  math::Vector3 position = GetPosition() + v * power_ * update_time_;
+  SetPosition(position);
 
-   //Deceleration(2);
+  //Deceleration(2);
 }
 
 void Enemy::SetPosition(math::Vector3 position) {
@@ -101,9 +103,9 @@ void Enemy::SetPosition(math::Vector3 position) {
 void Enemy::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
 
 void Enemy::SetRotation() {
-   math::Quaternion rotation = transform_.GetRotation();
-   rotation.y += velocity_.x;
-   transform_.SetRotation(rotation);
+  math::Quaternion rotation = transform_.GetRotation();
+  rotation.y += velocity_.x;
+  transform_.SetRotation(rotation);
 }
 
 //移動に必要なパラメータを初期化
@@ -116,16 +118,16 @@ void Enemy::ResetParameter() {
 
 ////減速
 //void Enemy::Deceleration(float deceleration_rate) {
-//   float x = deceleration_x_ * deceleration_rate * update_time_;
-//   float z = deceleration_z_ * deceleration_rate * update_time_;
+//  float x = deceleration_x_ * deceleration_rate * update_time_;
+//  float z = deceleration_z_ * deceleration_rate * update_time_;
 //
-//   if ((x <= velocity_.x && velocity_.x <= 0) ||
+//  if ((x <= velocity_.x && velocity_.x <= 0) ||
 //      (0 <= velocity_.x && velocity_.x <= x)) {
 //    velocity_.x = 0;
 //  } else {
 //    velocity_.x -= x;
 //  }
-//   if ((z <= velocity_.z && velocity_.z <= 0) ||
+//  if ((z <= velocity_.z && velocity_.z <= 0) ||
 //      (0 <= velocity_.z && velocity_.z <= z)) {
 //    velocity_.z = 0;
 //  } else {
@@ -140,6 +142,14 @@ math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }
 math::Vector3 Enemy::GetVelocity() const { return velocity_; }
 
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
+
+float Enemy::GetPower() const { return power_; }
+
+bool Enemy::GetIsMove() const { return is_move_; }
+
+bool Enemy::GetMoveEnd() const { return move_end_; }
+
+void Enemy::ResetMoveEnd() { move_end_ = false; }
 
 }  // namespace enemy
 }  // namespace legend

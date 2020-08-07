@@ -12,6 +12,7 @@ namespace legend {
 namespace directx {
 namespace shader {
 /**
+ * @class VertexShader
  * @brief 頂点シェーダー
  */
 class VertexShader final : public ShaderBase {
@@ -26,7 +27,7 @@ class VertexShader final : public ShaderBase {
   ~VertexShader();
   /**
    * @brief 初期化
-   * @param device DirectXデバイス
+   * @param accessor DirectXデバイスアクセサ
    * @param filepath シェーダーファイルパス
    * @param elements 入力レイアウト
    * @return 初期化に成功したらtrueを返す
@@ -36,7 +37,7 @@ class VertexShader final : public ShaderBase {
             const std::vector<D3D12_INPUT_ELEMENT_DESC>& elements);
   /**
    * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param filepath シェーダーファイルパス
    * @return 初期化に成功したらtrueを返す
    * @details

@@ -12,11 +12,11 @@ D3D12_PRIMITIVE_TOPOLOGY Convert(legend::directx::PrimitiveTopology topology) {
 
   static const std::unordered_map<PrimitiveTopology, D3D12_PRIMITIVE_TOPOLOGY>
       dict{
-          {PrimitiveTopology::TriangleList,
+          {PrimitiveTopology::TRIANGLE_LIST,
            D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST},
-          {PrimitiveTopology::PointList,
+          {PrimitiveTopology::POINT_LIST,
            D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST},
-          {PrimitiveTopology::LineList,
+          {PrimitiveTopology::LINE_LIST,
            D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST},
       };
 

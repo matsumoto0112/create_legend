@@ -3,12 +3,15 @@
 
 /**
  * @file shader_resource_type.h
+ * @brief シェーダーリソースの種類定義
  */
+
 namespace legend {
 namespace directx {
 namespace shader {
 
 /**
+ * @enum ResourceType
  * @brief リソースの種類
  */
 enum class ResourceType : u32 {

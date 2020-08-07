@@ -14,6 +14,7 @@
 #include "src/directx/frame_resource.h"
 #include "src/directx/render_target/depth_stencil.h"
 #include "src/directx/render_target/render_resource_manager.h"
+#include "src/directx/shader/root_signature.h"
 
 namespace legend {
 namespace directx {
@@ -93,7 +94,7 @@ class DirectXDevice : public IDirectXAccessor {
   /**
    * @brief ヒープ管理オブジェクトを取得する
    */
-  directx::descriptor_heap::HeapManager& GetHeapManager() const {
+  descriptor_heap::HeapManager& GetHeapManager() const {
     return *heap_manager_;
   }
   /**
@@ -115,10 +116,16 @@ class DirectXDevice : public IDirectXAccessor {
    * @brief 現在のフレームリソースを取得する
    */
   FrameResource* GetCurrentFrameResource() const { return current_resource_; }
+  /**
+   * @brief デフォルトのルートシグネチャを取得する
+   */
+  shader::RootSignature* GetDefaultRootSignature() const {
+    return default_root_signature_.get();
+  }
 
  private:
   //! アダプター
-  directx::device::DXGIAdapter adapter_;
+  DXGIAdapter adapter_;
   //!デバイス
   ComPtr<ID3D12Device> device_;
   //! コマンドキュー
@@ -136,9 +143,11 @@ class DirectXDevice : public IDirectXAccessor {
   //! 現在のフレームリソース
   FrameResource* current_resource_;
   //! ヒープ管理オブジェクト
-  std::unique_ptr<directx::descriptor_heap::HeapManager> heap_manager_;
+  std::unique_ptr<descriptor_heap::HeapManager> heap_manager_;
   //! 描画リソース管理オブジェクト
   render_target::RenderResourceManager render_resource_manager_;
+  //! デフォルトのルートシグネチャ
+  std::unique_ptr<shader::RootSignature> default_root_signature_;
 };
 
 }  // namespace device

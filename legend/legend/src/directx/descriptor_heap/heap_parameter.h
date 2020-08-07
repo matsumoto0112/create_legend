@@ -18,7 +18,7 @@ namespace heap_parameter {
 
 //! アプリケーション全体でのディスクリプタヒープの最大数
 //! CBV,SRV,UAVで共通する割り当て可能数の上限値
-constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 100000;
+constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 500000;
 //! RTVで使用する割り当て可能数
 constexpr u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! DSVで使用する割り当て可能数
@@ -64,7 +64,7 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
     case LocalHeapID::MODEL_VIEW_SCENE:
       return 100;
     case LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE:
-      return 100;
+      return 200000;
     case LocalHeapID::PHYSICS_TEST:
       return 100;
     case LocalHeapID::SOUND_TEST:

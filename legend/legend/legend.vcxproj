@@ -103,6 +103,8 @@
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
+    <ClCompile Include="src\draw\sprite_2d.cpp" />
+    <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -194,6 +196,8 @@
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\draw\model.h" />
+    <ClInclude Include="src\draw\sprite_2d.h" />
+    <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />

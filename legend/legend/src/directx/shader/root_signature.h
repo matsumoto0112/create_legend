@@ -16,7 +16,9 @@
 namespace legend {
 namespace directx {
 namespace shader {
+
 /**
+ * @class RootSignature
  * @brief ルートシグネチャクラス
  */
 class RootSignature {

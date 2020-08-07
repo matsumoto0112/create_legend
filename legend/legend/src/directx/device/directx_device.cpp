@@ -50,6 +50,11 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   }
   command_queue_->SetName(L"CommandQueue");
 
+  default_root_signature_ = std::make_unique<shader::RootSignature>();
+  if (!default_root_signature_->InitByDefault(*this, L"DefaultRootSignature")) {
+    return false;
+  }
+
   //描画リソース管理オブジェクトを作成する
   if (!render_resource_manager_.Init(*this, adapter_, FRAME_COUNT, width,
                                      height,
@@ -105,6 +110,8 @@ bool DirectXDevice::Prepare() {
       directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::NONE, false);
 
+  default_root_signature_->SetGraphicsCommandList(
+      current_resource_->GetCommandList());
   return true;
 }
 

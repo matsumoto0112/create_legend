@@ -9,6 +9,7 @@
 namespace legend {
 namespace directx {
 namespace directx_helper {
+
 /**
  * @brief テクスチャのフォーマットからピクセルのメモリサイズを取得する
  * @param format 調べるフォーマット

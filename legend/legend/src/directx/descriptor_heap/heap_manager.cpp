@@ -124,7 +124,7 @@ void HeapManager::RegisterHandle(u32 register_num, shader::ResourceType type,
   }
 }
 
-void HeapManager::UpdateGlobalHeap(ID3D12Device* device,
+void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
                                    device::CommandList& command_list) {
   auto PaddingNullHandle = [&](std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handle,
                                D3D12_CPU_DESCRIPTOR_HANDLE default_handle) {
@@ -147,7 +147,7 @@ void HeapManager::UpdateGlobalHeap(ID3D12Device* device,
         const DescriptorHandle global_handle =
             global_heap_.GetHandle(global_heap_allocated_count_);
         D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = global_handle.cpu_handle_;
-        device->CopyDescriptors(
+        accessor.GetDevice()->CopyDescriptors(
             1, &dst_handle, &count, count, handles.data(), nullptr,
             D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 

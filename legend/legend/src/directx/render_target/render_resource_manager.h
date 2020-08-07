@@ -151,6 +151,18 @@ class RenderResourceManager {
    */
   void UseAsSRV(device::IDirectXAccessor& accessor, RenderTargetID id,
                 u32 render_target_index);
+  /**
+   * @brief レンダーターゲットIDがすでに登録されているか
+   * @param id レンダーターゲットID
+   * @return すでに登録されてたらtrueを返す
+   */
+  bool IsRegisteredRenderTarget(RenderTargetID id) const;
+  /**
+   * @brief デプス・ステンシルIDがすでに登録されているか
+   * @param id デプス・ステンシルID
+   * @return すでに登録されてたらtrueを返す
+   */
+  bool IsRegisteredDepthStencilTarget(DepthStencilTargetID id) const;
 
  private:
   //! フレーム数

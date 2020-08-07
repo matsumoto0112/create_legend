@@ -79,7 +79,7 @@ bool Model::Init(const std::filesystem::path& path,
   const std::vector<u16> indices = loader.GetIndex();
   const u32 index_num = static_cast<u32>(indices.size());
   if (!index_buffer_.Init(device, sizeof(u16), index_num,
-                          directx::PrimitiveTopology::TriangleList,
+                          directx::PrimitiveTopology::TRIANGLE_LIST,
                           model_name_ + L"_IndexBuffer")) {
     return false;
   }
@@ -119,7 +119,7 @@ bool Model::Init(const std::filesystem::path& path,
 void Model::Draw(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   albedo_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device.GetDevice(), command_list);
+  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

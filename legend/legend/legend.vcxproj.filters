@@ -71,6 +71,8 @@
     <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
     <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\draw\sprite_2d.cpp" />
+    <ClCompile Include="src\draw\sprite_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -180,6 +182,8 @@
     <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\draw\sprite_2d.h" />
+    <ClInclude Include="src\draw\sprite_renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

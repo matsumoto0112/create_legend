@@ -40,6 +40,14 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
     return false;
   }
 
+  //スプライト描画
+  const math::Vector2 screen_size =
+      math::Vector2(static_cast<float>(window_->GetScreenSize().x),
+                    static_cast<float>(window_->GetScreenSize().y));
+  if (!sprite_renderer_.Init(screen_size)) {
+    return false;
+  }
+
   //リソース管理
   if (!resource_.Init()) {
     return false;

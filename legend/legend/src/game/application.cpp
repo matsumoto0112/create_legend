@@ -28,7 +28,6 @@ void Application::Run() {
       DispatchMessageW(&msg);
     }
   }
-  Destroy();
 }
 
 //”j‰óŽž

@@ -8,6 +8,7 @@
 
 #include "src/audio/audio_manager.h"
 #include "src/directx/device/directx_device.h"
+#include "src/draw/sprite_renderer.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
 #include "src/util/imgui_manager.h"
@@ -57,6 +58,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   util::Random& GetRandom() const { return *random_; }
 
   util::resource::Resource& GetResource() { return resource_; }
+  draw::SpriteRenderer& GetSpriteRenderer() { return sprite_renderer_; }
 
  protected:
   /**
@@ -81,6 +83,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   std::unique_ptr<util::Random> random_;
   util::ImguiManager imgui_manager_;
   util::resource::Resource resource_;
+  draw::SpriteRenderer sprite_renderer_;
 };
 
 }  // namespace game

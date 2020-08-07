@@ -14,9 +14,9 @@ namespace directx {
  * @brief プリミティブの形状
  */
 enum class PrimitiveTopology : u32 {
-  TriangleList,
-  PointList,
-  LineList,
+  TRIANGLE_LIST,
+  POINT_LIST,
+  LINE_LIST,
 };
 }  // namespace directx
 }  // namespace legend

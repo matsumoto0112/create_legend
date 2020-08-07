@@ -4,6 +4,7 @@
 #include "src/util/byte_reader.h"
 
 namespace {
+
 /**
  * @brief コンポーネントの種類とマスクからフォーマットを取得する
  * @details

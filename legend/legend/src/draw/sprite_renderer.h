@@ -6,10 +6,8 @@
  * @brief スプライト描画機能定義クラス
  */
 
-#include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/directx/constant_buffer_structure.h"
 #include "src/directx/shader/graphics_pipeline_state.h"
 #include "src/draw/sprite_2d.h"
 
@@ -21,19 +19,44 @@ namespace draw {
  */
 class SpriteRenderer {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   SpriteRenderer();
-  ~SpriteRenderer();
+  /**
+   * @brief デストラクタ
+   */
+  virtual ~SpriteRenderer();
+  /**
+   * @brief 初期化
+   * @param window_size ウィンドウサイズ
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init(const math::Vector2& window_size);
+  /**
+   * @brief 描画リストにスプライトを追加する
+   */
   void AddDrawItems(Sprite2D* sprite);
-  void DrawItems();
+  /**
+   * @brief 描画リストにあるスプライトを描画する
+   * @param command_list コマンドリスト
+   */
+  void DrawItems(directx::device::CommandList& command_list);
 
  private:
+  using WorldContext_CBStruct =
+      directx::buffer::constant_buffer_structure::WorldContext;
+
+ private:
+  //! 頂点バッファ
   directx::buffer::VertexBuffer vertex_buffer_;
+  //! インデックスバッファ
   directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<
-      directx::constant_buffer_structure::WorldContext>
-      world_cb_;
+  //! ワールド情報コンスタントバッファ
+  directx::buffer::ConstantBuffer<WorldContext_CBStruct> world_cb_;
+  //! 描画パイプライン
   directx::shader::GraphicsPipelineState pipeline_state_;
+  //! スプライトリスト
   std::vector<Sprite2D*> draw_items_;
 };
 

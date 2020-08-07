@@ -54,7 +54,7 @@ class HeapManager {
   void RegisterHandle(u32 register_num, shader::ResourceType type,
                       DescriptorHandle handle);
 
-  void UpdateGlobalHeap(ID3D12Device* device,
+  void UpdateGlobalHeap(device::IDirectXAccessor& accessor,
                         device::CommandList& command_list);
   bool AddLocalHeap(device::IDirectXAccessor& accessor,
                     heap_parameter::LocalHeapID heap_id);

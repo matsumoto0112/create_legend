@@ -6,6 +6,7 @@ namespace legend {
 namespace directx {
 namespace shader {
 
+//‰Šú‰»
 bool ShaderBase::Init(device::IDirectXAccessor& accessor,
                       const std::filesystem::path& filepath) {
   this->shader_code_ = util::byte_reader::Read(filepath);
@@ -15,6 +16,7 @@ bool ShaderBase::Init(device::IDirectXAccessor& accessor,
 
   return true;
 }
+
 }  // namespace shader
 }  // namespace directx
 }  // namespace legend

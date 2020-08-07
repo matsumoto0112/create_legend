@@ -159,6 +159,17 @@ void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
   render_targets_.at(id).Get().UseAsSRV(accessor, render_target_number);
 }
 
+//“o˜^Ï‚İ‚©”»’è
+bool RenderResourceManager::IsRegisteredRenderTarget(RenderTargetID id) const {
+  return util::Exist(render_targets_, id);
+}
+
+//“o˜^Ï‚İ‚©”»’è
+bool RenderResourceManager::IsRegisteredDepthStencilTarget(
+    DepthStencilTargetID id) const {
+  return util::Exist(depth_stencil_targets_, id);
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

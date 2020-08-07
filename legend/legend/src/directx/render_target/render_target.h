@@ -13,17 +13,26 @@
 namespace legend {
 namespace directx {
 namespace render_target {
+
 /**
  * @class RenderTarget
  * @brief レンダーターゲット
  */
 class RenderTarget {
  public:
+  /**
+   * @brief レンダーターゲットデスク
+   */
   struct RenderTargetDesc {
+    //! リソース名
     std::wstring name;
-    u32 width;
-    u32 height;
+    //! フォーマット
     DXGI_FORMAT format;
+    //! 幅
+    u32 width;
+    //! 高さ
+    u32 height;
+    //! クリア色
     util::Color4 clear_color;
   };
 
@@ -38,23 +47,35 @@ class RenderTarget {
   ~RenderTarget();
   /**
    * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc レンダーターゲットデスク
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(device::IDirectXAccessor& accessor, const RenderTargetDesc& desc);
+  /**
+   * @brief バッファから初期化する
+   * @param accessor DirectXデバイスアクセサ
+   * @param buffer バッファ
+   * @param clear_color クリア色
+   * @param name リソース名
+   * @return 初期化に成功したらtrueを返す
+   */
   bool InitFromBuffer(device::IDirectXAccessor& accessor,
                       ComPtr<ID3D12Resource> buffer,
                       const util::Color4& clear_color,
                       const std::wstring& name);
-
+  /**
+   * @brief 状態を遷移させる
+   * @param command_list コマンドリスト
+   * @param next_state 次の状態
+   */
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_state);
+  /**
+   * @brief レンダーターゲットをクリアする
+   * @param command_list コマンドリスト
+   */
   void ClearRenderTarget(device::CommandList& command_list) const;
-  ///**
-  // * @brief パイプラインステートにRTV情報を書き込む
-  // * @param pipeline 書き込む対象
-  // */
-  // void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline)
-  // const;
 
  public:
   /**

@@ -50,18 +50,20 @@ class Texture2D {
   ~Texture2D();
   /**
    * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param desc テクスチャデスク
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(device::IDirectXAccessor& accessor, const Desc& desc);
   /**
    * @brief テクスチャを読み込みつつ初期化する
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
+   * @param command_list コマンドリスト
    * @param register_num シェーダーのレジスター番号
    * @param filename ファイル名
    * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
+   * @details リソースのコピーのためにコマンドリストが必要
    */
   bool InitAndWrite(device::IDirectXAccessor& accessor,
                     device::CommandList& command_list, u32 register_num,
@@ -69,13 +71,15 @@ class Texture2D {
                     const descriptor_heap::DescriptorHandle& handle);
   /**
    * @brief テクスチャを書き込みつつ初期化する
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
+   * @param command_list コマンドリスト
    * @param register_num シェーダーのレジスター番号
    * @param format テクスチャのフォーマット
    * @param data テクスチャデータ
    * @param handle テクスチャハンドル
-   * @param filename ファイル名
+   * @param filename リソース名
    * @return 初期化に成功したらtrueを返す
+   * @details リソースのコピーのためにコマンドリストが必要
    */
   bool InitAndWrite(device::IDirectXAccessor& accessor,
                     device::CommandList& command_list, u32 register_num,
@@ -84,20 +88,16 @@ class Texture2D {
                     const std::wstring& name);
   /**
    * @brief テクスチャデータを書き込む
+   * @param command_list コマンドリスト
+   * @param data テクスチャデータ
    */
   void WriteResource(device::CommandList& command_list, const void* data);
 
   /**
    * @brief ヒープに自身を追加する
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    */
   void SetToHeap(device::IDirectXAccessor& accessor);
-  ///**
-  // * @brief レジスター番号を指定してヒープに自身を追加する
-  // * @param accessor DirectX12デバイスアクセサ
-  // * @param overwrite_register_num 上書きするレジスター番号
-  // */
-  // void SetToHeap(IDirectXAccessor& accessor, u32 overwrite_register_num);
 
  public:
   /**
@@ -110,12 +110,12 @@ class Texture2D {
   inline u32 GetHeight() const { return height_; }
 
  private:
-  // /**
-  //  * @brief テクスチャバッファを初期化する
-  //  * @param accessor DirectX12デバイスアクセサ
-  //  * @param desc テクスチャデスク
-  //  * @return 初期化に成功したらtrueを返す
-  //  */
+  /**
+   * @brief テクスチャバッファを初期化する
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc テクスチャデスク
+   * @return 初期化に成功したらtrueを返す
+   */
   bool InitTexBuffer(device::IDirectXAccessor& accessor, const Desc& desc);
 
  private:

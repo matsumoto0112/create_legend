@@ -30,8 +30,8 @@ class RootSignature {
    */
   ~RootSignature();
   /**
-   * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @brief デフォルトの設定で初期化
+   * @param accessor DirectXデバイスアクセサ
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
@@ -46,6 +46,7 @@ class RootSignature {
 
   /**
    * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
    */
   void SetGraphicsCommandList(device::CommandList& command_list);
 

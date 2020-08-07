@@ -19,12 +19,21 @@ namespace render_target {
  */
 class DepthStencil {
  public:
+  /**
+   * @brief デプス・ステンシルデスク
+   */
   struct DepthStencilDesc {
+    //! リソース名
     std::wstring name;
+    //! フォーマット
     DXGI_FORMAT format;
+    //! 幅
     u32 width;
+    //! 高さ
     u32 height;
+    //! デプス値
     float depth_value;
+    //! ステンシル値
     u8 stencil_value;
   };
 
@@ -39,15 +48,26 @@ class DepthStencil {
   ~DepthStencil();
   /**
    * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc デプス・ステンシルデスク
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(device::IDirectXAccessor& accessor, const DepthStencilDesc& desc);
   /**
    * @brief デプス・ステンシル値のクリア
+   * @param command_list コマンドリスト
    */
   void ClearDepthStencil(device::CommandList& command_list) const;
+  /**
+   * @brief 状態を遷移させる
+   * @param command_list コマンドリスト
+   * @param next_states 次の状態
+   */
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_states);
+  /**
+   * @brief ディスクリプタハンドルを取得する
+   */
   descriptor_heap::DescriptorHandle GetHandle() const { return handle_; }
 
  private:
@@ -57,8 +77,9 @@ class DepthStencil {
   descriptor_heap::DescriptorHandle handle_;
   //! フォーマット
   DXGI_FORMAT format_;
-  //! クリア値
+  //! デプス値
   float depth_value_;
+  //! ステンシル値
   u8 stencil_value_;
 };
 

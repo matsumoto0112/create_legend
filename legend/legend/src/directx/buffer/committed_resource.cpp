@@ -3,6 +3,7 @@
 #include "src/directx/directx_helper.h"
 
 namespace {
+
 /**
  * @brief バッファの初期化値が必要かどうか判定する
  * @param flags リソースの用途
@@ -13,6 +14,7 @@ bool NeedClearValue(D3D12_RESOURCE_FLAGS flags) {
       flags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET ||
       flags & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 }
+
 }  // namespace
 
 namespace legend {
@@ -37,8 +39,11 @@ void CommittedResource::Reset() {
   current_state_ = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 }
 
+//バッファとして初期化する
 bool CommittedResource::InitAsBuffer(device::IDirectXAccessor& accessor,
                                      const BufferDesc& desc) {
+  // Uploadバッファとして作成する
+  //リソースのコピーにはMapを使用する
   if (Failed(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
           D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
@@ -54,13 +59,18 @@ bool CommittedResource::InitAsBuffer(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//テクスチャとして初期化する
 bool CommittedResource::InitAsTex2D(device::IDirectXAccessor& accessor,
                                     const Tex2DDesc& desc) {
+  //テクスチャデスクを作成する
   const CD3DX12_RESOURCE_DESC resource_desc = CD3DX12_RESOURCE_DESC::Tex2D(
       desc.format, desc.width, desc.height, 1, 1, 1, 0, desc.flags);
+  //リソースの種類に応じて初期化の値が必要になるか決まるので判定する
   const D3D12_CLEAR_VALUE* clear_value_ptr =
       NeedClearValue(resource_desc.Flags) ? &desc.clear_value : nullptr;
 
+  //リソースの作成
+  //リソースのコピーにはUpdateSubresourcesを使用する
   if (Failed(accessor.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
           D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE, &resource_desc,
@@ -77,6 +87,7 @@ bool CommittedResource::InitAsTex2D(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//バッファから初期化する
 bool CommittedResource::InitFromBuffer(device::IDirectXAccessor& accessor,
                                        ComPtr<ID3D12Resource> buffer,
                                        D3D12_RESOURCE_STATES init_states,

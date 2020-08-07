@@ -38,14 +38,11 @@ class CountingDescriptorHeap {
             const DescriptorHeap::Desc& desc);
   /**
    * @brief CPU,GPUハンドルを取得する
-   * @param index ハンドルインデックス
-   * @return 有効なハンドルを返す
    */
   DescriptorHandle GetHandle();
   /**
-   * @brief インデックスを指定したハンドルを返す
+   * @brief インデックスを指定したハンドルを取得する
    * @param index ハンドルインデックス
-   * @return 有効なハンドルを返す
    */
   DescriptorHandle GetForceHandle(u32 index) const;
   /**

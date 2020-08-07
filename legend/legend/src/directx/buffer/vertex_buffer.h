@@ -30,15 +30,21 @@ class VertexBuffer {
   ~VertexBuffer();
   /**
    * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param vertex_size 頂点構造体の大きさ
+   * @param vertex_num 頂点数
+   * @param name リソース名
    */
   bool Init(device::IDirectXAccessor& accessor, u32 vertex_size, u32 vertex_num,
             const std::wstring& name);
   /**
-   * @brief リソースにデータを書き込む書き込む
+   * @brief リソースにデータを書き込む
+   * @param data 書き込むデータ
    */
   bool WriteBufferResource(const void* data);
   /**
    * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
    */
   void SetGraphicsCommandList(device::CommandList& command_list);
 

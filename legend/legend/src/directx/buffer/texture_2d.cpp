@@ -25,6 +25,7 @@ bool Texture2D::Init(device::IDirectXAccessor& accessor, const Desc& desc) {
   return InitTexBuffer(accessor, desc);
 }
 
+//初期化と書き込み
 bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
                              device::CommandList& command_list,
                              u32 register_num,
@@ -45,6 +46,7 @@ bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//初期化と書き込み
 bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
                              device::CommandList& command_list,
                              u32 register_num, DXGI_FORMAT format,
@@ -63,6 +65,7 @@ bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//リソースデータを書き込む
 void Texture2D::WriteResource(device::CommandList& command_list,
                               const void* data) {
   const u64 row = width_ * directx_helper::CalcPixelSizeFromFormat(format_);
@@ -73,6 +76,7 @@ void Texture2D::WriteResource(device::CommandList& command_list,
 
   CommittedResource::UpdateSubresource(command_list, &texture_,
                                        &texture_immediate_, data, row, slice);
+  // TODO:ピクセルシェーダー内でしか使用しないならSTATE_PIXEL_SHADER_RESOURCEを使用するように機能追加
   texture_.Transition(command_list,
                       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
@@ -81,14 +85,6 @@ void Texture2D::WriteResource(device::CommandList& command_list,
 void Texture2D::SetToHeap(device::IDirectXAccessor& accessor) {
   accessor.RegisterHandle(register_num_, shader::ResourceType::SRV, handle_);
 }
-
-////ヒープに追加する
-// void Texture2D::SetToHeap(IDirectXAccessor& accessor,
-//                          u32 overwrite_register_num) {
-//  accessor.SetToGlobalHeap(overwrite_register_num, ResourceType::Srv,
-//  handle_);
-//}
-//
 
 //テクスチャバッファを初期化する
 bool Texture2D::InitTexBuffer(device::IDirectXAccessor& accessor,
@@ -100,12 +96,13 @@ bool Texture2D::InitTexBuffer(device::IDirectXAccessor& accessor,
       desc.height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_NONE,
       CD3DX12_CLEAR_VALUE(),
-      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST};
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
 
   if (!texture_.InitAsTex2D(accessor, buffer_desc)) {
     return false;
   }
 
+  //コピーに使用する一時的なリソースを作成する
   const u64 immediate_size =
       GetRequiredIntermediateSize(texture_.GetResource(), 0, 1);
   CommittedResource::BufferDesc immediate_desc = {

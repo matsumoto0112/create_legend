@@ -9,6 +9,7 @@ Texture2D<float4> g_output2 : register(t5);
 struct MultiRenderTargetTestPP_ConstantBufferStructure {
     float border;
 };
+
 ConstantBuffer<MultiRenderTargetTestPP_ConstantBufferStructure> g_local_cb : register(b2);
 
 struct VSInput{
@@ -36,14 +37,12 @@ VSOutput VSMain(const VSInput v){
 
 float4 PSMain(const PSInput i){
     float4 color;
-    if(i.uv.x <= g_local_cb.border){
-     color =    g_output1.Sample(g_sampler_linear,i.uv);
+    if(i.uv.x <= g_local_cb.border) {
+        color = g_output1.Sample(g_sampler_warp, i.uv);
     }
-    else{
-         color =    g_output2.Sample(g_sampler_linear,i.uv);
+    else {
+        color = g_output2.Sample(g_sampler_warp, i.uv);
     }
-    //float gray = color.r * 0.2125+ color.g * 0.7154+ color.b * 0.0721;
-    //color = float4(gray,gray,gray,1.0);
     return color;
 }
 

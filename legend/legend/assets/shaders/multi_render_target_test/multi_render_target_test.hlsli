@@ -3,14 +3,14 @@
 
 #include "../defines/global.hlsli"
 
-struct VSInput{
+struct VSInput {
     float3 pos : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
     float4 tangent : TANGENT;
 };
 
-struct VSOutput{
+struct VSOutput {
     float4 pos : SV_POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
@@ -18,12 +18,12 @@ struct VSOutput{
 
 typedef VSOutput PSInput;
 
-struct PSOutput{
+struct PSOutput {
     float4 output_1 : SV_TARGET0;    
     float4 output_2 : SV_TARGET1;    
 };
 
-VSOutput VSMain(const VSInput v){
+VSOutput VSMain(const VSInput v) {
     VSOutput o = (VSOutput)0;
     o.pos = mul(float4(v.pos,1.0),g_transform.world);
     o.pos = mul(o.pos,g_world_context.view);
@@ -36,10 +36,10 @@ VSOutput VSMain(const VSInput v){
     return o;
 }
 
-PSOutput PSMain(const PSInput i){
+PSOutput PSMain(const PSInput i) {
     PSOutput o = (PSOutput)0;
-    o.output_1 = g_albedo.Sample(g_sampler_linear,i.uv);
-    o.output_2 = g_albedo.Sample(g_sampler_linear,i.uv);
+    o.output_1 = g_albedo.Sample(g_sampler_warp, i.uv);
+    o.output_2 = g_albedo.Sample(g_sampler_clamp, i.uv);
     return o;
 }
 

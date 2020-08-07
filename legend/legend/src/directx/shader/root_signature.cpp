@@ -57,6 +57,7 @@ bool RootSignature::InitByDefault(device::IDirectXAccessor& accessor,
       D3D12_ROOT_SIGNATURE_FLAGS::
           D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
+  //ルートシグネチャを作成する
   ComPtr<ID3DBlob> signature;
   ComPtr<ID3DBlob> error;
   if (Failed(D3D12SerializeRootSignature(

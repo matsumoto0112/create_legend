@@ -51,8 +51,9 @@ class ConstantBuffer {
   void Reset();
   /**
    * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param register_num シェーダーのレジスター番号
+   * @param handle ディスクリプタハンドル
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
@@ -114,11 +115,13 @@ inline ConstantBuffer<T>::~ConstantBuffer() {
   Reset();
 }
 
+//コピーコンストラクタ
 template <class T>
 inline ConstantBuffer<T>::ConstantBuffer(const ConstantBuffer& other) {
   *this = other;
 }
 
+//代入演算子
 template <class T>
 inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     const ConstantBuffer& other) {
@@ -137,11 +140,13 @@ inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
   return *this;
 }
 
+//ムーブコンストラクタ
 template <class T>
 inline ConstantBuffer<T>::ConstantBuffer(ConstantBuffer&& other) noexcept {
   *this = std::move(other);
 }
 
+//ムーブ演算子
 template <class T>
 inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     ConstantBuffer&& other) noexcept {
@@ -184,6 +189,7 @@ inline bool ConstantBuffer<T>::Init(device::IDirectXAccessor& accessor,
   buffer_aligned_size_ = math::util::AlignPow2(
       sizeof(T), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
+  // InitAsBufferはUploadヒープで作成するのでステートはGENERIC_READである必要がある
   const CommittedResource::BufferDesc desc{
       name, buffer_aligned_size_,
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};

@@ -19,10 +19,15 @@ namespace buffer {
  */
 class CommittedResource {
  public:
+  /**
+   * @brief バッファデスク
+   */
   struct BufferDesc {
     //! リソース名
     std::wstring name;
+    //! バッファの大きさ
     u64 buffer_size;
+    //! リソースの初期状態
     D3D12_RESOURCE_STATES init_states;
   };
 
@@ -42,6 +47,7 @@ class CommittedResource {
     D3D12_RESOURCE_FLAGS flags;
     //! 初期化が必要な時の初期化値
     D3D12_CLEAR_VALUE clear_value;
+    //! リソースの初期状態
     D3D12_RESOURCE_STATES init_states;
   };
 
@@ -60,14 +66,22 @@ class CommittedResource {
   void Reset();
   /**
    * @brief バッファとして初期化する
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc バッファデスク
    */
   bool InitAsBuffer(device::IDirectXAccessor& accessor, const BufferDesc& desc);
   /**
    * @brief 2Dテクスチャとして初期化する
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc テクスチャデスク
    */
   bool InitAsTex2D(device::IDirectXAccessor& accessor, const Tex2DDesc& desc);
   /**
    * @brief バッファをコピーして初期化する
+   * @param accessor DirectXデバイスアクセサ
+   * @param buffer コピー元のバッファ
+   * @param init_states リソースの初期状態
+   * @param name リソース名
    */
   bool InitFromBuffer(device::IDirectXAccessor& accessor,
                       ComPtr<ID3D12Resource> buffer,
@@ -75,6 +89,8 @@ class CommittedResource {
                       const std::wstring& name);
   /**
    * @brief 状態を遷移させる
+   * @param command_list コマンドリスト
+   * @param next_state 次の状態
    */
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_state);
@@ -97,7 +113,7 @@ class CommittedResource {
  public:
   /**
    * @brief テクスチャなどに利用する2つのリソースを利用したコピーをする
-   * @param accessor DirectX12デバイスアクセサ
+   * @param command_list コマンドリスト
    * @param dest_resource　書き込み先のリソース
    * @param immediate_resource 一時的なリソース
    * @param data 書き込むデータ

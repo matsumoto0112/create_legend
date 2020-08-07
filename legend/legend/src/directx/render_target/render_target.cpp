@@ -10,12 +10,11 @@ RenderTarget::RenderTarget() {}
 //デストラクタ
 RenderTarget::~RenderTarget() {}
 
+//初期化
 bool RenderTarget::Init(device::IDirectXAccessor& accessor,
                         const RenderTargetDesc& rt_desc) {
-  CD3DX12_CLEAR_VALUE clear_value = {};
-  clear_value.Format = rt_desc.format;
-  memcpy(clear_value.Color, rt_desc.clear_color.Get().data(),
-         sizeof(float) * 4);
+  const CD3DX12_CLEAR_VALUE clear_value(rt_desc.format,
+                                        rt_desc.clear_color.Get().data());
 
   const buffer::CommittedResource::Tex2DDesc desc{
       rt_desc.name,
@@ -46,6 +45,7 @@ bool RenderTarget::Init(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//バッファから初期化する
 bool RenderTarget::InitFromBuffer(device::IDirectXAccessor& accessor,
                                   ComPtr<ID3D12Resource> buffer,
                                   const util::Color4& clear_color,
@@ -73,41 +73,17 @@ bool RenderTarget::InitFromBuffer(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//状態を遷移させる
 void RenderTarget::Transition(device::CommandList& command_list,
                               D3D12_RESOURCE_STATES next_state) {
   resource_.Transition(command_list, next_state);
 }
 
+//レンダーターゲットをクリアする
 void RenderTarget::ClearRenderTarget(device::CommandList& command_list) const {
   command_list.GetCommandList()->ClearRenderTargetView(
       rtv_handle_.cpu_handle_, clear_color_.Get().data(), 0, nullptr);
 }
-
-//
-////レンダーターゲットをクリアする
-// void RenderTarget::ClearRenderTarget(IDirectXAccessor& accessor) const {
-//  accessor.GetCommandList()->ClearRenderTargetView(
-//      rtv_handle_.cpu_handle_, clear_color_.Get().data(), 0, nullptr);
-//}
-//
-////描画終了
-// void RenderTarget::DrawEnd(IDirectXAccessor& accessor) {
-//  this->Transition(accessor,
-//                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT);
-//}
-//
-////状態遷移
-// void RenderTarget::Transition(IDirectXAccessor& accessor,
-//                              D3D12_RESOURCE_STATES next_state) {
-//  resource_.Transition(accessor, next_state);
-//}
-//
-////パイプラインステートデスクに情報を書き込む
-// void RenderTarget::WriteInfoToPipelineState(
-//    shader::GraphicsPipelineState* pipeline) const {
-//  pipeline->SetRTVFormat(format_, 0);
-//  pipeline->SetRenderTargetNum(1);
-//}
 
 }  // namespace render_target
 }  // namespace directx

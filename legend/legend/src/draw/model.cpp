@@ -78,7 +78,7 @@ bool Model::Init(const std::filesystem::path& path,
   //インデックス配列
   const std::vector<u16> indices = loader.GetIndex();
   const u32 index_num = static_cast<u32>(indices.size());
-  if (!index_buffer_.Init(device, index_num, sizeof(u16),
+  if (!index_buffer_.Init(device, sizeof(u16), index_num,
                           directx::PrimitiveTopology::TriangleList,
                           model_name_ + L"_IndexBuffer")) {
     return false;

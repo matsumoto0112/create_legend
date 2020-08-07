@@ -6,24 +6,25 @@
  */
 
 #include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
 
 class FrameResource {
  public:
-  std::vector<ID3D12CommandList*> batch_submit_;
-
-  std::vector<directx::device::CommandList> command_lists_;
-
-  u64 fence_value_;
-
   FrameResource() {}
   ~FrameResource() {}
-  bool Init(ID3D12Device* device);
-  bool AddCommandList(ID3D12Device* device);
+  bool Init(device::IDirectXAccessor& accessor);
   bool Ready();
   void Destroy();
+  device::CommandList& GetCommandList() { return command_lists_; }
+
+ public:
+  u64 fence_value_;
+
+ private:
+  device::CommandList command_lists_;
 };
 }  // namespace directx
 }  // namespace legend

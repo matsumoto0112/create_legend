@@ -12,6 +12,7 @@ RenderResourceManager::RenderResourceManager() {}
 //デストラクタ
 RenderResourceManager::~RenderResourceManager() {}
 
+//初期化
 bool RenderResourceManager::Init(device::IDirectXAccessor& accessor,
                                  device::DXGIAdapter& adapter, u32 frame_count,
                                  u32 width, u32 height, DXGI_FORMAT format,
@@ -26,12 +27,11 @@ bool RenderResourceManager::Init(device::IDirectXAccessor& accessor,
       RenderTargetID::BACK_BUFFER,
       MultiFrameMultiRenderTargetTexture(frame_count, swap_chain_));
   auto& rtt = render_targets_.at(RenderTargetID::BACK_BUFFER);
-  rtt.mrt.resize(frame_count);
 
   for (u32 i = 0; i < frame_count; i++) {
     std::wstringstream wss;
     wss << L"BackBuffer " << i;
-    if (!rtt.mrt[i].InitFromBuffer(accessor, swap_chain_.GetBuffer(i),
+    if (!rtt.Get(i).InitFromBuffer(accessor, swap_chain_.GetBuffer(i),
                                    util::Color4(1.0f, 0.0f, 0.0f, 1.0f),
                                    wss.str())) {
       return false;
@@ -39,60 +39,65 @@ bool RenderResourceManager::Init(device::IDirectXAccessor& accessor,
   }
 
   this->depth_stencil_targets_.clear();
-  this->current_render_target_id_ = RenderTargetID::BACK_BUFFER;
-  this->current_depth_stencil_target_id_ = DepthStencilTargetID::NONE;
   return true;
 }
 
-void RenderResourceManager::ClearCurrentRenderTarget(
-    device::CommandList& command_list) const {
-  render_targets_.at(current_render_target_id_)
-      .Get()
-      .ClearRenderTarget(command_list);
-}
-
-void RenderResourceManager::ClearCurrentDepthStencil(
-    device::CommandList& command_list) const {
-  depth_stencil_targets_.at(current_depth_stencil_target_id_)
-      .Get()
-      .ClearDepthStencil(command_list);
-}
-
+//レンダーターゲットをセットする
 void RenderResourceManager::SetRenderTargets(
-    device::CommandList& command_list) {
-  MultiRenderTargetTexture& target =
-      render_targets_.at(current_render_target_id_).Get();
-  target.PrepareToUseRenderTargets(command_list);
+    device::CommandList& command_list, RenderTargetID render_target_id,
+    bool clear_render_target, DepthStencilTargetID depth_stencil_target_id,
+    bool clear_depth_stencil_target) {
+  MY_ASSERTION(util::Exist(render_targets_, render_target_id),
+               L"未登録のRenderTargetIDが選択されました。");
+
+  //レンダーターゲットを使用可能状態にする
+  MultiRenderTargetTexture& render_target =
+      render_targets_.at(render_target_id).Get();
+  render_target.Transition(
+      command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
 
   const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtv_handle =
-      target.GetRTVHandles();
-
+      render_target.GetRTVHandles();
   const u32 size = static_cast<u32>(rtv_handle.size());
-  if (current_depth_stencil_target_id_ == DepthStencilTargetID::NONE) {
+
+  //デプス・ステンシルが無効IDならセットしない
+  if (depth_stencil_target_id == DepthStencilTargetID::NONE) {
     command_list.GetCommandList()->OMSetRenderTargets(size, rtv_handle.data(),
                                                       FALSE, nullptr);
   } else {
+    MY_ASSERTION(util::Exist(depth_stencil_targets_, depth_stencil_target_id),
+                 L"未登録のDepthStencilIDが選択されました。");
+
+    //デプス・ステンシルを使用可能状態にする
+    DepthStencil& depth_stencil_target =
+        depth_stencil_targets_.at(depth_stencil_target_id).Get();
+    depth_stencil_target.Transition(
+        command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
     const D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle =
-        depth_stencil_targets_.at(current_depth_stencil_target_id_)
-            .Get()
-            .GetHandle()
-            .cpu_handle_;
-    depth_stencil_targets_.at(current_depth_stencil_target_id_)
-        .Get()
-        .Transition(command_list,
-                    D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
+        depth_stencil_target.GetHandle().cpu_handle_;
     command_list.GetCommandList()->OMSetRenderTargets(size, rtv_handle.data(),
                                                       FALSE, &dsv_handle);
+    //デプス・ステンシルのクリアが必要なら処理をする
+    if (clear_depth_stencil_target) {
+      depth_stencil_target.ClearDepthStencil(command_list);
+    }
   }
 
-  target.SetScissorRect(command_list);
-  target.SetViewport(command_list);
+  //レンダーターゲットのクリアが必要なら処理をする
+  if (clear_render_target) {
+    render_target.ClearRenderTarget(command_list);
+  }
+
+  render_target.SetScissorRect(command_list);
+  render_target.SetViewport(command_list);
 }
 
+//現在のバックバッファのインデックスを取得する
 u32 RenderResourceManager::GetCurrentBackBufferIndex() const {
   return swap_chain_.GetCurrentBackBufferIndex();
 }
 
+//描画終了
 void RenderResourceManager::DrawEnd(device::CommandList& command_list) {
   render_targets_.at(RenderTargetID::BACK_BUFFER)
       .Get()
@@ -100,16 +105,22 @@ void RenderResourceManager::DrawEnd(device::CommandList& command_list) {
                   D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PRESENT);
 }
 
+//描画内容表示
 bool RenderResourceManager::Present() { return swap_chain_.Present(); }
 
+//レンダーターゲットを追加する
 bool RenderResourceManager::AddRenderTarget(
     RenderTargetID id, device::IDirectXAccessor& accessor,
     const std::vector<MultiRenderTargetTexture::Info>& infos) {
+  MY_ASSERTION(!util::Exist(render_targets_, id),
+               L"登録済みのIDが選択されました。");
+
   render_targets_.emplace(
       id, MultiFrameMultiRenderTargetTexture(frame_count_, swap_chain_));
   auto& rtt = render_targets_.at(id);
+
   for (u32 i = 0; i < frame_count_; i++) {
-    if (!rtt.mrt[i].Init(
+    if (!rtt.Get(i).Init(
             accessor, descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID,
             infos)) {
       return false;
@@ -119,23 +130,32 @@ bool RenderResourceManager::AddRenderTarget(
   return true;
 }
 
+//デプス・ステンシルを追加する
 bool RenderResourceManager::AddDepthStencil(
     DepthStencilTargetID id, device::IDirectXAccessor& accessor,
     const DepthStencil::DepthStencilDesc& desc) {
+  MY_ASSERTION(!util::Exist(depth_stencil_targets_, id),
+               L"登録済みのIDが選択されました。");
+
   depth_stencil_targets_.emplace(
       id, MultiFrameDepthStencil(frame_count_, swap_chain_));
   auto& ds = depth_stencil_targets_.at(id);
+
   for (u32 i = 0; i < frame_count_; i++) {
-    if (!ds.ds[i].Init(accessor, desc)) {
+    if (!ds.Get(i).Init(accessor, desc)) {
       return false;
     }
   }
   return true;
 }
 
+//シェーダーリソースとして使用する
 void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
                                      RenderTargetID id,
                                      u32 render_target_number) {
+  MY_ASSERTION(util::Exist(render_targets_, id),
+               L"未登録のIDが選択されました。");
+
   render_targets_.at(id).Get().UseAsSRV(accessor, render_target_number);
 }
 

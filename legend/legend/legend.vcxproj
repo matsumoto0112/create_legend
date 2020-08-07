@@ -167,7 +167,6 @@
     <ClInclude Include="src\audio\audio_manager.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\audio\xaudio2_callback.h" />
-    <None Include="assets\shaders\default\default.hlsli" />
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
@@ -279,14 +278,6 @@
     <None Include="src\.clang-format" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="assets\shaders\default\default_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\default\default_vs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
     <FxCompile Include="assets\shaders\draw2d\sprite_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

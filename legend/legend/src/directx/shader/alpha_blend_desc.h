@@ -12,7 +12,7 @@ namespace shader {
 namespace alpha_blend_desc {
 
 //! デフォルトのブレンド設定
-static const D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_DEFAULT = []() {
+static D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_DEFAULT = []() {
   D3D12_RENDER_TARGET_BLEND_DESC desc{};
   desc.BlendEnable = FALSE;
   desc.LogicOpEnable = FALSE;
@@ -29,7 +29,7 @@ static const D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_DEFAULT = []() {
 }();
 
 //! 加算合成
-static const D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ADD = []() {
+static D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ADD = []() {
   D3D12_RENDER_TARGET_BLEND_DESC desc;
   desc.BlendEnable = TRUE;
   desc.LogicOpEnable = FALSE;
@@ -46,7 +46,7 @@ static const D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ADD = []() {
 }();
 
 //線形合成
-static const D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ALIGNMENT = []() {
+static D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ALIGNMENT = []() {
   D3D12_RENDER_TARGET_BLEND_DESC desc;
   desc.BlendEnable = TRUE;
   desc.LogicOpEnable = FALSE;

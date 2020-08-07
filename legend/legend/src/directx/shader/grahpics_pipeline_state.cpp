@@ -13,6 +13,7 @@ GraphicsPipelineState::GraphicsPipelineState() : pipeline_state_(nullptr) {}
 //デストラクタ
 GraphicsPipelineState::~GraphicsPipelineState() {}
 
+//初期化
 bool GraphicsPipelineState::Init(device::IDirectXAccessor& accessor,
                                  const PSODesc& desc) {
   if (Failed(accessor.GetDevice()->CreateGraphicsPipelineState(
@@ -23,6 +24,7 @@ bool GraphicsPipelineState::Init(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//コマンドリストにセットする
 void GraphicsPipelineState::SetGraphicsCommandList(
     device::CommandList& command_list) {
   command_list.GetCommandList()->SetPipelineState(pipeline_state_.Get());

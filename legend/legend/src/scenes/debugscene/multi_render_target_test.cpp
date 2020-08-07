@@ -85,8 +85,7 @@ bool MultiRenderTargetTest::Initialize() {
 
   directx::device::CommandList command_list;
   if (!command_list.Init(
-          device.GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
 
@@ -251,7 +250,7 @@ bool MultiRenderTargetTest::Initialize() {
     const std::vector<u16> indices{0, 1, 2, 0, 2, 3};
     const u32 index_num = static_cast<u32>(indices.size());
     if (!post_process_index_buffer_.Init(
-            device, index_num, sizeof(u16),
+            device, sizeof(u16), index_num,
             directx::PrimitiveTopology::TriangleList,
             L"PostProcess_IndexBuffer")) {
       return false;
@@ -289,24 +288,7 @@ bool MultiRenderTargetTest::Initialize() {
   }
 
   device.ExecuteCommandList({command_list});
-
-  HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
-  if (!fence_event) {
-    return false;
-  }
-
-  const UINT64 fence_to_wait_for = device.fence_value_;
-  if (FAILED(device.command_queue_->Signal(device.fence_.Get(),
-                                           fence_to_wait_for))) {
-    return false;
-  }
-  device.fence_value_++;
-
-  if (FAILED(device.fence_->SetEventOnCompletion(fence_to_wait_for,
-                                                 fence_event))) {
-    return false;
-  }
-  WaitForSingleObject(fence_event, INFINITE);
+  device.WaitExecute();
 
   return true;
 }
@@ -360,17 +342,12 @@ void MultiRenderTargetTest::Draw() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
-  auto& command_list =
-      device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
   //まず、マルチレンダーターゲット側にモデルを描画する
-  render_resource_manager.SetRenderTargetID(
-      RenderTarget_ID::MULTI_RENDER_TARGET_TEST);
-  render_resource_manager.SetDepthStencilTargetID(
-      DepthStencilTarget_ID::DEPTH_ONLY);
-  render_resource_manager.SetRenderTargets(command_list);
-  render_resource_manager.ClearCurrentRenderTarget(command_list);
-  render_resource_manager.ClearCurrentDepthStencil(command_list);
+  render_resource_manager.SetRenderTargets(
+      command_list, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, true,
+      DepthStencilTarget_ID::DEPTH_ONLY, true);
   device.GetHeapManager().SetGraphicsCommandList(command_list);
   camera_.RenderStart();
   game::GameDevice::GetInstance()
@@ -386,11 +363,9 @@ void MultiRenderTargetTest::Draw() {
   }
 
   //バックバッファに切り替え、ポストプロセスを利用して描画をする
-  render_resource_manager.SetRenderTargetID(
-      directx::render_target::RenderTargetID::BACK_BUFFER);
-  render_resource_manager.SetDepthStencilTargetID(DepthStencilTarget_ID::NONE);
-  render_resource_manager.SetRenderTargets(command_list);
-  render_resource_manager.ClearCurrentRenderTarget(command_list);
+  render_resource_manager.SetRenderTargets(command_list,
+                                           RenderTarget_ID::BACK_BUFFER, true,
+                                           DepthStencilTarget_ID::NONE, false);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()

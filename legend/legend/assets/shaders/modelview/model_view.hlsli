@@ -18,7 +18,7 @@ struct VSOutput{
 
 typedef VSOutput PSInput;
 
-VSOutput VSMain(const VSInput v){
+VSOutput VSMain(const VSInput v) {
     VSOutput o = (VSOutput)0;
     o.pos = mul(float4(v.pos,1.0),g_transform.world);
     o.pos = mul(o.pos,g_world_context.view);
@@ -31,8 +31,8 @@ VSOutput VSMain(const VSInput v){
     return o;
 }
 
-float4 PSMain(const PSInput i){
-    float4 color = g_albedo.Sample(g_sampler_linear,i.uv);
+float4 PSMain(const PSInput i) {
+    float4 color = g_albedo.Sample(g_sampler_clamp, i.uv);
     return color;
 }
 

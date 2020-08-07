@@ -9,10 +9,13 @@ namespace device {
 using directx_helper::Failed;
 using directx_helper::Succeeded;
 
+//コンストラクタ
 SwapChain::SwapChain() {}
 
+//デストラクタ
 SwapChain::~SwapChain() {}
 
+//初期化
 bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
                      u32 frame_count, u32 width, u32 height, DXGI_FORMAT format,
                      HWND hwnd, ID3D12CommandQueue* command_queue) {
@@ -52,6 +55,7 @@ bool SwapChain::Init(IDirectXAccessor& accessor, DXGIAdapter& adapter,
   return true;
 }
 
+//バックバッファを取得する
 ComPtr<ID3D12Resource> SwapChain::GetBuffer(u32 index) const {
   ComPtr<ID3D12Resource> res;
   if (Failed(swap_chain_->GetBuffer(index, IID_PPV_ARGS(&res)))) {
@@ -60,6 +64,7 @@ ComPtr<ID3D12Resource> SwapChain::GetBuffer(u32 index) const {
   return res;
 }
 
+//表示
 bool SwapChain::Present() {
   HRESULT hr;
   if (allow_tearing_) {
@@ -74,6 +79,7 @@ bool SwapChain::Present() {
   return true;
 }
 
+//バックバッファのインデックスを取得する
 u32 SwapChain::GetCurrentBackBufferIndex() const {
   return swap_chain_->GetCurrentBackBufferIndex();
 }

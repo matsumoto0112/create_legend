@@ -70,8 +70,7 @@ bool GameDevice::BeginFrame() {
 
 bool GameDevice::EndFrame() {
   imgui_manager_.EndFrame(
-      device_->current_resource_->command_lists_[device_->MID_COMMAND_LIST_ID]
-          .GetCommandList());
+      device_->GetCurrentFrameResource()->GetCommandList().GetCommandList());
   if (!device_->Present()) {
     return false;
   }

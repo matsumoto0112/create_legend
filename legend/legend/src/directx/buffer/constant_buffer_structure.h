@@ -3,6 +3,7 @@
 
 /**
  * @file constant_buffer_structure.h
+ * @brief コンスタントバッファで使用する構造体定義ファイル
  */
 
 #include "src/math/matrix_4x4.h"
@@ -13,6 +14,7 @@ namespace buffer {
 namespace constant_buffer_structure {
 
 /**
+ * @struct Transform
  * @brief ワールド行列データ構造体
  */
 struct Transform {
@@ -21,6 +23,7 @@ struct Transform {
 };
 
 /**
+ * @struct WorldContext
  * @brief ワールド描画用データ構造体
  */
 struct WorldContext {
@@ -30,6 +33,10 @@ struct WorldContext {
   math::Matrix4x4 projection;
 };
 
+/**
+ * @struct UVRect
+ * @brief UV矩形
+ */
 struct UVRect {
   float left;
   float top;
@@ -41,4 +48,5 @@ struct UVRect {
 }  // namespace buffer
 }  // namespace directx
 }  // namespace legend
+
 #endif  //! LEGEND_DIRECTX_BUFFER_CONSTANT_BUFFER_STRUCTURE_H_

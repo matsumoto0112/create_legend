@@ -25,6 +25,11 @@ D3D12_PRIMITIVE_TOPOLOGY Convert(legend::directx::PrimitiveTopology topology) {
   return dict.at(topology);
 }
 
+/**
+ * @brief インデックスの大きさからフォーマットを計算する
+ * @param index_size
+ * @return
+ */
 DXGI_FORMAT CalcFormatFromIndexSize(legend::u32 index_size) {
   switch (index_size) {
     case sizeof(legend::u16):
@@ -53,8 +58,9 @@ IndexBuffer::IndexBuffer()
 //デストラクタ
 IndexBuffer::~IndexBuffer() {}
 
-bool IndexBuffer::Init(device::IDirectXAccessor& accessor, u32 index_num,
-                       u32 index_size, PrimitiveTopology topology,
+//初期化する
+bool IndexBuffer::Init(device::IDirectXAccessor& accessor, u32 index_size,
+                       u32 index_num, PrimitiveTopology topology,
                        const std::wstring& name) {
   index_buffer_view_ = {};
   index_num_ = index_num;
@@ -63,7 +69,7 @@ bool IndexBuffer::Init(device::IDirectXAccessor& accessor, u32 index_num,
   const DXGI_FORMAT index_format = CalcFormatFromIndexSize(index_size);
   const u32 index_buffer_size = index_num * index_size;
 
-  CommittedResource::BufferDesc desc{
+  const CommittedResource::BufferDesc desc{
       name, index_buffer_size,
       D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
   if (!resource_.InitAsBuffer(accessor, desc)) {
@@ -77,15 +83,18 @@ bool IndexBuffer::Init(device::IDirectXAccessor& accessor, u32 index_num,
   return true;
 }
 
+//リソースを書き込む
 bool IndexBuffer::WriteBufferResource(const void* data) {
   return resource_.WriteResource(data);
 }
 
+//コマンドリストにセットする
 void IndexBuffer::SetGraphicsCommandList(device::CommandList& command_list) {
   command_list.GetCommandList()->IASetIndexBuffer(&index_buffer_view_);
   command_list.GetCommandList()->IASetPrimitiveTopology(primitive_toporogy_);
 }
 
+//描画
 void IndexBuffer::Draw(device::CommandList& command_list) {
   command_list.GetCommandList()->DrawIndexedInstanced(index_num_, 1, 0, 0, 0);
 }

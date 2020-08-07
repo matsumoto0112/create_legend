@@ -5,6 +5,7 @@ namespace directx {
 namespace shader {
 namespace defined_static_sampler {
 
+// Warpサンプラー
 D3D12_STATIC_SAMPLER_DESC Warp(u32 register_id) {
   D3D12_STATIC_SAMPLER_DESC warp_sampler = {};
   warp_sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -25,6 +26,7 @@ D3D12_STATIC_SAMPLER_DESC Warp(u32 register_id) {
   return warp_sampler;
 }
 
+// Clampサンプラー
 D3D12_STATIC_SAMPLER_DESC Clamp(u32 register_id) {
   D3D12_STATIC_SAMPLER_DESC clamp_sampler = {};
   clamp_sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;

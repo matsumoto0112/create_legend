@@ -3,6 +3,7 @@
 
 /**
  * @file graphics_pipeline_state.h
+ * @brief グラフィックパイプラインステートクラス定義
  */
 
 #include "src/directx/device/command_list.h"
@@ -13,6 +14,7 @@ namespace directx {
 namespace shader {
 
 /**
+ * @class GraphicsPipelineState
  * @brief パイプラインステートクラス
  */
 class GraphicsPipelineState {
@@ -28,10 +30,19 @@ class GraphicsPipelineState {
    * @brief デストラクタ
    */
   ~GraphicsPipelineState();
-
+  /**
+   * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc パイプラインデスク
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init(device::IDirectXAccessor& accessor, const PSODesc& desc);
-
+  /**
+   * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
+   */
   void SetGraphicsCommandList(device::CommandList& command_list);
+
  protected:
   //! パイプラインステート
   ComPtr<ID3D12PipelineState> pipeline_state_;

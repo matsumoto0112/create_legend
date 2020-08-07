@@ -31,23 +31,29 @@ class IndexBuffer {
   ~IndexBuffer();
   /**
    * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param index_size インデックス配列の大きさ
+   * @param index_num インデックスのバイトサイズ
+   * @param topology プリミティブの形状
+   * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(device::IDirectXAccessor& accessor, u32 index_num, u32 index_size,
+  bool Init(device::IDirectXAccessor& accessor, u32 index_size, u32 index_num,
             PrimitiveTopology topology, const std::wstring& name);
   /**
    * @brief バッファにリソースを書き込む
-   * @param indices インデックス配列
+   * @param data 書き込むデータ
    * @return 書き込みに成功したらtrueを返す
    */
   bool WriteBufferResource(const void* data);
   /**
-   * @brief グラフィックスコマンドリストに追加する
+   * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
    */
   void SetGraphicsCommandList(device::CommandList& command_list);
   /**
    * @brief 描画
-   * @param accessor DirectX12デバイスアクセサ
+   * @param command_list コマンドリスト
    */
   void Draw(device::CommandList& command_list);
 

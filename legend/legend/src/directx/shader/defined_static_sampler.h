@@ -11,7 +11,15 @@ namespace directx {
 namespace shader {
 namespace defined_static_sampler {
 
+/**
+ * @brief Warpサンプラーを取得する
+ * @param register_id シェーダーのレジスター番号
+ */
 D3D12_STATIC_SAMPLER_DESC Warp(u32 register_id);
+/**
+ * @brief Clampサンプラーを取得する
+ * @param register_id シェーダーのレジスター番号
+ */
 D3D12_STATIC_SAMPLER_DESC Clamp(u32 register_id);
 
 }  // namespace defined_static_sampler

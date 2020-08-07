@@ -37,8 +37,7 @@ bool ModelView::Initialize() {
 
   directx::device::CommandList command_list;
   if (!command_list.Init(
-          device.GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
 
@@ -126,24 +125,7 @@ bool ModelView::Initialize() {
   }
 
   device.ExecuteCommandList({command_list});
-
-  HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
-  if (!fence_event) {
-    return false;
-  }
-
-  const UINT64 fence_to_wait_for = device.fence_value_;
-  if (FAILED(device.command_queue_->Signal(device.fence_.Get(),
-                                           fence_to_wait_for))) {
-    return false;
-  }
-  device.fence_value_++;
-
-  if (FAILED(device.fence_->SetEventOnCompletion(fence_to_wait_for,
-                                                 fence_event))) {
-    return false;
-  }
-  WaitForSingleObject(fence_event, INFINITE);
+  device.WaitExecute();
 
   return true;
 }
@@ -163,11 +145,11 @@ void ModelView::Draw() {
 
   auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
-      device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
-  //render_resource_manager.SetDepthStencilTargetID(
+      device.GetCurrentFrameResource()->GetCommandList();
+  // render_resource_manager.SetDepthStencilTargetID(
   //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY);
-  //render_resource_manager.ClearCurrentDepthStencil(command_list);
-  //render_resource_manager.SetRenderTargets(command_list);
+  // render_resource_manager.ClearCurrentDepthStencil(command_list);
+  // render_resource_manager.SetRenderTargets(command_list);
 
   root_signature_.SetGraphicsCommandList(command_list);
   pipeline_.SetGraphicsCommandList(command_list);

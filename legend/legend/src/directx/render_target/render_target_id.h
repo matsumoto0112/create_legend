@@ -22,6 +22,7 @@ enum class RenderTargetID : u32 {
 };
 
 /**
+ * @enum DepthStencilTargetID
  * @brief デプス・ステンシルターゲットを一意に特定するID
  */
 enum class DepthStencilTargetID {

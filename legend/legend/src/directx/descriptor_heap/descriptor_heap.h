@@ -52,7 +52,6 @@ class DescriptorHeap {
   /**
    * @brief CPU,GPUハンドルを取得する
    * @param index ハンドルインデックス
-   * @return 有効なハンドルを返す
    */
   DescriptorHandle GetHandle(u32 index) const;
   /**

@@ -10,12 +10,11 @@ DepthStencil::DepthStencil() {}
 //デストラクタ
 DepthStencil::~DepthStencil() {}
 
+//初期化
 bool DepthStencil::Init(device::IDirectXAccessor& accessor,
                         const DepthStencilDesc& ds_desc) {
-  CD3DX12_CLEAR_VALUE dsv_clear_value = {};
-  dsv_clear_value.Format = ds_desc.format;
-  dsv_clear_value.DepthStencil.Depth = ds_desc.depth_value;
-  dsv_clear_value.DepthStencil.Stencil = ds_desc.stencil_value;
+  const CD3DX12_CLEAR_VALUE dsv_clear_value = CD3DX12_CLEAR_VALUE(
+      ds_desc.format, ds_desc.depth_value, ds_desc.stencil_value);
 
   const buffer::CommittedResource::Tex2DDesc desc{
       ds_desc.name,
@@ -44,12 +43,14 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
   return true;
 }
 
+//クリアする
 void DepthStencil::ClearDepthStencil(device::CommandList& command_list) const {
   command_list.GetCommandList()->ClearDepthStencilView(
       handle_.cpu_handle_, D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH,
       depth_value_, stencil_value_, 0, nullptr);
 }
 
+//状態を遷移させる
 void DepthStencil::Transition(device::CommandList& command_list,
                               D3D12_RESOURCE_STATES next_states) {
   resource_.Transition(command_list, next_states);

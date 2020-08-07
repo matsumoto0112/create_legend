@@ -77,6 +77,7 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
     }
   }
 
+  // WARPデバイスを作るかどうかで分岐する
   if (util::enum_util::IsBitpop(this->options_ &
                                 DeviceOptionFlags::USE_WARP_DEVICE)) {
     if (Failed(factory_->EnumWarpAdapter(IID_PPV_ARGS(&adapter_)))) {

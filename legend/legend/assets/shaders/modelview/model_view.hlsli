@@ -32,7 +32,7 @@ VSOutput VSMain(const VSInput v) {
 }
 
 float4 PSMain(const PSInput i) {
-    float4 color = g_albedo.Sample(g_sampler_clamp, i.uv);
+    float4 color = g_albedo.Sample(g_sampler_warp, i.uv);
     return color;
 }
 

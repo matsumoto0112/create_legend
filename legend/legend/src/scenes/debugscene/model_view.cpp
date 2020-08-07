@@ -1,6 +1,7 @@
 #include "src/scenes/debugscene/model_view.h"
 
 #include "src/directx/directx_helper.h"
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -9,7 +10,7 @@
 #include "src/util/path.h"
 
 namespace {
-constexpr legend::u32 OBJ_NUM = 10;
+constexpr legend::u32 OBJ_NUM = 1;
 }  // namespace
 
 namespace legend {
@@ -63,9 +64,7 @@ bool ModelView::Initialize() {
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
     pso_desc.DepthStencilState.DepthEnable = false;
     pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-    pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
     pso_desc.InputLayout = vs.GetInputLayout();
-    pso_desc.NodeMask = 0;
     pso_desc.NumRenderTargets = 1;
     pso_desc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -107,9 +106,9 @@ bool ModelView::Initialize() {
     transform_cb_[i].UpdateStaging();
   }
   {
-    const math::Vector3 pos = math::Vector3(0.0f, 10.0f, -10.0f);
+    const math::Vector3 pos = math::Vector3(0.0f, 0.3f, -0.5f);
     const math::Quaternion rot =
-        math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
+        math::Quaternion::FromEular(20.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;
     const float aspect = 1280.0f / 720.0f;
     if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect)) {
@@ -133,6 +132,10 @@ bool ModelView::Update() {
     return false;
   }
 
+  transforms_[0].SetRotation(transforms_[0].GetRotation() *
+                             math::Quaternion::FromEular(0.0f, 0.001f, 0.0f));
+  transform_cb_[0].GetStagingRef().world = transforms_[0].CreateWorldMatrix();
+  transform_cb_[0].UpdateStaging();
   return true;
 }
 
@@ -143,6 +146,9 @@ void ModelView::Draw() {
   auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
       device.GetCurrentFrameResource()->GetCommandList();
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   pipeline_.SetGraphicsCommandList(command_list);
   device.GetHeapManager().SetGraphicsCommandList(command_list);

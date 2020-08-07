@@ -2,10 +2,7 @@
 #define LEGEND_PLAYER_PLAYER_H_
 
 #include "src/actor/actor.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
-#include "src/util/transform.h"
 
 namespace legend {
 namespace player {

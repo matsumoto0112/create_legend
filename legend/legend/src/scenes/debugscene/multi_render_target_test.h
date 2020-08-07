@@ -13,7 +13,6 @@
 #include "src/directx/buffer/vertex_buffer.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"
-#include "src/draw/sprite_2d.h"
 #include "src/scenes/scene.h"
 #include "src/util/transform.h"
 

@@ -13,7 +13,8 @@ TextureString::~TextureString() { Clear(); }
 
 //‰Šú‰»
 bool TextureString::Init(
-    const std::wstring& str, u32 register_num,
+    directx::device::CommandList& command_list, const std::wstring& str,
+    u32 register_num,
     directx::descriptor_heap::heap_parameter::LocalHeapID use_heap_id,
     const std::wstring& font, i32 font_size) {
   this->position_ = math::Vector2::kZeroVector;
@@ -23,7 +24,7 @@ bool TextureString::Init(
   this->register_num_ = register_num;
   this->use_heap_id_ = use_heap_id;
 
-  return  Append(str);;
+  return Append(command_list, str);
 }
 
 //À•W‚ðÝ’è‚·‚é
@@ -47,26 +48,26 @@ void TextureString::SetScale(const math::Vector2& scale) {
 }
 
 //•`‰æ
-void TextureString::Draw(SpriteRenderer& sprite_renderer) {
+void TextureString::StackDrawList(SpriteRenderer& sprite_renderer) {
   for (auto&& ch : chars_) {
     sprite_renderer.AddDrawItems(&ch);
   }
 }
 
 //’Ç‰Á
-bool TextureString::Append(const std::wstring& str) {
+bool TextureString::Append(directx::device::CommandList& command_list,
+                           const std::wstring& str) {
   math::Vector2 position = position_;
   if (chars_.size() != 0) {
     position = chars_.back().GetPosition();
     position.x += chars_.back().GetContentSize().x * chars_.back().GetScale().x;
   }
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   for (auto&& c : str) {
     TextureChar& ch = chars_.emplace_back(TextureChar());
-    if (!ch.Init(c, font_, font_size_, register_num_,
-                 device.GetLocalHeapHandle(use_heap_id_))) {
+    if (!ch.Init(command_list, c, font_, font_size_, register_num_,
+                 device.GetLocalHandle(use_heap_id_))) {
       return false;
     }
     ch.SetPosition(position);

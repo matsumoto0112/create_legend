@@ -105,6 +105,8 @@
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
+    <ClCompile Include="src\draw\texture_string.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
@@ -129,8 +131,12 @@
     <ClCompile Include="src\math\vector_2.cpp" />
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
+    <ClCompile Include="src\object\desk.cpp" />
+    <ClCompile Include="src\physics\bounding_box.cpp" />
+    <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\stdafx.cpp">
@@ -159,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
@@ -198,6 +205,8 @@
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
+    <ClInclude Include="src\draw\texture_string.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -235,8 +244,12 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
+    <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\physics\bounding_box.h" />
+    <ClInclude Include="src\player\player.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
+    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />

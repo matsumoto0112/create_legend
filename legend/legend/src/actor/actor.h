@@ -3,12 +3,12 @@
 
 /**
  * @file actor.h
+ * @brief アクタークラス定義
  */
 
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/constant_buffer_structure.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/game/game_device.h"
-#include "src/util/resource/resource_id.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -16,7 +16,7 @@ namespace actor {
 
 /**
  * @brief アクタークラス
- * @tparam T
+ * @tparam T オブジェクトのコリジョン
  */
 template <class T>
 class Actor {
@@ -47,7 +47,8 @@ class Actor {
   //! トランスフォーム
   util::Transform transform_;
   //! トランスフォームコンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
       transform_cb_;
 
   //! 描画モデル
@@ -56,24 +57,26 @@ class Actor {
   T collision_;
 };
 
+//コンストラクタk
 template <class T>
 inline Actor<T>::Actor() {}
 
+//デストラクタ
 template <class T>
 inline Actor<T>::~Actor() {}
 
+//描画
 template <class T>
 inline void Actor<T>::Draw() {
   MY_ASSERTION(model_.get(), L"モデルが存在しません。");
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
 
-  model_->Draw();
+  model_->Draw(device.GetCurrentFrameResource()->GetCommandList());
 }
 
 }  // namespace actor

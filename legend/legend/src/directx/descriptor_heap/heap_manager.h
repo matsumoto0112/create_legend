@@ -22,6 +22,7 @@ namespace directx {
 namespace descriptor_heap {
 
 /**
+ * @class HeapManager
  * @brief ヒープ管理クラス
  */
 class HeapManager {
@@ -48,19 +49,44 @@ class HeapManager {
    * @brief フレーム開始時に呼ぶ
    */
   void BeginFrame();
-
+  /**
+   * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
+   */
   void SetGraphicsCommandList(device::CommandList& command_list) const;
-
+  /**
+   * @brief ハンドルをグローバルに登録する
+   * @param register_num シェーダーのレジスター番号
+   * @param type リソースの種類
+   * @param handle 登録するハンドル
+   */
   void RegisterHandle(u32 register_num, shader::ResourceType type,
                       DescriptorHandle handle);
-
+  /**
+   * @brief グローバルヒープを更新する
+   * @param accessor DirectXデバイスアクセサ
+   * @param command_list コマンドリスト
+   */
   void UpdateGlobalHeap(device::IDirectXAccessor& accessor,
                         device::CommandList& command_list);
+  /**
+   * @brief ローカルヒープを追加する
+   * @param accessor DirectXデバイスアクセサ
+   * @param heap_id ローカルヒープを一意に特定するID
+   * @return 追加に成功したらtrueを返す
+   */
   bool AddLocalHeap(device::IDirectXAccessor& accessor,
                     heap_parameter::LocalHeapID heap_id);
-
+  /**
+   * @brief ローカルヒープを削除する
+   * @param heap_id 削除するヒープID
+   */
   void RemoveLocalHeap(heap_parameter::LocalHeapID heap_id);
-
+  /**
+   * @brief ローカルヒープのディスクリプタハンドルを取得する
+   * @param heap_id ヒープを一意に特定するID
+   * @return 対象のヒープのハンドル
+   */
   DescriptorHandle GetLocalHeap(heap_parameter::LocalHeapID heap_id);
 
  public:
@@ -72,12 +98,6 @@ class HeapManager {
    * @brief デプス・ステンシルヒープを取得する
    */
   CountingDescriptorHeap* GetDsvHeap() { return &dsv_heap_; }
-  ///**
-  // * @brief IDからローカルヒープを取得する
-  // * @param id ローカルヒープのID
-  // * @return IDが有効なら対応したローカルヒープを返す
-  // */
-  // CountingDescriptorHeap* GetLocalHeap(heap_parameter::LocalHeapID id);
 
  private:
   //! レンダーターゲットヒープ
@@ -91,6 +111,9 @@ class HeapManager {
   //! ローカルのシェーダーリソースヒープ
   LocalHeapMap local_heaps_;
 
+  /**
+   * @brief ローカルハンドル構造体
+   */
   struct LocalHandles final {
     //! コンスタントバッファのハンドル
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles_;

@@ -73,6 +73,11 @@
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
+    <ClCompile Include="src\draw\texture_char.cpp" />
+    <ClCompile Include="src\draw\texture_string.cpp" />
+    <ClCompile Include="src\player\player.cpp" />
+    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\object\desk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -184,6 +189,12 @@
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
+    <ClInclude Include="src\draw\texture_char.h" />
+    <ClInclude Include="src\draw\texture_string.h" />
+    <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\player\player.h" />
+    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
+    <ClInclude Include="src\object\desk.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

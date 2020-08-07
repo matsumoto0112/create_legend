@@ -15,6 +15,7 @@ Model::Model() {}
 //デストラクタ
 Model::~Model() {}
 
+//初期化
 bool Model::Init(const std::filesystem::path& path,
                  directx::device::CommandList& command_list) {
   util::loader::GLBLoader loader;
@@ -73,7 +74,9 @@ bool Model::Init(const std::filesystem::path& path,
     }
   }();
 
-  vertex_buffer_.WriteBufferResource(vertices.data());
+  if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
+    return false;
+  }
 
   //インデックス配列
   const std::vector<u16> indices = loader.GetIndex();
@@ -99,6 +102,7 @@ bool Model::Init(const std::filesystem::path& path,
       return false;
     }
   } else {
+    //テクスチャがなければ仮のテクスチャを作る
     const std::vector<u8> tex_white = {0xff, 0xff, 0xff, 0xff};
     const directx::buffer::Texture2D::Desc desc{
         directx::shader::TextureRegisterID::ALBEDO,
@@ -116,6 +120,7 @@ bool Model::Init(const std::filesystem::path& path,
   return true;
 }
 
+//描画
 void Model::Draw(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   albedo_.SetToHeap(device);

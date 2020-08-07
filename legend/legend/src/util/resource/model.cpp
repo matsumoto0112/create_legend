@@ -11,7 +11,7 @@ Model::Model() {}
 Model::~Model() {}
 
 //“Ç‚İ‚İ
-bool Model::Load(ModelID key, const std::filesystem::path& filepath,
+bool Model::Load(id::Model key, const std::filesystem::path& filepath,
                  directx::device::CommandList& command_list) {
   MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚İ‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
 

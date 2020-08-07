@@ -7,29 +7,17 @@
  */
 
 #include "src/draw/model.h"
+#include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
 namespace legend {
 namespace util {
 namespace resource {
-
-/**
- * @enum ModelID
- * @brief モデルを一意に特定するID
- */
-enum class ModelID {
-  CHECK_XYZ,
-  KARI,
-  OBJECT_1000CM,
-  ERASER,
-  DESK,
-};
-
 /**
  * @class Model
  * @brief モデルリソース管理クラス
  */
-class Model : public ResourceManager<ModelID, std::shared_ptr<draw::Model>> {
+class Model : public ResourceManager<id::Model, std::shared_ptr<draw::Model>> {
  public:
   /**
    * @brief コンストラクタ
@@ -45,7 +33,7 @@ class Model : public ResourceManager<ModelID, std::shared_ptr<draw::Model>> {
    * @param filepath ファイルへのパス
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(ModelID key, const std::filesystem::path& filepath,
+  bool Load(id::Model key, const std::filesystem::path& filepath,
             directx::device::CommandList& command_list);
 };
 

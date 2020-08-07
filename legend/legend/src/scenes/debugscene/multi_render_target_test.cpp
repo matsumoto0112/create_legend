@@ -1,37 +1,44 @@
 #include "src/scenes/debugscene/multi_render_target_test.h"
 
-#include "src/directx/descriptor_heap/heap_parameter.h"
-#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
-#include "src/util/loader/glb_loader.h"
-#include "src/util/path.h"
+#include "src/util/resource/resource_id.h"
 
 namespace {
+
+using VertexShader_ID = legend::util::resource::id::VertexShader;
+using PixelShader_ID = legend::util::resource::id::PixelShader;
+using Pipeline_ID = legend::util::resource::id::Pipeline;
+using Model_ID = legend::util::resource::id::Model;
+using RenderTarget_ID = legend::directx::render_target::RenderTargetID;
+using DepthStencilTarget_ID = legend::directx::render_target::RenderTargetID;
+using ConstantBuffer_ID =
+    legend::directx::shader::ConstantBufferRegisterID::Enum;
+
 struct VS_LOAD_INFO {
-  legend::util::resource::id::VertexShader id;
+  VertexShader_ID id;
   std::filesystem::path filepath;
 };
 
 static VS_LOAD_INFO VS_PAIRS[] = {
-    {legend::util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST,
+    {VertexShader_ID::MULTI_RENDER_TARGET_TEST,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_vs.cso"},
-    {legend::util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST_PP,
+    {VertexShader_ID::MULTI_RENDER_TARGET_TEST_PP,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_pp_vs.cso"}};
 
 struct PS_LOAD_INFO {
-  legend::util::resource::id::PixelShader id;
+  PixelShader_ID id;
   std::filesystem::path filepath;
 };
 
 static PS_LOAD_INFO PS_PAIRS[] = {
-    {legend::util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST,
+    {PixelShader_ID::MULTI_RENDER_TARGET_TEST,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_ps.cso"},
-    {legend::util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST_PP,
+    {PixelShader_ID::MULTI_RENDER_TARGET_TEST_PP,
      std::filesystem::path("multi_render_target_test") /
          "multi_render_target_test_pp_ps.cso"}};
 
@@ -43,14 +50,17 @@ namespace debugscene {
 MultiRenderTargetTest::MultiRenderTargetTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
-MultiRenderTargetTest::~MultiRenderTargetTest() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+MultiRenderTargetTest::~MultiRenderTargetTest() {}
+
 bool MultiRenderTargetTest::Initialize() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+
+  if (!device.GetHeapManager().AddLocalHeap(
+          device, directx::descriptor_heap::heap_parameter::LocalHeapID::
+                      MULTI_RENDER_TARGET_TEST_SCENE)) {
+    return false;
+  }
 
   //事前に使用するリソースを読み込む
   {
@@ -58,11 +68,24 @@ bool MultiRenderTargetTest::Initialize() {
         util::Path::GetInstance()->shader();
 
     for (auto&& info : VS_PAIRS) {
-      resource.GetVertexShader().Load(info.id, shader_path / info.filepath);
+      if (!resource.GetVertexShader().Load(info.id,
+                                           shader_path / info.filepath)) {
+        return false;
+      }
     }
     for (auto&& info : PS_PAIRS) {
-      resource.GetPixelShader().Load(info.id, shader_path / info.filepath);
+      if (!resource.GetPixelShader().Load(info.id,
+                                          shader_path / info.filepath)) {
+        return false;
+      }
     }
+  }
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device.GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
   }
 
   //通常描画用パラメータ設定
@@ -70,7 +93,8 @@ bool MultiRenderTargetTest::Initialize() {
     //描画するモデルを読み込む
     const std::filesystem::path filepath =
         util::Path::GetInstance()->model() / L"1000cmObject.glb";
-    if (!model_.Init(filepath)) {
+    if (!resource.GetModel().Load(Model_ID::OBJECT_1000CM, filepath,
+                                  command_list)) {
       return false;
     }
 
@@ -85,31 +109,47 @@ bool MultiRenderTargetTest::Initialize() {
         {5, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 
-    //まだレンダーターゲットが作られていないなら作る
-    if (!device.GetRenderResourceManager().IsRegisteredRenderTargetID(
-            directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST)) {
-      if (!device.GetRenderResourceManager().CreateRenderTargets(
-              device,
-              directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-              infos)) {
-        return false;
-      }
+    if (!device.GetRenderResourceManager().AddRenderTarget(
+            directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
+            device, infos)) {
+      return false;
     }
+
+    if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
+      return false;
+    }
+
     auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
-    ps->Init(device);
-    ps->SetVertexShader(resource.GetVertexShader().Get(
-        util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST));
-    ps->SetPixelShader(resource.GetPixelShader().Get(
-        util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST));
-    ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-        device, directx::render_target::DepthStencilTargetID::Depth, ps.get());
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-        device,
-        directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-        ps.get());
-    ps->SetRootSignature(device.GetDefaultRootSignature());
-    ps->CreatePipelineState(device);
+
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
+    pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+    pso_desc.DepthStencilState.DepthEnable = false;
+    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+    pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
+    pso_desc.InputLayout = resource.GetVertexShader()
+                               .Get(VertexShader_ID::MULTI_RENDER_TARGET_TEST)
+                               ->GetInputLayout();
+    pso_desc.NodeMask = 0;
+    pso_desc.NumRenderTargets = 2;
+    pso_desc.PrimitiveTopologyType =
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    pso_desc.RTVFormats[0] = pso_desc.RTVFormats[1] =
+        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+    pso_desc.SampleDesc.Count = 1;
+    pso_desc.SampleMask = UINT_MAX;
+    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.PS = resource.GetPixelShader()
+                      .Get(PixelShader_ID::MULTI_RENDER_TARGET_TEST)
+                      ->GetShaderBytecode();
+    pso_desc.VS = resource.GetVertexShader()
+                      .Get(VertexShader_ID::MULTI_RENDER_TARGET_TEST)
+                      ->GetShaderBytecode();
+    if (!ps->Init(device, pso_desc)) {
+      return false;
+    }
     resource.GetPipeline().Register(
         util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST, ps);
 
@@ -125,18 +165,32 @@ bool MultiRenderTargetTest::Initialize() {
   //ポストプロセス描画用パラメータ
   {
     auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
-    ps->Init(device);
-    ps->SetVertexShader(resource.GetVertexShader().Get(
-        util::resource::id::VertexShader::MULTI_RENDER_TARGET_TEST_PP));
-    ps->SetPixelShader(resource.GetPixelShader().Get(
-        util::resource::id::PixelShader::MULTI_RENDER_TARGET_TEST_PP));
-    ps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_DEFAULT, 0);
-    device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-        device, directx::render_target::DepthStencilTargetID::None, ps.get());
-    device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-        device, directx::render_target::RenderTargetID::BACK_BUFFER, ps.get());
-    ps->SetRootSignature(device.GetDefaultRootSignature());
-    ps->CreatePipelineState(device);
+    directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+    pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+    pso_desc.DepthStencilState.DepthEnable = false;
+    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
+    pso_desc.InputLayout =
+        resource.GetVertexShader()
+            .Get(VertexShader_ID::MULTI_RENDER_TARGET_TEST_PP)
+            ->GetInputLayout();
+    pso_desc.NumRenderTargets = 1;
+    pso_desc.PrimitiveTopologyType =
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.PS = resource.GetPixelShader()
+                      .Get(PixelShader_ID::MULTI_RENDER_TARGET_TEST_PP)
+                      ->GetShaderBytecode();
+    pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+    pso_desc.SampleDesc.Count = 1;
+    pso_desc.SampleMask = UINT_MAX;
+    pso_desc.VS = resource.GetVertexShader()
+                      .Get(VertexShader_ID::MULTI_RENDER_TARGET_TEST_PP)
+                      ->GetShaderBytecode();
+    if (!ps->Init(device, pso_desc)) {
+      return false;
+    }
     resource.GetPipeline().Register(
         util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP, ps);
 
@@ -146,10 +200,9 @@ bool MultiRenderTargetTest::Initialize() {
     const math::Vector2 screen_size_float(static_cast<float>(screen_size.x),
                                           static_cast<float>(screen_size.y));
     if (!post_process_transform_cb_.Init(
-            device, directx::shader::ConstantBufferRegisterID::Transform,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::
-                    MULTI_RENDER_TARGET_TEST_SCENE),
+            device, ConstantBuffer_ID::TRANSFORM,
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
             L"PostProcess_TransformConstantBuffer")) {
       return false;
     }
@@ -159,10 +212,9 @@ bool MultiRenderTargetTest::Initialize() {
     post_process_transform_cb_.UpdateStaging();
 
     if (!post_process_world_cb_.Init(
-            device, directx::shader::ConstantBufferRegisterID::WorldContext,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::
-                    MULTI_RENDER_TARGET_TEST_SCENE),
+            device, ConstantBuffer_ID::WORLD_CONTEXT,
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
             L"PostProcess_WorldConstantBuffer")) {
       return false;
     }
@@ -182,22 +234,26 @@ bool MultiRenderTargetTest::Initialize() {
                                           L"PostProcess_VertexBuffer")) {
       return false;
     }
-    if (!post_process_vertex_buffer_.WriteBufferResource(vertices)) {
+    if (!post_process_vertex_buffer_.WriteBufferResource(vertices.data())) {
       return false;
     }
 
     const std::vector<u16> indices{0, 1, 2, 0, 2, 3};
-    if (!post_process_index_buffer_.InitAndWrite(
-            device, indices, directx::PrimitiveTopology::TriangleList,
+    const u32 index_num = static_cast<u32>(indices.size());
+    if (!post_process_index_buffer_.Init(
+            device, index_num, sizeof(u16),
+            directx::PrimitiveTopology::TriangleList,
             L"PostProcess_IndexBuffer")) {
+      return false;
+    }
+    if (!post_process_index_buffer_.WriteBufferResource(indices.data())) {
       return false;
     }
 
     if (!post_process_local_cb_.Init(
             device, 2,
-            device.GetLocalHeapHandle(
-                directx::descriptor_heap::heap_parameter::LocalHeapID::
-                    MULTI_RENDER_TARGET_TEST_SCENE),
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
             L"Local")) {
       return false;
     }
@@ -205,19 +261,43 @@ bool MultiRenderTargetTest::Initialize() {
     post_process_local_cb_.UpdateStaging();
   }
 
-  constexpr u32 MODEL_NUM = 10;
+  constexpr u32 MODEL_NUM = 1;
   for (u32 i = 0; i < MODEL_NUM; i++) {
     transforms_.emplace_back(math::Vector3(3.0f * i, 0, 0));
     auto& cb = transform_cbs_.emplace_back();
-    if (!cb.Init(device, directx::shader::ConstantBufferRegisterID::Transform,
-                 device.GetLocalHeapHandle(
-                     directx::descriptor_heap::heap_parameter::LocalHeapID::
-                         MULTI_RENDER_TARGET_TEST_SCENE),
-                 L"")) {
+    if (!cb.Init(
+            device, ConstantBuffer_ID::TRANSFORM,
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
+            L"")) {
       return false;
     }
   }
-  device.WaitForGPU();
+
+  if (!command_list.Close()) {
+    return false;
+  }
+
+  device.ExecuteCommandList({command_list});
+
+  HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
+  if (!fence_event) {
+    return false;
+  }
+
+  const UINT64 fence_to_wait_for = device.fence_value_;
+  if (FAILED(device.command_queue_->Signal(device.fence_.Get(),
+                                           fence_to_wait_for))) {
+    return false;
+  }
+  device.fence_value_++;
+
+  if (FAILED(device.fence_->SetEventOnCompletion(fence_to_wait_for,
+                                                 fence_event))) {
+    return false;
+  }
+  WaitForSingleObject(fence_event, INFINITE);
+
   return true;
 }
 
@@ -256,83 +336,92 @@ bool MultiRenderTargetTest::Update() {
     post_process_local_cb_.UpdateStaging();
   }
   ImGui::End();
-  return true;
-}
-void MultiRenderTargetTest::Draw() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
-  //まず、マルチレンダーターゲット側にモデルを描画する
-  device.GetRenderResourceManager().SetRenderTargetID(
-      directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST);
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::Depth);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
-  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
-  camera_.RenderStart();
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST)
-      ->SetGraphicsCommandList(device);
 
   for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
     transform_cbs_[i].GetStagingRef().world =
         transforms_[i].CreateWorldMatrix();
     transform_cbs_[i].UpdateStaging();
+  }
+
+  return true;
+}
+void MultiRenderTargetTest::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& render_resource_manager = device.GetRenderResourceManager();
+
+  auto& command_list =
+      device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
+
+  //まず、マルチレンダーターゲット側にモデルを描画する
+  device.GetRenderResourceManager().SetRenderTargetID(
+      RenderTarget_ID::MULTI_RENDER_TARGET_TEST);
+  device.GetRenderResourceManager().SetRenderTargets(command_list);
+  device.GetRenderResourceManager().ClearCurrentRenderTarget(command_list);
+  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  camera_.RenderStart();
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetPipeline()
+      .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST)
+      ->SetGraphicsCommandList(command_list);
+  root_signature_.SetGraphicsCommandList(command_list);
+
+  for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
     transform_cbs_[i].SetToHeap(device);
-    model_.Draw();
+    resource.GetModel().Get(Model_ID::OBJECT_1000CM)->Draw(command_list);
   }
 
   //バックバッファに切り替え、ポストプロセスを利用して描画をする
-  device.GetRenderResourceManager().SetRenderTargetID(
+  render_resource_manager.SetRenderTargetID(
       directx::render_target::RenderTargetID::BACK_BUFFER);
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::None);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentRenderTarget(device);
+  render_resource_manager.SetRenderTargets(command_list);
+  render_resource_manager.ClearCurrentRenderTarget(command_list);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP)
-      ->SetGraphicsCommandList(device);
+      ->SetGraphicsCommandList(command_list);
 
-  device.GetRenderResourceManager().UseRenderTargetToShaderResource(
-      device, directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-      0);
-  device.GetRenderResourceManager().UseRenderTargetToShaderResource(
-      device, directx::render_target::RenderTargetID::MULTI_RENDER_TARGET_TEST,
-      1);
+  render_resource_manager.UseAsSRV(
+      device, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, 0);
+  render_resource_manager.UseAsSRV(
+      device, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, 1);
+
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   post_process_local_cb_.SetToHeap(device);
-//  device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
+  device.GetHeapManager().UpdateGlobalHeap(device.GetDevice(), command_list);
 
-  post_process_vertex_buffer_.SetGraphicsCommandList(device);
-  post_process_index_buffer_.SetGraphicsCommandList(device);
-  post_process_index_buffer_.Draw(device);
+  post_process_vertex_buffer_.SetGraphicsCommandList(command_list);
+  post_process_index_buffer_.SetGraphicsCommandList(command_list);
+  post_process_index_buffer_.Draw(command_list);
 }
 void MultiRenderTargetTest::Finalize() {
-  //game::GameDevice::GetInstance()
+  // game::GameDevice::GetInstance()
   //    ->GetDevice()
   //    .GetHeapManager()
   //    .ResetLocalHeapAllocateCounter(
   //        directx::descriptor_heap::heap_parameter::LocalHeapID::
   //            MULTI_RENDER_TARGET_TEST_SCENE);
 
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  for (auto&& info : VS_PAIRS) {
-    resource.GetVertexShader().Unload(info.id);
-  }
-  for (auto&& info : PS_PAIRS) {
-    resource.GetPixelShader().Unload(info.id);
-  }
-  resource.GetPipeline().Unload(
-      util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST);
-  resource.GetPipeline().Unload(
-      util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP);
+  // auto& device = game::GameDevice::GetInstance()->GetDevice();
+  // util::resource::Resource& resource =
+  //    game::GameDevice::GetInstance()->GetResource();
+  // for (auto&& info : VS_PAIRS) {
+  //  resource.GetVertexShader().Unload(info.id);
+  //}
+  // for (auto&& info : PS_PAIRS) {
+  //  resource.GetPixelShader().Unload(info.id);
+  //}
+  // resource.GetPipeline().Unload(
+  //    util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST);
+  // resource.GetPipeline().Unload(
+  //    util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP);
+
+  // device.GetHeapManager().RemoveLocalHeap(
+  //    directx::descriptor_heap::heap_parameter::LocalHeapID::
+  //        MULTI_RENDER_TARGET_TEST_SCENE);
 }
 
 }  // namespace debugscene

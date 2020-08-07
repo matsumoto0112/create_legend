@@ -113,7 +113,7 @@ void MultiRenderTargetTexture::UseAsSRV(device::IDirectXAccessor& accessor,
       math::util::IsInRange(render_target_number, 0u, render_target_num_),
       L"render_target_number‚ª”ÍˆÍŠO‚Å‚·B");
 
-  const RenderTargetTexture& rtt = render_targets_[render_target_num_];
+  const RenderTargetTexture& rtt = render_targets_[render_target_number];
   accessor.RegisterHandle(rtt.register_num, shader::ResourceType::SRV,
                           rtt.srv_handle);
 }

@@ -91,6 +91,10 @@ class RenderResourceManager {
   void DrawEnd(device::CommandList& command_list);
   bool Present();
 
+  bool AddRenderTarget(
+      RenderTargetID id, device::IDirectXAccessor& accessor,
+      const std::vector<MultiRenderTargetTexture::Info>& infos);
+
   bool AddDepthStencil(DepthStencilTargetID id,
                        device::IDirectXAccessor& accessor,
                        const DepthStencil::DepthStencilDesc& desc);
@@ -99,6 +103,8 @@ class RenderResourceManager {
   void SetDepthStencilTargetID(DepthStencilTargetID id) {
     current_depth_stencil_target_id_ = id;
   }
+
+  void UseAsSRV(device::IDirectXAccessor& accessor, RenderTargetID id, u32 render_target_number);
 
  private:
   u32 frame_count_;

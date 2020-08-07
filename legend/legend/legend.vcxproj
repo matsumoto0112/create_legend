@@ -128,6 +128,7 @@
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\stdafx.cpp">
@@ -232,6 +233,7 @@
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />

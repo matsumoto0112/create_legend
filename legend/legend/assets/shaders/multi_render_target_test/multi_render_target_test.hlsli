@@ -39,7 +39,7 @@ VSOutput VSMain(const VSInput v){
 PSOutput PSMain(const PSInput i){
     PSOutput o = (PSOutput)0;
     o.output_1 = g_albedo.Sample(g_sampler_linear,i.uv);
-    o.output_2 = float4(1.0f,0.0f,0.0f,1.0f);
+    o.output_2 = g_albedo.Sample(g_sampler_linear,i.uv);
     return o;
 }
 

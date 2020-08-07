@@ -98,6 +98,23 @@ void RenderResourceManager::DrawEnd(device::CommandList& command_list) {
 
 bool RenderResourceManager::Present() { return swap_chain_.Present(); }
 
+bool RenderResourceManager::AddRenderTarget(
+    RenderTargetID id, device::IDirectXAccessor& accessor,
+    const std::vector<MultiRenderTargetTexture::Info>& infos) {
+  render_targets_.emplace(
+      id, MultiFrameMultiRenderTargetTexture(frame_count_, swap_chain_));
+  auto& rtt = render_targets_.at(id);
+  for (u32 i = 0; i < frame_count_; i++) {
+    if (!rtt.mrt[i].Init(
+            accessor, descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID,
+            infos)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool RenderResourceManager::AddDepthStencil(
     DepthStencilTargetID id, device::IDirectXAccessor& accessor,
     const DepthStencil::DepthStencilDesc& desc) {
@@ -110,6 +127,12 @@ bool RenderResourceManager::AddDepthStencil(
     }
   }
   return true;
+}
+
+void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
+                                     RenderTargetID id,
+                                     u32 render_target_number) {
+  render_targets_.at(id).Get().UseAsSRV(accessor, render_target_number);
 }
 
 }  // namespace render_target

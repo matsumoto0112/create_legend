@@ -145,9 +145,11 @@
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
+    <ClCompile Include="src\scenes\title.cpp" />
     <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -270,11 +272,13 @@
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
+    <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
     <ClInclude Include="src\scenes\scene_manager.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\task.h" />
+    <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\stage_generate\StageGenerator.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\system\physics_field.h" />

@@ -62,7 +62,6 @@ bool ModelView::Initialize() {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
     pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-    pso_desc.DepthStencilState.DepthEnable = false;
     pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
     pso_desc.InputLayout = vs.GetInputLayout();
     pso_desc.NumRenderTargets = 1;

@@ -1,7 +1,7 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
-//#include "src/physics/collision.h"
+#include "src/physics/collision.h"
 
 namespace {
 namespace ResourceID = legend::util::resource::id;
@@ -40,6 +40,16 @@ bool PlayerMoveViewer::Initialize() {
   device.GetHeapManager().AddLocalHeap(
       device, directx::descriptor_heap::heap_parameter::LocalHeapID::
                   PLAYER_MOVE_VIEWER);
+
+  {
+    directx::render_target::DepthStencil::DepthStencilDesc desc = {
+        L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, 1280, 720, 1.0f, 0};
+    if (!device.GetRenderResourceManager().AddDepthStencil(
+            directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
+            desc)) {
+      return false;
+    }
+  }
 
   //このシーンで使用するリソースを事前に読み込む
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -207,11 +217,11 @@ bool PlayerMoveViewer::Update() {
   }
   ImGui::End();
 
-  // if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
-  //        player_.GetCollisionRef(), desk_.GetCollisionRef())) {
-  //  MY_LOG(L"消しゴムと机が衝突しました");
-  //  player_.SetPosition(player_.GetCollisionRef().GetPosition());
-  //}
+  if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
+          player_.GetCollisionRef(), desk_.GetCollisionRef())) {
+    MY_LOG(L"消しゴムと机が衝突しました");
+    player_.SetPosition(player_.GetCollisionRef().GetPosition());
+  }
 
   return true;
 }
@@ -221,6 +231,10 @@ void PlayerMoveViewer::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   device.GetHeapManager().SetGraphicsCommandList(command_list);
+  auto& render_resource_manager = device.GetRenderResourceManager();
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   game::GameDevice::GetInstance()
       ->GetResource()
@@ -229,7 +243,7 @@ void PlayerMoveViewer::Draw() {
       ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
-  // player_.Draw();
+  player_.Draw();
   desk_.Draw();
 }
 

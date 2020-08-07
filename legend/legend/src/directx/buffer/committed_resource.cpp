@@ -57,7 +57,7 @@ bool CommittedResource::InitAsBuffer(device::IDirectXAccessor& accessor,
 bool CommittedResource::InitAsTex2D(device::IDirectXAccessor& accessor,
                                     const Tex2DDesc& desc) {
   const CD3DX12_RESOURCE_DESC resource_desc = CD3DX12_RESOURCE_DESC::Tex2D(
-      desc.format, desc.width, desc.height, 1, 0, 1, 0, desc.flags);
+      desc.format, desc.width, desc.height, 1, 1, 1, 0, desc.flags);
   const D3D12_CLEAR_VALUE* clear_value_ptr =
       NeedClearValue(resource_desc.Flags) ? &desc.clear_value : nullptr;
 

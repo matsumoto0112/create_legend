@@ -1,5 +1,6 @@
 #include "src/scenes/debugscene/multi_render_target_test.h"
 
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
@@ -12,7 +13,8 @@ using PixelShader_ID = legend::util::resource::id::PixelShader;
 using Pipeline_ID = legend::util::resource::id::Pipeline;
 using Model_ID = legend::util::resource::id::Model;
 using RenderTarget_ID = legend::directx::render_target::RenderTargetID;
-using DepthStencilTarget_ID = legend::directx::render_target::RenderTargetID;
+using DepthStencilTarget_ID =
+    legend::directx::render_target::DepthStencilTargetID;
 using ConstantBuffer_ID =
     legend::directx::shader::ConstantBufferRegisterID::Enum;
 
@@ -115,6 +117,13 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
 
+    const directx::render_target::DepthStencil::DepthStencilDesc dsv_desc = {
+        L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, w, h, 1.0f, 0};
+    if (!device.GetRenderResourceManager().AddDepthStencil(
+            DepthStencilTarget_ID::DEPTH_ONLY, device, dsv_desc)) {
+      return false;
+    }
+
     if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
       return false;
     }
@@ -122,9 +131,10 @@ bool MultiRenderTargetTest::Initialize() {
     auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
-    pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    pso_desc.BlendState.RenderTarget[0] =
+        directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+    pso_desc.BlendState.AlphaToCoverageEnable = true;
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-    pso_desc.DepthStencilState.DepthEnable = false;
     pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
     pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
     pso_desc.InputLayout = resource.GetVertexShader()
@@ -157,7 +167,7 @@ bool MultiRenderTargetTest::Initialize() {
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
     if (!camera_.Init(L"MainCamera", math::Vector3(0.0f, 1.0f, -1.0f),
                       camera_rotation, 60.0f * math::util::DEG_2_RAD,
-                      aspect_ratio, math::Vector3::kUpVector)) {
+                      aspect_ratio, math::Vector3::kUpVector, 0.1f, 1000.0f)) {
       return false;
     }
   }
@@ -169,7 +179,7 @@ bool MultiRenderTargetTest::Initialize() {
     pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState.DepthEnable = false;
-    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
+    pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
     pso_desc.InputLayout =
         resource.GetVertexShader()
             .Get(VertexShader_ID::MULTI_RENDER_TARGET_TEST_PP)
@@ -261,9 +271,9 @@ bool MultiRenderTargetTest::Initialize() {
     post_process_local_cb_.UpdateStaging();
   }
 
-  constexpr u32 MODEL_NUM = 1;
+  constexpr u32 MODEL_NUM = 50;
   for (u32 i = 0; i < MODEL_NUM; i++) {
-    transforms_.emplace_back(math::Vector3(3.0f * i, 0, 0));
+    transforms_.emplace_back(math::Vector3(i * 1.0f, 0, i * 1.0f));
     auto& cb = transform_cbs_.emplace_back();
     if (!cb.Init(
             device, ConstantBuffer_ID::TRANSFORM,
@@ -354,10 +364,13 @@ void MultiRenderTargetTest::Draw() {
       device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
 
   //まず、マルチレンダーターゲット側にモデルを描画する
-  device.GetRenderResourceManager().SetRenderTargetID(
+  render_resource_manager.SetRenderTargetID(
       RenderTarget_ID::MULTI_RENDER_TARGET_TEST);
-  device.GetRenderResourceManager().SetRenderTargets(command_list);
-  device.GetRenderResourceManager().ClearCurrentRenderTarget(command_list);
+  render_resource_manager.SetDepthStencilTargetID(
+      DepthStencilTarget_ID::DEPTH_ONLY);
+  render_resource_manager.SetRenderTargets(command_list);
+  render_resource_manager.ClearCurrentRenderTarget(command_list);
+  render_resource_manager.ClearCurrentDepthStencil(command_list);
   device.GetHeapManager().SetGraphicsCommandList(command_list);
   camera_.RenderStart();
   game::GameDevice::GetInstance()
@@ -375,6 +388,7 @@ void MultiRenderTargetTest::Draw() {
   //バックバッファに切り替え、ポストプロセスを利用して描画をする
   render_resource_manager.SetRenderTargetID(
       directx::render_target::RenderTargetID::BACK_BUFFER);
+  render_resource_manager.SetDepthStencilTargetID(DepthStencilTarget_ID::NONE);
   render_resource_manager.SetRenderTargets(command_list);
   render_resource_manager.ClearCurrentRenderTarget(command_list);
   game::GameDevice::GetInstance()
@@ -398,13 +412,6 @@ void MultiRenderTargetTest::Draw() {
   post_process_index_buffer_.Draw(command_list);
 }
 void MultiRenderTargetTest::Finalize() {
-  // game::GameDevice::GetInstance()
-  //    ->GetDevice()
-  //    .GetHeapManager()
-  //    .ResetLocalHeapAllocateCounter(
-  //        directx::descriptor_heap::heap_parameter::LocalHeapID::
-  //            MULTI_RENDER_TARGET_TEST_SCENE);
-
   // auto& device = game::GameDevice::GetInstance()->GetDevice();
   // util::resource::Resource& resource =
   //    game::GameDevice::GetInstance()->GetResource();

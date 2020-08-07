@@ -46,9 +46,7 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
 
 void DepthStencil::ClearDepthStencil(device::CommandList& command_list) const {
   command_list.GetCommandList()->ClearDepthStencilView(
-      handle_.cpu_handle_,
-      D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH |
-          D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_STENCIL,
+      handle_.cpu_handle_, D3D12_CLEAR_FLAGS::D3D12_CLEAR_FLAG_DEPTH,
       depth_value_, stencil_value_, 0, nullptr);
 }
 

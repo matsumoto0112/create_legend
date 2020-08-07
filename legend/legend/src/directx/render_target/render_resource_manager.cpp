@@ -77,6 +77,10 @@ void RenderResourceManager::SetRenderTargets(
             .Get()
             .GetHandle()
             .cpu_handle_;
+    depth_stencil_targets_.at(current_depth_stencil_target_id_)
+        .Get()
+        .Transition(command_list,
+                    D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
     command_list.GetCommandList()->OMSetRenderTargets(size, rtv_handle.data(),
                                                       FALSE, &dsv_handle);
   }

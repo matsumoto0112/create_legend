@@ -70,7 +70,7 @@ bool EnemyMoveViewer::Initialize() {
 
   //ƒJƒƒ‰‚Ì‰Šú‰»
   {
-    const math::Vector3 camera_position = math::Vector3(0, 10, -10);
+    const math::Vector3 camera_position = math::Vector3(0, 2, -2);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =

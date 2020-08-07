@@ -45,9 +45,12 @@ class EnemyManager {
   */
   void Destroy(i32 index);
 
+  void SetPosition(Enemy* enemy);
+
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;
   i32 action_enemy_index_ = -1;
+  i32 enemy_max_count_ = 50;
   float move_timer_ = 0.0f;
   const float move_time_ = 0.25f;
 };

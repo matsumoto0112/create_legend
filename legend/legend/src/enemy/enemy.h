@@ -14,21 +14,20 @@ namespace enemy {
  * @class Enemy
  * @brief エネミーのクラス
  */
-class Enemy {
+class Enemy : public actor::Actor<physics::BoundingBox> {
+ public:
+  /**
+   * @brief 初期化パラメータ
+   */
+  struct InitializeParameter {
+    util::Transform transform;
+    math::Vector3 bouding_box_length;
+  };
  public:
   /**
    * @brief コンストラクタ
    */
   Enemy();
-  /**
-   * @brief コンストラクタ
-   * @param 座標
-   * @param 回転
-   * @param スケール
-   * @param 力の最低値
-   * @param 力の最大値
-   */
-  Enemy(math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
   /**
    * @brief デストラクタ
    */
@@ -36,16 +35,11 @@ class Enemy {
   /**
    * @brief 初期化
    */
-  bool Initilaize(directx::DirectX12Device& device,
-                  util::resource::Resource& resource);
+  virtual bool Init(const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
   bool Update();
-  /**
-   * @brief 描画
-   */
-  void Draw(directx::DirectX12Device& device);
   /**
    * @brief 移動
    */
@@ -66,11 +60,11 @@ class Enemy {
    * @brief 移動に必要なパラメータの初期化
    */
   void ResetParameter();
-  /**
-   * @brief 減速
-   * @param 減速率(1より大きい値で)
-   */
-  void Deceleration(float deceleration_rate);
+  ///**
+  // * @brief 減速
+  // * @param 減速率(1より大きい値で)
+  // */
+  //void Deceleration(float deceleration_rate);
   /**
    * @brief 座標の取得
    */
@@ -83,31 +77,19 @@ class Enemy {
    * @brief 回転の取得
    */
   math::Quaternion GetRotation() const;
-  /**
-   * @brief 直方体の取得
-   */
-  physics::BoundingBox& GetOBB();
 
  private:
-  //衝突判定用の直方体
-  physics::BoundingBox obb_;
-
-  //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      transform_cb_;
-  //! トランスフォーム
-  util::Transform transform_;
 
   //! 速度
   math::Vector3 velocity_;
-  //! 減速率
-  float deceleration_x_;
-  float deceleration_z_;
+  ////! 減速率
+  //float deceleration_x_;
+  //float deceleration_z_;
   //! 移動中か
   bool is_move_;
 
   //! 移動に加える力
-  const float power_ = 10;
+  const float power_ = 1;
   ////! 実際に加える力の加減
   //float impulse_;
 

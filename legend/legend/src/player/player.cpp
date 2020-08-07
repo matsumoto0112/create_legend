@@ -33,8 +33,8 @@ bool Player::Init(const InitializeParameter& parameter) {
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
           device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
-                                    LocalHeapID::PLAYER_MOVE_VIEWER),
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
     return false;
   }

@@ -28,70 +28,6 @@ bool PhysicsTest::Initialize() {
     return false;
   }
 
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
-    return false;
-  }
-
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::id::Model::DESK, model_path,
-                                command_list)) {
-    return false;
-  }
-
-  D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
-  pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-  pso_desc.BlendState.AlphaToCoverageEnable = true;
-  pso_desc.BlendState.RenderTarget[0] =
-      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
-  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-  pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-  pso_desc.InputLayout = resource.GetVertexShader()
-                             .Get(util::resource::id::VertexShader::MODEL_VIEW)
-                             ->GetInputLayout();
-  pso_desc.NumRenderTargets = 1;
-  pso_desc.PrimitiveTopologyType =
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-  pso_desc.pRootSignature =
-      device.GetDefaultRootSignature()->GetRootSignature();
-  pso_desc.PS = resource.GetPixelShader()
-                    .Get(util::resource::id::PixelShader::MODEL_VIEW)
-                    ->GetShaderBytecode();
-  pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  pso_desc.SampleDesc.Count = 1;
-  pso_desc.SampleMask = UINT_MAX;
-  pso_desc.VS = resource.GetVertexShader()
-                    .Get(util::resource::id::VertexShader::MODEL_VIEW)
-                    ->GetShaderBytecode();
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  if (!gps->Init(device, pso_desc)) {
-    return false;
-  }
-  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
-                                  gps);
-
-  auto gps_wire_frame =
-      std::make_shared<directx::shader::GraphicsPipelineState>();
-  pso_desc.RasterizerState.FillMode =
-      D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
-  if (!gps_wire_frame->Init(device, pso_desc)) {
-    return false;
-  }
-  resource.GetPipeline().Register(
-      util::resource::id::Pipeline::OBJECT_WIREFRAME, gps_wire_frame);
-
   for (i32 i = 0; i < obb_num_; i++) {
     if (!obbs_[i].Init()) {
       return false;
@@ -264,14 +200,7 @@ void PhysicsTest::Draw() {
 
 //終了
 void PhysicsTest::Finalize() {
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource::id::VertexShader::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::OBJECT_WIREFRAME);
-  resource.GetModel().Unload(util::resource::id::Model::DESK);
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 }  // namespace debugscene
 }  // namespace scenes

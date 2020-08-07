@@ -64,12 +64,6 @@ bool MultiRenderTargetTest::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  if (!device.GetHeapManager().AddLocalHeap(
-          device, directx::descriptor_heap::heap_parameter::LocalHeapID::
-                      MULTI_RENDER_TARGET_TEST_SCENE)) {
-    return false;
-  }
-
   directx::device::CommandList command_list;
   if (!command_list.Init(
           device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
@@ -97,14 +91,6 @@ bool MultiRenderTargetTest::Initialize() {
 
   //通常描画用パラメータ設定
   {
-    //描画するモデルを読み込む
-    const std::filesystem::path filepath =
-        util::Path::GetInstance()->model() / L"1000cmObject.glb";
-    if (!resource.GetModel().Load(Model_ID::OBJECT_1000CM, filepath,
-                                  command_list)) {
-      return false;
-    }
-
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
 
@@ -391,6 +377,8 @@ void MultiRenderTargetTest::Draw() {
 
 void MultiRenderTargetTest::Finalize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+  device.WaitExecute();
+
   util::resource::Resource& resource =
       game::GameDevice::GetInstance()->GetResource();
   for (auto&& info : VS_LOAD_LISTS) {
@@ -400,13 +388,8 @@ void MultiRenderTargetTest::Finalize() {
     resource.GetPixelShader().Unload(info.id);
   }
 
-  resource.GetModel().Unload(Model_ID::OBJECT_1000CM);
   resource.GetPipeline().Unload(Pipeline_ID::MULTI_RENDER_TARGET_TEST);
   resource.GetPipeline().Unload(Pipeline_ID::MULTI_RENDER_TARGET_TEST_PP);
-
-  device.GetHeapManager().RemoveLocalHeap(
-      directx::descriptor_heap::heap_parameter::LocalHeapID::
-          MULTI_RENDER_TARGET_TEST_SCENE);
 }
 
 }  // namespace debugscene

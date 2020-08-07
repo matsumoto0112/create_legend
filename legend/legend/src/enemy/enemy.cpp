@@ -38,8 +38,8 @@ bool Enemy::Init(const InitializeParameter& parameter) {
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
           device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
-                                    LocalHeapID::ENEMY_MOVE_TEST),
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
     return false;
   }

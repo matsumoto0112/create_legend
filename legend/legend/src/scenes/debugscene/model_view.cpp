@@ -30,12 +30,6 @@ bool ModelView::Initialize() {
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  if (!device.GetHeapManager().AddLocalHeap(
-          device, directx::descriptor_heap::heap_parameter::LocalHeapID::
-                      MODEL_VIEW_SCENE)) {
-    return false;
-  }
-
   transform_cb_.resize(OBJ_NUM);
   transforms_.resize(OBJ_NUM);
   for (u32 i = 0; i < OBJ_NUM; i++) {
@@ -99,10 +93,7 @@ void ModelView::Draw() {
   }
 }
 
-void ModelView::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().GetHeapManager().RemoveLocalHeap(
-      directx::descriptor_heap::heap_parameter::LocalHeapID::MODEL_VIEW_SCENE);
-}
+void ModelView::Finalize() {}
 
 }  // namespace debugscene
 }  // namespace scenes

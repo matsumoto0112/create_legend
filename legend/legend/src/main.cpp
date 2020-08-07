@@ -123,6 +123,16 @@ class MyApp final : public device::Application {
         }
         resource.GetPipeline().Register(
             util::resource::id::Pipeline::MODEL_VIEW, pipeline);
+
+        pso_desc.RasterizerState.FillMode =
+            D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
+        auto pipeline_wireframe =
+            std::make_shared<directx::shader::GraphicsPipelineState>();
+        if (!pipeline_wireframe->Init(device, pso_desc)) {
+          return false;
+        }
+        resource.GetPipeline().Register(
+            util::resource::id::Pipeline::OBJECT_WIREFRAME, pipeline_wireframe);
       }
     }
 

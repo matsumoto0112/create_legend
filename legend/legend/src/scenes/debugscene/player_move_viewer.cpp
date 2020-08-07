@@ -1,19 +1,6 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
-#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/physics/collision.h"
-
-namespace {
-namespace ResourceID = legend::util::resource::id;
-constexpr ResourceID::VertexShader MODEL_VIEW_VS =
-    ResourceID::VertexShader::MODEL_VIEW;
-constexpr ResourceID::PixelShader MODEL_VIEW_PS =
-    ResourceID::PixelShader::MODEL_VIEW;
-constexpr ResourceID::Pipeline MODEL_VIEW_MAT =
-    ResourceID::Pipeline::MODEL_VIEW;
-constexpr ResourceID::Model PLAYER_MODEL = ResourceID::Model::ERASER;
-constexpr ResourceID::Model DESK_MODEL = ResourceID::Model::DESK;
-}  // namespace
 
 namespace legend {
 namespace scenes {
@@ -28,18 +15,6 @@ PlayerMoveViewer::~PlayerMoveViewer() {}
 //初期化
 bool PlayerMoveViewer::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-  directx::device::CommandList command_list;
-  if (!command_list.Init(device, D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
-
-  device.GetHeapManager().AddLocalHeap(
-      device,
-      directx::descriptor_heap::heap_parameter::LocalHeapID::PHYSICS_TEST);
-  device.GetHeapManager().AddLocalHeap(
-      device, directx::descriptor_heap::heap_parameter::LocalHeapID::
-                  PLAYER_MOVE_VIEWER);
 
   //プレイヤーの初期化
   {
@@ -83,9 +58,6 @@ bool PlayerMoveViewer::Initialize() {
     }
   }
 
-  command_list.Close();
-  device.ExecuteCommandList({command_list});
-  device.WaitExecute();
   return true;
 }
 
@@ -162,7 +134,7 @@ void PlayerMoveViewer::Draw() {
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
-      .Get(MODEL_VIEW_MAT)
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
@@ -172,13 +144,9 @@ void PlayerMoveViewer::Draw() {
 
 //終了
 void PlayerMoveViewer::Finalize() {
-  auto& heap_manager =
-      game::GameDevice::GetInstance()->GetDevice().GetHeapManager();
-  heap_manager.RemoveLocalHeap(directx::descriptor_heap::heap_parameter::
-                                   LocalHeapID::PLAYER_MOVE_VIEWER);
-  heap_manager.RemoveLocalHeap(
-      directx::descriptor_heap::heap_parameter::LocalHeapID::PHYSICS_TEST);
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
+
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

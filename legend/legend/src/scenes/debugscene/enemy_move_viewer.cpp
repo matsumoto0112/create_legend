@@ -26,60 +26,6 @@ bool EnemyMoveViewer::Initialize() {
     return false;
   }
 
-  device.GetHeapManager().AddLocalHeap(
-      device,
-      directx::descriptor_heap::heap_parameter::LocalHeapID::ENEMY_MOVE_TEST);
-
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
-    return false;
-  }
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::id::Model::ERASER, model_path,
-                                command_list)) {
-    return false;
-  }
-
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
-  pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-  pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-  pso_desc.InputLayout = resource.GetVertexShader()
-                             .Get(util::resource::id::VertexShader::MODEL_VIEW)
-                             ->GetInputLayout();
-  pso_desc.NumRenderTargets = 1;
-  pso_desc.PrimitiveTopologyType =
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-  pso_desc.pRootSignature =
-      device.GetDefaultRootSignature()->GetRootSignature();
-  pso_desc.PS = resource.GetPixelShader()
-                    .Get(util::resource::id::PixelShader::MODEL_VIEW)
-                    ->GetShaderBytecode();
-  pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  pso_desc.SampleDesc.Count = 1;
-  pso_desc.SampleMask = UINT_MAX;
-  pso_desc.VS = resource.GetVertexShader()
-                    .Get(util::resource::id::VertexShader::MODEL_VIEW)
-                    ->GetShaderBytecode();
-  if (!gps->Init(device, pso_desc)) {
-    return false;
-  }
-  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
-                                  gps);
-
   if (!enemy_manager_.Initilaize()) {
     return false;
   }
@@ -174,15 +120,7 @@ void EnemyMoveViewer::Draw() {
 }
 
 void EnemyMoveViewer::Finalize() {
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource::id::VertexShader::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::id::Model::ERASER);
-  game::GameDevice::GetInstance()->GetDevice().GetHeapManager().RemoveLocalHeap(
-      directx::descriptor_heap::heap_parameter::LocalHeapID::ENEMY_MOVE_TEST);
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
 }  // namespace debugscene

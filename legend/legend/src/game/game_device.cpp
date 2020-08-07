@@ -41,6 +41,10 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
   }
 
   //ƒŠƒ\[ƒXŠÇ—
+  if (!resource_.Init()) {
+    return false;
+  }
+
   // ImGui
   if (!imgui_manager_.Init(window_->GetHWND(), device_->GetDevice(),
                            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3, true)) {
@@ -75,7 +79,7 @@ bool GameDevice::EndFrame() {
   return true;
 }
 
-void GameDevice::Finalize() {}
+void GameDevice::Finalize() { device_->Destroy(); }
 
 }  // namespace game
 }  // namespace  legend

@@ -6,12 +6,14 @@
  * @brief テクスチャ使用可能なレンダーターゲットクラス定義
  */
 
+#include "src/directx/descriptor_heap/heap_parameter.h"
+#include "src/directx/device/command_list.h"
 #include "src/directx/render_target/render_target.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
 
 namespace legend {
 namespace directx {
 namespace render_target {
+
 /**
  * @class MultiRenderTargetTexture
  * @brief テクスチャ使用可能なレンダーターゲット
@@ -64,7 +66,7 @@ class MultiRenderTargetTexture {
    * @param info レンダーターゲットの情報
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor,
+  bool Init(device::IDirectXAccessor& accessor,
             descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
             const Info& info);
   /**
@@ -73,37 +75,40 @@ class MultiRenderTargetTexture {
    * @param info 各レンダーターゲットの情報
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor,
+  bool Init(device::IDirectXAccessor& accessor,
             descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
             const std::vector<Info>& infos);
+  bool InitFromBuffer(device::IDirectXAccessor& accessor,
+                      ComPtr<ID3D12Resource> buffer,
+                      const util::Color4& clear_color,
+                      const std::wstring& name);
   /**
    * @brief レンダーターゲットの色をクリアする
    * @param accessor DirextX12アクセサ
    * @details レンダーターゲットにセットされていないときは無効
    */
-  void ClearRenderTarget(IDirectXAccessor& accessor) const;
+  void ClearRenderTarget(device::CommandList& command_list) const;
   /**
    * @brief 描画終了
    * @param accessor DirextX12アクセサ
    */
-  void DrawEnd(IDirectXAccessor& accessor);
-  /**
-   * @brief テクスチャをSRVとしてグローバルヒープにセットする
-   * @param accessor DirextX12アクセサ
-   */
-  void SetToGlobalHeap(IDirectXAccessor& accessor,
-                       u32 render_target_number) const;
-  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline);
+  void DrawEnd(device::CommandList& command_list);
 
-  void PrepareToUseRenderTarget(IDirectXAccessor& accessor);
-  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const;
-
-  void SetViewport(IDirectXAccessor& accessor) const;
-  void SetScissorRect(IDirectXAccessor& accessor) const;
+  void PrepareToUseRenderTargets(directx::device::CommandList& command_list);
+  void UseAsSRV(device::IDirectXAccessor& accessor, u32 render_target_number);
+  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GetRTVHandles() const {
+    return rtv_handles_;
+  }
+  void SetViewport(device::CommandList& command_list) const;
+  void SetScissorRect(device::CommandList& command_list) const;
+  void Transition(device::CommandList& command_list,
+                  D3D12_RESOURCE_STATES next_state);
 
  private:
+  u32 render_target_num_;
   std::vector<D3D12_VIEWPORT> viewports_;
   std::vector<D3D12_RECT> scissor_rects_;
+  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtv_handles_;
   std::vector<RenderTargetTexture> render_targets_;
 };
 

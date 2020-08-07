@@ -32,7 +32,7 @@ void Application::Run() {
 }
 
 //”j‰óŽž
-void Application::Destroy() {}
+void Application::Destroy() { game::GameDevice::GetInstance()->Finalize(); }
 
 bool Application::BeginFrame() {
   if (!game::GameDevice::GetInstance()->BeginFrame()) {

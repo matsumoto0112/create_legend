@@ -94,6 +94,8 @@
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
     <ClCompile Include="src\directx\frame_resource.cpp" />
     <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
@@ -178,7 +180,8 @@
     <ClInclude Include="src\directx\device\swap_chain.h" />
     <ClInclude Include="src\directx\frame_resource.h" />
     <ClInclude Include="src\directx\render_target\depth_stencil.h" />
-    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
+    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
     <ClInclude Include="src\directx\render_target\render_target.h" />
     <ClInclude Include="src\directx\render_target\render_target_id.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />

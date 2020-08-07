@@ -6,6 +6,7 @@
  */
 
 #include "src/directx/descriptor_heap/descriptor_handle.h"
+#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/shader/shader_resource_type.h"
 
 namespace legend {
@@ -28,6 +29,8 @@ class IDirectXAccessor {
 
   virtual descriptor_heap::DescriptorHandle GetRTVHandle() = 0;
   virtual descriptor_heap::DescriptorHandle GetDSVHandle() = 0;
+  virtual descriptor_heap::DescriptorHandle GetLocalHandle(
+      descriptor_heap::heap_parameter::LocalHeapID heap_id) = 0;
 
   virtual void RegisterHandle(u32 register_num, shader::ResourceType type,
                               descriptor_heap::DescriptorHandle handle) = 0;

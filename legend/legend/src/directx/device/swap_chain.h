@@ -34,17 +34,12 @@ class SwapChain {
   bool Init(IDirectXAccessor& accessor, DXGIAdapter& adapter, u32 frame_count,
             u32 width, u32 height, DXGI_FORMAT format, HWND hwnd,
             ID3D12CommandQueue* command_queue);
-
+  ComPtr<ID3D12Resource> GetBuffer(u32 index) const;
   bool Present();
   u32 GetCurrentBackBufferIndex() const;
 
  public:
   ComPtr<IDXGISwapChain3> swap_chain_;
-  std::vector<render_target::RenderTarget> render_targets_;
-
-  D3D12_VIEWPORT viewport_;
-  D3D12_RECT scissor_rect_;
-
   bool allow_tearing_;
 };
 

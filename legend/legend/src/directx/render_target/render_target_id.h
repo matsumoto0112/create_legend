@@ -19,8 +19,18 @@ enum class RenderTargetID : u32 {
   BACK_BUFFER = 0,
 
   MULTI_RENDER_TARGET_TEST,
-
 };
+
+/**
+ * @brief デプス・ステンシルターゲットを一意に特定するID
+ */
+enum class DepthStencilTargetID {
+  //! 使用しないときのデフォルトID
+  NONE,
+
+  DEPTH_ONLY,
+};
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

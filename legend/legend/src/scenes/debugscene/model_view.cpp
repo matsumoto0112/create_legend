@@ -8,6 +8,10 @@
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 
+namespace {
+constexpr legend::u32 OBJ_NUM = 10;
+}  // namespace
+
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -24,6 +28,13 @@ bool ModelView::Initialize() {
   }
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+
+  if (!device.GetHeapManager().AddLocalHeap(
+          device, directx::descriptor_heap::heap_parameter::LocalHeapID::
+                      MODEL_VIEW_SCENE)) {
+    return false;
+  }
+
   directx::device::CommandList command_list;
   if (!command_list.Init(
           device.GetDevice(),
@@ -55,6 +66,7 @@ bool ModelView::Initialize() {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
     pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
+    pso_desc.DepthStencilState.DepthEnable = false;
     pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
     pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
     pso_desc.InputLayout = vs.GetInputLayout();
@@ -74,16 +86,30 @@ bool ModelView::Initialize() {
     }
   }
 
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Transform")) {
-    return false;
+  {
+    directx::render_target::DepthStencil::DepthStencilDesc desc = {
+        L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, 1280, 720, 1.0f, 0};
+    if (!device.GetRenderResourceManager().AddDepthStencil(
+            directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
+            desc)) {
+      return false;
+    }
   }
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
 
+  transform_cb_.resize(OBJ_NUM);
+  transforms_.resize(OBJ_NUM);
+  for (u32 i = 0; i < OBJ_NUM; i++) {
+    if (!transform_cb_[i].Init(
+            device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+            device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                      LocalHeapID::GLOBAL_ID),
+            L"Transform")) {
+      return false;
+    }
+    transforms_[i].SetPosition(math::Vector3(i * 0.6f, 0.0f, i * 0.6f));
+    transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
+    transform_cb_[i].UpdateStaging();
+  }
   {
     const math::Vector3 pos = math::Vector3(0.0f, 10.0f, -10.0f);
     const math::Quaternion rot =
@@ -99,9 +125,7 @@ bool ModelView::Initialize() {
     return false;
   }
 
-  ID3D12CommandList* pp_command_list[] = {command_list.GetCommandList()};
-  device.command_queue_->ExecuteCommandLists(_countof(pp_command_list),
-                                             pp_command_list);
+  device.ExecuteCommandList({command_list});
 
   HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
   if (!fence_event) {
@@ -137,14 +161,23 @@ bool ModelView::Update() {
 void ModelView::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
+  auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
       device.current_resource_->command_lists_[device.MID_COMMAND_LIST_ID];
+  //render_resource_manager.SetDepthStencilTargetID(
+  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY);
+  //render_resource_manager.ClearCurrentDepthStencil(command_list);
+  //render_resource_manager.SetRenderTargets(command_list);
+
   root_signature_.SetGraphicsCommandList(command_list);
   pipeline_.SetGraphicsCommandList(command_list);
-  device.heap_manager_.SetGraphicsCommandList(command_list);
+  device.GetHeapManager().SetGraphicsCommandList(command_list);
   camera_.RenderStart();
-  transform_cb_.SetToHeap(device);
-  model_.Draw(command_list);
+
+  for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
+    transform_cb_[i].SetToHeap(device);
+    model_.Draw(command_list);
+  }
 }
 
 void ModelView::Finalize() {}

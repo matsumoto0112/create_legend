@@ -12,6 +12,7 @@
 #include "src/util/fps_counter.h"
 #include "src/util/imgui_manager.h"
 #include "src/util/random.h"
+#include "src/util/resource/resource.h"
 #include "src/util/singleton.h"
 #include "src/window/window.h"
 
@@ -55,6 +56,8 @@ class GameDevice : public util::Singleton<GameDevice> {
    */
   util::Random& GetRandom() const { return *random_; }
 
+  util::resource::Resource& GetResource() { return resource_; }
+
  protected:
   /**
    * @brief コンストラクタ
@@ -77,6 +80,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   //! 乱数デバイス
   std::unique_ptr<util::Random> random_;
   util::ImguiManager imgui_manager_;
+  util::resource::Resource resource_;
 };
 
 }  // namespace game

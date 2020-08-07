@@ -58,9 +58,9 @@ class ModelView : public Scene {
   directx::shader::RootSignature root_signature_;
   directx::shader::GraphicsPipelineState pipeline_;
 
-  util::Transform transform_;
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
+  std::vector<util::Transform> transforms_;
+  std::vector<directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>>
       transform_cb_;
 };
 

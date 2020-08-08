@@ -96,6 +96,10 @@
     <ClCompile Include="src\scenes\title.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
+    <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -230,6 +234,10 @@
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
+    <ClInclude Include="src\scenes\debugscene\sound_test.h" />
+    <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
+    <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
+    <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

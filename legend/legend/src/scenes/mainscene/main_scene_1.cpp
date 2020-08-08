@@ -11,9 +11,7 @@ namespace mainscene {
 MainScene1::MainScene1(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //デストラクタ
-MainScene1::~MainScene1() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+MainScene1::~MainScene1() {}
 
 //初期化
 bool MainScene1::Initialize() {
@@ -21,56 +19,7 @@ bool MainScene1::Initialize() {
   current_turn_ = system::TurnSystem();
   physics_field_.Init();
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
-    return false;
-  }
-
-  //モデルデータを読み込む
-  const std::filesystem::path player_model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::ERASER,
-                                player_model_path)) {
-    return false;
-  }
-  const std::filesystem::path desk_model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::DESK,
-                                desk_model_path)) {
-    return false;
-  }
-
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  gps->Init(device);
-  gps->SetVertexShader(resource.GetVertexShader().Get(
-      util::resource::id::VertexShader::MODEL_VIEW));
-  gps->SetPixelShader(resource.GetPixelShader().Get(
-      util::resource::id::PixelShader::MODEL_VIEW));
-  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
-  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
-  gps->SetRootSignature(device.GetDefaultRootSignature());
-  gps->SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-  gps->CreatePipelineState(device);
-  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
-                                  gps);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //プレイヤーの初期化
   {
@@ -196,18 +145,18 @@ bool MainScene1::Update() {
 
 //描画
 void MainScene1::Draw() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::Depth);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  device.GetRenderResourceManager().SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(device);
+      ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
   player_.Draw();
   desk_.Draw();
@@ -216,16 +165,8 @@ void MainScene1::Draw() {
 
 //終了
 void MainScene1::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource::id::VertexShader::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::ERASER);
-  resource.GetModel().Unload(util::resource::ModelID::DESK);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  device.WaitExecute();
 }
 
 //ターン別の更新処理

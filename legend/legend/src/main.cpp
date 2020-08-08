@@ -1,3 +1,4 @@
+#include "src/directx/shader/shader_register_id.h"
 #include "src/game/application.h"
 #include "src/game/game_device.h"
 #include "src/scenes/scene_manager.h"
@@ -36,6 +37,13 @@ const Model MODEL_LIST[] = {
     {Model::ID::KARI, path("kari.glb")},
     {Model::ID::OBJECT_1000CM, path("1000cmObject.glb")},
 };
+
+struct Texture {
+  using ID = legend::util::resource::id::Texture;
+  ID id;
+  path filepath;
+};
+const Texture TEXTURE_LIST[] = {{Texture::ID::TEX, path("tex.png")}};
 }  // namespace
 
 namespace legend {
@@ -89,6 +97,16 @@ class MyApp final : public device::Application {
         if (!resource.GetModel().Load(model.id, model_path / model.filepath,
                                       command_list))
           return false;
+      }
+      const path texture_path = util::Path::GetInstance()->texture();
+      for (auto&& tex : TEXTURE_LIST) {
+        if (!resource.GetTexture().Load(
+                command_list, tex.id, texture_path / tex.filepath,
+                directx::shader::TextureRegisterID::ALBEDO,
+                directx::descriptor_heap::heap_parameter::LocalHeapID::
+                    GLOBAL_ID)) {
+          return false;
+        }
       }
 
       //パイプラインの登録

@@ -80,11 +80,11 @@ class Sprite2D {
   /**
    * @brief 表示するUV矩形を設定する
    */
-  inline void SetRect(const math::Rect& rect);
+  void SetRect(const math::Rect& rect);
   /**
    * @brief 現在のUV矩形を取得する
    */
-  inline const math::Rect& GetRect() const;
+  math::Rect GetRect() const;
   /**
    * @brief コマンドリストに積む
    */

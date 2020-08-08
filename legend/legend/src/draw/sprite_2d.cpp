@@ -71,12 +71,12 @@ bool Sprite2D::Init(
 }
 
 // UV‹éŒ`‚ğİ’è‚·‚é
-inline void Sprite2D::SetRect(const math::Rect& rect) {
+void Sprite2D::SetRect(const math::Rect& rect) {
   uv_rect_constant_buffer_.GetStagingRef() = Convert(rect);
 }
 
 // UV‹éŒ`‚ğæ“¾‚·‚é
-inline const math::Rect& Sprite2D::GetRect() const {
+math::Rect Sprite2D::GetRect() const {
   return Convert(uv_rect_constant_buffer_.GetStating());
 }
 

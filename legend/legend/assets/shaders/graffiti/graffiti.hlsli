@@ -7,10 +7,7 @@
 
 #include "../defines/global.hlsli"
 
-struct Graffiti {
-    float alpha;
-};
-ConstantBuffer<Graffiti> g_graffiti_params : register(b2);
+Texture2D<float> g_mask : register(t1);
 
 struct VSInput{
     float3 pos : POSITION;
@@ -42,7 +39,7 @@ VSOutput VSMain(const VSInput v) {
 
 float4 PSMain(const PSInput i) {
     float4 color = g_albedo.Sample(g_sampler_warp, i.uv);
-    color.a = g_graffiti_params.alpha;
+    color = color * g_mask.Sample(g_sampler_warp, i.uv);
     return color;
 }
 

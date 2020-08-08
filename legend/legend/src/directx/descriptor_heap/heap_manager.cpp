@@ -82,6 +82,17 @@ bool HeapManager::Init(device::IDirectXAccessor& accessor) {
 
   accessor.GetDevice()->CreateShaderResourceView(
       nullptr, &null_srv_desc, default_handle_.default_srv_handle_.cpu_handle_);
+
+  this->default_handle_.default_uav_handle_ =
+      local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
+  D3D12_UNORDERED_ACCESS_VIEW_DESC null_uav_desc = {};
+  null_uav_desc.ViewDimension =
+      D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE2D;
+  null_uav_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  accessor.GetDevice()->CreateUnorderedAccessView(
+      nullptr, nullptr, &null_uav_desc,
+      this->default_handle_.default_uav_handle_.cpu_handle_);
+
   return true;
 }
 
@@ -119,6 +130,10 @@ void HeapManager::RegisterHandle(u32 register_num, shader::ResourceType type,
                                   &current_local_handles_.srv_handles_,
                                   handle.cpu_handle_);
       break;
+    case shader::ResourceType::UAV:
+      SetToHandlesAndAppendIfNeed(register_num,
+                                  &current_local_handles_.uav_handles_,
+                                  handle.cpu_handle_);
     default:
       break;
   }
@@ -138,6 +153,8 @@ void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
                     default_handle_.default_cbv_handle_.cpu_handle_);
   PaddingNullHandle(&current_local_handles_.srv_handles_,
                     default_handle_.default_srv_handle_.cpu_handle_);
+  PaddingNullHandle(&current_local_handles_.uav_handles_,
+                    default_handle_.default_uav_handle_.cpu_handle_);
 
   auto CopyAndSetToCommandList =
       [&](u32 index, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
@@ -160,6 +177,8 @@ void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
                           current_local_handles_.cbv_handles_);
   CopyAndSetToCommandList(shader::root_parameter_index::SRV,
                           current_local_handles_.srv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::UAV,
+                          current_local_handles_.uav_handles_);
 }
 
 bool HeapManager::AddLocalHeap(device::IDirectXAccessor& accessor,

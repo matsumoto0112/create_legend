@@ -8,6 +8,7 @@
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/object/graffiti.h"
 #include "src/scenes/scene.h"
 #include "src/util/transform.h"
 
@@ -48,17 +49,9 @@ class GraffitiTest : public Scene {
 
  private:
   camera::PerspectiveCamera camera_;
-
-  util::Transform transform_;
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_cb_;
-
-  struct GraffitiStruct {
-    float alpha;
-  };
-  directx::buffer::ConstantBuffer<GraffitiStruct> graffiti_struct_cb_;
+  object::Graffiti graffiti_;
 };
+
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

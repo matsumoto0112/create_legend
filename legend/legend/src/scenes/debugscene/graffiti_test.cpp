@@ -3,6 +3,11 @@
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 
+namespace {
+std::vector<legend::u8> pixels(64 * 64 * 4);
+
+}  // namespace
+
 namespace legend {
 namespace scenes {
 namespace debugscene {
@@ -20,33 +25,28 @@ bool GraffitiTest::Initialize() {
   }
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetHeapManager().GetLocalHeap(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Transform")) {
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
-  if (!graffiti_struct_cb_.Init(
-          device, 2,
-          device.GetHeapManager().GetLocalHeap(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Graffiti")) {
+
+  const object::GraffitiInitializeParameter param{math::Vector3::kZeroVector,
+                                                  math::Vector3::kUnitVector};
+  if (!graffiti_.Init(param, command_list)) {
     return false;
   }
+
+  command_list.Close();
+  device.ExecuteCommandList({command_list});
+  device.WaitExecute();
 
   return true;
 }
 
 bool GraffitiTest::Update() {
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
-
-  float alpha = graffiti_struct_cb_.GetStaging().alpha;
-  alpha += 0.0001f;
-  if (alpha > 1.0f) alpha -= 1.0f;
-  graffiti_struct_cb_.GetStagingRef().alpha = alpha;
-  graffiti_struct_cb_.UpdateStaging();
+  graffiti_.Update();
   return true;
 }
 
@@ -58,14 +58,9 @@ void GraffitiTest::Draw() {
   device.GetRenderResourceManager().SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-  resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::GRAFFITI)
-      ->SetGraphicsCommandList(command_list);
 
   camera_.RenderStart();
-  transform_cb_.SetToHeap(device);
-  graffiti_struct_cb_.SetToHeap(device);
-  resource.GetModel().Get(util::resource::id::Model::PLANE)->Draw(command_list);
+  graffiti_.Draw(command_list);
 }
 
 void GraffitiTest::Finalize() {

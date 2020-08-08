@@ -139,6 +139,12 @@ bool DirectXDevice::Present() {
   }
   fence_value_++;
 
+  //WARPデバイスを使用する環境だとwaitがおかしい？
+  //うまく機能しないためコマンドを逐次待機するようにする
+  if (USE_WARP_DEVICE) {
+    WaitExecute();
+  }
+
   return true;
 }
 

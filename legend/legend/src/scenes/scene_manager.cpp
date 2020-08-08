@@ -1,6 +1,7 @@
 #include "src/scenes/scene_manager.h"
 
 #include "src/scenes/debugscene/enemy_move_viewer.h"
+#include "src/scenes/debugscene/graffiti_test.h"
 #include "src/scenes/debugscene/model_view.h"
 #include "src/scenes/debugscene/multi_render_target_test.h"
 #include "src/scenes/debugscene/physics_test.h"
@@ -80,6 +81,8 @@ bool SceneManager::Update() {
           return std::make_unique<mainscene::MainScene1>(this);
         case SceneType::STAGE_GENERATE_TEST:
           return std::make_unique<debugscene::StageGenerateTest>(this);
+        case SceneType::GRAFFITI_TEST:
+          return std::make_unique<debugscene::GraffitiTest>(this);
         default:
           MY_ASSERTION(false, L"存在しないシーンが選択されました。");
           return nullptr;

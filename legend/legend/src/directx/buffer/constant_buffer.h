@@ -67,7 +67,7 @@ class ConstantBuffer {
   /**
    * @brief 現在のコンスタントバッファ構造体のデータを取得する
    */
-  T GetStating() const { return staging_; }
+  T GetStaging() const { return staging_; }
   /**
    * @brief 現在の状態をGPUに更新する
    */

@@ -29,6 +29,10 @@ class Random {
    */
   i32 Range(i32 min, i32 max);
   /**
+   * @brief minˆÈãmax–¢–‚Ì—”‚Ì¶¬
+   */
+  u32 Range(u32 min, u32 max);
+  /**
    * @brief minˆÈãmaxˆÈ‰º‚Ì—”‚Ì¶¬
    */
   float Range(float min, float max);
@@ -40,6 +44,8 @@ class Random {
   std::mt19937 mt_;
   //! i32Œ^‚Ì—”¶¬
   std::uniform_int_distribution<i32> rand_n_;
+  //! u32Œ^‚Ì—”¶¬
+  std::uniform_int_distribution<u32> rand_un_;
   //! floatŒ^‚Ì—”¶¬
   std::uniform_real_distribution<float> rand_f_;
 };

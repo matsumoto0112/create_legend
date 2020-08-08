@@ -100,6 +100,8 @@
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
+    <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
+    <ClCompile Include="src\object\graffiti.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -238,6 +240,8 @@
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
     <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
+    <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
+    <ClInclude Include="src\object\graffiti.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -249,6 +253,7 @@
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
+    <None Include="assets\shaders\graffiti\graffiti.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -263,6 +268,8 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
     <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
+    <FxCompile Include="assets\shaders\graffiti\graffiti_vs.hlsl" />
+    <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

@@ -119,6 +119,8 @@ class HeapManager {
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cbv_handles_;
     //! シェーダーリソースのハンドル
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> srv_handles_;
+    //! アンオーダートアクセスビューのハンドル
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> uav_handles_;
   } current_local_handles_;
 
   /**
@@ -127,6 +129,7 @@ class HeapManager {
   struct DefaultHandle final {
     DescriptorHandle default_srv_handle_;
     DescriptorHandle default_cbv_handle_;
+    DescriptorHandle default_uav_handle_;
   } default_handle_;
 };
 

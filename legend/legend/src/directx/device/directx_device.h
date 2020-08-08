@@ -30,7 +30,7 @@ class DirectXDevice : public IDirectXAccessor {
   static constexpr u32 FRAME_COUNT = 3;
   //! WARPデバイスを使用するか
   //! 現在特定環境下においてDeviceの不具合があるためその時はtrueにする
-  static constexpr bool USE_WARP_DEVICE = true;
+  static constexpr bool USE_WARP_DEVICE = false;
 
  public:
   /**

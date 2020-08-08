@@ -27,8 +27,7 @@ class PhysicsField {
    */
   bool Update(Turn turn, math::Vector3 player_vel, bool player_move,
               float player_impulse, float player_power,
-              std::vector<math::Vector3> enemies_vel, bool enemy_move,
-              float enemy_power);
+              std::vector<math::Vector3> enemies_vel, bool enemy_move);
   /**
    * @brief プレイヤーあたり判定の登録
    * @param プレイヤーの直方体
@@ -63,7 +62,7 @@ class PhysicsField {
    * @brief エネミーの移動処理
    * @param 速度
    */
-  void EnemyMove(std::vector<math::Vector3> enemies_vel, float enemy_power);
+  void EnemyMove(std::vector<math::Vector3> enemies_vel);
   /**
    * @brief 減衰処理
    * @param 減衰率
@@ -87,15 +86,26 @@ class PhysicsField {
    * @brief エネミーあたり判定の取得
    */
   physics::BoundingBox GetEnemyOBB(i32 index_num) const;
+  /**
+   * @brief 更新したプレイヤーの速度の取得
+   */
   math::Vector3 GetPlayerVelocity() const;
-  bool GetPlayerMove() const;
 
+  /**
+   * @brief 更新した各エネミーの速度の取得
+   */
   math::Vector3 GetEnemyVelocity(i32 index_num) const;
-  i32 GetEnemyCount() const;
+  /**
+   * @brief エネミーの移動判定のリセット
+   */
+  void ResetEnemyMove();
 
  private:
+  //! プレイヤーの直方体
   physics::BoundingBox player_obb_;
+  //! エネミーの直方体
   std::vector<physics::BoundingBox> desk_obbs_;
+  //! 机の直方体
   std::vector<physics::BoundingBox> enemy_obbs_;
 
   //! 重力
@@ -105,10 +115,15 @@ class PhysicsField {
 
   //! プレイヤーが移動中か
   bool is_player_move_;
+  //! プレイヤーの速度
   math::Vector3 player_velocity_;
 
+  //! 最後のエネミーが移動開始したか
   bool is_last_enemy_move_;
+  //! 各エネミーの速度
   std::vector<math::Vector3> enemy_velocities_;
+  //! 各エネミーの移動開始判定
+  std::vector<bool> is_enemy_move_;
 };
 
 }  // namespace system

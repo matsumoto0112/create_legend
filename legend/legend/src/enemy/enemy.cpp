@@ -84,15 +84,15 @@ void Enemy::Move() {
   float z = -velocity_.z / length;
 
   ////å∏ë¨åvéZ
-  //deceleration_x_ = x / (length * length);
-  //deceleration_z_ = z / (length * length);
+  // deceleration_x_ = x / (length * length);
+  // deceleration_z_ = z / (length * length);
 
   //à⁄ìÆèàóù
   math::Vector3 v = math::Vector3(x, 0, z);
   math::Vector3 position = GetPosition() + v * power_ * update_time_;
   SetPosition(position);
 
-  //Deceleration(2);
+  // Deceleration(2);
 }
 
 void Enemy::SetPosition(math::Vector3 position) {
@@ -112,12 +112,12 @@ void Enemy::SetRotation() {
 void Enemy::ResetParameter() {
   if (velocity_.Magnitude() != 0.0f) return;
 
-  //deceleration_x_ = deceleration_z_ = 0;
+  // deceleration_x_ = deceleration_z_ = 0;
   is_move_ = false;
 }
 
 ////å∏ë¨
-//void Enemy::Deceleration(float deceleration_rate) {
+// void Enemy::Deceleration(float deceleration_rate) {
 //  float x = deceleration_x_ * deceleration_rate * update_time_;
 //  float z = deceleration_z_ * deceleration_rate * update_time_;
 //
@@ -144,8 +144,6 @@ math::Vector3 Enemy::GetVelocity() const { return velocity_; }
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 
 float Enemy::GetPower() const { return power_; }
-
-bool Enemy::GetIsMove() const { return is_move_; }
 
 bool Enemy::GetMoveEnd() const { return move_end_; }
 

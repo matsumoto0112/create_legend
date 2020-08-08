@@ -23,6 +23,7 @@ class Enemy : public actor::Actor<physics::BoundingBox> {
     util::Transform transform;
     math::Vector3 bouding_box_length;
   };
+
  public:
   /**
    * @brief コンストラクタ
@@ -64,7 +65,7 @@ class Enemy : public actor::Actor<physics::BoundingBox> {
   // * @brief 減速
   // * @param 減速率(1より大きい値で)
   // */
-  //void Deceleration(float deceleration_rate);
+  // void Deceleration(float deceleration_rate);
   /**
    * @brief 座標の取得
    */
@@ -78,29 +79,37 @@ class Enemy : public actor::Actor<physics::BoundingBox> {
    */
   math::Quaternion GetRotation() const;
 
+  /**
+   * @brief 移動に加える力の取得
+   */
   float GetPower() const;
-  bool GetIsMove() const;
+  /**
+   * @brief 移動終了判定の取得
+   */
   bool GetMoveEnd() const;
+  /**
+   * @brief 移動終了判定のリセット
+   */
   void ResetMoveEnd();
 
  private:
-
   //! 速度
   math::Vector3 velocity_;
   ////! 減速率
-  //float deceleration_x_;
-  //float deceleration_z_;
+  // float deceleration_x_;
+  // float deceleration_z_;
   //! 移動中か
   bool is_move_;
 
   //! 移動に加える力
   const float power_ = 1;
   ////! 実際に加える力の加減
-  //float impulse_;
+  // float impulse_;
 
   //! 更新時間
   float update_time_;
 
+  //! 移動終了判定
   bool move_end_;
 };
 

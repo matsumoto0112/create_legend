@@ -34,8 +34,8 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
   if (FAILED(device.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
           D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE, &tex_resource_desc,
-          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST, nullptr,
-          IID_PPV_ARGS(&mask_texture_)))) {
+          D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+          nullptr, IID_PPV_ARGS(&mask_texture_)))) {
     return false;
   }
 
@@ -66,6 +66,17 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
   }
 
   UpdateTexture(command_list);
+
+  D3D12_SHADER_RESOURCE_VIEW_DESC srv_view = {};
+  srv_view.Texture2D.MipLevels = 1;
+  srv_view.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  srv_view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+  srv_view.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+  game::GameDevice::GetInstance()
+      ->GetDevice()
+      .GetDevice()
+      ->CreateShaderResourceView(mask_texture_.Get(), &srv_view,
+                                 handle_.cpu_handle_);
 
   if (!transform_cb_.Init(
           device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
@@ -130,6 +141,12 @@ void Graffiti::SetTextureColor(u32 x, u32 y, const util::Color4& color) {
       static_cast<u8>(color.a * 255.0f);
 }
 void Graffiti::UpdateTexture(directx::device::CommandList& command_list) {
+  command_list.GetCommandList()->ResourceBarrier(
+      1, &CD3DX12_RESOURCE_BARRIER::Transition(
+             mask_texture_.Get(),
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST));
+
   constexpr u64 row = MASK_WIDTH * PIXEL_SIZE;
   constexpr u64 slice = row * MASK_HEIGHT;
 
@@ -146,17 +163,6 @@ void Graffiti::UpdateTexture(directx::device::CommandList& command_list) {
           mask_texture_.Get(),
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
-
-  D3D12_SHADER_RESOURCE_VIEW_DESC srv_view = {};
-  srv_view.Texture2D.MipLevels = 1;
-  srv_view.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  srv_view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-  srv_view.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
-  game::GameDevice::GetInstance()
-      ->GetDevice()
-      .GetDevice()
-      ->CreateShaderResourceView(mask_texture_.Get(), &srv_view,
-                                 handle_.cpu_handle_);
 }
 }  // namespace object
 }  // namespace legend

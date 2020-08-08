@@ -1,3 +1,4 @@
+#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/application.h"
 #include "src/game/game_device.h"
@@ -14,6 +15,7 @@ struct VertexShader {
 };
 const VertexShader VS_LIST[] = {
     {VertexShader::ID::MODEL_VIEW, path("modelview") / "model_view_vs.cso"},
+    {VertexShader::ID::GRAFFITI, path("graffiti") / "graffiti_vs.cso"},
 };
 
 struct PixelShader {
@@ -23,6 +25,7 @@ struct PixelShader {
 };
 const PixelShader PS_LIST[] = {
     {PixelShader::ID::MODEL_VIEW, path("modelview") / "model_view_ps.cso"},
+    {PixelShader::ID::GRAFFITI, path("graffiti") / "graffiti_ps.cso"},
 };
 
 struct Model {
@@ -36,6 +39,7 @@ const Model MODEL_LIST[] = {
     {Model::ID::ERASER, path("eraser_01.glb")},
     {Model::ID::KARI, path("kari.glb")},
     {Model::ID::OBJECT_1000CM, path("1000cmObject.glb")},
+    {Model::ID::PLANE, path("plane.glb")},
 };
 
 struct Texture {
@@ -141,7 +145,25 @@ class MyApp final : public device::Application {
         }
         resource.GetPipeline().Register(
             util::resource::id::Pipeline::MODEL_VIEW, pipeline);
-
+        auto pipeline_graffiti =
+            std::make_shared<directx::shader::GraphicsPipelineState>();
+        pso_desc.VS = resource.GetVertexShader()
+                          .Get(VertexShader::ID::GRAFFITI)
+                          ->GetShaderBytecode();
+        pso_desc.InputLayout = resource.GetVertexShader()
+                                   .Get(VertexShader::ID::GRAFFITI)
+                                   ->GetInputLayout();
+        pso_desc.PS = resource.GetPixelShader()
+                          .Get(PixelShader::ID::GRAFFITI)
+                          ->GetShaderBytecode();
+        pso_desc.BlendState.AlphaToCoverageEnable = false;
+        pso_desc.BlendState.RenderTarget[0] =
+            directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+        if (!pipeline_graffiti->Init(device, pso_desc)) {
+          return false;
+        }
+        resource.GetPipeline().Register(util::resource::id::Pipeline::GRAFFITI,
+                                        pipeline_graffiti);
         pso_desc.RasterizerState.FillMode =
             D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
         auto pipeline_wireframe =
@@ -188,6 +210,7 @@ class MyApp final : public device::Application {
           scenes::SceneType::PLAYER_MOVE_VIEWER,
           scenes::SceneType::MAIN_SCENE_1,
           scenes::SceneType::STAGE_GENERATE_TEST,
+          scenes::SceneType::GRAFFITI_TEST,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

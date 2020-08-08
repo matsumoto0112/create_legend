@@ -77,7 +77,7 @@ void Sprite2D::SetRect(const math::Rect& rect) {
 
 // UV矩形を取得する
 math::Rect Sprite2D::GetRect() const {
-  return Convert(uv_rect_constant_buffer_.GetStating());
+  return Convert(uv_rect_constant_buffer_.GetStaging());
 }
 
 //コマンドリストに積む

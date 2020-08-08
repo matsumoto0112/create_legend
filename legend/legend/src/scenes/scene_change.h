@@ -21,6 +21,7 @@ enum class SceneType {
   ENEMY_MOVE_VIEWER,
   MAIN_SCENE_1,
   STAGE_GENERATE_TEST,
+  GRAFFITI_TEST,
 };
 
 class ISceneChange {

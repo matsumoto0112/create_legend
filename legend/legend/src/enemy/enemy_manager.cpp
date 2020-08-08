@@ -105,7 +105,7 @@ void EnemyManager::Add(system::PhysicsField* physics_field) {
   auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   auto paramater = enemy::Enemy::InitializeParameter();
   paramater.transform =
-      util::Transform(math::Vector3(x,0,z), math::Quaternion::kIdentity,
+      util::Transform(math::Vector3(x, 0, z), math::Quaternion::kIdentity,
                       math::Vector3::kUnitVector);
   paramater.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
   enemy->Init(paramater);
@@ -114,7 +114,7 @@ void EnemyManager::Add(system::PhysicsField* physics_field) {
   }
 
   enemys_.emplace_back(std::move(enemy));
-  //SetPosition(enemys_[enemys_.size() - 1].get());
+  // SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
 void EnemyManager::Destroy(i32 index, system::PhysicsField* physics_field) {
@@ -139,46 +139,52 @@ void EnemyManager::SetPosition(Enemy* enemy) {
   enemy->SetPosition(position);
 }
 
+//最後の敵の取得
 Enemy* EnemyManager::GetLastEnemy() const {
   return enemys_.at(enemys_.size() - 1).get();
 }
 
+// obbの座標を基に座標更新
 void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->SetPosition(physics_field->GetEnemyOBB(i).GetPosition());
+    if (enemys_[i]->GetPosition().y <= -10.0f) Destroy(i, physics_field);
   }
 }
 
-float EnemyManager::GetEnemyPower() const { return 1.0f; }
-
+//敵の数を取得
 i32 EnemyManager::GetEnemiesSize() const {
   return static_cast<i32>(enemys_.size());
 }
 
-void EnemyManager::SetVelocity(system::PhysicsField* physics_field,
-                               i32 index_num) {
-  enemys_[index_num]->SetVelocity(physics_field->GetEnemyVelocity(index_num));
+// obbの速度を基に速度更新
+void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    if (enemys_[i]->GetMoveEnd()) continue;
+    enemys_[i]->SetVelocity(physics_field->GetEnemyVelocity(i));
+  }
 }
 
-std::vector<math::Vector3> EnemyManager::GetVelocities() const {
-  std::vector<math::Vector3> velocities;
-  for (i32 i = 0; i < enemys_.size(); i++) {
-    velocities.push_back(enemys_[i]->GetVelocity());
+//各敵の速度を取得
+std::vector<math::Vector3> EnemyManager::GetVelocities() {
+  velocities_.resize(enemys_.size());
+  for (i32 i = 0; i < velocities_.size(); i++) {
+    velocities_[i] = enemys_[i]->GetVelocity();
   }
 
-  return velocities;
+  return velocities_;
 }
 
-bool EnemyManager::LastEnemyMoveEnd() const
-{
-    bool end = false;
-    if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
-        end = true;
-        for (i32 i = 0; i < enemys_.size(); i++) {
-            enemys_[i]->ResetMoveEnd();
-        }
+//最後の敵の移動終了判定を取得
+bool EnemyManager::LastEnemyMoveEnd() const {
+  bool end = false;
+  if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
+    end = true;
+    for (i32 i = 0; i < enemys_.size(); i++) {
+      enemys_[i]->ResetMoveEnd();
     }
-    return end;
+  }
+  return end;
 }
 
 }  // namespace enemy

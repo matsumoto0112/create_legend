@@ -118,8 +118,8 @@ void Enemy::ResetParameter() {
 
 ////Œ¸‘¬
 // void Enemy::Deceleration(float deceleration_rate) {
-//   float x = deceleration_x_ * deceleration_rate * update_time_;
-//   float z = deceleration_z_ * deceleration_rate * update_time_;
+//  float x = deceleration_x_ * deceleration_rate * update_time_;
+//  float z = deceleration_z_ * deceleration_rate * update_time_;
 //
 //  if ((x <= velocity_.x && velocity_.x <= 0) ||
 //      (0 <= velocity_.x && velocity_.x <= x)) {
@@ -144,8 +144,6 @@ math::Vector3 Enemy::GetVelocity() const { return velocity_; }
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 
 float Enemy::GetPower() const { return power_; }
-
-bool Enemy::GetIsMove() const { return is_move_; }
 
 bool Enemy::GetMoveEnd() const { return move_end_; }
 

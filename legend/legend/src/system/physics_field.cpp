@@ -14,6 +14,7 @@ PhysicsField::~PhysicsField() {}
 bool PhysicsField::Init() {
   desk_obbs_.clear();
   enemy_obbs_.clear();
+  is_enemy_move_.clear();
 
   return true;
 }
@@ -22,7 +23,7 @@ bool PhysicsField::Init() {
 bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
                           float player_impulse, float player_power,
                           std::vector<math::Vector3> enemies_vel,
-                          bool enemy_move, float enemy_power) {
+                          bool enemy_move) {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
@@ -32,10 +33,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     else
       is_player_move_ = false;
   } else {
-    if (enemy_move)
-      EnemyMove(enemies_vel, enemy_power);
-    else
-      is_last_enemy_move_ = false;
+    if (enemy_move) EnemyMove(enemies_vel);
   }
 
   //プレイヤーと各机との衝突判定を調べる
@@ -88,13 +86,14 @@ void PhysicsField::SetPlayer(physics::BoundingBox& player_obb) {
 
 //エネミーあたり判定の登録
 void PhysicsField::AddEnemy(physics::BoundingBox& enemy_obb) {
-  enemy_obbs_.push_back(enemy_obb);
-  enemy_velocities_.push_back(math::Vector3::kZeroVector);
+  enemy_obbs_.emplace_back(enemy_obb);
+  enemy_velocities_.emplace_back(math::Vector3::kZeroVector);
+  is_enemy_move_.emplace_back(false);
 }
 
 //机あたり判定の登録
 void PhysicsField::AddDesk(physics::BoundingBox& desk_obb) {
-  desk_obbs_.push_back(desk_obb);
+  desk_obbs_.emplace_back(desk_obb);
 }
 
 //エネミーあたり判定の削除
@@ -105,6 +104,7 @@ void PhysicsField::RemoveEnemy(i32 index_num) {
 
   enemy_obbs_.erase(enemy_obbs_.begin() + index_num);
   enemy_velocities_.erase(enemy_velocities_.begin() + index_num);
+  is_enemy_move_.erase(is_enemy_move_.begin() + index_num);
 }
 
 //机あたり判定の削除
@@ -121,7 +121,10 @@ void PhysicsField::UpdateGravity(float gravity) {
 
   //プレイヤーの重力落下処理
   if (!player_obb_.GetOnGround()) {
-    if (player_obb_.GetPosition().y <= -10) return;
+    // if (player_obb_.GetPosition().y <= -10) {
+    //  player_velocity_ = math::Vector3::kZeroVector;
+    //  return;
+    //}
 
     g = player_velocity_ + math::Vector3(0, gravity, 0);
     math::Vector3 player_pos = player_obb_.GetPosition() + g * update_time_;
@@ -131,7 +134,10 @@ void PhysicsField::UpdateGravity(float gravity) {
   //エネミーの重力落下処理
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (!enemy_obbs_[i].GetOnGround()) {
-      if (enemy_obbs_[i].GetPosition().y <= -10) continue;
+      // if (enemy_obbs_[i].GetPosition().y <= -10) {
+      //  enemy_velocities_[i] = math::Vector3::kZeroVector;
+      //  continue;
+      //}
 
       g = enemy_velocities_[i] + math::Vector3(0, gravity, 0);
       math::Vector3 enemy_pos = enemy_obbs_[i].GetPosition() + g * update_time_;
@@ -147,6 +153,8 @@ void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
     player_velocity_ = vel;
     is_player_move_ = true;
   }
+
+  if (player_velocity_ == math::Vector3::kZeroVector) return;
 
   float length = math::util::Sqrt(player_velocity_.x * player_velocity_.x +
                                   player_velocity_.z * player_velocity_.z);
@@ -168,13 +176,17 @@ void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
     Deceleration(player_velocity_, 2, deceleration_x_, deceleration_z_);
 }
 
-void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel,
-                             float enemy_power) {
+//各エネミーの移動処理
+void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel) {
   for (i32 i = 0; i < enemies_vel.size(); i++) {
-    if (!is_last_enemy_move_) {
+    if (!is_last_enemy_move_ && !is_enemy_move_[i]) {
       enemy_velocities_[i] = enemies_vel[i];
+      if (enemy_velocities_[i] != math::Vector3::kZeroVector)
+        is_enemy_move_[i] = true;
       if (i == enemy_obbs_.size()) is_last_enemy_move_ = true;
     }
+
+    if (enemy_velocities_[i] == math::Vector3::kZeroVector) continue;
 
     float length =
         math::util::Sqrt(enemy_velocities_[i].x * enemy_velocities_[i].x +
@@ -186,7 +198,7 @@ void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel,
 
     math::Vector3 v = math::Vector3(x, 0, z);
     math::Vector3 velocity =
-        enemy_obbs_[i].GetPosition() + v * update_time_ * enemy_power;
+        enemy_obbs_[i].GetPosition() + v * update_time_ * 1.0f;
     enemy_obbs_[i].SetPosition(velocity);
 
     //減速計算
@@ -229,17 +241,22 @@ physics::BoundingBox PhysicsField::GetEnemyOBB(i32 index_num) const {
   return enemy_obbs_[index_num];
 }
 
+//更新したプレイヤーの速度の取得
 math::Vector3 PhysicsField::GetPlayerVelocity() const {
   return player_velocity_;
 }
 
-bool PhysicsField::GetPlayerMove() const { return is_player_move_; }
-
+//更新した各エネミーの速度の取得
 math::Vector3 PhysicsField::GetEnemyVelocity(i32 index_num) const {
   return enemy_velocities_[index_num];
 }
-i32 PhysicsField::GetEnemyCount() const {
-  return static_cast<i32>(enemy_obbs_.size());
+
+//エネミーの移動判定のリセット
+void PhysicsField::ResetEnemyMove() {
+  for (i32 i = 0; i < is_enemy_move_.size(); i++) {
+    is_enemy_move_[i] = false;
+  }
+  is_last_enemy_move_ = false;
 }
 }  // namespace system
 }  // namespace legend

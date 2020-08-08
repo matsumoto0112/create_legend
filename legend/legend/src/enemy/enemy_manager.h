@@ -49,12 +49,29 @@ class EnemyManager {
 
   void SetPosition(Enemy* enemy);
 
+  /**
+   * @brief 最後の敵を取得
+   */
   Enemy* GetLastEnemy() const;
+  /**
+   * @brief obbの座標を基に座標更新
+   */
   void SetPosition(system::PhysicsField* physics_field);
-  float GetEnemyPower() const;
+  /**
+   * @brief 敵の数を取得
+   */
   i32 GetEnemiesSize() const;
-  void SetVelocity(system::PhysicsField* physics_field, i32 index_num);
-  std::vector<math::Vector3> GetVelocities() const;
+  /**
+   * @brief obbの速度を基に速度更新
+   */
+  void SetVelocity(system::PhysicsField* physics_field);
+  /**
+   * @brief 各敵の速度を取得
+   */
+  std::vector<math::Vector3> GetVelocities();
+  /**
+   * @brief 最後の敵の移動終了判定の取得
+   */
   bool LastEnemyMoveEnd() const;
 
  private:
@@ -63,6 +80,9 @@ class EnemyManager {
   i32 enemy_max_count_ = 50;
   float move_timer_ = 0.0f;
   const float move_time_ = 0.25f;
+
+  //! 各敵の速度格納リスト
+  std::vector<math::Vector3> velocities_;
 };
 }  // namespace enemy
 }  // namespace legend

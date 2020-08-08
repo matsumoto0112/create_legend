@@ -58,6 +58,9 @@ bool Player::Update() {
     is_move_ = true;
   }
 
+  // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  // transform_cb_.UpdateStaging();
+
   if (is_move_ && velocity_ == math::Vector3::kZeroVector) {
     ResetParameter();
     move_end_ = true;
@@ -104,7 +107,11 @@ void Player::SetVelocity() {
 }
 
 //‘¬“x‚Ìİ’è
-void Player::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
+void Player::SetVelocity(math::Vector3 velocity) {
+  if (!is_move_) return;
+
+  velocity_ = velocity;
+}
 
 //ƒpƒ[‚Ìİ’è
 void Player::SetImpulse() {

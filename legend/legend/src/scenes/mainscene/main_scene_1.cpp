@@ -43,7 +43,7 @@ bool MainScene1::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(6.0f, 0.5f, 4.0f);
+    desk_parameter.bounding_box_length = math::Vector3(10.0f, 0.5f, 10.0f);
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
@@ -51,10 +51,9 @@ bool MainScene1::Initialize() {
     physics_field_.AddDesk(desk_.GetCollisionRef());
   }
 
-  // if (!enemy_manager_.Initilaize(&physics_field_)) {
-  //  return false;
-  //}
-  enemy_manager_.Add(&physics_field_);
+  if (!enemy_manager_.Initilaize(&physics_field_)) {
+    return false;
+  }
 
   //カメラの初期化
   {
@@ -81,19 +80,15 @@ bool MainScene1::Update() {
   if (!physics_field_.Update(turn_, player_.GetVelocity(), player_.GetIsMove(),
                              player_.GetImpulse(), player_.GetPower(),
                              enemy_manager_.GetVelocities(),
-                             enemy_manager_.GetLastEnemy()->GetIsMove(),
-                             enemy_manager_.GetEnemyPower())) {
+                             !enemy_manager_.LastEnemyMoveEnd())) {
     return false;
   }
 
   player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
   enemy_manager_.SetPosition(&physics_field_);
 
-  if (player_.GetIsMove())
-    player_.SetVelocity(physics_field_.GetPlayerVelocity());
-  for (i32 i = 0; i < enemy_manager_.GetEnemiesSize(); i++) {
-    enemy_manager_.SetVelocity(&physics_field_, i);
-  }
+  player_.SetVelocity(physics_field_.GetPlayerVelocity());
+  enemy_manager_.SetVelocity(&physics_field_);
 
   if (ImGui::Begin("Player")) {
     math::Vector3 position = player_.GetPosition();
@@ -187,12 +182,13 @@ bool MainScene1::UpdateTurn() {
       if (!enemy_manager_.Update(&physics_field_)) {
         return false;
       }
-      //最後に登録されているエネミーが動き終えたらターン切り替え
+      //最後に登録されているエネミーが動き終えたら又はエネミーが全ていなければ、ターン切り替え
       //ターン数加算
       if (enemy_manager_.LastEnemyMoveEnd() ||
-          physics_field_.GetEnemyCount() == 0) {
+          enemy_manager_.GetEnemiesSize() == 0) {
         turn_ = system::Turn::PLAYER_TURN;
         current_turn_.AddCurrentTurn();
+        physics_field_.ResetEnemyMove();
       }
       MY_LOG(L"ENEMY TURN");
       break;

@@ -1,5 +1,5 @@
-#ifndef LEGEND_STAGE_GENERATE_STAGEGENERATOR_H_
-#define LEGEND_STAGE_GENERATE_STAGEGENERATOR_H_
+#ifndef LEGEND_STAGE_GENERATE_STAGE_GENERATOR_H_
+#define LEGEND_STAGE_GENERATE_STAGE_GENERATOR_H_
 
 namespace legend {
 namespace stage_generate {
@@ -23,7 +23,7 @@ class StageGenerator {
    * @brief “Ç‚İ‚İˆ—
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool LoadStageData(std::wstring filepath);
+  std::vector<std::string> LoadStageData(std::wstring filepath);
 
  private:
 };

@@ -6,6 +6,7 @@
  */
 
 #include "src/scenes/scene.h"
+#include "src/stage_generate/stage_generator.h"
 
 namespace legend {
 namespace scenes {
@@ -41,6 +42,10 @@ class StageGenerateTest : public Scene {
    * @brief I—¹ˆ—
    */
   void Finalize() override;
+
+ private:
+  std::unique_ptr<stage_generate::StageGenerator> stage_generator_;
+  std::vector<std::string> indexs_;
 };
 
 }  // namespace debugscene

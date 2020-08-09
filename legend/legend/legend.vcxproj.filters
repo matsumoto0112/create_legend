@@ -80,6 +80,8 @@
     <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\system\turn_system.cpp" />
+    <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
+    <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
@@ -222,6 +224,9 @@
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\plane.h" />
     <ClInclude Include="src\system\physics_field.h" />
+    <ClInclude Include="src\util\timer.h" />
+    <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
+    <ClInclude Include="src\stage_generate\stage_generator.h" />
     <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\enemy\enemy.h" />
     <ClInclude Include="src\enemy\enemy_manager.h" />

@@ -125,6 +125,9 @@ class Collision : public util::Singleton<Collision> {
    * @param ‹…
    */
   bool Collision_Ray_Sphere(Ray& ray, Sphere& sphere);
+
+  private:
+      math::Vector3 return_vector_;
 };
 }  // namespace physics
 }  // namespace legend

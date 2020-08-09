@@ -179,21 +179,16 @@ void PhysicsTest::Draw() {
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  device.GetRenderResourceManager().SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
+  // device.GetRenderResourceManager().SetRenderTargets(
+  //    command_list, directx::render_target::RenderTargetID::BACK_BUFFER,
+  //    false, directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
   camera_.RenderStart();
 
   for (i32 i = 0; i < obb_num_; i++) {
-    obbs_[i].DebugDraw();
+    obbs_[i].DebugDraw(command_list);
   }
 
-  plane_.Draw();
+  // plane_.Draw();
   // sphere_.Draw(device);
   // ray_.Draw(device);
 }

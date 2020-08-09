@@ -5,12 +5,10 @@
 
 struct VS_Input {
     float3 position : POSITION;
-    float3 normal : NORMAL;
 };
 
 struct VS_Output {
     float4 position : SV_POSITION;
-    float3 normal : NORMAL;
 };
 
 typedef VS_Output PS_Input;
@@ -20,9 +18,6 @@ VS_Output VS_Main(const VS_Input input) {
     output.position = mul(float4(input.position, 1.0f), g_transform.world);
     output.position = mul(output.position, g_world_context.view);
     output.position = mul(output.position, g_world_context.projection);
-
-    output.normal = mul(input.normal, (float3x3)g_transform.world);
-    output.normal = input.normal;
 
     return output;
 }

@@ -109,11 +109,6 @@ void EnemyMoveViewer::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
 
   enemy_manager_.Draw();

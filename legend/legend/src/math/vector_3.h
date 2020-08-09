@@ -91,6 +91,10 @@ class Vector3 {
    * @brief 外積
    */
   static Vector3 Cross(const Vector3& v, const Vector3& w);
+  /**
+   * @brief ベクトルの各要素をかけた値を返す
+   */
+  static Vector3 MultiplyEach(const Vector3& v, const Vector3& w);
 };
 
 /**

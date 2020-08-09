@@ -39,6 +39,7 @@ enum class Pipeline {
   SIMPLE_PARTICLE,
   OBJECT_WIREFRAME,
   GRAFFITI,
+  PRIMITIVE_LINE,
 };
 
 /**

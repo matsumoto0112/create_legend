@@ -80,5 +80,9 @@ Vector3 Vector3::Cross(const Vector3& v, const Vector3& w) {
                  v.x * w.y - v.y * w.x);
 }
 
+Vector3 Vector3::MultiplyEach(const Vector3& v, const Vector3& w) {
+  return Vector3(v.x * w.x, v.y * w.y, v.z * w.z);
+}
+
 }  // namespace math
 }  // namespace legend

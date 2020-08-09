@@ -8,6 +8,8 @@ namespace legend {
 namespace object {
 
 class Desk : public actor::Actor<physics::BoundingBox> {
+  using Parent = actor::Actor<physics::BoundingBox>;
+
  public:
   /**
    * @brief Š÷‚Ì‰Šú‰»ƒpƒ‰ƒ[ƒ^

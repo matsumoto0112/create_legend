@@ -46,54 +46,14 @@ BoundingBox::~BoundingBox() {}
 
 //初期化
 bool BoundingBox::Init() {
-  //中心座標と各軸の長さから頂点座標を設定
-  float left = GetPosition().x - GetLength(0);
-  float right = GetPosition().x + GetLength(0);
-  float down = GetPosition().y - GetLength(1);
-  float up = GetPosition().y + GetLength(1);
-  float front = GetPosition().z - GetLength(2);
-  float back = GetPosition().z + GetLength(2);
-
-  const std::vector<directx::PhysicsVertex> vertices{
-      {{left, down, front}},   // 0
-      {{left, down, back}},    // 1
-      {{right, down, back}},   // 2
-      {{right, down, front}},  // 3
-      {{left, up, front}},     // 4
-      {{left, up, back}},      // 5
-      {{right, up, back}},     // 6
-      {{right, up, front}}     // 7
-  };
-
-  if (!InitVertexBuffer(vertices)) {
+  if (!draw_box_.Init()) {
     return false;
   }
-
-  const std::vector<u16> indices{0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 7, 7, 3,
-
-                                 4, 5, 5, 6, 6, 7,
-
-                                 5, 1, 6, 2};
-  if (!InitIndexBuffer(indices)) {
-    return false;
-  }
-
-  if (!InitTransformConstantBuffer()) {
-    return false;
-  }
-
   return true;
 }
 
 //更新
-void BoundingBox::Update() {
-  math::Vector3 position = GetPosition();
-  math::Vector3 rotate = GetRotation().ToEular() * math::util::RAD_2_DEG;
-  math::Vector3 scale = GetScale();
-  transform_constant_buffer_.GetStagingRef().world =
-      transform_.CreateWorldMatrix();
-  transform_constant_buffer_.UpdateStaging();
-}
+void BoundingBox::Update() { draw_box_.SetTransform(transform_); }
 
 //方向ベクトルを取得
 math::Vector3 BoundingBox::GetDirection(i32 direction_num) const {
@@ -208,6 +168,16 @@ void BoundingBox::SetIsTrigger(bool trigger) { is_trigger_ = trigger; }
 
 //接地判定の設定
 void BoundingBox::SetOnGround(bool is_ground) { is_on_ground_ = is_ground; }
+
+void BoundingBox::DebugDraw(directx::device::CommandList& command_list) {
+  math::Vector3 length(lengthes_[0], lengthes_[1], lengthes_[2]);
+  math::Vector3 scale =
+      math::Vector3::MultiplyEach(transform_.GetScale(), length);
+  draw_box_.SetTransform(util::Transform(transform_.GetPosition(),
+                                         transform_.GetRotation(), scale));
+
+  draw_box_.Render(command_list);
+}
 
 }  // namespace physics
 }  // namespace legend

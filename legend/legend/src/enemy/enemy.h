@@ -15,6 +15,8 @@ namespace enemy {
  * @brief エネミーのクラス
  */
 class Enemy : public actor::Actor<physics::BoundingBox> {
+  using Parent = actor::Actor<physics::BoundingBox>;
+
  public:
   /**
    * @brief 初期化パラメータ

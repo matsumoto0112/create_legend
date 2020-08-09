@@ -22,7 +22,7 @@ bool PlayerMoveViewer::Initialize() {
     player_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+    player_parameter.bouding_box_length = math::Vector3(0.1f, 0.05f, 0.2f);
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -37,7 +37,7 @@ bool PlayerMoveViewer::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
+    desk_parameter.bounding_box_length = math::Vector3(0.3f, 0.05f, 0.2f);
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
@@ -46,7 +46,7 @@ bool PlayerMoveViewer::Initialize() {
 
   //ÉJÉÅÉâÇÃèâä˙âª
   {
-    const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
+    const math::Vector3 camera_position = math::Vector3(0, 3.5f, -2.5f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -131,15 +131,16 @@ void PlayerMoveViewer::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
-
   player_.Draw();
   desk_.Draw();
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::NONE, false);
+  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  player_.GetCollisionRef().DebugDraw(command_list);
+  desk_.GetCollisionRef().DebugDraw(command_list);
 }
 
 //èIóπ

@@ -2,6 +2,7 @@
 #define LEGEND_PHYSICS_BOUNDING_BOX_H_
 
 #include "src/physics/collider.h"
+#include "src/primitive/box.h"
 
 namespace legend {
 namespace physics {
@@ -128,6 +129,8 @@ class BoundingBox : public Collider {
    */
   void SetOnGround(bool is_ground);
 
+  void DebugDraw(directx::device::CommandList& command_list) override;
+
  private:
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
@@ -144,6 +147,8 @@ class BoundingBox : public Collider {
   bool is_trigger_;
   //! 接地判定
   bool is_on_ground_;
+
+  primitive::Box draw_box_;
 };
 
 }  // namespace physics

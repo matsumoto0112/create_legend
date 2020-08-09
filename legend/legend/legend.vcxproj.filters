@@ -102,6 +102,8 @@
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
     <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
     <ClCompile Include="src\object\graffiti.cpp" />
+    <ClCompile Include="src\primitive\primitive.cpp" />
+    <ClCompile Include="src\primitive\box.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -242,6 +244,8 @@
     <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
     <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
     <ClInclude Include="src\object\graffiti.h" />
+    <ClInclude Include="src\primitive\box.h" />
+    <ClInclude Include="src\primitive\primitive.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -12,6 +12,8 @@ namespace player {
  * @brief プレイヤーのクラス
  */
 class Player : public actor::Actor<physics::BoundingBox> {
+  using Parent = actor::Actor<physics::BoundingBox>;
+
  public:
   /**
    * @brief 初期化パラメータ

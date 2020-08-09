@@ -9,9 +9,7 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-Enemy::Enemy()
-    : actor::Actor<physics::BoundingBox>(),
-      velocity_(math::Vector3::kZeroVector) {
+Enemy::Enemy() : Parent(L"Enemy"), velocity_(math::Vector3::kZeroVector) {
   is_move_ = false;
   // deceleration_x_ = deceleration_z_ = 0;
 }
@@ -21,6 +19,7 @@ Enemy::~Enemy() {}
 
 //初期化
 bool Enemy::Init(const InitializeParameter& parameter) {
+  if (!Parent::InitBuffer()) return false;
   // if (!obb_.Initialize(device)) {
   //  return false;
   //}
@@ -28,21 +27,12 @@ bool Enemy::Init(const InitializeParameter& parameter) {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
-  this->collision_ =
-      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
-                           transform_.GetScale() * 0.1f);
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetRotation(transform_.GetRotation());
+  this->collision_.SetScale(transform_.GetScale());
   this->collision_.SetLength(parameter.bouding_box_length.x,
                              parameter.bouding_box_length.y,
                              parameter.bouding_box_length.z);
-
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Transform ConstantBuffer")) {
-    return false;
-  }
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();

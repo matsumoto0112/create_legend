@@ -16,6 +16,7 @@ struct VertexShader {
 const VertexShader VS_LIST[] = {
     {VertexShader::ID::MODEL_VIEW, path("modelview") / "model_view_vs.cso"},
     {VertexShader::ID::GRAFFITI, path("graffiti") / "graffiti_vs.cso"},
+    {VertexShader::ID::OBB, path("physics") / "obb_vs.cso"},
 };
 
 struct PixelShader {
@@ -26,6 +27,7 @@ struct PixelShader {
 const PixelShader PS_LIST[] = {
     {PixelShader::ID::MODEL_VIEW, path("modelview") / "model_view_ps.cso"},
     {PixelShader::ID::GRAFFITI, path("graffiti") / "graffiti_ps.cso"},
+    {PixelShader::ID::OBB, path("physics") / "obb_ps.cso"},
 };
 
 struct Model {
@@ -173,6 +175,35 @@ class MyApp final : public device::Application {
         }
         resource.GetPipeline().Register(
             util::resource::id::Pipeline::OBJECT_WIREFRAME, pipeline_wireframe);
+      }
+      {
+        auto pipeline =
+            std::make_shared<directx::shader::GraphicsPipelineState>();
+        directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+        auto vs = resource.GetVertexShader().Get(VertexShader::ID::OBB);
+        auto ps = resource.GetPixelShader().Get(PixelShader::ID::OBB);
+        pso_desc.BlendState.RenderTarget[0] =
+            directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+        pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+        pso_desc.DepthStencilState.DepthEnable = false;
+        pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
+        pso_desc.InputLayout = vs->GetInputLayout();
+        pso_desc.NumRenderTargets = 1;
+        pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+        pso_desc.PrimitiveTopologyType =
+            D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+        pso_desc.pRootSignature =
+            device.GetDefaultRootSignature()->GetRootSignature();
+        pso_desc.PS = ps->GetShaderBytecode();
+        pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+        pso_desc.SampleDesc.Count = 1;
+        pso_desc.SampleMask = UINT_MAX;
+        pso_desc.VS = vs->GetShaderBytecode();
+        if (!pipeline->Init(device, pso_desc)) {
+          return false;
+        }
+        resource.GetPipeline().Register(
+            util::resource::id::Pipeline::PRIMITIVE_LINE, pipeline);
       }
     }
 

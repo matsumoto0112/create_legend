@@ -6,16 +6,20 @@ namespace legend {
 namespace object {
 
 //コンストラク
-Desk::Desk() : actor::Actor<physics::BoundingBox>() {}
+Desk::Desk() : Parent(L"Desk") {}
 
 //デストラクタ
 Desk::~Desk() {}
 
 bool Desk::Init(const InitializeParameter& parameter) {
+  if (!Parent::InitBuffer()) {
+    return false;
+  }
+
   this->transform_ = parameter.transform;
-  this->collision_ =
-      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
-                           transform_.GetScale() * 0.1f);
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetRotation(transform_.GetRotation());
+  this->collision_.SetScale(transform_.GetScale());
   this->collision_.SetLength(parameter.bounding_box_length.x,
                              parameter.bounding_box_length.y,
                              parameter.bounding_box_length.z);
@@ -23,15 +27,6 @@ bool Desk::Init(const InitializeParameter& parameter) {
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Transform ConstantBuffer")) {
-    return false;
-  }
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();

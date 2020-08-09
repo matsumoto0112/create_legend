@@ -104,6 +104,7 @@
     <ClCompile Include="src\object\graffiti.cpp" />
     <ClCompile Include="src\primitive\primitive.cpp" />
     <ClCompile Include="src\primitive\box.cpp" />
+    <ClCompile Include="src\primitive\line.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -246,6 +247,7 @@
     <ClInclude Include="src\object\graffiti.h" />
     <ClInclude Include="src\primitive\box.h" />
     <ClInclude Include="src\primitive\primitive.h" />
+    <ClInclude Include="src\primitive\line.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

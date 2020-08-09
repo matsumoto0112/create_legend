@@ -8,9 +8,11 @@
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
 #include "src/primitive/box.h"
+#include "src/primitive/line.h"
 #include "src/util/path.h"
+
 namespace {
-legend::primitive::Box box_;
+legend::primitive::Line line_;
 }  // namespace
 
 namespace {
@@ -49,9 +51,9 @@ bool ModelView::Initialize() {
     transform_cb_[i].UpdateStaging();
   }
   {
-    const math::Vector3 pos = math::Vector3(0.0f, 1.5f, -2.0f);
-    const math::Quaternion rot = math::Quaternion::FromEular(
-        36.0f * math::util::DEG_2_RAD, 10.0f * math::util::DEG_2_RAD, 0.0f);
+    const math::Vector3 pos = math::Vector3(0.0f, 0.5f, -0.5f);
+    const math::Quaternion rot =
+        math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;
     const float aspect = 1280.0f / 720.0f;
     if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect)) {
@@ -59,6 +61,9 @@ bool ModelView::Initialize() {
     }
   }
 
+  if (!line_.Init()) {
+    return false;
+  }
   return true;
 }
 
@@ -78,27 +83,24 @@ void ModelView::Draw() {
   auto& render_resource_manager = device.GetRenderResourceManager();
   directx::device::CommandList& command_list =
       device.GetCurrentFrameResource()->GetCommandList();
-  // render_resource_manager.SetRenderTargets(
-  //    command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  // resource.GetPipeline()
-  //    .Get(util::resource::id::Pipeline::MODEL_VIEW)
-  //    ->SetGraphicsCommandList(command_list);
   camera_.RenderStart();
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::PRIMITIVE_LINE)
+      .Get(util::resource::id::Pipeline::MODEL_VIEW)
       ->SetGraphicsCommandList(command_list);
-  box_.Render(command_list);
+  for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
+    transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
+    transform_cb_[i].UpdateStaging();
+    transform_cb_[i].SetToHeap(device);
+    resource.GetModel()
+        .Get(util::resource::id::Model::DESK)
+        ->Draw(command_list);
+  }
 
-  // for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
-  //  transform_cb_[i].GetStagingRef().world =
-  //  transforms_[i].CreateWorldMatrix(); transform_cb_[i].UpdateStaging();
-  //  transform_cb_[i].SetToHeap(device);
-  //  resource.GetModel()
-  //      .Get(util::resource::id::Model::DESK)
-  //      ->Draw(command_list);
-  //}
+  line_.Render(command_list);
 }
 
 void ModelView::Finalize() {}

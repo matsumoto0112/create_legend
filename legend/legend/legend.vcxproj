@@ -144,6 +144,7 @@
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\primitive\box.cpp" />
+    <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\primitive\primitive.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\player\player.h" />
     <ClInclude Include="src\primitive\box.h" />
+    <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />

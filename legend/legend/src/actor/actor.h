@@ -48,20 +48,27 @@ class Actor {
   T& GetCollisionRef() { return collision_; }
 
  protected:
+  /**
+   * @brief バッファの初期化
+   * @return 初期化に成功したらtrueを返す
+   */
   bool InitBuffer();
 
  public:
+  /**
+   * @brief トランスフォームコンスタントバッファの参照を取得する
+   */
   TransformConstantBuffer& GetTransformConstantBufferRef() {
     return transform_cb_;
   }
 
  protected:
+  //! アクター名
   std::wstring name_;
   //! トランスフォーム
   util::Transform transform_;
   //! トランスフォームコンスタントバッファ
   TransformConstantBuffer transform_cb_;
-
   //! 描画モデル
   std::shared_ptr<draw::Model> model_;
   //! コリジョン

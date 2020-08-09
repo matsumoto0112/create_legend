@@ -56,6 +56,14 @@ void DepthStencil::Transition(device::CommandList& command_list,
   resource_.Transition(command_list, next_states);
 }
 
+D3D12_DEPTH_STENCIL_DESC DepthStencil::GetDepthStencilDesc() const {
+  D3D12_DEPTH_STENCIL_DESC res = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+  res.DepthEnable = true;
+  res.StencilEnable =
+      format_ == DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT ? true : false;
+  return res;
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

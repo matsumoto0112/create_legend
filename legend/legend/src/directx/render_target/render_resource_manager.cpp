@@ -170,6 +170,18 @@ bool RenderResourceManager::IsRegisteredDepthStencilTarget(
   return util::Exist(depth_stencil_targets_, id);
 }
 
+MultiRenderTargetTexture RenderResourceManager::GetRenderTarget(
+    RenderTargetID id) const {
+  MY_ASSERTION(IsRegisteredRenderTarget(id), L"");
+  return render_targets_.at(id).Get();
+}
+
+DepthStencil RenderResourceManager::GetDepthStencilTarget(
+    DepthStencilTargetID id) const {
+  MY_ASSERTION(IsRegisteredDepthStencilTarget(id), L"");
+  return depth_stencil_targets_.at(id).Get();
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

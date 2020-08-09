@@ -89,7 +89,6 @@
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
-    <ClCompile Include="src\stage_generate\StageGenerator.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
@@ -107,6 +106,7 @@
     <ClCompile Include="src\primitive\primitive.cpp" />
     <ClCompile Include="src\primitive\box.cpp" />
     <ClCompile Include="src\primitive\line.cpp" />
+    <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -235,7 +235,6 @@
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
-    <ClInclude Include="src\stage_generate\StageGenerator.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
@@ -253,6 +252,7 @@
     <ClInclude Include="src\primitive\box.h" />
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\primitive\line.h" />
+    <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

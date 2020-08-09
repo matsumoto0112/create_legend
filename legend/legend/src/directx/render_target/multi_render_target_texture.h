@@ -20,6 +20,9 @@ namespace render_target {
  */
 class MultiRenderTargetTexture {
  private:
+  static constexpr u32 RTV_MAX_NUM = 8;
+
+ private:
   /**
    * @struct RenderTargetTexture
    * @brief レンダーターゲットテクスチャ構造体
@@ -133,6 +136,9 @@ class MultiRenderTargetTexture {
    */
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_state);
+
+  std::array<DXGI_FORMAT, RTV_MAX_NUM> GetRTVFormats() const;
+  u32 GetRenderTargetNum() const { return render_target_num_; }
 
  private:
   //! レンダーターゲット数

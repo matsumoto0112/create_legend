@@ -133,6 +133,17 @@ void MultiRenderTargetTexture::Transition(device::CommandList& command_list,
   }
 }
 
+//レンダーターゲットのフォーマットを取得する
+std::array<DXGI_FORMAT, MultiRenderTargetTexture::RTV_MAX_NUM>
+MultiRenderTargetTexture::GetRTVFormats() const {
+  std::array<DXGI_FORMAT, RTV_MAX_NUM> res;
+  res.fill(DXGI_FORMAT::DXGI_FORMAT_UNKNOWN);
+  for (u32 i = 0; i < render_target_num_; i++) {
+    res[i] = render_targets_[i].render_target.GetFormat();
+  }
+  return res;
+}
+
 }  // namespace render_target
 }  // namespace directx
 }  // namespace legend

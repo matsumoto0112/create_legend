@@ -99,6 +99,7 @@
     <ClCompile Include="src\directx\render_target\render_target.cpp" />
     <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
     <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
+    <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
     <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
+    <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
     <ClInclude Include="src\directx\shader\pixel_shader.h" />
     <ClInclude Include="src\directx\shader\root_parameter_index.h" />
     <ClInclude Include="src\directx\shader\root_signature.h" />

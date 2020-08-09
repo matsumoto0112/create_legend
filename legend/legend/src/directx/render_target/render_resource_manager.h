@@ -164,6 +164,9 @@ class RenderResourceManager {
    */
   bool IsRegisteredDepthStencilTarget(DepthStencilTargetID id) const;
 
+  MultiRenderTargetTexture GetRenderTarget(RenderTargetID id) const;
+  DepthStencil GetDepthStencilTarget(DepthStencilTargetID id) const;
+
  private:
   //! ƒtƒŒ[ƒ€”
   u32 frame_count_;

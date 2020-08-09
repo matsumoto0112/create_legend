@@ -1,4 +1,5 @@
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/application.h"
 #include "src/game/game_device.h"
@@ -118,28 +119,25 @@ class MyApp final : public device::Application {
       //パイプラインの登録
       //パイプラインは外部ファイルに書き出してそれを読み取る形式にしたい
       {
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
+        directx::shader::GraphicsPipelineStateDesc pso_desc = {};
+        pso_desc.SetRenderTargets(
+            device.GetRenderResourceManager().GetRenderTarget(
+                directx::render_target::RenderTargetID::BACK_BUFFER));
+        pso_desc.SetVertexShader(
+            resource.GetVertexShader().Get(VertexShader::ID::MODEL_VIEW).get());
+        pso_desc.SetPixelShader(
+            resource.GetPixelShader().Get(PixelShader::ID::MODEL_VIEW).get());
+        pso_desc.SetDepthStencilTarget(
+            device.GetRenderResourceManager().GetDepthStencilTarget(
+                directx::render_target::DepthStencilTargetID::DEPTH_ONLY));
+        pso_desc.SetRootSignature(device.GetDefaultRootSignature());
+
         pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-        pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
-        pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-        pso_desc.InputLayout = resource.GetVertexShader()
-                                   .Get(VertexShader::ID::MODEL_VIEW)
-                                   ->GetInputLayout();
-        pso_desc.NumRenderTargets = 1;
         pso_desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE::
             D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-        pso_desc.pRootSignature =
-            device.GetDefaultRootSignature()->GetRootSignature();
-        pso_desc.PS = resource.GetPixelShader()
-                          .Get(PixelShader::ID::MODEL_VIEW)
-                          ->GetShaderBytecode();
         pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-        pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
         pso_desc.SampleDesc.Count = 1;
         pso_desc.SampleMask = UINT_MAX;
-        pso_desc.VS = resource.GetVertexShader()
-                          .Get(VertexShader::ID::MODEL_VIEW)
-                          ->GetShaderBytecode();
         auto pipeline =
             std::make_shared<directx::shader::GraphicsPipelineState>();
         if (!pipeline->Init(device, pso_desc)) {
@@ -149,15 +147,10 @@ class MyApp final : public device::Application {
             util::resource::id::Pipeline::MODEL_VIEW, pipeline);
         auto pipeline_graffiti =
             std::make_shared<directx::shader::GraphicsPipelineState>();
-        pso_desc.VS = resource.GetVertexShader()
-                          .Get(VertexShader::ID::GRAFFITI)
-                          ->GetShaderBytecode();
-        pso_desc.InputLayout = resource.GetVertexShader()
-                                   .Get(VertexShader::ID::GRAFFITI)
-                                   ->GetInputLayout();
-        pso_desc.PS = resource.GetPixelShader()
-                          .Get(PixelShader::ID::GRAFFITI)
-                          ->GetShaderBytecode();
+        pso_desc.SetVertexShader(
+            resource.GetVertexShader().Get(VertexShader::ID::GRAFFITI).get());
+        pso_desc.SetPixelShader(
+            resource.GetPixelShader().Get(PixelShader::ID::GRAFFITI).get());
         pso_desc.BlendState.AlphaToCoverageEnable = false;
         pso_desc.BlendState.RenderTarget[0] =
             directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;

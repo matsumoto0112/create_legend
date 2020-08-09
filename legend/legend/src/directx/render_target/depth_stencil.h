@@ -70,6 +70,10 @@ class DepthStencil {
    */
   descriptor_heap::DescriptorHandle GetHandle() const { return handle_; }
 
+  DXGI_FORMAT GetFormat() const { return format_; }
+
+  D3D12_DEPTH_STENCIL_DESC GetDepthStencilDesc() const;
+
  private:
   //! ÉäÉ\Å[ÉX
   buffer::CommittedResource resource_;

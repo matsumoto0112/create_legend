@@ -46,6 +46,7 @@ BoundingBox::~BoundingBox() {}
 
 //初期化
 bool BoundingBox::Init() {
+  //描画用のBoxを初期化する
   if (!draw_box_.Init()) {
     return false;
   }
@@ -170,8 +171,9 @@ void BoundingBox::SetIsTrigger(bool trigger) { is_trigger_ = trigger; }
 void BoundingBox::SetOnGround(bool is_ground) { is_on_ground_ = is_ground; }
 
 void BoundingBox::DebugDraw(directx::device::CommandList& command_list) {
-  math::Vector3 length(lengthes_[0], lengthes_[1], lengthes_[2]);
-  math::Vector3 scale =
+  //スケーリングは辺の長さ * スケーリング比率
+  const math::Vector3 length(lengthes_[0], lengthes_[1], lengthes_[2]);
+  const math::Vector3 scale =
       math::Vector3::MultiplyEach(transform_.GetScale(), length);
   draw_box_.SetTransform(util::Transform(transform_.GetPosition(),
                                          transform_.GetRotation(), scale));

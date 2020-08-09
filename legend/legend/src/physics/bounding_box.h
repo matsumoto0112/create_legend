@@ -128,7 +128,10 @@ class BoundingBox : public Collider {
    * @brief 接地判定の設定
    */
   void SetOnGround(bool is_ground);
-
+  /**
+   * @brief デバッグ描画
+   * @param command_list コマンドリスト 
+  */
   void DebugDraw(directx::device::CommandList& command_list) override;
 
  private:
@@ -148,6 +151,7 @@ class BoundingBox : public Collider {
   //! 接地判定
   bool is_on_ground_;
 
+  //描画用のBox
   primitive::Box draw_box_;
 };
 

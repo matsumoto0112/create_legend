@@ -3,25 +3,35 @@
 
 /**
  * @file box.h
+ * @brief Box型のプリミティブ描画クラス定義
  */
 
 #include "src/primitive/primitive.h"
 
 namespace legend {
 namespace primitive {
+
+/**
+ * @brief Box型のプリミティブ描画クラス
+ */
 class Box : public PrimitiveBase {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   Box();
-  ~Box();
-
-  void SetTransform(const util::Transform& transform) {
-    this->transform_ = transform;
-  }
+  /**
+   * @brief デストラクタ
+   */
+  virtual ~Box();
+  /**
+   * @brief 初期化
+   * @return 初期化に成功したらtrueを返す
+   */
   bool Init() override;
-
- private:
 };
 
 }  // namespace primitive
 }  // namespace legend
+
 #endif  //! LEGEND_PRIMITIVE_BOX_H_

@@ -3,21 +3,26 @@
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 
+namespace {
+constexpr auto PIPELINE_ID =
+    legend::util::resource::id::Pipeline::PRIMITIVE_LINE;
+}  // namespace
+
 namespace legend {
 namespace primitive {
 
-legend::primitive::PrimitiveBase::PrimitiveBase(const std::wstring& name)
-    : name_(name) {}
+//コンストラクタ
+PrimitiveBase::PrimitiveBase(const std::wstring& name) : name_(name) {}
 
+//デストラクタ
 PrimitiveBase::~PrimitiveBase() {}
 
+//描画
 void PrimitiveBase::Render(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::PRIMITIVE_LINE)
-      ->SetGraphicsCommandList(command_list);
+  resource.GetPipeline().Get(PIPELINE_ID)->SetGraphicsCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -29,6 +34,7 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
   index_buffer_.Draw(command_list);
 }
 
+//バッファの初期化
 bool PrimitiveBase::InitBuffer(
     const std::vector<directx::PhysicsVertex>& vertices,
     const std::vector<u16>& indices) {
@@ -54,11 +60,13 @@ bool PrimitiveBase::InitBuffer(
     return false;
   }
 
+  constexpr auto TRANSFORM_ID =
+      directx::shader::ConstantBufferRegisterID::TRANSFORM;
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device, TRANSFORM_ID,
           device.GetHeapManager().GetLocalHeap(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"")) {
+          name_ + L"_TransformConstantBuffer")) {
     return false;
   }
   return true;

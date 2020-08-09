@@ -175,7 +175,7 @@ math::Quaternion Player::GetRotation() const {
 float Player::GetImpulse() const { return impulse_; }
 
 //‰Á‚¦‚é—Í‚Ìæ“¾
-float Player::GetPower() { return power_; }
+float Player::GetPower() const { return power_; }
 
 //ˆÚ“®I—¹”»’è‚Ìæ“¾
 bool Player::GetMoveEnd() const { return move_end_; }

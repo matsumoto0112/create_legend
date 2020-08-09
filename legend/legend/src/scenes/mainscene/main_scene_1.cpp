@@ -27,7 +27,8 @@ bool MainScene1::Initialize() {
     player_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+    //消しゴムのあたり判定の長さは仮でこれぐらい
+    player_parameter.bouding_box_length = math::Vector3(0.12f, 0.05f, 0.28f);
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -43,7 +44,7 @@ bool MainScene1::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(10.0f, 0.5f, 10.0f);
+    desk_parameter.bounding_box_length = math::Vector3(0.7f, 0.05f, 0.5f);
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
@@ -51,7 +52,13 @@ bool MainScene1::Initialize() {
     physics_field_.AddDesk(desk_.GetCollisionRef());
   }
 
-  if (!enemy_manager_.Initilaize(&physics_field_)) {
+  math::Vector3 min = math::Vector3(
+      desk_.GetPosition().x - desk_.GetCollisionRef().GetLength(0), 0,
+      desk_.GetPosition().z - desk_.GetCollisionRef().GetLength(2));
+  math::Vector3 max = math::Vector3(
+      desk_.GetPosition().x + desk_.GetCollisionRef().GetLength(0), 0,
+      desk_.GetPosition().z + desk_.GetCollisionRef().GetLength(2));
+  if (!enemy_manager_.Initilaize(min, max, &physics_field_)) {
     return false;
   }
 
@@ -168,6 +175,7 @@ void MainScene1::Finalize() {
 bool MainScene1::UpdateTurn() {
   switch (turn_) {
     case legend::system::Turn::PLAYER_TURN:
+      MY_LOG(L"PLAYER TURN");
       if (!player_.Update()) {
         return false;
       }
@@ -176,10 +184,10 @@ bool MainScene1::UpdateTurn() {
         turn_ = system::Turn::ENEMY_TURN;
         player_.ResetMoveEnd();
       }
-      MY_LOG(L"PLAYER TURN");
       break;
     case legend::system::Turn::ENEMY_TURN:
-      if (!enemy_manager_.Update(&physics_field_)) {
+      MY_LOG(L"ENEMY TURN");
+      if (!enemy_manager_.Update(&player_, &physics_field_)) {
         return false;
       }
       //最後に登録されているエネミーが動き終えたら又はエネミーが全ていなければ、ターン切り替え
@@ -190,7 +198,6 @@ bool MainScene1::UpdateTurn() {
         current_turn_.AddCurrentTurn();
         physics_field_.ResetEnemyMove();
       }
-      MY_LOG(L"ENEMY TURN");
       break;
     default:
       break;

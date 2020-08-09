@@ -87,7 +87,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   /**
    * @brief ‰Á‚¦‚é—Í‚Ìæ“¾
    */
-  float GetPower();
+  float GetPower() const;
   /**
    * @brief ˆÚ“®I—¹”»’è‚Ìæ“¾
    */
@@ -113,7 +113,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   const float change_time_ = 0.1f;
 
   //! ˆÚ“®‚É‰Á‚¦‚é—Í
-  const float power_ = 10;
+  const float power_ = 3.0f;
   //! ÀÛ‚É‰Á‚¦‚é—Í‚Ì‰ÁŒ¸
   float impulse_;
   //! Å¬’l

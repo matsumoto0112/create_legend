@@ -5,6 +5,7 @@
 
 #include "src/enemy/enemy.h"
 #include "src/system/physics_field.h"
+#include "src/player/player.h"
 
 namespace legend {
 namespace enemy {
@@ -25,11 +26,12 @@ class EnemyManager {
   /**
    * @brief ‰Šú‰»
    */
-  bool Initilaize(system::PhysicsField* physics_field = nullptr);
+  bool Initilaize(math::Vector3 min_pos, math::Vector3 max_pos,
+                  system::PhysicsField* physics_field = nullptr);
   /**
    * @brief XV
    */
-  bool Update(system::PhysicsField* physics_field = nullptr);
+  bool Update(player::Player* player = nullptr, system::PhysicsField* physics_field = nullptr);
   /**
    * @brief •`‰æ
    */
@@ -37,11 +39,12 @@ class EnemyManager {
   /**
    * @brief “G‚Ìs“®ˆ—
    */
-  void EnemyAction();
+  void EnemyAction(player::Player* player = nullptr);
   /**
    * @brief “G‚ğ’Ç‰Á
    */
-  void Add(system::PhysicsField* physics_field = nullptr);
+  void Add(math::Vector3 min_pos, math::Vector3 max_pos,
+           system::PhysicsField* physics_field = nullptr);
   /**
    * @brief “G‚ğíœ
    */

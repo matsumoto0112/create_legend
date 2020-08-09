@@ -113,13 +113,16 @@ class PhysicsField {
   //! 更新時間(deltaTime)
   float update_time_;
 
+  float player_deceleration_x_;
+  float player_deceleration_z_;
+  std::vector<float>enemy_deceleration_x_;
+  std::vector<float>enemy_deceleration_z_;
+
   //! プレイヤーが移動中か
   bool is_player_move_;
   //! プレイヤーの速度
   math::Vector3 player_velocity_;
 
-  //! 最後のエネミーが移動開始したか
-  bool is_last_enemy_move_;
   //! 各エネミーの速度
   std::vector<math::Vector3> enemy_velocities_;
   //! 各エネミーの移動開始判定

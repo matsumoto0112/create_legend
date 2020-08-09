@@ -6,7 +6,7 @@ namespace legend {
 namespace system {
 
 //コンストラクタ
-PhysicsField::PhysicsField() : gravity_(-9.8f) {}
+PhysicsField::PhysicsField() : gravity_(-2.0f) {}
 
 //デストラクタ
 PhysicsField::~PhysicsField() {}
@@ -15,6 +15,8 @@ bool PhysicsField::Init() {
   desk_obbs_.clear();
   enemy_obbs_.clear();
   is_enemy_move_.clear();
+  enemy_deceleration_x_.clear();
+  enemy_deceleration_z_.clear();
 
   return true;
 }
@@ -60,15 +62,40 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_obb_,
                                                              enemy_obbs_[i])) {
       MY_LOG(L"プレイヤー消しゴムとエネミー消しゴムが衝突しました");
+
+      if (turn == Turn::PLAYER_TURN) {
+        math::Vector3 vel = player_velocity_ * update_time_;
+        math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * player_power;
+        enemy_obbs_[i].SetPosition(pos);
+        //衝突時に減速
+        Deceleration(player_velocity_, 5, player_deceleration_x_,
+                     player_deceleration_z_);
+      }
+      if (turn == Turn::ENEMY_TURN) {
+        math::Vector3 vel = enemy_velocities_[i] * update_time_;
+        math::Vector3 pos = player_obb_.GetPosition() + vel * 2.0f;
+        player_obb_.SetPosition(pos);
+        //衝突時に減速
+        Deceleration(enemy_velocities_[i], 5, enemy_deceleration_x_[i],
+                     enemy_deceleration_z_[i]);
+      }
     }
   }
 
   if (enemy_obbs_.size() >= 2) {
-    //各敵同士の衝突判定を調べる
-    for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
-      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-              enemy_obbs_[i], enemy_obbs_[i + 1])) {
-        MY_LOG(L"敵消しゴム同士で衝突しました");
+    for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+      for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+        if (i == j) continue;
+
+        if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+                enemy_obbs_[i], enemy_obbs_[j])) {
+          math::Vector3 vel = enemy_velocities_[i] * update_time_;
+          math::Vector3 pos = enemy_obbs_[j].GetPosition() + vel * 2.0f;
+          enemy_obbs_[j].SetPosition(pos);
+          //衝突時に減速
+          Deceleration(enemy_velocities_[i], 5, enemy_deceleration_x_[i],
+                       enemy_deceleration_z_[i]);
+        }
       }
     }
   }
@@ -89,6 +116,8 @@ void PhysicsField::AddEnemy(physics::BoundingBox& enemy_obb) {
   enemy_obbs_.emplace_back(enemy_obb);
   enemy_velocities_.emplace_back(math::Vector3::kZeroVector);
   is_enemy_move_.emplace_back(false);
+  enemy_deceleration_x_.emplace_back(0.0f);
+  enemy_deceleration_z_.emplace_back(0.0f);
 }
 
 //机あたり判定の登録
@@ -105,6 +134,8 @@ void PhysicsField::RemoveEnemy(i32 index_num) {
   enemy_obbs_.erase(enemy_obbs_.begin() + index_num);
   enemy_velocities_.erase(enemy_velocities_.begin() + index_num);
   is_enemy_move_.erase(is_enemy_move_.begin() + index_num);
+  enemy_deceleration_x_.erase(enemy_deceleration_x_.begin() + index_num);
+  enemy_deceleration_z_.erase(enemy_deceleration_z_.begin() + index_num);
 }
 
 //机あたり判定の削除
@@ -121,26 +152,18 @@ void PhysicsField::UpdateGravity(float gravity) {
 
   //プレイヤーの重力落下処理
   if (!player_obb_.GetOnGround()) {
-    // if (player_obb_.GetPosition().y <= -10) {
-    //  player_velocity_ = math::Vector3::kZeroVector;
-    //  return;
-    //}
-
     g = player_velocity_ + math::Vector3(0, gravity, 0);
-    math::Vector3 player_pos = player_obb_.GetPosition() + g * update_time_;
+    math::Vector3 player_pos =
+        player_obb_.GetPosition() + g * update_time_ * 0.5f;
     player_obb_.SetPosition(player_pos);
   }
 
   //エネミーの重力落下処理
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (!enemy_obbs_[i].GetOnGround()) {
-      // if (enemy_obbs_[i].GetPosition().y <= -10) {
-      //  enemy_velocities_[i] = math::Vector3::kZeroVector;
-      //  continue;
-      //}
-
       g = enemy_velocities_[i] + math::Vector3(0, gravity, 0);
-      math::Vector3 enemy_pos = enemy_obbs_[i].GetPosition() + g * update_time_;
+      math::Vector3 enemy_pos =
+          enemy_obbs_[i].GetPosition() + g * update_time_ * 0.5f;
       enemy_obbs_[i].SetPosition(enemy_pos);
     }
   }
@@ -149,72 +172,79 @@ void PhysicsField::UpdateGravity(float gravity) {
 //移動
 void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
                               float player_power) {
+  float speed = player_power * player_impulse;
   if (!is_player_move_) {
     player_velocity_ = vel;
-    is_player_move_ = true;
+
+    if (player_velocity_ == math::Vector3::kZeroVector) return;
+
+    float length = math::util::Sqrt(player_velocity_.x * player_velocity_.x +
+                                    player_velocity_.z * player_velocity_.z);
+
+    //実際に動く距離
+    float rate = speed / length;
+    player_velocity_.x *= rate;
+    player_velocity_.z *= rate;
+
+    if (!is_player_move_) {
+      //減速計算
+      player_deceleration_x_ = player_velocity_.x / (speed * speed);
+      player_deceleration_z_ = player_velocity_.z / (speed * speed);
+      is_player_move_ = true;
+    }
   }
 
-  if (player_velocity_ == math::Vector3::kZeroVector) return;
-
-  float length = math::util::Sqrt(player_velocity_.x * player_velocity_.x +
-                                  player_velocity_.z * player_velocity_.z);
-
-  //実際に動く距離
-  float x = player_velocity_.x / length;
-  float z = player_velocity_.z / length;
-
-  math::Vector3 v = math::Vector3(x, 0, z);
-  math::Vector3 velocity = player_obb_.GetPosition() +
-                           v * update_time_ * player_impulse * player_power;
+  math::Vector3 v = player_velocity_;
+  math::Vector3 velocity = player_obb_.GetPosition() + v * update_time_ * speed;
   player_obb_.SetPosition(velocity);
 
-  //減速計算
-  float deceleration_x_ = x / (length * length);
-  float deceleration_z_ = z / (length * length);
-
   if (player_obb_.GetOnGround())
-    Deceleration(player_velocity_, 2, deceleration_x_, deceleration_z_);
+    Deceleration(player_velocity_, 2, player_deceleration_x_,
+                 player_deceleration_z_);
 }
 
 //各エネミーの移動処理
 void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel) {
+  float speed = 1.0f;
   for (i32 i = 0; i < enemies_vel.size(); i++) {
-    if (!is_last_enemy_move_ && !is_enemy_move_[i]) {
+    if (!is_enemy_move_[i]) {
       enemy_velocities_[i] = enemies_vel[i];
-      if (enemy_velocities_[i] != math::Vector3::kZeroVector)
+
+      if (enemy_velocities_[i] == math::Vector3::kZeroVector) continue;
+
+      float length =
+          math::util::Sqrt(enemy_velocities_[i].x * enemy_velocities_[i].x +
+                           enemy_velocities_[i].z * enemy_velocities_[i].z);
+
+      //実際に動く距離
+      float rate = speed / length;
+      enemy_velocities_[i].x *= rate;
+      enemy_velocities_[i].z *= rate;
+
+      if (!is_enemy_move_[i]) {
+        //減速計算
+        enemy_deceleration_x_[i] = enemy_velocities_[i].x / (speed * speed);
+        enemy_deceleration_z_[i] = enemy_velocities_[i].z / (speed * speed);
         is_enemy_move_[i] = true;
-      if (i == enemy_obbs_.size()) is_last_enemy_move_ = true;
+      }
     }
 
-    if (enemy_velocities_[i] == math::Vector3::kZeroVector) continue;
-
-    float length =
-        math::util::Sqrt(enemy_velocities_[i].x * enemy_velocities_[i].x +
-                         enemy_velocities_[i].z * enemy_velocities_[i].z);
-
-    //実際に動く距離
-    float x = enemy_velocities_[i].x / length;
-    float z = enemy_velocities_[i].z / length;
-
-    math::Vector3 v = math::Vector3(x, 0, z);
+    math::Vector3 v = enemy_velocities_[i];
     math::Vector3 velocity =
-        enemy_obbs_[i].GetPosition() + v * update_time_ * 1.0f;
+        enemy_obbs_[i].GetPosition() + v * update_time_ * speed;
     enemy_obbs_[i].SetPosition(velocity);
 
-    //減速計算
-    float deceleration_x_ = x / (length * length);
-    float deceleration_z_ = z / (length * length);
-
     if (enemy_obbs_[i].GetOnGround())
-      Deceleration(enemy_velocities_[i], 2, deceleration_x_, deceleration_z_);
+      Deceleration(enemy_velocities_[i], 2, enemy_deceleration_x_[i],
+                   enemy_deceleration_z_[i]);
   }
 }
 
 //減衰
 void PhysicsField::Deceleration(math::Vector3& vel, float deceleration_rate,
                                 float deceleration_x, float deceleration_z) {
-  float x = deceleration_x * deceleration_rate * update_time_;
-  float z = deceleration_z * deceleration_rate * update_time_;
+  float x = (deceleration_x * deceleration_rate * update_time_);
+  float z = (deceleration_z * deceleration_rate * update_time_);
 
   if ((x <= vel.x && vel.x <= 0) || (0 <= vel.x && vel.x <= x)) {
     vel.x = 0;
@@ -256,7 +286,6 @@ void PhysicsField::ResetEnemyMove() {
   for (i32 i = 0; i < is_enemy_move_.size(); i++) {
     is_enemy_move_[i] = false;
   }
-  is_last_enemy_move_ = false;
 }
 }  // namespace system
 }  // namespace legend

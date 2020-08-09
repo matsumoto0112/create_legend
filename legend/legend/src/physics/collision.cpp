@@ -87,6 +87,8 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
     return false;
   }
 
+  obb1.SetPosition(obb1.GetPosition() + return_vector_);
+  obb2.SetPosition(obb2.GetPosition() - return_vector_);
   return true;
 }
 
@@ -112,6 +114,14 @@ bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
   if (length > len_a + len_b) {
     //Õ“Ë‚µ‚Ä‚¢‚È‚¢
     return false;
+  }
+
+  if (v_sep.x >= v_sep.y && v_sep.x > v_sep.z) {
+    return_vector_ += math::Vector3(len_a - len_b, 0, 0);
+  } else if (v_sep.y > v_sep.x && v_sep.y >= v_sep.z) {
+    return_vector_ += math::Vector3(0, len_a - len_b, 0);
+  } else if (v_sep.z > v_sep.x && v_sep.z > v_sep.y) {
+    return_vector_ += math::Vector3(0, 0, len_a - len_b);
   }
 
   //Õ“Ë‚µ‚Ä‚¢‚é
@@ -160,13 +170,13 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   math::Vector3 normal = plane.GetNormal();
   math::Vector3 return_vector = math::Vector3::kZeroVector;
   if (normal.x > 0) {
-    return_vector = math::Vector3(return_distance, 0, 0) + obb.GetPosition();
+    return_vector += math::Vector3(return_distance, 0, 0);
   } else if (normal.y > 0) {
-    return_vector = math::Vector3(0, return_distance, 0) + obb.GetPosition();
+    return_vector += math::Vector3(0, return_distance, 0);
   } else if (normal.z > 0) {
-    return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
+    return_vector += math::Vector3(0, 0, return_distance);
   }
-  obb.SetPosition(return_vector);
+  obb.SetPosition(obb.GetPosition() + return_vector);
 
   return true;
 }
@@ -179,22 +189,20 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
 
   math::Vector3 normal = math::Vector3::kUpVector;
   for (i32 i = 0; i < 3; i++) {
-    math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
+    math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i);
     proximity_distance += fabs(math::Vector3::Dot(
         math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
   }
 
-  math::Vector3 desk_pos = desk_obb.GetPosition() +
-                           math::Vector3(0, desk_obb.GetLengthByScale(1), 0);
+  math::Vector3 desk_pos =
+      desk_obb.GetPosition() + math::Vector3(0, desk_obb.GetLength(1), 0);
   //Á‚µƒSƒ€‚ÆŠ÷‚Ì•\–Ê‚Æ‚Ì‹——£‚ðŽZo
   float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
 
-  if (math::util::Abs(obb.GetPosition().x + obb.GetLengthByScale(0)) >
-          math::util::Abs(desk_obb.GetPosition().x +
-                          desk_obb.GetLengthByScale(0)) ||
-      math::util::Abs(obb.GetPosition().z + obb.GetLengthByScale(2)) >
-          math::util::Abs(desk_obb.GetPosition().z +
-                          desk_obb.GetLengthByScale(2))) {
+  if (math::util::Abs(obb.GetPosition().x + obb.GetLength(0)) >
+          math::util::Abs(desk_obb.GetPosition().x + desk_obb.GetLength(0)) ||
+      math::util::Abs(obb.GetPosition().z + obb.GetLength(2)) >
+          math::util::Abs(desk_obb.GetPosition().z + desk_obb.GetLength(2))) {
     MY_LOG(L"Š÷‚ÌŠO‚É‚¢‚Ü‚·");
     obb.SetOnGround(false);
     return false;
@@ -223,13 +231,13 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //À•W‚ÌC³
   math::Vector3 return_vector = math::Vector3::kZeroVector;
   if (normal.x > 0) {
-    return_vector = math::Vector3(return_distance, 0, 0) + obb.GetPosition();
+    return_vector += math::Vector3(return_distance, 0, 0);
   } else if (normal.y > 0) {
-    return_vector = math::Vector3(0, return_distance, 0) + obb.GetPosition();
+    return_vector += math::Vector3(0, return_distance, 0);
   } else if (normal.z > 0) {
-    return_vector = math::Vector3(0, 0, return_distance) + obb.GetPosition();
+    return_vector += math::Vector3(0, 0, return_distance);
   }
-  obb.SetPosition(return_vector);
+  obb.SetPosition(obb.GetPosition() + return_vector);
   obb.SetOnGround(true);
 
   return true;

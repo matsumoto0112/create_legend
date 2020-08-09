@@ -45,6 +45,7 @@ class StageGenerateTest : public Scene {
 
  private:
   std::unique_ptr<stage_generate::StageGenerator> stage_generator_;
+  std::vector<std::string> indexs_;
 };
 
 }  // namespace debugscene

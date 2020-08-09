@@ -23,7 +23,7 @@ class StageGenerator {
    * @brief “Ç‚İ‚İˆ—
    * @return ˆ—‚ª³‚µ‚­I—¹‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool LoadStageData(std::wstring filepath);
+  std::vector<std::string> LoadStageData(std::wstring filepath);
 
  private:
 };

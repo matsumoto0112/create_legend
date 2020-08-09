@@ -3,8 +3,7 @@
 
 #include "model_view.hlsli"
 
-float4 main(PSInput i) : SV_TARGET
-{
+float4 main(const PSInput i) : SV_TARGET {
 	return PSMain(i);
 }
 

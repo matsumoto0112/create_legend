@@ -1,5 +1,7 @@
 #include "src/directx/render_target/multi_render_target_texture.h"
 
+#include "src/math/math_util.h"
+
 namespace legend {
 namespace directx {
 namespace render_target {
@@ -12,32 +14,38 @@ MultiRenderTargetTexture::~MultiRenderTargetTexture() {}
 
 //初期化
 bool MultiRenderTargetTexture::Init(
-    IDirectXAccessor& accessor,
+    device::IDirectXAccessor& accessor,
     descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
     const Info& info) {
   return Init(accessor, srv_local_heap_id, std::vector{info});
 }
 
+//初期化
 bool MultiRenderTargetTexture::Init(
-    IDirectXAccessor& accessor,
+    device::IDirectXAccessor& accessor,
     descriptor_heap::heap_parameter::LocalHeapID srv_local_heap_id,
     const std::vector<Info>& infos) {
-  const u32 render_target_num = static_cast<u32>(infos.size());
-  render_targets_.resize(render_target_num);
-  viewports_.resize(render_target_num);
-  scissor_rects_.resize(render_target_num);
+  //各変数の初期化
+  this->render_target_num_ = static_cast<u32>(infos.size());
+  render_targets_.resize(render_target_num_);
+  viewports_.resize(render_target_num_);
+  scissor_rects_.resize(render_target_num_);
+  rtv_handles_.resize(render_target_num_);
 
-  for (u32 i = 0; i < render_target_num; i++) {
+  //一枚ずつレンダーターゲットを作成する
+  for (u32 i = 0; i < render_target_num_; i++) {
     RenderTargetTexture& target = render_targets_[i];
-    if (!target.render_target.Init(accessor, infos[i].format, infos[i].width,
-                                   infos[i].height, infos[i].clear_color,
-                                   infos[i].name)) {
+    const RenderTarget::RenderTargetDesc desc{infos[i].name, infos[i].format,
+                                              infos[i].width, infos[i].height,
+                                              infos[i].clear_color};
+    if (!target.render_target.Init(accessor, desc)) {
       return false;
     }
     target.register_num = infos[i].register_num;
-    target.srv_handle = accessor.GetLocalHeapHandle(
+    target.srv_handle = accessor.GetLocalHandle(
         descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
 
+    //レンダーターゲットをテクスチャとして使用できるようにするために設定する
     D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
     srv_desc.Texture2D.MipLevels = 1;
     srv_desc.Format = infos[i].format;
@@ -50,68 +58,79 @@ bool MultiRenderTargetTexture::Init(
 
     viewports_[i] = target.render_target.GetViewport();
     scissor_rects_[i] = target.render_target.GetScissorRect();
+    rtv_handles_[i] = target.render_target.GetHandle().cpu_handle_;
   }
 
   return true;
 }
 
+//バッファから初期化する
+bool MultiRenderTargetTexture::InitFromBuffer(
+    device::IDirectXAccessor& accessor, ComPtr<ID3D12Resource> buffer,
+    const util::Color4& clear_color, const std::wstring& name) {
+  this->render_target_num_ = 1;
+  render_targets_.resize(render_target_num_);
+  viewports_.resize(render_target_num_);
+  scissor_rects_.resize(render_target_num_);
+  rtv_handles_.resize(render_target_num_);
+
+  RenderTargetTexture& target = render_targets_[0];
+  if (!target.render_target.InitFromBuffer(accessor, buffer, clear_color,
+                                           name)) {
+    return false;
+  }
+
+  //無効な設定にしておく
+  target.register_num = -1;
+  target.srv_handle = {};
+
+  viewports_[0] = target.render_target.GetViewport();
+  scissor_rects_[0] = target.render_target.GetScissorRect();
+  rtv_handles_[0] = target.render_target.GetHandle().cpu_handle_;
+
+  return true;
+}
+
+//レンダーターゲットのクリア
 void MultiRenderTargetTexture::ClearRenderTarget(
-    IDirectXAccessor& accessor) const {
-  for (auto&& rtt : render_targets_) {
-    rtt.render_target.ClearRenderTarget(accessor);
+    device::CommandList& command_list) const {
+  for (auto&& rt : render_targets_) {
+    rt.render_target.ClearRenderTarget(command_list);
   }
 }
 
-void MultiRenderTargetTexture::DrawEnd(IDirectXAccessor& accessor) {
-  for (auto&& rtt : render_targets_) {
-    rtt.render_target.DrawEnd(accessor);
-    rtt.render_target.Transition(
-        accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
-  }
-}
+//シェーダーリソースとして使用する
+void MultiRenderTargetTexture::UseAsSRV(device::IDirectXAccessor& accessor,
+                                        u32 render_target_number) {
+  MY_ASSERTION(
+      math::util::IsInRange(render_target_number, 0u, render_target_num_),
+      L"render_target_numberが範囲外です。");
 
-void MultiRenderTargetTexture::SetToGlobalHeap(IDirectXAccessor& accessor,
-                                               u32 render_target_number) const {
   const RenderTargetTexture& rtt = render_targets_[render_target_number];
-  accessor.SetToGlobalHeap(rtt.register_num, ResourceType::Srv, rtt.srv_handle);
+  accessor.RegisterHandle(rtt.register_num, shader::ResourceType::SRV,
+                          rtt.srv_handle);
 }
 
-void MultiRenderTargetTexture::WriteInfoToPipelineState(
-    shader::GraphicsPipelineState* pipeline) {
-  const u32 render_target_num = static_cast<u32>(render_targets_.size());
-  for (u32 i = 0; i < render_target_num; i++) {
-    pipeline->SetRTVFormat(render_targets_[i].render_target.GetFormat(), i);
-  }
-  pipeline->SetRenderTargetNum(render_target_num);
+//ビューポートをセットする
+void MultiRenderTargetTexture::SetViewport(
+    device::CommandList& command_list) const {
+  command_list.GetCommandList()->RSSetViewports(render_target_num_,
+                                                viewports_.data());
 }
 
-void MultiRenderTargetTexture::PrepareToUseRenderTarget(
-    IDirectXAccessor& accessor) {
-  for (auto&& rtt : render_targets_) {
-    rtt.render_target.Transition(
-        accessor, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_RENDER_TARGET);
-  }
-}
-
-std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>
-MultiRenderTargetTexture::GetRTVHandles() const {
-  const u32 render_target_num = static_cast<u32>(render_targets_.size());
-  std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> res(render_target_num);
-  for (u32 i = 0; i < render_target_num; i++) {
-    res[i] = render_targets_[i].render_target.GetHandle().cpu_handle_;
-  }
-  return res;
-}
-
-void MultiRenderTargetTexture::SetViewport(IDirectXAccessor& accessor) const {
-  const u32 viewport_num = static_cast<u32>(viewports_.size());
-  accessor.GetCommandList()->RSSetViewports(viewport_num, viewports_.data());
-}
-
+//シザー矩形をセットする
 void MultiRenderTargetTexture::SetScissorRect(
-    IDirectXAccessor& accessor) const {
-  const u32 rect_num = static_cast<u32>(scissor_rects_.size());
-  accessor.GetCommandList()->RSSetScissorRects(rect_num, scissor_rects_.data());
+    device::CommandList& command_list) const {
+  command_list.GetCommandList()->RSSetScissorRects(render_target_num_,
+                                                   scissor_rects_.data());
+}
+
+//状態を遷移させる
+void MultiRenderTargetTexture::Transition(device::CommandList& command_list,
+                                          D3D12_RESOURCE_STATES next_state) {
+  for (auto&& rt : render_targets_) {
+    rt.render_target.Transition(command_list, next_state);
+  }
 }
 
 }  // namespace render_target

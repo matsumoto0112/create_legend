@@ -15,15 +15,15 @@ Texture::~Texture() {}
 
 //“Ç‚Ýž‚Ý
 bool Texture::Load(
-    id::Texture key, const std::filesystem::path& filepath, u32 register_num,
+    directx::device::CommandList& command_list, id::Texture key,
+    const std::filesystem::path& filepath, u32 register_num,
     directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
   MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚Ý‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto tex = std::make_shared<directx::buffer::Texture2D>();
-  if (!tex->InitAndWrite(device, register_num, filepath,
-                         device.GetLocalHeapHandle(heap_id))) {
+  if (!tex->InitAndWrite(device, command_list, register_num, filepath,
+                         device.GetLocalHandle(heap_id))) {
     return false;
   }
 

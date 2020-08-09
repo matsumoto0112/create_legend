@@ -7,8 +7,6 @@
  * @details コンパイル時に決定できる、基本的に変更しない情報を定義する
  */
 
-#include "src/util/stl_extend.h"
-
 namespace legend {
 namespace directx {
 namespace descriptor_heap {
@@ -20,7 +18,7 @@ namespace heap_parameter {
 
 //! アプリケーション全体でのディスクリプタヒープの最大数
 //! CBV,SRV,UAVで共通する割り当て可能数の上限値
-constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 100000;
+constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 500000;
 //! RTVで使用する割り当て可能数
 constexpr u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! DSVで使用する割り当て可能数
@@ -56,7 +54,6 @@ constexpr u32 UNDEFINED_DESCRIPTOR_NUM = UINT_LEAST32_MAX;
  * @brief 定義済みのローカルIDに対応したディスクリプタ数を取得する
  */
 inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
-  using legend::directx::descriptor_heap::heap_parameter::LocalHeapID;
   switch (id) {
     case LocalHeapID::GLOBAL_ID:
       return 20000;
@@ -67,7 +64,7 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
     case LocalHeapID::MODEL_VIEW_SCENE:
       return 100;
     case LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE:
-      return 100;
+      return 200000;
     case LocalHeapID::PHYSICS_TEST:
       return 100;
     case LocalHeapID::SOUND_TEST:

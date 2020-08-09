@@ -11,6 +11,7 @@ namespace directx {
 namespace descriptor_heap {
 
 /**
+ * @struct DescriptorHandle
  * @brief ディスクリプタハンドル構造体
  * @details 二つのハンドル CPU・GPUをまとめた構造体
  */

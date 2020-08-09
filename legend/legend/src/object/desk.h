@@ -2,15 +2,14 @@
 #define LEGEND_OBJECT_DESK_H_
 
 #include "src/actor/actor.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
-#include "src/util/transform.h"
 
 namespace legend {
 namespace object {
 
 class Desk : public actor::Actor<physics::BoundingBox> {
+  using Parent = actor::Actor<physics::BoundingBox>;
+
  public:
   /**
    * @brief Š÷‚Ì‰Šú‰»ƒpƒ‰ƒ[ƒ^

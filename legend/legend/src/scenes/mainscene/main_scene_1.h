@@ -2,11 +2,12 @@
 #define LEGEND_SCENES_MAINSCENE_MAIN_SCENE_1_H_
 
 #include "src/camera/perspective_camera.h"
+#include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
-#include "src/system/turn_system.h"
 #include "src/system/physics_field.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
@@ -42,15 +43,22 @@ class MainScene1 : public Scene {
    * @brief 終了
    */
   void Finalize() override;
+  /**
+   * @brief ターン別の更新処理
+   */
+  bool UpdateTurn();
 
  private:
   camera::PerspectiveCamera camera_;
-  //system::Turn turn_;
+  system::Turn turn_;
+  system::TurnSystem current_turn_;
   system::PhysicsField physics_field_;
-  ////! プレイヤー
-  //player::Player player_;
-  ////! 机
-  //object::Desk desk_;
+  //! プレイヤー
+  player::Player player_;
+  //! 机
+  object::Desk desk_;
+  //! エネミー
+  enemy::EnemyManager enemy_manager_;
 };
 
 }  // namespace mainscene

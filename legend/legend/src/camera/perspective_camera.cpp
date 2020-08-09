@@ -56,8 +56,8 @@ void PerspectiveCamera::RenderStart() {
 bool PerspectiveCamera::InitConstantBuffer() {
   if (!world_context_constant_buffer_.Init(
           game::GameDevice::GetInstance()->GetDevice(),
-          directx::shader::ConstantBufferRegisterID::WorldContext,
-          game::GameDevice::GetInstance()->GetDevice().GetLocalHeapHandle(
+          directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT,
+          game::GameDevice::GetInstance()->GetDevice().GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           name_ + L"_WorldContext_ConstantBuffer")) {
     return false;

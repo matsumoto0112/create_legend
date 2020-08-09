@@ -1,6 +1,5 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
-#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/physics/collision.h"
 
 namespace legend {
@@ -11,62 +10,11 @@ PlayerMoveViewer::PlayerMoveViewer(ISceneChange* scene_change)
     : Scene(scene_change) {}
 
 //デストラクタ
-PlayerMoveViewer::~PlayerMoveViewer() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+PlayerMoveViewer::~PlayerMoveViewer() {}
 
 //初期化
 bool PlayerMoveViewer::Initialize() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-
-  //このシーンで使用するシェーダーを事前に読み込んでおく
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  if (!resource.GetVertexShader().Load(
-          util::resource::id::VertexShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_vs.cso")) {
-    return false;
-  }
-  if (!resource.GetPixelShader().Load(
-          util::resource::id::PixelShader::MODEL_VIEW,
-          util::Path::GetInstance()->shader() / "modelview" /
-              "model_view_ps.cso")) {
-    return false;
-  }
-
-  //モデルデータを読み込む
-  const std::filesystem::path player_model_path =
-      util::Path::GetInstance()->model() / "eraser_01.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::ERASER,
-                                player_model_path)) {
-    return false;
-  }
-  const std::filesystem::path desk_model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::DESK,
-                                desk_model_path)) {
-    return false;
-  }
-
-  auto gps = std::make_shared<directx::shader::GraphicsPipelineState>();
-  gps->Init(device);
-  gps->SetVertexShader(resource.GetVertexShader().Get(
-      util::resource::id::VertexShader::MODEL_VIEW));
-  gps->SetPixelShader(resource.GetPixelShader().Get(
-      util::resource::id::PixelShader::MODEL_VIEW));
-  gps->SetBlendDesc(directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER, gps.get());
-  device.GetRenderResourceManager().WriteDepthStencilTargetInfoToPipeline(
-      device, directx::render_target::DepthStencilTargetID::Depth, gps.get());
-  gps->SetRootSignature(device.GetDefaultRootSignature());
-  gps->SetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-  gps->CreatePipelineState(device);
-  resource.GetPipeline().Register(util::resource::id::Pipeline::MODEL_VIEW,
-                                  gps);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //プレイヤーの初期化
   {
@@ -74,7 +22,7 @@ bool PlayerMoveViewer::Initialize() {
     player_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    player_parameter.bouding_box_length = math::Vector3(1.0f, 0.5f, 2.0f);
+    player_parameter.bouding_box_length = math::Vector3(0.1f, 0.05f, 0.2f);
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -89,7 +37,7 @@ bool PlayerMoveViewer::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(3.0f, 0.5f, 2.0f);
+    desk_parameter.bounding_box_length = math::Vector3(0.3f, 0.05f, 0.2f);
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
@@ -98,7 +46,7 @@ bool PlayerMoveViewer::Initialize() {
 
   //カメラの初期化
   {
-    const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
+    const math::Vector3 camera_position = math::Vector3(0, 3.5f, -2.5f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -118,7 +66,6 @@ bool PlayerMoveViewer::Update() {
   if (!player_.Update()) {
     return false;
   }
-  player_.UpdateGravity(-9.8f);
 
   if (ImGui::Begin("Camera")) {
     //カメラ座標
@@ -176,37 +123,31 @@ bool PlayerMoveViewer::Update() {
 
 //描画
 void PlayerMoveViewer::Draw() {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  device.GetRenderResourceManager().SetDepthStencilTargetID(
-      directx::render_target::DepthStencilTargetID::Depth);
-  device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  auto& render_resource_manager = device.GetRenderResourceManager();
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(device);
   camera_.RenderStart();
-
   player_.Draw();
   desk_.Draw();
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::NONE, false);
+  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  player_.GetCollisionRef().DebugDraw(command_list);
+  desk_.GetCollisionRef().DebugDraw(command_list);
 }
 
 //終了
 void PlayerMoveViewer::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-  resource.GetVertexShader().Unload(
-      util::resource::id::VertexShader::MODEL_VIEW);
-  resource.GetPixelShader().Unload(util::resource::id::PixelShader::MODEL_VIEW);
-  resource.GetPipeline().Unload(util::resource::id::Pipeline::MODEL_VIEW);
-  resource.GetModel().Unload(util::resource::ModelID::ERASER);
-  resource.GetModel().Unload(util::resource::ModelID::DESK);
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
+
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

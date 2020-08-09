@@ -1,9 +1,8 @@
 #ifndef LEGEND_PHYSICS_PLANE_H_
 #define LEGEND_PHYSICS_PLANE_H_
 
-#include "src/directx/shader/graphics_pipeline_state.h"
-#include "src/draw/model.h"
-#include "src/util/resource/resource.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -32,12 +31,11 @@ class Plane {
   /**
    * @brief 初期化
    */
-  bool Initialize(directx::DirectX12Device& device,
-                  util::resource::Resource& resource);
+  bool Initialize();
   /**
    * @brief 描画
    */
-  void Draw(directx::DirectX12Device& device);
+  void Draw();
   /**
    * @brief 位置の設定
    */
@@ -72,7 +70,8 @@ class Plane {
   float down_;
 
   //! トランスフォーム転送用コンスタントバッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
       transform_cb_;
 };
 

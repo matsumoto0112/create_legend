@@ -15,6 +15,11 @@ i32 Random::Range(i32 min, i32 max) {
   return rand_n_(mt_);
 }
 
+u32 Random::Range(u32 min, u32 max) {
+  rand_un_ = std::uniform_int_distribution<u32>(min, max - 1);
+  return rand_un_(mt_);
+}
+
 // minˆÈãmaxˆÈ‰º‚Ì—”¶¬
 float Random::Range(float min, float max) {
   rand_f_ = std::uniform_real_distribution<float>(min, max);

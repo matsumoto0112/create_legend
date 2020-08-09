@@ -26,9 +26,7 @@ VS_Output VS_Main(const VS_Input input) {
 }
 
 float4 PS_Main(const PS_Input input) {
-    return g_albedo.Sample(g_sampler_linear, input.uv);
+    return g_albedo.Sample(g_sampler_warp, input.uv);
 }
-
-
 
 #endif //! LEGEND_ASSETS_SHADERS_PARTICLE_SIMPLE_PARTICLE_HLSLI_

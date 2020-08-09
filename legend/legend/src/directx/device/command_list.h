@@ -6,6 +6,8 @@
  * @brief コマンドリストクラス定義
  */
 
+#include "src/directx/device/directx_accessor.h"
+
 namespace legend {
 namespace directx {
 namespace device {
@@ -24,16 +26,21 @@ class CommandList {
   ~CommandList();
   /**
    * @brief 初期化
-   * @param device デバイス
-   * @param command_queue コマンドキュー
+   * @param accessor DirectXデバイスアクセサ
+   * @param type コマンドリストの種類
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(ID3D12Device* device, ID3D12CommandQueue* command_queue);
+  bool Init(IDirectXAccessor& accessor, D3D12_COMMAND_LIST_TYPE type);
   /**
    * @brief コマンドリストを閉じる
    * @return 閉じることに成功したらtrueを返す
    */
   bool Close();
+  /**
+   * @brief コマンドリストをリセットする
+   * @return リセットに成功したらtrueを返す
+   */
+  bool Reset();
 
  public:
   /**

@@ -9,9 +9,7 @@ namespace scenes {
 namespace debugscene {
 StageGenerateTest::StageGenerateTest(ISceneChange* scene_change)
     : Scene(scene_change) {}
-StageGenerateTest::~StageGenerateTest() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-}
+StageGenerateTest::~StageGenerateTest() {}
 bool StageGenerateTest::Initialize() { return true; }
 bool StageGenerateTest::Update() {
   if (ImGui::Begin("StageGenerateTest")) {
@@ -24,7 +22,10 @@ bool StageGenerateTest::Update() {
   return true;
 }
 void StageGenerateTest::Draw() {}
-void StageGenerateTest::Finalize() {}
+void StageGenerateTest::Finalize() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  device.WaitExecute();
+}
 }  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

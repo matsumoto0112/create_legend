@@ -30,6 +30,7 @@ class TextureString {
 
   /**
    * @brief 初期化
+   * @param command_list コマンドリスト
    * @param str 初期化する文字列
    * @param register_num シェーダーのレジスター番号
    * @param use_heap_id 使用するローカルヒープID
@@ -37,7 +38,8 @@ class TextureString {
    * @param font_size フォントサイズ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(const std::wstring& str, u32 register_num,
+  bool Init(directx::device::CommandList& command_list, const std::wstring& str,
+            u32 register_num,
             directx::descriptor_heap::heap_parameter::LocalHeapID use_heap_id,
             const std::wstring& font = L"メイリオ", i32 font_size = 32);
 
@@ -61,13 +63,15 @@ class TextureString {
    * @brief 描画する
    * @param sprite_renderer スプライト描画器
    */
-  void Draw(SpriteRenderer& sprite_renderer);
+  void StackDrawList(SpriteRenderer& sprite_renderer);
   /**
    * @brief 文字を結合する
+   * @param command_list コマンドリスト
    * @param str 結合する文字列
    * @return 結合に成功したらtrueを返す
    */
-  bool Append(const std::wstring& str);
+  bool Append(directx::device::CommandList& command_list,
+              const std::wstring& str);
   /**
    * @brief 文字列をクリアする
    */

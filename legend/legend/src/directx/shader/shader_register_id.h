@@ -14,8 +14,8 @@ namespace shader {
  */
 namespace ConstantBufferRegisterID {
 enum Enum : u32 {
-  Transform = 0,     //! トランスフォーム情報
-  WorldContext = 1,  //! ビュー、プロジェクション情報
+  TRANSFORM = 0,     //! トランスフォーム情報
+  WORLD_CONTEXT = 1,  //! ビュー、プロジェクション情報
   UV_RECT = 2,
 };
 }  // namespace ConstantBufferRegisterID
@@ -25,7 +25,7 @@ enum Enum : u32 {
  */
 namespace TextureRegisterID {
 enum Enum : u32 {
-  Albedo = 0,  //! アルベド情報
+  ALBEDO = 0,  //! アルベド情報
 };
 }  // namespace TextureRegisterID
 
@@ -34,8 +34,8 @@ enum Enum : u32 {
  */
 namespace SamplerRegisterID {
 enum Enum : u32 {
-  Linear = 0,
-  Point = 1,
+  WARP = 0,
+  CLAMP = 1,
 };
 }  // namespace SamplerRegisterID
 

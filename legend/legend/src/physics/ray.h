@@ -1,7 +1,11 @@
 #ifndef LEGEND_PHYSICS_RAY_H_
 #define LEGEND_PHYSICS_RAY_H_
 
-#include "src/physics/bounding_box.h"
+#include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
+#include "src/math/quaternion.h"
 
 namespace legend {
 namespace physics {
@@ -28,7 +32,8 @@ class Ray {
    * @param 方向ベクトル
    * @param 最大範囲
    */
-  Ray(math::Vector3 start_position, math::Vector3 direction, float max_distance);
+  Ray(math::Vector3 start_position, math::Vector3 direction,
+      float max_distance);
   /**
    * @brief デストラクタ
    */
@@ -36,7 +41,7 @@ class Ray {
   /**
    * @brief 初期化
    */
-  bool Initialize(directx::DirectX12Device& device);
+  bool Initialize();
   /**
    * @brief 更新
    */
@@ -44,7 +49,7 @@ class Ray {
   /**
    * @brief 描画
    */
-  void Draw(directx::DirectX12Device& device);
+  void Draw();
   /**
    * @brief 始点の取得
    */
@@ -68,10 +73,9 @@ class Ray {
 
   directx::buffer::VertexBuffer vertex_buffer_;
   directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<Transform> transform_constant_buffer_;
-
-  directx::buffer::ConstantBuffer<WorldContext> world_constant_buffer_;
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
+      transform_constant_buffer_;
 };
 
 }  // namespace physics

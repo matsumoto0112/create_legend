@@ -1,5 +1,7 @@
 #include "counting_descriptor_heap.h"
 
+#include "src/math/math_util.h"
+
 namespace legend {
 namespace directx {
 namespace descriptor_heap {
@@ -12,7 +14,7 @@ CountingDescriptorHeap::CountingDescriptorHeap()
 CountingDescriptorHeap::~CountingDescriptorHeap() {}
 
 //初期化
-bool CountingDescriptorHeap::Init(IDirectXAccessor& accessor,
+bool CountingDescriptorHeap::Init(device::IDirectXAccessor& accessor,
                                   const DescriptorHeap::Desc& desc) {
   if (!this->heap_.Init(accessor, desc)) {
     return false;
@@ -33,6 +35,8 @@ DescriptorHandle CountingDescriptorHeap::GetHandle() {
 
 //インデックス指定のハンドルを取得する
 DescriptorHandle CountingDescriptorHeap::GetForceHandle(u32 index) const {
+  MY_ASSERTION(math::util::IsInRange(index, 0u, max_allocate_num_),
+               L"indexが範囲外です。");
   return heap_.GetHandle(index);
 }
 

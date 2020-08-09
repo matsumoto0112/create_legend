@@ -7,9 +7,8 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/descriptor_heap/descriptor_handle.h"
-#include "src/directx/directx_accessor.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -21,22 +20,21 @@ namespace render_target {
 class DepthStencil {
  public:
   /**
-   * @struct ClearValue
-   * @brief デプス・ステンシルのクリア値
+   * @brief デプス・ステンシルデスク
    */
-  struct ClearValue {
-    //! 深度値
-    float depth;
+  struct DepthStencilDesc {
+    //! リソース名
+    std::wstring name;
+    //! フォーマット
+    DXGI_FORMAT format;
+    //! 幅
+    u32 width;
+    //! 高さ
+    u32 height;
+    //! デプス値
+    float depth_value;
     //! ステンシル値
-    u8 stencil;
-
-    /**
-     * @brief コンストラクタ
-     * @param depth 深度値
-     * @param stencil ステンシル値
-     */
-    ClearValue(float depth = 1.0f, u8 stencil = 0)
-        : depth(depth), stencil(stencil) {}
+    u8 stencil_value;
   };
 
  public:
@@ -50,51 +48,39 @@ class DepthStencil {
   ~DepthStencil();
   /**
    * @brief 初期化
-   * @param accessor DirextX12デバイスアクセサ
-   * @param format フォーマット
-   * @param width 幅
-   * @param height 高さ
-   * @param clear_value クリア値
-   * @param name リソース名
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc デプス・ステンシルデスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, DXGI_FORMAT format, u32 width,
-            u32 height, const ClearValue& clear_value,
-            const std::wstring& name);
+  bool Init(device::IDirectXAccessor& accessor, const DepthStencilDesc& desc);
   /**
    * @brief デプス・ステンシル値のクリア
-   * @param accessor DirextX12デバイスアクセサ
+   * @param command_list コマンドリスト
    */
-  void ClearDepthStencil(IDirectXAccessor& accessor) const;
+  void ClearDepthStencil(device::CommandList& command_list) const;
   /**
-   * @brief コマンドリストにセットする準備をする
-   * @param accessor DirextX12デバイスアクセサ
-   * @details RTVセットと同時にDSVもセットするため、そのセット前に呼ぶ必要がある
+   * @brief 状態を遷移させる
+   * @param command_list コマンドリスト
+   * @param next_states 次の状態
    */
-  void PrepareToSetCommandList(IDirectXAccessor& accessor);
+  void Transition(device::CommandList& command_list,
+                  D3D12_RESOURCE_STATES next_states);
   /**
-   * @brief パイプラインにDSV情報を書き込む
-   * @param pipeline 書き込む対象
+   * @brief ディスクリプタハンドルを取得する
    */
-  void WriteInfoToPipelineState(shader::GraphicsPipelineState* pipeline) const;
-
-  /**
-   * @brief CPUハンドルを取得する
-   * @details RTVのセット時に同時にDSVもセットするため、RTV向けに公開
-   */
-  D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() const {
-    return handle_.cpu_handle_;
-  }
+  descriptor_heap::DescriptorHandle GetHandle() const { return handle_; }
 
  private:
   //! リソース
-  legend::directx::buffer::CommittedResource resource_;
+  buffer::CommittedResource resource_;
   //! ハンドル
-  legend::directx::descriptor_heap::DescriptorHandle handle_;
+  descriptor_heap::DescriptorHandle handle_;
   //! フォーマット
   DXGI_FORMAT format_;
-  //! クリア値
-  ClearValue clear_value_;
+  //! デプス値
+  float depth_value_;
+  //! ステンシル値
+  u8 stencil_value_;
 };
 
 }  // namespace render_target

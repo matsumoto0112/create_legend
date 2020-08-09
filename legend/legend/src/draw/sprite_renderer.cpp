@@ -16,8 +16,7 @@ SpriteRenderer::~SpriteRenderer() {}
 
 //初期化
 bool SpriteRenderer::Init(const math::Vector2& window_size) {
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   const std::vector<directx::Sprite> vertices{
       {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -29,54 +28,60 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
                            L"SpriteRenderer_VertexBuffer")) {
     return false;
   }
-  if (!vertex_buffer_.WriteBufferResource(vertices)) {
+  if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
     return false;
   }
 
   const std::vector<u16> indices{0, 1, 2, 0, 2, 3};
-  if (!index_buffer_.InitAndWrite(device, indices,
-                                  directx::PrimitiveTopology::TriangleList,
-                                  L"SpriteRenderer_IndexBuffer")) {
+  const u32 index_num = static_cast<u32>(indices.size());
+  if (!index_buffer_.Init(device, sizeof(u16), index_num,
+                          directx::PrimitiveTopology::TRIANGLE_LIST,
+                          L"SpriteRenderer_IndexBuffer")) {
+    return false;
+  }
+  if (!index_buffer_.WriteBufferResource(indices.data())) {
     return false;
   }
 
-  auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
-  const std::filesystem::path vertex_shader_path =
-      util::Path::GetInstance()->shader() / "draw2d" / "sprite_vs.cso";
-  if (!vertex_shader->Init(
-          device, vertex_shader_path,
-          directx::input_element::GetElementDescs<directx::Sprite>())) {
+  directx::shader::VertexShader vs;
+  const std::filesystem::path shader_path =
+      util::Path::GetInstance()->shader() / "draw2d";
+  if (!vs.Init(device, shader_path / "sprite_vs.cso")) {
     return false;
   }
 
-  const std::filesystem::path pixel_shader_path =
-      util::Path::GetInstance()->shader() / "draw2d" / "sprite_ps.cso";
-  auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
-  if (!pixel_shader->Init(device, pixel_shader_path)) {
+  directx::shader::PixelShader ps;
+  if (!ps.Init(device, shader_path / "sprite_ps.cso")) {
     return false;
   }
 
-  if (!pipeline_state_.Init(device)) {
-    return false;
-  }
-  pipeline_state_.SetRootSignature(device.GetDefaultRootSignature());
-  pipeline_state_.SetVertexShader(vertex_shader);
-  pipeline_state_.SetPixelShader(pixel_shader);
-  pipeline_state_.SetBlendDesc(
-      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT, 0);
-  device.GetRenderResourceManager().WriteRenderTargetInfoToPipeline(
-      device, directx::render_target::RenderTargetID::BACK_BUFFER,
-      &pipeline_state_);
+  directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+  pso_desc.BlendState.RenderTarget[0] =
+      directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+  pso_desc.BlendState.AlphaToCoverageEnable = true;
+  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC();
+  pso_desc.InputLayout = vs.GetInputLayout();
+  pso_desc.NumRenderTargets = 1;
+  pso_desc.PrimitiveTopologyType =
+      D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+  pso_desc.pRootSignature =
+      device.GetDefaultRootSignature()->GetRootSignature();
+  pso_desc.PS = ps.GetShaderBytecode();
+  pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  pso_desc.SampleDesc.Count = 1;
+  pso_desc.SampleMask = UINT_MAX;
+  pso_desc.VS = vs.GetShaderBytecode();
 
-  if (!pipeline_state_.CreatePipelineState(device)) {
+  if (!pipeline_state_.Init(device, pso_desc)) {
     return false;
   }
 
   if (!world_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::WorldContext,
-          device.GetLocalHeapHandle(
+          device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT,
+          device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Sprite_WorldContextConstantBuffer")) {
+          L"SpriteRenderer_WorldContextConstantBuffer")) {
     return false;
   }
 
@@ -87,27 +92,30 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   return true;
 }
 
+//描画リストに追加する
 void SpriteRenderer::AddDrawItems(Sprite2D* sprite) {
   draw_items_.push_back(sprite);
 }
 
-void SpriteRenderer::DrawItems() {
+//描画処理
+void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   if (draw_items_.empty()) {
     return;
   }
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  pipeline_state_.SetGraphicsCommandList(device);
+  pipeline_state_.SetGraphicsCommandList(command_list);
   world_cb_.SetToHeap(device);
 
-  vertex_buffer_.SetGraphicsCommandList(device);
-  index_buffer_.SetGraphicsCommandList(device);
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+
+  //各スプライトの描画情報をセットしてから描画指令を送る
   for (auto&& sp : draw_items_) {
     if (!sp) continue;
-    sp->SetToCommandList();
-    device.GetHeapManager().CopyHeapAndSetToGraphicsCommandList(device);
-    index_buffer_.Draw(device);
+    sp->SetToGraphicsCommandList(command_list);
+    device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+    index_buffer_.Draw(command_list);
   }
   draw_items_.clear();
 }

@@ -6,12 +6,10 @@
  * @brief モデル管理クラス
  */
 
-#include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/texture_2d.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/directx/constant_buffer_structure.h"
-#include "src/math/quaternion.h"
+#include "src/directx/device/command_list.h"
 
 namespace legend {
 namespace draw {
@@ -34,11 +32,12 @@ class Model {
    * @param path モデルへのパス
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(const std::filesystem::path& path);
+  bool Init(const std::filesystem::path& path,
+            directx::device::CommandList& command_list);
   /**
    * @brief 描画する
    */
-  void Draw();
+  void Draw(directx::device::CommandList& command_list);
 
  private:
   //! モデル名

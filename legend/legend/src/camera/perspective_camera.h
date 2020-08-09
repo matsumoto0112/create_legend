@@ -7,7 +7,7 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/constant_buffer_structure.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/math/matrix_4x4.h"
 #include "src/math/quaternion.h"
 #include "src/math/vector_3.h"
@@ -152,7 +152,7 @@ class PerspectiveCamera {
   float far_z_;
   //! 描画用コンスタントバッファ
   directx::buffer::ConstantBuffer<
-      directx::constant_buffer_structure::WorldContext>
+      directx::buffer::constant_buffer_structure::WorldContext>
       world_context_constant_buffer_;
 };
 

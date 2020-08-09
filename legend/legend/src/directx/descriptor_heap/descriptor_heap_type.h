@@ -11,6 +11,7 @@ namespace directx {
 namespace descriptor_heap {
 
 /**
+ * @enum DescriptorHeapType
  * @brief ディスクリプタヒープの種類
  */
 enum class DescriptorHeapType {
@@ -21,6 +22,7 @@ enum class DescriptorHeapType {
 };
 
 /**
+ * @enum DescriptorHeapFlag
  * @brief ディスクリプタヒープの使用フラグ
  */
 enum class DescriptorHeapFlag {
@@ -32,4 +34,4 @@ enum class DescriptorHeapFlag {
 }  // namespace directx
 }  // namespace legend
 
-#endif //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_TYPE_H_
+#endif  //! LEGEND_DIRECTX_DESCRIPTOR_HEAP_DESCRIPTOR_HEAP_TYPE_H_

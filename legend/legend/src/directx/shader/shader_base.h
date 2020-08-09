@@ -3,18 +3,37 @@
 
 /**
  * @file shader_base.h
+ * @brief シェーダー基底クラス定義
  */
 
-#include "src/directx/directx_accessor.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
 namespace shader {
+
+/**
+ * @class ShaderBase
+ * @brief シェーダー基底クラス
+ */
 class ShaderBase {
  public:
+  /**
+   * @brief コンストラクタ
+   * @return
+   */
   ShaderBase(){};
+  /**
+   * @brief デストラクタ
+   */
   virtual ~ShaderBase() = default;
-  virtual bool Init(IDirectXAccessor& accessor,
+  /**
+   * @brief 初期化
+   * @param accessor DirectXデバイスアクセサ
+   * @param filepath ファイルへのパス
+   * @return 初期化に成功したらtrueを返す
+   */
+  virtual bool Init(device::IDirectXAccessor& accessor,
                     const std::filesystem::path& filepath);
   /**
    * @brief シェーダーコードとして返す
@@ -24,6 +43,7 @@ class ShaderBase {
   }
 
  protected:
+  //! シェーダーコード
   std::vector<u8> shader_code_;
 };
 

@@ -9,6 +9,7 @@
 namespace legend {
 namespace directx {
 namespace directx_helper {
+
 /**
  * @brief テクスチャのフォーマットからピクセルのメモリサイズを取得する
  * @param format 調べるフォーマット
@@ -33,9 +34,9 @@ constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
  * @brief HRESULTを文字列に変換する
  */
 inline std::wstring HrToWString(HRESULT hr) {
-  wchar_t buf[64] = {};
-  swprintf_s(buf, 64, L"HRESULT of 0x%08X", static_cast<u32>(hr));
-  return std::wstring(buf);
+  char buf[64] = {};
+  sprintf_s(buf, 64, "HRESULT of 0x%08X", static_cast<u32>(hr));
+  return util::string_util::String_2_WString(buf);
 }
 
 /**
@@ -46,7 +47,19 @@ inline bool Succeeded(HRESULT hr) {
   if (SUCCEEDED(hr)) {
     return true;
   }
-  MY_LOG(L"HRESULT of %s", HrToWString(hr));
+  MY_LOG(L"HRESULT of %s", HrToWString(hr).c_str());
+  return false;
+}
+
+/**
+ * @brief HRESULT型が成功しているか判定し、失敗していたらログを出力するする
+ * @return 失敗していたらtrueを返す
+ */
+inline bool Failed(HRESULT hr) {
+  if (FAILED(hr)) {
+    MY_LOG(L"HRESULT of %s", HrToWString(hr).c_str());
+    return true;
+  }
   return false;
 }
 

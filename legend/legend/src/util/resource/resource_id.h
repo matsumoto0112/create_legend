@@ -18,6 +18,7 @@ enum class Model {
   OBJECT_1000CM,
   ERASER,
   DESK,
+  PLANE,
 };
 
 /**
@@ -36,6 +37,9 @@ enum class Pipeline {
   MULTI_RENDER_TARGET_TEST,
   MULTI_RENDER_TARGET_TEST_PP,
   SIMPLE_PARTICLE,
+  OBJECT_WIREFRAME,
+  GRAFFITI,
+  PRIMITIVE_LINE,
 };
 
 /**
@@ -48,6 +52,7 @@ enum class VertexShader {
   MULTI_RENDER_TARGET_TEST,
   OBB,
   SIMPLE_PARTICLE,
+  GRAFFITI,
 };
 
 /**
@@ -60,6 +65,7 @@ enum class PixelShader {
   MULTI_RENDER_TARGET_TEST,
   OBB,
   SIMPLE_PARTICLE,
+  GRAFFITI,
 };
 
 }  // namespace id

@@ -3,15 +3,6 @@
 
 #include "../defines/global.hlsli"
 
-struct UVRect{
-    float left;
-    float top;
-    float width;
-    float height;
-};
-
-ConstantBuffer<UVRect> g_uv_rect : register(b2);
-
 struct VS_Input {
     float3 position : POSITION;
     float2 uv : TEXCOORD0;
@@ -35,7 +26,7 @@ VS_Output VS_Main(const VS_Input input) {
 }
 
 float4 PS_Main(const PS_Input input) {
-    return g_albedo.Sample(g_sampler_linear, input.uv);
+    return g_albedo.Sample(g_sampler_warp, input.uv);
 }
 
 #endif //! LEGEND_ASSETS_SHADERS_DRAW2D_SPRITE_HLSLI_

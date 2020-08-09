@@ -8,12 +8,9 @@
 
 #include "src/directx/device/dxgi_adapter.h"
 #include "src/directx/device/swap_chain.h"
-#include "src/directx/directx_accessor.h"
 #include "src/directx/render_target/depth_stencil.h"
-#include "src/directx/render_target/depth_stencil_target_id.h"
 #include "src/directx/render_target/multi_render_target_texture.h"
 #include "src/directx/render_target/render_target_id.h"
-#include "src/window/window.h"
 
 namespace legend {
 namespace directx {
@@ -25,10 +22,52 @@ namespace render_target {
  */
 class RenderResourceManager {
  private:
+  /**
+   * @brief 複数フレーム分のターゲット管理クラス
+   * @tparam T 管理するターゲットの型
+   */
+  template <class T>
+  struct MultiframeTarget {
+    /**
+     * @brief コンストラクタ
+     * @param frame_count フレーム数
+     * @param swap_chain スワップチェイン
+     */
+    inline MultiframeTarget(u32 frame_count, device::SwapChain& swap_chain)
+        : swap_chain(swap_chain) {
+      this->targets.resize(frame_count);
+    }
+    /**
+     * @brief 現在フレームのターゲットを取得する
+     */
+    inline T& Get() { return targets[swap_chain.GetCurrentBackBufferIndex()]; }
+    /**
+     * @brief 現在フレームのターゲットを取得する
+     */
+    inline const T& Get() const {
+      return targets[swap_chain.GetCurrentBackBufferIndex()];
+    }
+    /**
+     * @brief indexからターゲットを取得する
+     */
+    inline T& Get(u32 index) { return targets[index]; }
+
+   private:
+    //! スワップチェイン
+    device::SwapChain& swap_chain;
+    //! フレーム数分のターゲット
+    std::vector<T> targets;
+  };
+
+  //! マルチレンダーターゲット
+  using MultiFrameMultiRenderTargetTexture =
+      MultiframeTarget<MultiRenderTargetTexture>;
+  //! デプス・ステンシル
+  using MultiFrameDepthStencil = MultiframeTarget<DepthStencil>;
   using RenderTargetMap =
-      std::unordered_map<RenderTargetID, MultiRenderTargetTexture>;
+      std::unordered_map<RenderTargetID, MultiFrameMultiRenderTargetTexture>;
   using DepthStencilTargetMap =
-      std::unordered_map<DepthStencilTargetID, DepthStencil>;
+      std::unordered_map<DepthStencilTargetID, MultiFrameDepthStencil>;
 
  public:
   using Info = MultiRenderTargetTexture::Info;
@@ -44,148 +83,96 @@ class RenderResourceManager {
   ~RenderResourceManager();
   /**
    * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param adapter アダプター
-   * @param target_window 描画対象のウィンドウ
-   * @param frame_count バックバッファ数
-   * @param format バックバッファのフォーマット
-   * @param command_queue スワップチェイン
+   * @param frame_count フレーム数
+   * @param width 幅
+   * @param height 高さ
+   * @param format フォーマット
+   * @param hwnd ウィンドウハンドル
+   * @param command_queue コマンドキュー
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, device::DXGIAdapter& adapter,
-            window::Window& target_window, u32 frame_count, DXGI_FORMAT format,
-            ID3D12CommandQueue* command_queue);
+  bool Init(device::IDirectXAccessor& accessor, device::DXGIAdapter& adapter,
+            u32 frame_count, u32 width, u32 height, DXGI_FORMAT format,
+            HWND hwnd, ID3D12CommandQueue* command_queue);
   /**
-   * @brief レンダーターゲットを作成する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id レンダーターゲットID
-   * @param format フォーマット
-   * @param width 幅
-   * @param height 高さ
-   * @param clear_color クリア色
-   * @param name レンダーターゲット名
-   * @return 作成に成功したらtrueを返す
+   * @brief レンダーターゲットをセットする
+   * @param command_list コマンドリスト
+   * @param render_target_id レンダーターゲットID
+   * @param clear_render_target レンダーターゲットをクリアするか
+   * @param depth_stencil_target_id デプス・ステンシルID
+   * @param clear_depth_stencil_target デプス・ステンシルをクリアするか
    */
-  bool CreateRenderTarget(IDirectXAccessor& accessor, RenderTargetID unique_id,
-                          DXGI_FORMAT format, u32 width, u32 height,
-                          const util::Color4& clear_color,
-                          const std::wstring& name);
+  void SetRenderTargets(device::CommandList& command_list,
+                        RenderTargetID render_target_id,
+                        bool clear_render_target,
+                        DepthStencilTargetID depth_stencil_target_id,
+                        bool clear_depth_stencil_target);
   /**
-   * @brief マルチレンダーターゲットを作成する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id レンダーターゲットID
-   * @param info それぞれのレンダーターゲットの情報
-   * @return 作成に成功したらtrueを返す
+   * @brief バックバッファのインデックスを取得する
    */
-  bool CreateRenderTargets(IDirectXAccessor& accessor, RenderTargetID unique_id,
-                           const std::vector<Info>& info);
+  u32 GetCurrentBackBufferIndex() const;
   /**
-   * @brief デプス・ステンシルを作成する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id デプス・ステンシルID
-   * @param format フォーマット
-   * @param width 幅
-   * @param height 高さ
-   * @param depth_clear_value デプス値のクリア値
-   * @param stencil_clear_value ステンシル値のクリア値k
-   * @param name デプス・ステンシル名
-   * @return 作成に成功したらtrueを返す
+   * @brief 描画終了処理
+   * @param command_list コマンドリスト
    */
-  bool CreateDepthStencil(IDirectXAccessor& accessor,
-                          DepthStencilTargetID unique_id, DXGI_FORMAT format,
-                          u32 width, u32 height, float depth_clear_value,
-                          u8 stencil_clear_value, const std::wstring& name);
+  void DrawEnd(device::CommandList& command_list);
   /**
-   * @brief 対象となるレンダーターゲットを切り替える
-   コマンドリストにはセットしない
-   */
-  void SetRenderTargetID(RenderTargetID unique_id);
-  /**
-   * @brief 対象となるデプス・ステンシルを切り替える
-    コマンドリストにはセットしない
-  */
-  void SetDepthStencilTargetID(DepthStencilTargetID unique_id);
-  /**
-   * @brief レンダーターゲットの情報をパイプラインに書き込む
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id レンダーターゲットID
-   * @param pipeline 書き込む対象のパイプライン
-   */
-  void WriteRenderTargetInfoToPipeline(IDirectXAccessor& accessor,
-                                       RenderTargetID unique_id,
-                                       shader::GraphicsPipelineState* pipeline);
-  /**
-   * @brief デプス・ステンシルの情報をパイプラインに書き込む
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id デプス・ステンシルID
-   * @param pipeline 書き込む対象のパイプライン
-   */
-  void WriteDepthStencilTargetInfoToPipeline(
-      IDirectXAccessor& accessor, DepthStencilTargetID unique_id,
-      shader::GraphicsPipelineState* pipeline);
-  /**
-   * @brief レンダーターゲットをシェーダーリソースとして利用する
-   * @param accessor DirectX12デバイスアクセサ
-   * @param unique_id レンダーターゲットID
-   * @param render_target_number
-   * 使用したいレンダーターゲットの番号
-   */
-  void UseRenderTargetToShaderResource(IDirectXAccessor& accessor,
-                                       RenderTargetID unique_id,
-                                       u32 render_target_number = 0);
-  /**
-   * @brief 現在対象となっているレンダーターゲットをクリアする
-   * @param accessor DirectX12デバイスアクセサ
-   */
-  void ClearCurrentRenderTarget(IDirectXAccessor& accessor);
-  /**
-   * @brief 現在対象となっているデプス・ステンシルをクリアする
-   * @param accessor DirectX12デバイスアクセサ
-   */
-  void ClearCurrentDepthStencilTarget(IDirectXAccessor& accessor);
-  /**
-   * @brief 現在対象となっているレンダーターゲットをコマンドリストにセットする
-   * @param accessor DirectX12デバイスアクセサ
-   */
-  void SetRenderTargetsToCommandList(IDirectXAccessor& accessor);
-  /**
-   * @brief 描画を終了する
-   * @param accessor
-   */
-  void DrawEnd(IDirectXAccessor& accessor);
-  /**
-   * @brief 引数のIDがすでに登録されているか
-   * @param unique_id 判定するID
-   * @return 登録されていたらtrueを返す
-   */
-  bool IsRegisteredRenderTargetID(RenderTargetID unique_id) const;
-  /**
-   * @brief 引数のIDがすでに登録されているか
-   * @param unique_id 判定するID
-   * @return 登録されていたらtrueを返す
-   */
-  bool IsRegisterdDepthStencilTargetID(DepthStencilTargetID unique_id) const;
-  /**
-   * @brief バックバッファを画面に表示する
-   * @return 表示に成功したらtrueを返す
+   * @brief 描画内容を表示する
+   * @return 成功したらtrueを返す
    */
   bool Present();
   /**
-   * @brief 現在フレームのインデックスを取得する
+   * @brief レンダーターゲットを追加する
+   * @param id レンダーターゲットID
+   * @param accessor DirectXデバイスアクセサ
+   * @param infos レンダーターゲット情報
+   * @return 追加に成功したらtrueを返す
    */
-  u32 GetCurrentFrameIndex() const;
+  bool AddRenderTarget(
+      RenderTargetID id, device::IDirectXAccessor& accessor,
+      const std::vector<MultiRenderTargetTexture::Info>& infos);
+  /**
+   * @brief デプス・ステンシルを追加する
+   * @param id レンダーターゲットID
+   * @param accessor DirectXデバイスアクセサ
+   * @param desc デプス・ステンシルデスク
+   * @return 追加に成功したらtrueを返す
+   */
+  bool AddDepthStencil(DepthStencilTargetID id,
+                       device::IDirectXAccessor& accessor,
+                       const DepthStencil::DepthStencilDesc& desc);
+  /**
+   * @brief シェーダーリソースとして使用する
+   * @param accessor DirectXデバイスアクセサ
+   * @param id レンダーターゲットID
+   * @param render_target_index 使用するマルチレンダーターゲットのインデックス
+   */
+  void UseAsSRV(device::IDirectXAccessor& accessor, RenderTargetID id,
+                u32 render_target_index);
+  /**
+   * @brief レンダーターゲットIDがすでに登録されているか
+   * @param id レンダーターゲットID
+   * @return すでに登録されてたらtrueを返す
+   */
+  bool IsRegisteredRenderTarget(RenderTargetID id) const;
+  /**
+   * @brief デプス・ステンシルIDがすでに登録されているか
+   * @param id デプス・ステンシルID
+   * @return すでに登録されてたらtrueを返す
+   */
+  bool IsRegisteredDepthStencilTarget(DepthStencilTargetID id) const;
 
  private:
+  //! フレーム数
+  u32 frame_count_;
   //! スワップチェイン
   device::SwapChain swap_chain_;
   //! レンダーターゲットマップ
   RenderTargetMap render_targets_;
-  //! 現在対象となっているレンダーターゲットID
-  RenderTargetID current_render_target_id_;
   //! デプス・ステンシルマップ
   DepthStencilTargetMap depth_stencil_targets_;
-  //! 現在対象となっているデプス・ステンシルID
-  DepthStencilTargetID current_depth_stencil_target_id_;
 };
 
 }  // namespace render_target

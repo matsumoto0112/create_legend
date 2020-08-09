@@ -69,20 +69,13 @@ Plane::Plane(math::Vector3 position, math::Vector3 normal)
 Plane::~Plane() {}
 
 //初期化
-bool Plane::Initialize(directx::DirectX12Device& device,
-                       util::resource::Resource& resource) {
-  //モデルデータを読み込む
-  const std::filesystem::path model_path =
-      util::Path::GetInstance()->model() / "desk.glb";
-  if (!resource.GetModel().Load(util::resource::ModelID::DESK, model_path)) {
-    return false;
-  }
-
+bool Plane::Initialize() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::PLAYER_MOVE_VIEWER),
+          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
     return false;
   }
@@ -94,18 +87,16 @@ bool Plane::Initialize(directx::DirectX12Device& device,
 }
 
 //描画
-void Plane::Draw(directx::DirectX12Device& device) {
-  //device.GetRenderResourceManager().SetDepthStencilTargetID(
-  //    directx::render_target::DepthStencilTargetID::Depth);
-  //device.GetRenderResourceManager().SetRenderTargetsToCommandList(device);
-  //device.GetRenderResourceManager().ClearCurrentDepthStencilTarget(device);
+void Plane::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
   transform_cb_.SetToHeap(device);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetModel()
-      .Get(util::resource::ModelID::DESK)
-      ->Draw();
+      .Get(util::resource::id::Model::DESK)
+      ->Draw(command_list);
 }
 
 //位置の設定

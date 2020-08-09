@@ -7,8 +7,6 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/descriptor_heap/descriptor_handle.h"
-#include "src/directx/directx_accessor.h"
 #include "src/math/math_util.h"
 
 namespace legend {
@@ -53,18 +51,23 @@ class ConstantBuffer {
   void Reset();
   /**
    * @brief 初期化
-   * @param accessor DirectX12デバイスアクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param register_num シェーダーのレジスター番号
+   * @param handle ディスクリプタハンドル
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, u32 register_num,
+  bool Init(device::IDirectXAccessor& accessor, u32 register_num,
             descriptor_heap::DescriptorHandle handle, const std::wstring& name);
 
   /**
    * @brief 現在のコンスタントバッファ構造体の参照を取得する
    */
   T& GetStagingRef() { return staging_; }
+  /**
+   * @brief 現在のコンスタントバッファ構造体のデータを取得する
+   */
+  T GetStaging() const { return staging_; }
   /**
    * @brief 現在の状態をGPUに更新する
    */
@@ -73,7 +76,7 @@ class ConstantBuffer {
    * @brief ヒープに自身を追加する
    * @param accessor DirectX12デバイスアクセサ
    */
-  void SetToHeap(IDirectXAccessor& accessor) const;
+  void SetToHeap(device::IDirectXAccessor& accessor) const;
 
  private:
   /**
@@ -116,11 +119,13 @@ inline ConstantBuffer<T>::~ConstantBuffer() {
   Reset();
 }
 
+//コピーコンストラクタ
 template <class T>
 inline ConstantBuffer<T>::ConstantBuffer(const ConstantBuffer& other) {
   *this = other;
 }
 
+//代入演算子
 template <class T>
 inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     const ConstantBuffer& other) {
@@ -139,11 +144,13 @@ inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
   return *this;
 }
 
+//ムーブコンストラクタ
 template <class T>
 inline ConstantBuffer<T>::ConstantBuffer(ConstantBuffer&& other) noexcept {
   *this = std::move(other);
 }
 
+//ムーブ演算子
 template <class T>
 inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     ConstantBuffer&& other) noexcept {
@@ -176,7 +183,7 @@ inline void ConstantBuffer<T>::Reset() {
 
 //初期化
 template <class T>
-inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
+inline bool ConstantBuffer<T>::Init(device::IDirectXAccessor& accessor,
                                     u32 register_num,
                                     descriptor_heap::DescriptorHandle handle,
                                     const std::wstring& name) {
@@ -186,7 +193,11 @@ inline bool ConstantBuffer<T>::Init(IDirectXAccessor& accessor,
   buffer_aligned_size_ = math::util::AlignPow2(
       sizeof(T), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
-  if (!resource_.InitAsBuffer(accessor, buffer_aligned_size_, name)) {
+  // InitAsBufferはUploadヒープで作成するのでステートはGENERIC_READである必要がある
+  const CommittedResource::BufferDesc desc{
+      name, buffer_aligned_size_,
+      D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ};
+  if (!resource_.InitAsBuffer(accessor, desc)) {
     return false;
   }
 
@@ -231,9 +242,10 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 
 //ヒープにセットする
 template <class T>
-inline void ConstantBuffer<T>::SetToHeap(IDirectXAccessor& accessor) const {
-  accessor.SetToGlobalHeap(this->register_num_, ResourceType::Cbv,
-                           this->resource_handle_);
+inline void ConstantBuffer<T>::SetToHeap(
+    device::IDirectXAccessor& accessor) const {
+  accessor.RegisterHandle(this->register_num_, shader::ResourceType::CBV,
+                          this->resource_handle_);
 }
 
 }  // namespace buffer

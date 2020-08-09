@@ -9,20 +9,20 @@
 namespace legend {
 namespace directx {
 namespace shader {
-namespace defined_sampler {
+namespace defined_static_sampler {
 
 /**
- * @brief StaticSamplerを作成する
- * @param register_number シェーダーのレジスター番号
- * @param filter フィルター
- * @param address_mode テクスチャの範囲外参照時の処理方法
- * @return 上記の設定によって作られたサンプラー
+ * @brief Warpサンプラーを取得する
+ * @param register_id シェーダーのレジスター番号
  */
-D3D12_STATIC_SAMPLER_DESC CreateStaticSampler(
-    u32 register_number, D3D12_FILTER filter,
-    D3D12_TEXTURE_ADDRESS_MODE address_mode);
+D3D12_STATIC_SAMPLER_DESC Warp(u32 register_id);
+/**
+ * @brief Clampサンプラーを取得する
+ * @param register_id シェーダーのレジスター番号
+ */
+D3D12_STATIC_SAMPLER_DESC Clamp(u32 register_id);
 
-}  // namespace defined_sampler
+}  // namespace defined_static_sampler
 }  // namespace shader
 }  // namespace directx
 }  // namespace legend

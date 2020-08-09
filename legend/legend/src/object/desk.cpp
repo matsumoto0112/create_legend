@@ -6,39 +6,32 @@ namespace legend {
 namespace object {
 
 //コンストラク
-Desk::Desk() : actor::Actor<physics::BoundingBox>() {}
+Desk::Desk() : Parent(L"Desk") {}
 
 //デストラクタ
 Desk::~Desk() {}
 
 bool Desk::Init(const InitializeParameter& parameter) {
+  if (!Parent::InitBuffer()) {
+    return false;
+  }
+
   this->transform_ = parameter.transform;
-  this->collision_ =
-      physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
-                           transform_.GetScale() * 0.1f);
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetRotation(transform_.GetRotation());
+  this->collision_.SetScale(transform_.GetScale());
   this->collision_.SetLength(parameter.bounding_box_length.x,
                              parameter.bounding_box_length.y,
                              parameter.bounding_box_length.z);
   SetNormal(parameter.normal);
 
-  directx::DirectX12Device& device =
-      game::GameDevice::GetInstance()->GetDevice();
-  util::resource::Resource& resource =
-      game::GameDevice::GetInstance()->GetResource();
-
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::Transform,
-          device.GetLocalHeapHandle(directx::descriptor_heap::heap_parameter::
-                                        LocalHeapID::PLAYER_MOVE_VIEWER),
-          L"Transform ConstantBuffer")) {
-    return false;
-  }
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  model_ = resource.GetModel().Get(util::resource::ModelID::DESK);
+  model_ = resource.GetModel().Get(util::resource::id::Model::DESK);
   return true;
 }
 

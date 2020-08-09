@@ -1,12 +1,12 @@
 #ifndef LEGEND_PHYSICS_COLLISION_H_
 #define LEGEND_PHYSICS_COLLISION_H_
 
+#include "src/object/desk.h"
 #include "src/physics/bounding_box.h"
 #include "src/physics/capsule.h"
 #include "src/physics/plane.h"
 #include "src/physics/ray.h"
 #include "src/physics/sphere.h"
-#include "src/object/desk.h"
 #include "src/util/singleton.h"
 
 namespace legend {
@@ -125,6 +125,9 @@ class Collision : public util::Singleton<Collision> {
    * @param ‹…
    */
   bool Collision_Ray_Sphere(Ray& ray, Sphere& sphere);
+
+  private:
+      math::Vector3 return_vector_;
 };
 }  // namespace physics
 }  // namespace legend

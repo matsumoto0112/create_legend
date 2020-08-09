@@ -1,55 +1,92 @@
 #include "src/game/game_device.h"
 
+#include "src/window/window_procedure.h"
+
 namespace {
-/**
- * @brief IntVector2からVector2に変換する
- */
-legend::math::Vector2 ToVector2(const legend::math::IntVector2& int_vec2) {
-  return legend::math::Vector2(static_cast<float>(int_vec2.x),
-                               static_cast<float>(int_vec2.y));
-}
+constexpr legend::u32 WINDOW_WIDTH = 1280;
+constexpr legend::u32 WINDOW_HEIGHT = 720;
+
 }  // namespace
 
 namespace legend {
 namespace game {
-GameDevice::GameDevice()
-    : fps_counter_{}, device_(nullptr), input_manager_(nullptr) {}
+GameDevice::GameDevice() : fps_counter_{} {}
+
 GameDevice::~GameDevice() {}
-bool GameDevice::Init(std::weak_ptr<window::Window> target_window) {
-  this->main_window_ = target_window;
-  device_ = std::make_unique<directx::DirectX12Device>();
-  if (!device_->Init(target_window)) {
+
+bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
+  //作るオブジェクトは
+  window_ = std::make_unique<window::Window>();
+  //ウィンドウ
+  window_->SetScreenSize(math::IntVector2(WINDOW_WIDTH, WINDOW_HEIGHT));
+  window_->SetWindowTitle(L"Game");
+  window_->SetWindowProc(window::procedure::WindowProcdures);
+  window_->SetWindowProcCallBack(callback);
+  window_->Create();
+  // DirectX12デバイス
+
+  device_ = std::make_unique<directx::device::DirectXDevice>();
+  if (!device_->Init(WINDOW_WIDTH, WINDOW_HEIGHT, window_->GetHWND())) {
     return false;
   }
 
-  input_manager_ =
-      std::make_unique<input::InputManager>(target_window.lock()->GetHWND());
+  //入力
+  input_manager_ = std::make_unique<input::InputManager>(window_->GetHWND());
+  random_ = std::make_unique<util::Random>();
 
+  //サウンド
   audio_manager = std::make_unique<audio::AudioManager>();
   if (!audio_manager->Init()) {
     return false;
   }
 
-  resource_ = std::make_unique<util::resource::Resource>();
-  if (!resource_->Init()) {
+  //スプライト描画
+  const math::Vector2 screen_size =
+      math::Vector2(static_cast<float>(window_->GetScreenSize().x),
+                    static_cast<float>(window_->GetScreenSize().y));
+  if (!sprite_renderer_.Init(screen_size)) {
     return false;
   }
 
-  sprite_renderer_ = std::make_unique<draw::SpriteRenderer>();
-  if (!sprite_renderer_->Init(
-          ToVector2(target_window.lock()->GetScreenSize()))) {
+  //リソース管理
+  if (!resource_.Init()) {
     return false;
   }
 
-  random_ = std::make_unique<util::Random>();
+  // ImGui
+  if (!imgui_manager_.Init(window_->GetHWND(), device_->GetDevice(),
+                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3, true)) {
+    return false;
+  }
+
   return true;
 }
 
-void GameDevice::Update() {
+bool GameDevice::BeginFrame() {
   fps_counter_.Update();
+
+  imgui_manager_.BeginFrame();
   input_manager_->Update();
   audio_manager->Update();
+
+  if (!device_->Prepare()) {
+    return false;
+  }
+
+  return true;
 }
+
+bool GameDevice::EndFrame() {
+  imgui_manager_.EndFrame(
+      device_->GetCurrentFrameResource()->GetCommandList().GetCommandList());
+  if (!device_->Present()) {
+    return false;
+  }
+
+  return true;
+}
+
+void GameDevice::Finalize() { device_->Destroy(); }
 
 }  // namespace game
 }  // namespace  legend

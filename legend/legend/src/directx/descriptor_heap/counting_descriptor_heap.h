@@ -8,8 +8,8 @@
  * 割り当てるたびにインデックスをインクリメントしていくので、ヒープの割り当てインデックスを外部で管理する必要のないヒープ
  */
 
-#include "src/directx/descriptor_heap/descriptor_handle.h"
 #include "src/directx/descriptor_heap/descriptor_heap.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -30,21 +30,19 @@ class CountingDescriptorHeap {
   ~CountingDescriptorHeap();
   /**
    * @brief 初期化
-   * @param accessor DirectX12アクセサ
+   * @param accessor DirectXデバイスアクセサ
    * @param desc ヒープ作成ディスク
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(IDirectXAccessor& accessor, const DescriptorHeap::Desc& desc);
+  bool Init(device::IDirectXAccessor& accessor,
+            const DescriptorHeap::Desc& desc);
   /**
    * @brief CPU,GPUハンドルを取得する
-   * @param index ハンドルインデックス
-   * @return 有効なハンドルを返す
    */
   DescriptorHandle GetHandle();
   /**
-   * @brief インデックスを指定したハンドルを返す
+   * @brief インデックスを指定したハンドルを取得する
    * @param index ハンドルインデックス
-   * @return 有効なハンドルを返す
    */
   DescriptorHandle GetForceHandle(u32 index) const;
   /**

@@ -2,10 +2,7 @@
 #define LEGEND_PLAYER_PLAYER_H_
 
 #include "src/actor/actor.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
-#include "src/util/transform.h"
 
 namespace legend {
 namespace player {
@@ -15,6 +12,8 @@ namespace player {
  * @brief プレイヤーのクラス
  */
 class Player : public actor::Actor<physics::BoundingBox> {
+  using Parent = actor::Actor<physics::BoundingBox>;
+
  public:
   /**
    * @brief 初期化パラメータ
@@ -44,17 +43,9 @@ class Player : public actor::Actor<physics::BoundingBox> {
    */
   bool Update();
   /**
-   * @brief 移動
-   */
-  void Move();
-  /**
    * @brief 座標の設定
    */
   void SetPosition(math::Vector3 position);
-  /**
-   * @brief 移動量の設定
-   */
-  void SetVelocity(math::Vector3 velocity);
   /**
    * @brief 回転量の設定
    */
@@ -64,13 +55,13 @@ class Player : public actor::Actor<physics::BoundingBox> {
    */
   void SetVelocity();
   /**
+   * @brief 移動量の設定
+   */
+  void SetVelocity(math::Vector3 velocity);
+  /**
    * @brief 加える力の設定
    */
   void SetImpulse();
-  /**
-   * @brief 重力による移動
-   */
-  void UpdateGravity(float gravity);
   /**
    * @brief 移動に必要なパラメータの初期化
    */
@@ -79,11 +70,6 @@ class Player : public actor::Actor<physics::BoundingBox> {
    * @brief 移動終了判定の初期化
    */
   void ResetMoveEnd();
-  /**
-   * @brief 減速
-   * @param 減速率(1より大きい値で)
-   */
-  void Deceleration(float deceleration_rate);
   /**
    * @brief 座標の取得
    */
@@ -97,22 +83,27 @@ class Player : public actor::Actor<physics::BoundingBox> {
    */
   math::Quaternion GetRotation() const;
   /**
-   * @brief 加える力の取得
+   * @brief 加える力の割合の取得
    */
   float GetImpulse() const;
+  /**
+   * @brief 加える力の取得
+   */
+  float GetPower() const;
   /**
    * @brief 移動終了判定の取得
    */
   bool GetMoveEnd() const;
+  /**
+   * @brief 移動判定の取得
+   */
+  bool GetIsMove() const;
 
  private:
   //! 速度
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;
   math::Vector3 change_amount_velocity_;
-  std::vector<math::Vector3> stick_velocities_;
-  //! リストの最大値
-  const i32 max_stick_velocity_num_ = 10;
   //! 減速率
   float deceleration_x_;
   float deceleration_z_;
@@ -124,7 +115,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   const float change_time_ = 0.1f;
 
   //! 移動に加える力
-  const float power_ = 10;
+  const float power_ = 3.0f;
   //! 実際に加える力の加減
   float impulse_;
   //! 最小値

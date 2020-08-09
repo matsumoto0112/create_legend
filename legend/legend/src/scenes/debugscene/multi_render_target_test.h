@@ -8,7 +8,10 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
+#include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"
 #include "src/scenes/scene.h"
 #include "src/util/transform.h"
@@ -20,6 +23,11 @@ namespace debugscene {
  * @brief マルチレンダーターゲットテストシーン
  */
 class MultiRenderTargetTest : public Scene {
+  using Transform_CBStruct =
+      directx::buffer::constant_buffer_structure::Transform;
+  using WorldContext_CBStruct =
+      directx::buffer::constant_buffer_structure::WorldContext;
+
  public:
   MultiRenderTargetTest(ISceneChange* scene_change);
   virtual ~MultiRenderTargetTest();
@@ -29,31 +37,28 @@ class MultiRenderTargetTest : public Scene {
   virtual void Finalize() override;
 
  private:
-  //通常描画用モデル
-  draw::Model model_;
+  directx::shader::RootSignature root_signature_;
+
+  std::vector<util::Transform> transforms_;
+  std::vector<directx::buffer::ConstantBuffer<Transform_CBStruct>>
+      transform_cbs_;
+  //! カメラ
+  camera::PerspectiveCamera camera_;
 
   //ポストプロセス用
   directx::buffer::VertexBuffer post_process_vertex_buffer_;
   directx::buffer::IndexBuffer post_process_index_buffer_;
 
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
-      post_process_transform_cb_;
   directx::buffer::ConstantBuffer<
-      directx::constant_buffer_structure::WorldContext>
-      post_process_world_cb_;
+      directx::buffer::constant_buffer_structure::Transform>
+      post_process_transform_cb_;
+  directx::buffer::ConstantBuffer<WorldContext_CBStruct> post_process_world_cb_;
   struct MultiRenderTargetTestPPConstantBufferStructure {
     float border;
   };
   directx::buffer::ConstantBuffer<
       MultiRenderTargetTestPPConstantBufferStructure>
       post_process_local_cb_;
-
-  std::vector<util::Transform> transforms_;
-  std::vector<directx::buffer::ConstantBuffer<
-      directx::constant_buffer_structure::Transform>>
-      transform_cbs_;
-  //! カメラ
-  camera::PerspectiveCamera camera_;
 };
 
 }  // namespace debugscene

@@ -18,20 +18,19 @@ bool SpriteRenderTest::Initialize() {
   const std::filesystem::path font =
       util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
   const std::wstring name = util::loader::FontLoader::GetInstance()->Load(font);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  if (!string_.Init(L"", directx::shader::TextureRegisterID::Albedo,
-                    directx::descriptor_heap::heap_parameter::LocalHeapID::
-                        SPRITE_RENDER_TEST,
-                    name, 128)) {
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
 
-  game::GameDevice::GetInstance()->GetResource().GetTexture().Load(
-      util::resource::id::Texture::TEX,
-      util::Path::GetInstance()->texture() / "tex.png",
-      directx::shader::TextureRegisterID::Albedo,
-      directx::descriptor_heap::heap_parameter::LocalHeapID::
-          SPRITE_RENDER_TEST);
+  if (!command_list.Close()) {
+    return false;
+  }
+  device.ExecuteCommandList({command_list});
+  device.WaitExecute();
   return true;
 }
 
@@ -46,7 +45,7 @@ bool SpriteRenderTest::Update() {
               game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
                   util::resource::id::Texture::TEX),
               directx::descriptor_heap::heap_parameter::LocalHeapID::
-                  SPRITE_RENDER_TEST)) {
+                  GLOBAL_ID)) {
         return false;
       }
 
@@ -88,9 +87,22 @@ bool SpriteRenderTest::Update() {
     static char buf[1024] = u8"友情・努力・勝利";
     ImGui::InputText("Append String", buf, _countof(buf));
     if (ImGui::Button("Append")) {
-      if (!string_.Append(util::string_util::UTF_8_2_WString(buf))) {
+      auto& device = game::GameDevice::GetInstance()->GetDevice();
+      directx::device::CommandList command_list;
+      if (!command_list.Init(
+              device,
+              D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
         return false;
       }
+      if (!string_.Append(command_list,
+                          util::string_util::UTF_8_2_WString(buf))) {
+        return false;
+      }
+      if (!command_list.Close()) {
+        return false;
+      }
+      device.ExecuteCommandList({command_list});
+      device.WaitExecute();
       ZeroMemory(buf, _countof(buf));
     }
     if (ImGui::Button("Clear")) {
@@ -105,22 +117,18 @@ void SpriteRenderTest::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
 
-  string_.Draw(sprite_renderer);
+  string_.StackDrawList(sprite_renderer);
   for (auto&& sp : sprites_) {
     sprite_renderer.AddDrawItems(&sp);
   }
-  sprite_renderer.DrawItems();
+  sprite_renderer.DrawItems(game::GameDevice::GetInstance()
+                                ->GetDevice()
+                                .GetCurrentFrameResource()
+                                ->GetCommandList());
 }
 
 void SpriteRenderTest::Finalize() {
-  game::GameDevice::GetInstance()->GetDevice().WaitForGPU();
-  game::GameDevice::GetInstance()->GetResource().GetTexture().Unload(
-      util::resource::id::Texture::TEX);
-  game::GameDevice::GetInstance()
-      ->GetDevice()
-      .GetHeapManager()
-      .ResetLocalHeapAllocateCounter(directx::descriptor_heap::heap_parameter::
-                                         LocalHeapID::SPRITE_RENDER_TEST);
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
 }  // namespace debugscene

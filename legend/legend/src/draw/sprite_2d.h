@@ -7,8 +7,9 @@
  */
 
 #include "src/directx/buffer/constant_buffer.h"
+#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/buffer/texture_2d.h"
-#include "src/directx/constant_buffer_structure.h"
+#include "src/directx/device/command_list.h"
 #include "src/math/rect.h"
 
 namespace legend {
@@ -30,6 +31,7 @@ class Sprite2D {
   /**
    * @brief 初期化
    * @param texture 使用するテクスチャ
+   * @param cbv_heap_id 使用するローカルヒープID
    */
   bool Init(std::shared_ptr<directx::buffer::Texture2D> texture,
             directx::descriptor_heap::heap_parameter::LocalHeapID cbv_heap_id);
@@ -75,15 +77,27 @@ class Sprite2D {
    * @brief 回転角度を取得する
 =  */
   inline float GetRotate() const { return rotate_; }
-
-  inline void SetRect(const math::Rect& rect) { this->rect_ = rect; }
-  inline const math::Rect& GetRect() const { return rect_; }
+  /**
+   * @brief 表示するUV矩形を設定する
+   */
+  void SetRect(const math::Rect& rect);
+  /**
+   * @brief 現在のUV矩形を取得する
+   */
+  math::Rect GetRect() const;
   /**
    * @brief コマンドリストに積む
    */
-  void SetToCommandList();
+  void SetToGraphicsCommandList(directx::device::CommandList& command_list);
+
+ private:
+  using Transform_CBStruct =
+      directx::buffer::constant_buffer_structure::Transform;
+  using UVRect_CBStruct = directx::buffer::constant_buffer_structure::UVRect;
 
  protected:
+  //! テクスチャ
+  std::shared_ptr<directx::buffer::Texture2D> texture_;
   //! コンテンツのサイズ
   math::Vector2 content_size_;
   //! スケーリング
@@ -95,13 +109,9 @@ class Sprite2D {
   //! 回転角度
   float rotate_;
   //! トランスフォーム行列バッファ
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::Transform>
+  directx::buffer::ConstantBuffer<Transform_CBStruct>
       transform_constant_buffer_;
-  //! テクスチャ
-  std::shared_ptr<directx::buffer::Texture2D> texture_;
-  math::Rect rect_;
-  directx::buffer::ConstantBuffer<directx::constant_buffer_structure::UVRect>
-      uv_rect_constant_buffer_;
+  directx::buffer::ConstantBuffer<UVRect_CBStruct> uv_rect_constant_buffer_;
 };
 }  // namespace draw
 }  // namespace legend

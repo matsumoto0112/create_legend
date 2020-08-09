@@ -1,6 +1,5 @@
 #include "src/directx/descriptor_heap/heap_manager.h"
 
-#include "src/directx/descriptor_heap/heap_parameter.h"
 #include "src/directx/shader/root_parameter_index.h"
 #include "src/util/stl_extend.h"
 
@@ -15,59 +14,98 @@ HeapManager::HeapManager() {}
 HeapManager::~HeapManager() {}
 
 //初期化
-bool HeapManager::Init(IDirectXAccessor& device) {
-  const DescriptorHeap::Desc global_desc(
-      L"GlobalHeap", heap_parameter::GLOBAL_HEAP_DESCRIPTOR_NUM,
-      DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::SHADER_VISIBLE);
-
-  if (!global_heap_.Init(device, global_desc)) {
-    return false;
+bool HeapManager::Init(device::IDirectXAccessor& accessor) {
+  //グローバルヒープ
+  {
+    const DescriptorHeap::Desc global_desc{
+        L"GlobalHeap", heap_parameter::GLOBAL_HEAP_DESCRIPTOR_NUM,
+        DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::SHADER_VISIBLE};
+    if (!global_heap_.Init(accessor, global_desc)) {
+      return false;
+    }
   }
 
-  const DescriptorHeap::Desc local_desc(
-      L"LocalHeap",
-      heap_parameter::local::GetDefinedLocalDescriptorNum(
-          heap_parameter::LocalHeapID::GLOBAL_ID),
-      DescriptorHeapType::CBV_SRV_UAV, DescriptorHeapFlag::NONE);
-  if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(device,
-                                                                 local_desc)) {
-    return false;
+  //グローバルで使用するローカルヒープ
+  {
+    const u32 descriptor_num =
+        heap_parameter::local::GetDefinedLocalDescriptorNum(
+            heap_parameter::LocalHeapID::GLOBAL_ID);
+    const DescriptorHeap::Desc local_desc{L"LocalHeap", descriptor_num,
+                                          DescriptorHeapType::CBV_SRV_UAV,
+                                          DescriptorHeapFlag::NONE};
+    if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(
+            accessor, local_desc)) {
+      return false;
+    }
   }
 
-  const DescriptorHeap::Desc rtv_desc(
-      L"RTVHeap", heap_parameter::RTV_HEAP_DESCRIPTOR_NUM,
-      DescriptorHeapType::RTV, DescriptorHeapFlag::NONE);
-  if (!rtv_heap_.Init(device, rtv_desc)) {
-    return false;
+  // RTVヒープ
+  {
+    const DescriptorHeap::Desc rtv_desc{
+        L"RTVHeap", heap_parameter::RTV_HEAP_DESCRIPTOR_NUM,
+        DescriptorHeapType::RTV, DescriptorHeapFlag::NONE};
+    if (!rtv_heap_.Init(accessor, rtv_desc)) {
+      return false;
+    }
   }
 
-  const DescriptorHeap::Desc dsv_desc(
-      L"DSVHeap", heap_parameter::DSV_HEAP_DESCRIPTOR_NUM,
-      DescriptorHeapType::DSV, DescriptorHeapFlag::NONE);
-  if (!dsv_heap_.Init(device, dsv_desc)) {
-    return false;
+  // DSVヒープ
+  {
+    const DescriptorHeap::Desc dsv_desc{
+        L"DSVHeap", heap_parameter::DSV_HEAP_DESCRIPTOR_NUM,
+        DescriptorHeapType::DSV, DescriptorHeapFlag::NONE};
+    if (!dsv_heap_.Init(accessor, dsv_desc)) {
+      return false;
+    }
   }
 
   this->global_heap_allocated_count_ = 0;
-  this->default_handle_ =
+
+  //デフォルトのコンスタントバッファ用ハンドルを作成
+  this->default_handle_.default_cbv_handle_ =
       local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
-  device.GetDevice()->CreateConstantBufferView(nullptr,
-                                               default_handle_.cpu_handle_);
+  accessor.GetDevice()->CreateConstantBufferView(
+      nullptr, default_handle_.default_cbv_handle_.cpu_handle_);
+
+  this->default_handle_.default_srv_handle_ =
+      local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
+
+  D3D12_SHADER_RESOURCE_VIEW_DESC null_srv_desc = {};
+  null_srv_desc.ViewDimension =
+      D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+  null_srv_desc.Shader4ComponentMapping =
+      D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+  null_srv_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  null_srv_desc.Texture2D.MipLevels = 1;
+  null_srv_desc.Texture2D.MostDetailedMip = 0;
+  null_srv_desc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+  accessor.GetDevice()->CreateShaderResourceView(
+      nullptr, &null_srv_desc, default_handle_.default_srv_handle_.cpu_handle_);
+
+  this->default_handle_.default_uav_handle_ =
+      local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].GetHandle();
+  D3D12_UNORDERED_ACCESS_VIEW_DESC null_uav_desc = {};
+  null_uav_desc.ViewDimension =
+      D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE2D;
+  null_uav_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  accessor.GetDevice()->CreateUnorderedAccessView(
+      nullptr, nullptr, &null_uav_desc,
+      this->default_handle_.default_uav_handle_.cpu_handle_);
+
   return true;
 }
 
-//フレーム開始時イベント
-void HeapManager::BeginNewFrame() { global_heap_allocated_count_ = 0; }
+void HeapManager::BeginFrame() { global_heap_allocated_count_ = 0; }
 
-//コマンドリストにグローバルヒープをセットする
-void HeapManager::SetHeapToCommandList(IDirectXAccessor& device) const {
-  ID3D12DescriptorHeap* heaps[] = {global_heap_.GetHeap()};
-  device.GetCommandList()->SetDescriptorHeaps(1, heaps);
+void HeapManager::SetGraphicsCommandList(
+    device::CommandList& command_list) const {
+  ID3D12DescriptorHeap* const heaps[] = {global_heap_.GetHeap()};
+  command_list.GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
 
-//ローカルヒープにハンドルをセットする
-void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
-                                       D3D12_CPU_DESCRIPTOR_HANDLE handle) {
+void HeapManager::RegisterHandle(u32 register_num, shader::ResourceType type,
+                                 DescriptorHandle handle) {
   //必要に応じて配列を拡張しつつ、ハンドルをセットする
   //レジスター番号に合わせてハンドルをセットする
   auto SetToHandlesAndAppendIfNeed =
@@ -82,83 +120,104 @@ void HeapManager::SetHandleToLocalHeap(u32 register_num, ResourceType type,
 
   //種類に応じて追加先を変える
   switch (type) {
-    case legend::directx::ResourceType::Cbv:
-      SetToHandlesAndAppendIfNeed(register_num, &cbv_handles_, handle);
+    case shader::ResourceType::CBV:
+      SetToHandlesAndAppendIfNeed(register_num,
+                                  &current_local_handles_.cbv_handles_,
+                                  handle.cpu_handle_);
       break;
-    case legend::directx::ResourceType::Srv:
-      SetToHandlesAndAppendIfNeed(register_num, &srv_handles_, handle);
+    case shader::ResourceType::SRV:
+      SetToHandlesAndAppendIfNeed(register_num,
+                                  &current_local_handles_.srv_handles_,
+                                  handle.cpu_handle_);
       break;
+    case shader::ResourceType::UAV:
+      SetToHandlesAndAppendIfNeed(register_num,
+                                  &current_local_handles_.uav_handles_,
+                                  handle.cpu_handle_);
     default:
       break;
   }
 }
 
-//ヒープをコピーしコマンドリストにセットする
-void HeapManager::CopyHeapAndSetToGraphicsCommandList(
-    IDirectXAccessor& device) {
-  auto PaddingNullHandle =
-      [&](std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handle) {
-        const u32 size = static_cast<u32>(handle->size());
-        for (u32 i = 0; i < size; i++) {
-          if ((*handle)[i].ptr == 0) (*handle)[i] = default_handle_.cpu_handle_;
-        }
-      };
+void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
+                                   device::CommandList& command_list) {
+  auto PaddingNullHandle = [&](std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handle,
+                               D3D12_CPU_DESCRIPTOR_HANDLE default_handle) {
+    const u32 size = static_cast<u32>(handle->size());
+    for (u32 i = 0; i < size; i++) {
+      if ((*handle)[i].ptr == 0) (*handle)[i] = default_handle;
+    }
+  };
 
-  PaddingNullHandle(&cbv_handles_);
-  PaddingNullHandle(&srv_handles_);
+  PaddingNullHandle(&current_local_handles_.cbv_handles_,
+                    default_handle_.default_cbv_handle_.cpu_handle_);
+  PaddingNullHandle(&current_local_handles_.srv_handles_,
+                    default_handle_.default_srv_handle_.cpu_handle_);
+  PaddingNullHandle(&current_local_handles_.uav_handles_,
+                    default_handle_.default_uav_handle_.cpu_handle_);
 
   auto CopyAndSetToCommandList =
       [&](u32 index, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
         //必要な数だけローカルからグローバルにコピーする
-        u32 count = static_cast<u32>(handles.size());
+        const u32 count = static_cast<u32>(handles.size());
         if (count == 0) return;
-        DescriptorHandle global_handle =
+        const DescriptorHandle global_handle =
             global_heap_.GetHandle(global_heap_allocated_count_);
         D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = global_handle.cpu_handle_;
-        device.GetDevice()->CopyDescriptors(
+        accessor.GetDevice()->CopyDescriptors(
             1, &dst_handle, &count, count, handles.data(), nullptr,
             D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-        device.GetCommandList()->SetGraphicsRootDescriptorTable(
+        command_list.GetCommandList()->SetGraphicsRootDescriptorTable(
             index, global_handle.gpu_handle_);
         global_heap_allocated_count_ += count;
       };
 
-  CopyAndSetToCommandList(shader::root_parameter_index::CBV, cbv_handles_);
-  CopyAndSetToCommandList(shader::root_parameter_index::SRV, srv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::CBV,
+                          current_local_handles_.cbv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::SRV,
+                          current_local_handles_.srv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::UAV,
+                          current_local_handles_.uav_handles_);
 }
 
-//ローカルヒープを追加するs
-bool HeapManager::AddLocalHeap(IDirectXAccessor& accessor,
-                               heap_parameter::LocalHeapID id) {
-  if (util::Exist(local_heaps_, id)) {
-    MY_LOG(L"すでに追加済みのヒープIDが追加されようとしました。");
+bool HeapManager::AddLocalHeap(device::IDirectXAccessor& accessor,
+                               heap_parameter::LocalHeapID heap_id) {
+  if (util::Exist(local_heaps_, heap_id)) {
+    MY_LOG(L"すでに追加済みのヒープIDが追加されようとしました。 %d",
+           static_cast<u32>(heap_id));
     return false;
   }
 
   std::wstringstream wss;
-  wss << L"LocalHeap_" << static_cast<u32>(id);
-  const DescriptorHeap::Desc desc{
-      wss.str(), heap_parameter::local::GetDefinedLocalDescriptorNum(id)};
-
-  if (desc.descriptor_num == heap_parameter::local::UNDEFINED_DESCRIPTOR_NUM) {
+  wss << L"LocalHeap_" << static_cast<u32>(heap_id);
+  const u32 descriptor_num =
+      heap_parameter::local::GetDefinedLocalDescriptorNum(heap_id);
+  if (descriptor_num == heap_parameter::local::UNDEFINED_DESCRIPTOR_NUM) {
+    MY_LOG(L"割り当てディスクリプタ数が不正です。");
     return false;
   }
 
-  return local_heaps_[id].Init(accessor, desc);
+  const DescriptorHeap::Desc desc{wss.str(), descriptor_num,
+                                  DescriptorHeapType::CBV_SRV_UAV,
+                                  DescriptorHeapFlag::NONE};
+  return local_heaps_[heap_id].Init(accessor, desc);
 }
 
-void HeapManager::ResetLocalHeapAllocateCounter(
-    heap_parameter::LocalHeapID id) {
-  MY_ASSERTION(util::Exist(local_heaps_, id), L"未登録のIDが送られました。");
-  local_heaps_[id].ResetAllocateCounter();
-}
-// IDに対応したローカルヒープを返す
-CountingDescriptorHeap* HeapManager::GetLocalHeap(
-    heap_parameter::LocalHeapID id) {
-  MY_ASSERTION(util::Exist(local_heaps_, id), L"未登録のIDが送られました。");
+void HeapManager::RemoveLocalHeap(heap_parameter::LocalHeapID heap_id) {
+  if (!util::Exist(local_heaps_, heap_id)) {
+    MY_LOG(L"未割当のヒープIDが選択されました。 %d", static_cast<u32>(heap_id));
+    return;
+  }
 
-  return &local_heaps_.at(id);
+  local_heaps_.erase(heap_id);
+  MY_LOG(L"%d", local_heaps_.size());
+}
+
+DescriptorHandle HeapManager::GetLocalHeap(
+    heap_parameter::LocalHeapID heap_id) {
+  MY_ASSERTION(util::Exist(local_heaps_, heap_id), L"heap_idが無効です。");
+  return local_heaps_.at(heap_id).GetHandle();
 }
 
 }  // namespace descriptor_heap

@@ -13,11 +13,12 @@ TextureChar::~TextureChar() {}
 
 //‰Šú‰»
 bool TextureChar::Init(
-    wchar_t c, const std::wstring& font, i32 font_size, u32 register_num,
+    directx::device::CommandList& command_list, wchar_t c,
+    const std::wstring& font, i32 font_size, u32 register_num,
     const directx::descriptor_heap::DescriptorHandle& handle) {
   std::vector<u8> data;
   u32 width, height;
-  if (!CreateChar(c, font, font_size, &data, &width, &height)) {
+  if (!CreateChar(command_list, c, font, font_size, &data, &width, &height)) {
     return false;
   }
 
@@ -32,8 +33,7 @@ bool TextureChar::Init(
     return false;
   }
 
-  texture->WriteResource(game::GameDevice::GetInstance()->GetDevice(),
-                         data.data());
+  texture->WriteResource(command_list, data.data());
   if (!Sprite2D::Init(
           texture,
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
@@ -43,7 +43,8 @@ bool TextureChar::Init(
 }
 
 //•¶š‚Ìì¬
-bool TextureChar::CreateChar(wchar_t c, const std::wstring& font, i32 font_size,
+bool TextureChar::CreateChar(directx::device::CommandList& command_list,
+                             wchar_t c, const std::wstring& font, i32 font_size,
                              std::vector<u8>* data, u32* width, u32* height) {
   //ƒtƒHƒ“ƒgî•ñ‚Ìì¬
   LOGFONT lf = {font_size,

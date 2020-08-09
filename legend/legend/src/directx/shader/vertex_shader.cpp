@@ -2,7 +2,9 @@
 
 #include "src/directx/directx_helper.h"
 #include "src/util/byte_reader.h"
+
 namespace {
+
 /**
  * @brief コンポーネントの種類とマスクからフォーマットを取得する
  * @details
@@ -69,6 +71,8 @@ namespace legend {
 namespace directx {
 namespace shader {
 
+using directx_helper::Failed;
+
 //コンストラクタ
 VertexShader::VertexShader() {}
 
@@ -76,11 +80,10 @@ VertexShader::VertexShader() {}
 VertexShader::~VertexShader() {}
 
 //初期化
-bool VertexShader::Init(IDirectXAccessor& accessor,
+bool VertexShader::Init(device::IDirectXAccessor& accessor,
                         const std::filesystem::path& filepath,
                         const std::vector<D3D12_INPUT_ELEMENT_DESC>& elements) {
-  this->shader_code_ = util::byte_reader::Read(filepath);
-  if (this->shader_code_.empty()) {
+  if (!ShaderBase::Init(accessor, filepath)) {
     return false;
   }
 
@@ -89,25 +92,20 @@ bool VertexShader::Init(IDirectXAccessor& accessor,
 }
 
 //初期化
-bool VertexShader::Init(IDirectXAccessor& accessor,
+bool VertexShader::Init(device::IDirectXAccessor& accessor,
                         const std::filesystem::path& filepath) {
-  this->shader_code_ = util::byte_reader::Read(filepath);
-  if (this->shader_code_.empty()) {
+  if (!ShaderBase::Init(accessor, filepath)) {
     return false;
   }
 
   //リフレクションによって入力レイアウトを解析する
-  if (HRESULT hr = D3DReflect(shader_code_.data(), shader_code_.size(),
-                              IID_PPV_ARGS(&shader_refrection_));
-      FAILED(hr)) {
-    MY_LOG(L"D3DReflect failed.\nReason: %s", directx_helper::HrToWString(hr));
+  if (Failed(D3DReflect(shader_code_.data(), shader_code_.size(),
+                        IID_PPV_ARGS(&shader_refrection_)))) {
     return false;
   }
 
   D3D12_SHADER_DESC shader_desc;
-  if (HRESULT hr = shader_refrection_->GetDesc(&shader_desc); FAILED(hr)) {
-    MY_LOG(L"ID3D12ShaderReflection::GetDesc failed.\nReason: %s",
-           directx_helper::HrToWString(hr));
+  if (Failed(shader_refrection_->GetDesc(&shader_desc))) {
     return false;
   }
 

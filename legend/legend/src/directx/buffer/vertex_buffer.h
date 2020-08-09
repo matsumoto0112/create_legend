@@ -7,7 +7,8 @@
  */
 
 #include "src/directx/buffer/committed_resource.h"
-#include "src/directx/directx12_device.h"
+#include "src/directx/device/command_list.h"
+#include "src/directx/device/directx_accessor.h"
 
 namespace legend {
 namespace directx {
@@ -29,25 +30,23 @@ class VertexBuffer {
   ~VertexBuffer();
   /**
    * @brief 初期化
-   * @param device デバイス
-   * @param vertex_size 頂点構造体のメモリサイズ
+   * @param accessor DirectXデバイスアクセサ
+   * @param vertex_size 頂点構造体の大きさ
    * @param vertex_num 頂点数
    * @param name リソース名
-   * @return 初期化に成功したらtrueを返す
    */
-  bool Init(DirectX12Device& device, u32 vertex_size, u32 vertex_num,
+  bool Init(device::IDirectXAccessor& accessor, u32 vertex_size, u32 vertex_num,
             const std::wstring& name);
   /**
-   * @brief リソースにデータを書き込む書き込む
-   * @param vertices 書き込む頂点データ
-   * @return 書き込みに成功したらtrueを返す
+   * @brief リソースにデータを書き込む
+   * @param data 書き込むデータ
    */
-  template <class T>
-  bool WriteBufferResource(const std::vector<T>& vertices);
+  bool WriteBufferResource(const void* data);
   /**
    * @brief コマンドリストにセットする
+   * @param command_list コマンドリスト
    */
-  void SetGraphicsCommandList(DirectX12Device& device);
+  void SetGraphicsCommandList(device::CommandList& command_list);
 
  protected:
   //! 頂点リソース
@@ -55,15 +54,6 @@ class VertexBuffer {
   //! 頂点バッファビュー
   D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
 };
-
-//リソースに書き込む
-template <class T>
-inline bool VertexBuffer::WriteBufferResource(const std::vector<T>& vertices) {
-  MY_ASSERTION(vertices.size() * sizeof(T) == vertex_buffer_view_.SizeInBytes,
-               L"vertices size is incorrect.");
-
-  return resource_.WriteResource(vertices.data());
-}
 
 }  // namespace buffer
 }  // namespace directx

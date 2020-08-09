@@ -81,46 +81,42 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\enemy\enemy_manager.cpp" />
-    <ClCompile Include="src\enemy\enemy.cpp" />
-    <ClCompile Include="src\object\desk.cpp" />
-    <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
-    <ClCompile Include="src\draw\particle\particle_manager.cpp" />
-    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
-    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
-    <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
-    <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
-    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
-    <ClCompile Include="src\directx\render_target\render_target.cpp" />
-    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
+    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
+    <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
+    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
+    <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
+    <ClCompile Include="src\directx\device\directx_device.cpp" />
+    <ClCompile Include="src\audio\audio_manager.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\counting_descriptor_heap.cpp" />
     <ClCompile Include="src\directx\device\command_list.cpp" />
     <ClCompile Include="src\directx\device\dxgi_adapter.cpp" />
     <ClCompile Include="src\directx\device\swap_chain.cpp" />
+    <ClCompile Include="src\directx\frame_resource.cpp" />
+    <ClCompile Include="src\directx\render_target\depth_stencil.cpp" />
+    <ClCompile Include="src\directx\render_target\multi_render_target_texture.cpp" />
+    <ClCompile Include="src\directx\render_target\render_resource_manager.cpp" />
+    <ClCompile Include="src\directx\render_target\render_target.cpp" />
+    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
+    <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
+    <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
+    <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
     <ClCompile Include="src\draw\texture_string.cpp" />
+    <ClCompile Include="src\enemy\enemy.cpp" />
+    <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
     <ClCompile Include="src\input\keyboard.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
-    <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
-    <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\descriptor_heap.cpp" />
     <ClCompile Include="src\directx\descriptor_heap\heap_manager.cpp" />
-    <ClCompile Include="src\directx\shader\defined_static_sampler.cpp" />
-    <ClCompile Include="src\directx\shader\root_signature.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
-    <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
-    <ClCompile Include="src\directx\buffer\vertex_buffer.cpp" />
-    <ClCompile Include="src\directx\directx12_device.cpp" />
-    <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
-    <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\game\application.cpp" />
     <ClCompile Include="src\libs\imgui\imgui.cpp" />
     <ClCompile Include="src\libs\imgui\imgui_draw.cpp" />
@@ -137,24 +133,31 @@
     <ClCompile Include="src\math\vector_2.cpp" />
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
+    <ClCompile Include="src\object\desk.cpp" />
+    <ClCompile Include="src\object\graffiti.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
+    <ClCompile Include="src\physics\collider.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\plane.cpp" />
-    <ClCompile Include="src\player\player.cpp" />
-    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
+    <ClCompile Include="src\player\player.cpp" />
+    <ClCompile Include="src\primitive\box.cpp" />
+    <ClCompile Include="src\primitive\line.cpp" />
+    <ClCompile Include="src\primitive\primitive.cpp" />
+    <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
+    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
+    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
-    <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
     <ClCompile Include="src\scenes\scene.cpp" />
-    <ClCompile Include="src\scenes\scene_change.cpp" />
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
@@ -187,44 +190,50 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
-    <ClInclude Include="src\enemy\enemy_manager.h" />
-    <ClInclude Include="src\enemy\enemy.h" />
-    <ClInclude Include="src\object\desk.h" />
     <ClInclude Include="src\actor\actor.h" />
-    <ClInclude Include="src\draw\particle\particle_emitter.h" />
-    <ClInclude Include="src\draw\particle\particle_manager.h" />
-    <ClInclude Include="src\draw\particle\smoke_particle.h" />
-    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
+    <ClInclude Include="src\camera\perspective_camera.h" />
+    <ClInclude Include="src\directx\buffer\committed_resource.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
+    <ClInclude Include="src\directx\buffer\index_buffer.h" />
+    <ClInclude Include="src\directx\buffer\texture_2d.h" />
+    <ClInclude Include="src\directx\buffer\vertex_buffer.h" />
+    <ClInclude Include="src\directx\device\directx_device.h" />
     <ClInclude Include="src\audio\audio_manager.h" />
     <ClInclude Include="src\audio\audio_type.h" />
     <ClInclude Include="src\audio\xaudio2_callback.h" />
     <None Include="assets\shaders\defines\global.hlsli">
       <FileType>Document</FileType>
     </None>
-    <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_parameter.h" />
-    <ClInclude Include="src\directx\render_target\depth_stencil.h" />
-    <ClInclude Include="src\directx\render_target\depth_stencil_target_id.h" />
-    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
-    <ClInclude Include="src\directx\render_target\render_target.h" />
-    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
     <ClInclude Include="src\directx\device\command_list.h" />
-    <ClInclude Include="src\directx\render_target\render_target_id.h" />
-    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
-    <ClInclude Include="src\directx\shader\shader_base.h" />
-    <ClInclude Include="src\directx\shader\shader_register_id.h" />
-    <ClInclude Include="src\directx\constant_buffer_structure.h" />
+    <ClInclude Include="src\directx\buffer\constant_buffer_structure.h" />
     <ClInclude Include="src\directx\descriptor_heap\counting_descriptor_heap.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap_type.h" />
     <ClInclude Include="src\directx\device\dxgi_adapter.h" />
     <ClInclude Include="src\directx\device\device_option.h" />
     <ClInclude Include="src\directx\device\swap_chain.h" />
+    <ClInclude Include="src\directx\frame_resource.h" />
+    <ClInclude Include="src\directx\render_target\depth_stencil.h" />
+    <ClInclude Include="src\directx\render_target\multi_render_target_texture.h" />
+    <ClInclude Include="src\directx\render_target\render_resource_manager.h" />
+    <ClInclude Include="src\directx\render_target\render_target.h" />
+    <ClInclude Include="src\directx\render_target\render_target_id.h" />
+    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
+    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
+    <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
+    <ClInclude Include="src\directx\shader\pixel_shader.h" />
+    <ClInclude Include="src\directx\shader\root_parameter_index.h" />
+    <ClInclude Include="src\directx\shader\root_signature.h" />
+    <ClInclude Include="src\directx\shader\shader_base.h" />
+    <ClInclude Include="src\directx\shader\shader_register_id.h" />
+    <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
-    <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\draw\texture_char.h" />
     <ClInclude Include="src\draw\texture_string.h" />
+    <ClInclude Include="src\enemy\enemy.h" />
+    <ClInclude Include="src\enemy\enemy_manager.h" />
     <ClInclude Include="src\game\game_device.h" />
     <ClInclude Include="src\input\game_pad.h" />
     <ClInclude Include="src\input\input_code.h" />
@@ -232,26 +241,15 @@
     <ClInclude Include="src\input\joy_code.h" />
     <ClInclude Include="src\input\mouse.h" />
     <ClInclude Include="src\input\keyboard.h" />
-    <ClInclude Include="src\directx\buffer\committed_resource.h" />
-    <ClInclude Include="src\directx\buffer\constant_buffer.h" />
-    <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_handle.h" />
     <ClInclude Include="src\directx\descriptor_heap\descriptor_heap.h" />
-    <ClInclude Include="src\directx\directx_accessor.h" />
+    <ClInclude Include="src\directx\device\directx_accessor.h" />
     <ClInclude Include="src\directx\descriptor_heap\heap_manager.h" />
-    <ClInclude Include="src\directx\resource_type.h" />
-    <ClInclude Include="src\directx\shader\defined_static_sampler.h" />
-    <ClInclude Include="src\directx\shader\root_signature.h" />
+    <ClInclude Include="src\directx\shader\shader_resource_type.h" />
     <ClInclude Include="src\input\input_manager.h" />
     <ClInclude Include="src\audio\audio_source.h" />
-    <ClInclude Include="src\directx\buffer\index_buffer.h" />
     <ClInclude Include="src\directx\primitive_topology.h" />
-    <ClInclude Include="src\directx\buffer\vertex_buffer.h" />
-    <ClInclude Include="src\directx\directx12_device.h" />
     <ClInclude Include="src\directx\directx_helper.h" />
-    <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
-    <ClInclude Include="src\directx\shader\pixel_shader.h" />
-    <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\directx\vertex.h" />
     <ClInclude Include="src\game\application.h" />
     <ClInclude Include="src\input\key_code.h" />
@@ -273,21 +271,29 @@
     <ClInclude Include="src\math\vector_2.h" />
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
+    <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\object\graffiti.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\capsule.h" />
+    <ClInclude Include="src\physics\collider.h" />
     <ClInclude Include="src\physics\collision.h" />
     <ClInclude Include="src\physics\plane.h" />
-    <ClInclude Include="src\player\player.h" />
-    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\physics\ray.h" />
     <ClInclude Include="src\physics\sphere.h" />
+    <ClInclude Include="src\player\player.h" />
+    <ClInclude Include="src\primitive\box.h" />
+    <ClInclude Include="src\primitive\line.h" />
+    <ClInclude Include="src\primitive\primitive.h" />
+    <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
+    <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
+    <ClInclude Include="src\scenes\debugscene\model_view.h" />
+    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
     <ClInclude Include="src\scenes\game_over.h" />
-    <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />
     <ClInclude Include="src\scenes\scene.h" />
     <ClInclude Include="src\scenes\scene_change.h" />
@@ -310,8 +316,8 @@
     <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\resource\model.h" />
     <ClInclude Include="src\util\resource\pipeline.h" />
-    <ClInclude Include="src\util\resource\resource.h" />
     <ClInclude Include="src\util\resource\pixel_shader.h" />
+    <ClInclude Include="src\util\resource\resource.h" />
     <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\util\resource\resource_manager.h" />
     <ClInclude Include="src\util\resource\texture.h" />
@@ -330,6 +336,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
+    <None Include="assets\shaders\graffiti\graffiti.hlsli" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
@@ -344,6 +351,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\graffiti\graffiti_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

@@ -16,7 +16,9 @@
   legend::util::debug::Assertion(expr,                                     \
                                  std::wstring(L"ERROR: %s %d\n") + format, \
                                  __FUNCTIONW__, __LINE__, __VA_ARGS__)
-#define MY_LOG(format, ...) legend::util::debug::Log(format, __VA_ARGS__)
+#define MY_LOG(format, ...)                                        \
+  legend::util::debug::Log(std::wstring(L"Log %s %d:\n") + format, \
+                           __FUNCTIONW__, __LINE__, __VA_ARGS__)
 //ÉäÉäÅ[ÉXéûÇ…ÇÕíËã`ÇµÇ»Ç¢
 #else
 #define MY_ASSERTION(expr, format, ...)

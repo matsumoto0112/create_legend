@@ -41,11 +41,11 @@ inline float Tan(float X) { return std::tanf(X); }
 
 /**
  * @brief ASin(X)
-*/
+ */
 inline float Asin(float X) { return std::asin(X); }
 /**
  * @brief ACos(X)
-*/
+ */
 inline float Acos(float X) { return std::acos(X); }
 /**
  * @brief atan2(Y,X)
@@ -70,6 +70,15 @@ inline float Abs(float X) { return std::abs(X); }
  */
 constexpr u32 AlignPow2(u32 num, u32 alignment) {
   return (num + (alignment - 1)) & ~(alignment - 1);
+}
+
+/**
+ * @brief value‚ªminˆÈãmax–¢–‚©‚Ç‚¤‚©”»’è‚·‚é
+ * @return ãŒÀ‚ğ–‚½‚µ‚Ä‚¢‚½‚çtrue‚ğ•Ô‚·
+ */
+template <typename T>
+constexpr bool IsInRange(T value, T min, T max) {
+  return min <= value && value < max;
 }
 
 /**

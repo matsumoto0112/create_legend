@@ -99,29 +99,22 @@ bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
   //ï™ó£é≤è„ÇÃãóó£
   float length = math::util::Abs(math::Vector3::Dot(v_sep, distance));
 
+  float obb1_x = math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLength(0);
+  float obb1_y = math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLength(1);
+  float obb1_z = math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLength(2);
+  float obb2_x = math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLength(0);
+  float obb2_y = math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLength(1);
+  float obb2_z = math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLength(2);
+
   //ï™ó£é≤è„Ç≈ç≈Ç‡âìÇ¢obb1ÇÃí∏ì_Ç‹Ç≈ÇÃãóó£
-  float len_a = math::util::Abs(
-      math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLengthByScale(0) +
-      math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLengthByScale(1) +
-      math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLengthByScale(2));
+  float len_a = math::util::Abs(obb1_x + obb1_y + obb1_z);
 
   //ï™ó£é≤è„Ç≈ç≈Ç‡âìÇ¢obb2ÇÃí∏ì_Ç‹Ç≈ÇÃãóó£
-  float len_b = math::util::Abs(
-      math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLengthByScale(0) +
-      math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLengthByScale(1) +
-      math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLengthByScale(2));
+  float len_b = math::util::Abs(obb2_x + obb2_y + obb2_z);
 
   if (length > len_a + len_b) {
     //è’ìÀÇµÇƒÇ¢Ç»Ç¢
     return false;
-  }
-
-  if (v_sep.x >= v_sep.y && v_sep.x > v_sep.z) {
-    return_vector_ += math::Vector3(len_a - len_b, 0, 0);
-  } else if (v_sep.y > v_sep.x && v_sep.y >= v_sep.z) {
-    return_vector_ += math::Vector3(0, len_a - len_b, 0);
-  } else if (v_sep.z > v_sep.x && v_sep.z > v_sep.y) {
-    return_vector_ += math::Vector3(0, 0, len_a - len_b);
   }
 
   //è’ìÀÇµÇƒÇ¢ÇÈ
@@ -201,17 +194,13 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   float distance = math::Vector3::Dot(
       obb.GetPosition() - desk_obb.GetPosition() + desk_surface, normal);
 
-  float obb_right = obb.GetPosition().x + obb.GetLength(0);
-  float obb_left = obb.GetPosition().x - obb.GetLength(0);
-  float obb_forward = obb.GetPosition().z + obb.GetLength(2);
-  float obb_back = obb.GetPosition().z - obb.GetLength(2);
   float desk_right = desk_obb.GetPosition().x + desk_obb.GetLength(0);
   float desk_left = desk_obb.GetPosition().x - desk_obb.GetLength(0);
   float desk_forward = desk_obb.GetPosition().z + desk_obb.GetLength(2);
   float desk_back = desk_obb.GetPosition().z - desk_obb.GetLength(2);
 
-  if (obb_right < desk_left || obb_left > desk_right ||
-      obb_forward < desk_back || obb_back > desk_forward) {
+  if (obb.GetPosition().x < desk_left || obb.GetPosition().x > desk_right ||
+      obb.GetPosition().z < desk_back || obb.GetPosition().z > desk_forward) {
     MY_LOG(L"ä˜ÇÃäOÇ…Ç¢Ç‹Ç∑");
     obb.SetOnGround(false);
     return false;

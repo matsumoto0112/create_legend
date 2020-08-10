@@ -108,13 +108,13 @@ math::Quaternion BoundingBox::GetRotation() const {
 math::Vector3 BoundingBox::GetScale() const { return transform_.GetScale(); }
 
 //•ª—£²X‚ğæ“¾
-math::Vector3 BoundingBox::GetAxisX() const { return axis_x; }
+math::Vector3 BoundingBox::GetAxisX() const { return axis_x_; }
 
 //•ª—£²Y‚ğæ“¾
-math::Vector3 BoundingBox::GetAxisY() const { return axis_y; }
+math::Vector3 BoundingBox::GetAxisY() const { return axis_y_; }
 
 //•ª—£²Z‚ğæ“¾
-math::Vector3 BoundingBox::GetAxisZ() const { return axis_z; }
+math::Vector3 BoundingBox::GetAxisZ() const { return axis_z_; }
 
 //ƒgƒŠƒK[”»’è‚Ìæ“¾
 bool BoundingBox::GetIsTrigger() const { return is_trigger_; }
@@ -156,11 +156,11 @@ void BoundingBox::SetAxis() {
   math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
       GetRotation().ToEular() * math::util::RAD_2_DEG);
 
-  axis_x = math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) *
+  axis_x_ = math::Matrix4x4::MultiplyCoord(directions_[0], rotate_matrix) *
            GetScale().x;
-  axis_y = math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) *
+  axis_y_ = math::Matrix4x4::MultiplyCoord(directions_[1], rotate_matrix) *
            GetScale().y;
-  axis_z = math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) *
+  axis_z_ = math::Matrix4x4::MultiplyCoord(directions_[2], rotate_matrix) *
            GetScale().z;
 }
 

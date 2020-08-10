@@ -55,7 +55,7 @@ bool MainScene1::Initialize() {
   //障害物の初期化
   {
     object::Obstacle::InitializeParameter params;
-    params.position = math::Vector3(0.15f, 0.1f, 0.03f);
+    params.position = math::Vector3(0.15f, 0.03f, 0.03f);
     params.model_id = 0;
     params.rotation =
         math::Quaternion::FromEular(0.0f, 28.12f * math::util::DEG_2_RAD, 0.0f);
@@ -67,15 +67,18 @@ bool MainScene1::Initialize() {
     physics_field_.AddObstacle(obs.GetCollisionRef());
   }
 
-  math::Vector3 min = math::Vector3(
-      desk_.GetPosition().x - desk_.GetCollisionRef().GetLength(0), 0,
-      desk_.GetPosition().z - desk_.GetCollisionRef().GetLength(2));
-  math::Vector3 max = math::Vector3(
-      desk_.GetPosition().x + desk_.GetCollisionRef().GetLength(0), 0,
-      desk_.GetPosition().z + desk_.GetCollisionRef().GetLength(2));
-  if (!enemy_manager_.Initilaize()) {
-    return false;
-  }
+  //{
+  //  if (!enemy_manager_.Initilaize()) {
+  //    return false;
+  //  }
+  //  enemy::Enemy::InitializeParameter enemy_parameter;
+  //  enemy_parameter.transform = util::Transform(math::Vector3(-0.04f, 0.1f, 0),
+  //                                              math::Quaternion::kIdentity,
+  //                                              math::Vector3::kUnitVector);
+  //  enemy_parameter.bouding_box_length =
+  //      math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+  //  enemy_manager_.Add(enemy_parameter);
+  //}
 
   //カメラの初期化
   {
@@ -107,26 +110,10 @@ bool MainScene1::Update() {
   }
 
   player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
-  enemy_manager_.SetPosition(&physics_field_);
-
+  enemy_manager_.SetPosition();
   player_.SetVelocity(physics_field_.GetPlayerVelocity());
-  enemy_manager_.SetVelocity(&physics_field_);
-
-  if (ImGui::Begin("Player")) {
-    math::Vector3 position = player_.GetPosition();
-    math::Vector3 velocity = player_.GetVelocity();
-    float impulse = player_.GetImpulse();
-    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
-    ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
-    ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
-
-    math::Vector3 rotation = math::Quaternion::ToEular(player_.GetRotation()) *
-                             math::util::RAD_2_DEG;
-    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
-    player_.SetRotation(
-        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
-  }
-  ImGui::End();
+  enemy_manager_.SetVelocity();
+  player_.SetRotation(physics_field_.GetPlayerRotation());
 
   if (ImGui::Begin("Camera")) {
     //カメラ座標
@@ -235,7 +222,7 @@ bool MainScene1::UpdateTurn() {
       break;
     case legend::system::Turn::ENEMY_TURN:
       MY_LOG(L"ENEMY TURN");
-      if (!enemy_manager_.Update(&player_, &physics_field_)) {
+      if (!enemy_manager_.Update()) {
         return false;
       }
       //最後に登録されているエネミーが動き終えたら又はエネミーが全ていなければ、ターン切り替え

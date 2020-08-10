@@ -140,11 +140,11 @@ class BoundingBox : public Collider {
   //!Še²•ûŒü‚Ì’·‚³(”¼Œa)
   std::vector<float> lengthes_;
   //!•ª—£²X
-  math::Vector3 axis_x;
+  math::Vector3 axis_x_ = math::Vector3::kRightVector;
   //!•ª—£²Y
-  math::Vector3 axis_y;
+  math::Vector3 axis_y_ = math::Vector3::kUpVector;
   //!•ª—£²Z
-  math::Vector3 axis_z;
+  math::Vector3 axis_z_ = math::Vector3::kForwardVector;
 
   //! ƒgƒŠƒK[‚©‚Ç‚¤‚©
   bool is_trigger_;

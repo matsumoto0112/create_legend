@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "src/enemy/enemy.h"
-#include "src/system/physics_field.h"
 #include "src/player/player.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace enemy {
@@ -30,7 +30,7 @@ class EnemyManager {
   /**
    * @brief 更新
    */
-  bool Update(player::Player* player = nullptr, system::PhysicsField* physics_field = nullptr);
+  bool Update();
   /**
    * @brief 描画
    */
@@ -38,16 +38,15 @@ class EnemyManager {
   /**
    * @brief 敵の行動処理
    */
-  void EnemyAction(player::Player* player);
+  void EnemyAction();
   /**
    * @brief 敵を追加
    */
-  void Add(const Enemy::InitializeParameter& paramater,
-           system::PhysicsField* physics_field);
+  void Add(const Enemy::InitializeParameter& paramater);
   /**
    * @brief 敵を削除
    */
-  void Destroy(i32 index, system::PhysicsField* physics_field);
+  void Destroy(i32 index);
 
   void SetPosition(Enemy* enemy);
 
@@ -58,7 +57,7 @@ class EnemyManager {
   /**
    * @brief obbの座標を基に座標更新
    */
-  void SetPosition(system::PhysicsField* physics_field);
+  void SetPosition();
   /**
    * @brief 敵の数を取得
    */
@@ -66,7 +65,7 @@ class EnemyManager {
   /**
    * @brief obbの速度を基に速度更新
    */
-  void SetVelocity(system::PhysicsField* physics_field);
+  void SetVelocity();
   /**
    * @brief 各敵の速度を取得
    */
@@ -87,6 +86,8 @@ class EnemyManager {
 
   //! 各敵の速度格納リスト
   std::vector<math::Vector3> velocities_;
+  std::unique_ptr<player::Player> player_;
+  std::unique_ptr<system::PhysicsField> physics_field_;
 };
 }  // namespace enemy
 }  // namespace legend

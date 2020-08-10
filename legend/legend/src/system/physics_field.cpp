@@ -42,7 +42,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   for (i32 i = 0; i < desk_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
             player_obb_, desk_obbs_[i])) {
-      MY_LOG(L"プレイヤー消しゴムと机が衝突しました");
+      // MY_LOG(L"プレイヤー消しゴムと机が衝突しました");
       break;
     }
   }
@@ -52,7 +52,37 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     for (i32 j = 0; j < enemy_obbs_.size(); j++) {
       if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
               enemy_obbs_[j], desk_obbs_[i])) {
-        MY_LOG(L"エネミー消しゴムと机が衝突しました");
+        // MY_LOG(L"エネミー消しゴムと机が衝突しました");
+      }
+    }
+  }
+
+  //プレイヤーと障害物の衝突判定
+  for (i32 i = 0; i < obstacle_obbs_.size(); i++) {
+    if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+            player_obb_, obstacle_obbs_[i])) {
+      MY_LOG(L"プレイヤーと障害物が衝突しました");
+      math::Vector3 o_v = math::Vector3(obstacle_obbs_[i].GetLength(0), 0,
+                                        obstacle_obbs_[i].GetLength(2));
+      player_obb_.SetPosition(player_obb_.GetPosition() + o_v);
+
+      Deceleration(player_velocity_, 8, player_deceleration_x_,
+                   player_deceleration_z_);
+    }
+  }
+
+  //各エネミーと障害物の衝突判定
+  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+    for (i32 j = 0; j < obstacle_obbs_.size(); j++) {
+      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+              enemy_obbs_[i], obstacle_obbs_[j])) {
+        MY_LOG(L"エネミーと障害物が衝突しました");
+        math::Vector3 o_v = math::Vector3(obstacle_obbs_[i].GetLength(0), 0,
+                                          obstacle_obbs_[i].GetLength(2));
+        enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() + o_v);
+
+        Deceleration(player_velocity_, 8, player_deceleration_x_,
+                     player_deceleration_z_);
       }
     }
   }
@@ -98,18 +128,36 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   }
 
   UpdateGravity(gravity_);
+
+  if (ImGui::Begin("Player")) {
+    math::Vector3 position = player_obb_.GetPosition();
+    math::Vector3 velocity = player_velocity_;
+    float impulse = player_impulse;
+    ImGui::SliderFloat3("Velocity", &velocity.x, -1.0f, 1.0f);
+    ImGui::SliderFloat("Impulse", &impulse, 0, 1.0f);
+    ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f);
+
+    math::Vector3 rotation =
+        math::Quaternion::ToEular(player_obb_.GetRotation()) *
+        math::util::RAD_2_DEG;
+    ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f);
+    player_obb_.SetRotation(
+        math::Quaternion::FromEular(rotation * math::util::DEG_2_RAD));
+  }
+  ImGui::End();
+
   return true;
 }
 
 //プレイヤーあたり判定の登録
-void PhysicsField::SetPlayer(physics::BoundingBox& player_obb) {
+void PhysicsField::SetPlayer(const physics::BoundingBox& player_obb) {
   player_obb_ = player_obb;
   is_player_move_ = false;
   player_velocity_ = math::Vector3::kZeroVector;
 }
 
 //エネミーあたり判定の登録
-void PhysicsField::AddEnemy(physics::BoundingBox& enemy_obb) {
+void PhysicsField::AddEnemy(const physics::BoundingBox& enemy_obb) {
   enemy_obbs_.emplace_back(enemy_obb);
   enemy_velocities_.emplace_back(math::Vector3::kZeroVector);
   is_enemy_move_.emplace_back(false);
@@ -118,7 +166,7 @@ void PhysicsField::AddEnemy(physics::BoundingBox& enemy_obb) {
 }
 
 //机あたり判定の登録
-void PhysicsField::AddDesk(physics::BoundingBox& desk_obb) {
+void PhysicsField::AddDesk(const physics::BoundingBox& desk_obb) {
   desk_obbs_.emplace_back(desk_obb);
 }
 
@@ -276,6 +324,10 @@ physics::BoundingBox PhysicsField::GetEnemyOBB(i32 index_num) const {
 //更新したプレイヤーの速度の取得
 math::Vector3 PhysicsField::GetPlayerVelocity() const {
   return player_velocity_;
+}
+
+math::Quaternion PhysicsField::GetPlayerRotation() const {
+  return player_obb_.GetRotation();
 }
 
 //更新した各エネミーの速度の取得

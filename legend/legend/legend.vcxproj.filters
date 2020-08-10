@@ -107,6 +107,7 @@
     <ClCompile Include="src\primitive\box.cpp" />
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
+    <ClCompile Include="src\draw\particle\particle_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
+    <ClInclude Include="src\draw\particle\particle_system.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -281,6 +283,10 @@
     <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_vs.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl" />
+    <FxCompile Include="assets\shaders\particle\gpu_particle_cs.hlsl" />
+    <FxCompile Include="assets\shaders\particle\gpu_particle_vs.hlsl" />
+    <FxCompile Include="assets\shaders\particle\gpu_particle_gs.hlsl" />
+    <FxCompile Include="assets\shaders\particle\gpu_particle_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

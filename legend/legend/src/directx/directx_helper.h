@@ -57,7 +57,7 @@ inline bool Succeeded(HRESULT hr) {
  */
 inline bool Failed(HRESULT hr) {
   if (FAILED(hr)) {
-    MY_LOG(L"HRESULT of %s", HrToWString(hr).c_str());
+    MY_LOG(L"%s", HrToWString(hr).c_str());
     return true;
   }
   return false;

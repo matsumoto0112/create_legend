@@ -87,6 +87,7 @@ void Enemy::Move() {
 
 void Enemy::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
+  collision_.SetPosition(position);
 }
 
 //ë¨ìxÇÃê›íË

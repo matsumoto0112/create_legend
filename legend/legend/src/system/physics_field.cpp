@@ -62,8 +62,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_obb_,
                                                              enemy_obbs_[i])) {
       MY_LOG(L"プレイヤー消しゴムとエネミー消しゴムが衝突しました");
-
-      if (turn == Turn::PLAYER_TURN) {
+      {
         math::Vector3 vel = player_velocity_ * update_time_;
         math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * player_power;
         enemy_obbs_[i].SetPosition(pos);
@@ -71,7 +70,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
         Deceleration(player_velocity_, 5, player_deceleration_x_,
                      player_deceleration_z_);
       }
-      if (turn == Turn::ENEMY_TURN) {
+      {
         math::Vector3 vel = enemy_velocities_[i] * update_time_;
         math::Vector3 pos = player_obb_.GetPosition() + vel * 2.0f;
         player_obb_.SetPosition(pos);
@@ -82,20 +81,18 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     }
   }
 
-  if (enemy_obbs_.size() >= 2) {
-    for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-      for (i32 j = 0; j < enemy_obbs_.size(); j++) {
-        if (i == j) continue;
+  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+      if (i == j) continue;
 
-        if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-                enemy_obbs_[i], enemy_obbs_[j])) {
-          math::Vector3 vel = enemy_velocities_[i] * update_time_;
-          math::Vector3 pos = enemy_obbs_[j].GetPosition() + vel * 2.0f;
-          enemy_obbs_[j].SetPosition(pos);
-          //衝突時に減速
-          Deceleration(enemy_velocities_[i], 5, enemy_deceleration_x_[i],
-                       enemy_deceleration_z_[i]);
-        }
+      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+              enemy_obbs_[i], enemy_obbs_[j])) {
+        math::Vector3 vel = enemy_velocities_[i] * update_time_;
+        math::Vector3 pos = enemy_obbs_[j].GetPosition() + vel * 2.0f;
+        enemy_obbs_[j].SetPosition(pos);
+        //衝突時に減速
+        Deceleration(enemy_velocities_[i], 5, enemy_deceleration_x_[i],
+                     enemy_deceleration_z_[i]);
       }
     }
   }

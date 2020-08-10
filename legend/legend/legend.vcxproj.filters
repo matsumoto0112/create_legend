@@ -83,7 +83,6 @@
     <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
     <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\enemy\enemy.cpp" />
-    <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
@@ -107,6 +106,7 @@
     <ClCompile Include="src\primitive\box.cpp" />
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
+    <ClCompile Include="src\enemy\enemy_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

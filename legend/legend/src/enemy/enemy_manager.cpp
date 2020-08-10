@@ -8,18 +8,16 @@ EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
-bool EnemyManager::Initilaize() {
-  return true;
-}
+bool EnemyManager::Initilaize() { return true; }
 
 bool EnemyManager::Update(player::Player* player,
                           system::PhysicsField* physics_field) {
-  // æ•µè¿½åŠ 
+  // “G’Ç‰Á
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
     // Add(physics_field);
   }
-  // æ•µå‰Šé™¤
+  // “Gíœ
   else if (game::GameDevice::GetInstance()
                ->GetInput()
                .GetKeyboard()
@@ -31,7 +29,7 @@ bool EnemyManager::Update(player::Player* player,
     }
   }
 
-  // æ•µè¡Œå‹•
+  // “Gs“®
   if (game::GameDevice::GetInstance()->GetInput().GetCommand(
           input::input_code::Pause)) {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
@@ -44,7 +42,7 @@ bool EnemyManager::Update(player::Player* player,
       }
     }
   }
-  // æ•µå†å§‹å‹•
+  // “GÄn“®
   else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
                input::input_code::Decide)) {
     if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
@@ -52,7 +50,7 @@ bool EnemyManager::Update(player::Player* player,
       move_timer_ = 0.0f;
     }
   }
-  // æ•µè¡Œå‹•
+  // “Gs“®
   EnemyAction(player);
 
   for (auto&& enemy : enemys_) {
@@ -94,7 +92,8 @@ void EnemyManager::EnemyAction(player::Player* player) {
   }
 }
 
-void EnemyManager::Add(const Enemy::InitializeParameter& paramater, system::PhysicsField* physics_field) {
+void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
+                       system::PhysicsField* physics_field) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
@@ -103,15 +102,6 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater, system::Phys
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
 
-  auto x =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.x, max_pos.x);
-  auto z =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.z, max_pos.z);
-  auto paramater = enemy::Enemy::InitializeParameter();
-  paramater.transform =
-      util::Transform(math::Vector3(x, 0.1f, z), math::Quaternion::kIdentity,
-                      math::Vector3::kUnitVector);
-  paramater.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
   enemy->Init(paramater);
   if (physics_field != nullptr) {
     physics_field->AddEnemy(enemy->GetCollisionRef());
@@ -143,12 +133,12 @@ void EnemyManager::SetPosition(Enemy* enemy) {
   enemy->SetPosition(position);
 }
 
-//æœ€å¾Œã®æ•µã®å–å¾—
+//ÅŒã‚Ì“G‚Ìæ“¾
 Enemy* EnemyManager::GetLastEnemy() const {
   return enemys_.at(enemys_.size() - 1).get();
 }
 
-// obbã®åº§æ¨™ã‚’åŸºã«åº§æ¨™æ›´æ–°
+// obb‚ÌÀ•W‚ğŠî‚ÉÀ•WXV
 void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->SetPosition(physics_field->GetEnemyOBB(i).GetPosition());
@@ -156,12 +146,12 @@ void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
   }
 }
 
-//æ•µã®æ•°ã‚’å–å¾—
+//“G‚Ì”‚ğæ“¾
 i32 EnemyManager::GetEnemiesSize() const {
   return static_cast<i32>(enemys_.size());
 }
 
-// obbã®é€Ÿåº¦ã‚’åŸºã«é€Ÿåº¦æ›´æ–°
+// obb‚Ì‘¬“x‚ğŠî‚É‘¬“xXV
 void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     if (enemys_[i]->GetMoveEnd()) continue;
@@ -169,7 +159,7 @@ void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
   }
 }
 
-//å„æ•µã®é€Ÿåº¦ã‚’å–å¾—
+//Še“G‚Ì‘¬“x‚ğæ“¾
 std::vector<math::Vector3> EnemyManager::GetVelocities() {
   velocities_.resize(enemys_.size());
   for (i32 i = 0; i < velocities_.size(); i++) {
@@ -179,7 +169,7 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
   return velocities_;
 }
 
-//æœ€å¾Œã®æ•µã®ç§»å‹•çµ‚äº†åˆ¤å®šã‚’å–å¾—
+//ÅŒã‚Ì“G‚ÌˆÚ“®I—¹”»’è‚ğæ“¾
 bool EnemyManager::LastEnemyMoveEnd() const {
   bool end = false;
   if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {

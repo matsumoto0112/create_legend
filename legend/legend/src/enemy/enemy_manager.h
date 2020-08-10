@@ -77,6 +77,8 @@ class EnemyManager {
    */
   bool LastEnemyMoveEnd() const;
 
+  void DebugDraw(directx::device::CommandList& command_list);
+
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;
   i32 action_enemy_index_ = -1;

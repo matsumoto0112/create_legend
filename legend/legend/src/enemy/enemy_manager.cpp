@@ -117,9 +117,9 @@ void EnemyManager::Add(math::Vector3 min_pos, math::Vector3 max_pos,
       game::GameDevice::GetInstance()->GetRandom().Range(min_pos.z, max_pos.z);
   auto paramater = enemy::Enemy::InitializeParameter();
   paramater.transform =
-      util::Transform(math::Vector3(x, 0, z), math::Quaternion::kIdentity,
+      util::Transform(math::Vector3(x, 0.1f, z), math::Quaternion::kIdentity,
                       math::Vector3::kUnitVector);
-  paramater.bouding_box_length = math::Vector3(0.12f, 0.05f, 0.28f);
+  paramater.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
   enemy->Init(paramater);
   if (physics_field != nullptr) {
     physics_field->AddEnemy(enemy->GetCollisionRef());
@@ -197,6 +197,12 @@ bool EnemyManager::LastEnemyMoveEnd() const {
     }
   }
   return end;
+}
+
+void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    enemys_[i]->GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 }  // namespace enemy

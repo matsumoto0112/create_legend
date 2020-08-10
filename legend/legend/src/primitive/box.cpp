@@ -11,7 +11,7 @@ Box::~Box() {}
 
 //‰Šú‰»
 bool Box::Init() {
-  const float length = 0.5f;
+  const float length = 1.0f;
 
   const std::vector<directx::PhysicsVertex> vertices{
       {{-length, length, -length}},   // 0

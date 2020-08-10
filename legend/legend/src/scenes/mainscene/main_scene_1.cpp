@@ -25,10 +25,10 @@ bool MainScene1::Initialize() {
   {
     player::Player::InitializeParameter player_parameter;
     player_parameter.transform =
-        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+        util::Transform(math::Vector3(0, 0.1f, 0), math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    //è¡ÇµÉSÉÄÇÃÇ†ÇΩÇËîªíËÇÃí∑Ç≥ÇÕâºÇ≈Ç±ÇÍÇÆÇÁÇ¢
-    player_parameter.bouding_box_length = math::Vector3(0.12f, 0.05f, 0.28f);
+    player_parameter.bouding_box_length =
+        math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -44,7 +44,8 @@ bool MainScene1::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(0.7f, 0.05f, 0.5f);
+    desk_parameter.bounding_box_length =
+        math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
@@ -139,6 +140,25 @@ bool MainScene1::Update() {
     float fov = camera_.GetFov() * math::util::RAD_2_DEG;
     ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
     camera_.SetFov(fov * math::util::DEG_2_RAD);
+
+    if (ImGui::Button("BackCamera")) {
+      camera_.SetPosition(math::Vector3(0, 0.5f, -0.5f));
+      camera_.SetRotation(math::Quaternion::FromEular(
+          math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f));
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("RightCamera")) {
+      camera_.SetPosition(math::Vector3(0.5f, 0.05f, 0));
+      camera_.SetRotation(math::Quaternion::FromEular(
+          0.0f, math::util::DEG_2_RAD * -90.0f, 0.0f));
+      camera_.SetUpVector(math::Vector3::kUpVector);
+    }
+    if (ImGui::Button("UpCamera")) {
+      camera_.SetPosition(math::Vector3(0, 1.0f, 0));
+      camera_.SetRotation(math::Quaternion::FromEular(
+          math::util::DEG_2_RAD * 90.0f, 0.0f, 0.0f));
+      camera_.SetUpVector(math::Vector3::kForwardVector);
+    }
   }
   ImGui::End();
 
@@ -154,15 +174,23 @@ void MainScene1::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
+  auto& render_resource_manager = device.GetRenderResourceManager();
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+
   camera_.RenderStart();
   player_.Draw();
   desk_.Draw();
   enemy_manager_.Draw();
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::NONE, false);
+  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  player_.GetCollisionRef().DebugDraw(command_list);
+  desk_.GetCollisionRef().DebugDraw(command_list);
+  enemy_manager_.DebugDraw(command_list);
 }
 
 //èIóπ

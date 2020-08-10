@@ -8,14 +8,7 @@ EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
-bool EnemyManager::Initilaize(math::Vector3 min_pos, math::Vector3 max_pos,
-                              system::PhysicsField* physics_field) {
-  i32 max = 4;
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-  for (i32 i = 0; i < max; i++) {
-    Add(min_pos, max_pos, physics_field);
-  }
+bool EnemyManager::Initilaize() {
   return true;
 }
 
@@ -101,8 +94,7 @@ void EnemyManager::EnemyAction(player::Player* player) {
   }
 }
 
-void EnemyManager::Add(math::Vector3 min_pos, math::Vector3 max_pos,
-                       system::PhysicsField* physics_field) {
+void EnemyManager::Add(const Enemy::InitializeParameter& paramater, system::PhysicsField* physics_field) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
@@ -111,15 +103,6 @@ void EnemyManager::Add(math::Vector3 min_pos, math::Vector3 max_pos,
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
 
-  auto x =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.x, max_pos.x);
-  auto z =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.z, max_pos.z);
-  auto paramater = enemy::Enemy::InitializeParameter();
-  paramater.transform =
-      util::Transform(math::Vector3(x, 0, z), math::Quaternion::kIdentity,
-                      math::Vector3::kUnitVector);
-  paramater.bouding_box_length = math::Vector3(0.12f, 0.05f, 0.28f);
   enemy->Init(paramater);
   if (physics_field != nullptr) {
     physics_field->AddEnemy(enemy->GetCollisionRef());

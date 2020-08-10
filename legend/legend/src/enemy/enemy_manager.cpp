@@ -171,6 +171,11 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
 
 //最後の敵の移動終了判定を取得
 bool EnemyManager::LastEnemyMoveEnd() const {
+  //空かどうかチェック
+  if (enemys_.empty()) {
+    return false;
+  }
+
   bool end = false;
   if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
     end = true;

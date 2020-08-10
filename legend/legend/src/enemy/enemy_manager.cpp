@@ -14,12 +14,12 @@ bool EnemyManager::Initilaize() {
 
 bool EnemyManager::Update(player::Player* player,
                           system::PhysicsField* physics_field) {
-  // “G’Ç‰Á
+  // æ•µè¿½åŠ 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
     // Add(physics_field);
   }
-  // “Gíœ
+  // æ•µå‰Šé™¤
   else if (game::GameDevice::GetInstance()
                ->GetInput()
                .GetKeyboard()
@@ -31,7 +31,7 @@ bool EnemyManager::Update(player::Player* player,
     }
   }
 
-  // “Gs“®
+  // æ•µè¡Œå‹•
   if (game::GameDevice::GetInstance()->GetInput().GetCommand(
           input::input_code::Pause)) {
     if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
@@ -44,7 +44,7 @@ bool EnemyManager::Update(player::Player* player,
       }
     }
   }
-  // “GÄn“®
+  // æ•µå†å§‹å‹•
   else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
                input::input_code::Decide)) {
     if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
@@ -52,7 +52,7 @@ bool EnemyManager::Update(player::Player* player,
       move_timer_ = 0.0f;
     }
   }
-  // “Gs“®
+  // æ•µè¡Œå‹•
   EnemyAction(player);
 
   for (auto&& enemy : enemys_) {
@@ -103,6 +103,15 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater, system::Phys
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
 
+  auto x =
+      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.x, max_pos.x);
+  auto z =
+      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.z, max_pos.z);
+  auto paramater = enemy::Enemy::InitializeParameter();
+  paramater.transform =
+      util::Transform(math::Vector3(x, 0.1f, z), math::Quaternion::kIdentity,
+                      math::Vector3::kUnitVector);
+  paramater.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
   enemy->Init(paramater);
   if (physics_field != nullptr) {
     physics_field->AddEnemy(enemy->GetCollisionRef());
@@ -134,12 +143,12 @@ void EnemyManager::SetPosition(Enemy* enemy) {
   enemy->SetPosition(position);
 }
 
-//ÅŒã‚Ì“G‚Ìæ“¾
+//æœ€å¾Œã®æ•µã®å–å¾—
 Enemy* EnemyManager::GetLastEnemy() const {
   return enemys_.at(enemys_.size() - 1).get();
 }
 
-// obb‚ÌÀ•W‚ğŠî‚ÉÀ•WXV
+// obbã®åº§æ¨™ã‚’åŸºã«åº§æ¨™æ›´æ–°
 void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->SetPosition(physics_field->GetEnemyOBB(i).GetPosition());
@@ -147,12 +156,12 @@ void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
   }
 }
 
-//“G‚Ì”‚ğæ“¾
+//æ•µã®æ•°ã‚’å–å¾—
 i32 EnemyManager::GetEnemiesSize() const {
   return static_cast<i32>(enemys_.size());
 }
 
-// obb‚Ì‘¬“x‚ğŠî‚É‘¬“xXV
+// obbã®é€Ÿåº¦ã‚’åŸºã«é€Ÿåº¦æ›´æ–°
 void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     if (enemys_[i]->GetMoveEnd()) continue;
@@ -160,7 +169,7 @@ void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
   }
 }
 
-//Še“G‚Ì‘¬“x‚ğæ“¾
+//å„æ•µã®é€Ÿåº¦ã‚’å–å¾—
 std::vector<math::Vector3> EnemyManager::GetVelocities() {
   velocities_.resize(enemys_.size());
   for (i32 i = 0; i < velocities_.size(); i++) {
@@ -170,7 +179,7 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
   return velocities_;
 }
 
-//ÅŒã‚Ì“G‚ÌˆÚ“®I—¹”»’è‚ğæ“¾
+//æœ€å¾Œã®æ•µã®ç§»å‹•çµ‚äº†åˆ¤å®šã‚’å–å¾—
 bool EnemyManager::LastEnemyMoveEnd() const {
   bool end = false;
   if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
@@ -180,6 +189,12 @@ bool EnemyManager::LastEnemyMoveEnd() const {
     }
   }
   return end;
+}
+
+void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    enemys_[i]->GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 }  // namespace enemy

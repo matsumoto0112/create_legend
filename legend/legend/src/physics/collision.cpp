@@ -101,15 +101,15 @@ bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
 
   //ï™ó£é≤è„Ç≈ç≈Ç‡âìÇ¢obb1ÇÃí∏ì_Ç‹Ç≈ÇÃãóó£
   float len_a = math::util::Abs(
-      math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLength(0) +
-      math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLength(1) +
-      math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLength(2));
+      math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLengthByScale(0) +
+      math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLengthByScale(1) +
+      math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLengthByScale(2));
 
   //ï™ó£é≤è„Ç≈ç≈Ç‡âìÇ¢obb2ÇÃí∏ì_Ç‹Ç≈ÇÃãóó£
   float len_b = math::util::Abs(
-      math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLength(0) +
-      math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLength(1) +
-      math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLength(2));
+      math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLengthByScale(0) +
+      math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLengthByScale(1) +
+      math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLengthByScale(2));
 
   if (length > len_a + len_b) {
     //è’ìÀÇµÇƒÇ¢Ç»Ç¢
@@ -137,8 +137,8 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
       obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
 
   for (i32 i = 0; i < 3; i++) {
-    math::Vector3 axis = obb.GetDirection(i) * obb.GetLengthByScale(i);
-    proximity_distance += fabs(
+    math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i);
+    proximity_distance += math::util::Abs(
         math::Vector3::Dot(math::Matrix4x4::MultiplyCoord(axis, rotate_matrix),
                            plane.GetNormal()));
   }
@@ -161,9 +161,9 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   //ñﬂÇµãóó£
   float return_distance = 0;
   if (distance > 0) {
-    return_distance = proximity_distance - fabs(distance);
+    return_distance = proximity_distance - math::util::Abs(distance);
   } else {
-    return_distance = proximity_distance + fabs(distance);
+    return_distance = proximity_distance + math::util::Abs(distance);
   }
 
   //ç¿ïWÇÃèCê≥
@@ -188,21 +188,30 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
       obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
 
   math::Vector3 normal = math::Vector3::kUpVector;
+  math::Vector3 desk_surface = math::Vector3(0, desk_obb.GetLength(1), 0);
   for (i32 i = 0; i < 3; i++) {
     math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i);
-    proximity_distance += fabs(math::Vector3::Dot(
-        math::Matrix4x4::MultiplyCoord(axis, rotate_matrix), normal));
+    proximity_distance += math::util::Abs(
+        math::Vector3::Dot(math::Matrix4x4::MultiplyCoord(axis, rotate_matrix),
+                           normal) +
+        desk_obb.GetLength(1));
   }
 
-  math::Vector3 desk_pos =
-      desk_obb.GetPosition() + math::Vector3(0, desk_obb.GetLength(1), 0);
-  //è¡ÇµÉSÉÄÇ∆ä˜ÇÃï\ñ Ç∆ÇÃãóó£ÇéZèo
-  float distance = math::Vector3::Dot(obb.GetPosition() - desk_pos, normal);
+  //íºï˚ëÃÇ∆ä˜ÇÃãóó£ÇéZèo
+  float distance = math::Vector3::Dot(
+      obb.GetPosition() - desk_obb.GetPosition() + desk_surface, normal);
 
-  if (math::util::Abs(obb.GetPosition().x + obb.GetLength(0)) >
-          math::util::Abs(desk_obb.GetPosition().x + desk_obb.GetLength(0)) ||
-      math::util::Abs(obb.GetPosition().z + obb.GetLength(2)) >
-          math::util::Abs(desk_obb.GetPosition().z + desk_obb.GetLength(2))) {
+  float obb_right = obb.GetPosition().x + obb.GetLength(0);
+  float obb_left = obb.GetPosition().x - obb.GetLength(0);
+  float obb_forward = obb.GetPosition().z + obb.GetLength(2);
+  float obb_back = obb.GetPosition().z - obb.GetLength(2);
+  float desk_right = desk_obb.GetPosition().x + desk_obb.GetLength(0);
+  float desk_left = desk_obb.GetPosition().x - desk_obb.GetLength(0);
+  float desk_forward = desk_obb.GetPosition().z + desk_obb.GetLength(2);
+  float desk_back = desk_obb.GetPosition().z - desk_obb.GetLength(2);
+
+  if (obb_right < desk_left || obb_left > desk_right ||
+      obb_forward < desk_back || obb_back > desk_forward) {
     MY_LOG(L"ä˜ÇÃäOÇ…Ç¢Ç‹Ç∑");
     obb.SetOnGround(false);
     return false;
@@ -223,9 +232,9 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //ñﬂÇµãóó£
   float return_distance = 0;
   if (distance > 0) {
-    return_distance = proximity_distance - fabs(distance);
+    return_distance = proximity_distance - math::util::Abs(distance);
   } else {
-    return_distance = proximity_distance + fabs(distance);
+    return_distance = proximity_distance + math::util::Abs(distance);
   }
 
   //ç¿ïWÇÃèCê≥

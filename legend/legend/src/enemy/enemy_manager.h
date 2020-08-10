@@ -26,8 +26,7 @@ class EnemyManager {
   /**
    * @brief ‰Šú‰»
    */
-  bool Initilaize(math::Vector3 min_pos, math::Vector3 max_pos,
-                  system::PhysicsField* physics_field = nullptr);
+  bool Initilaize();
   /**
    * @brief XV
    */
@@ -39,16 +38,16 @@ class EnemyManager {
   /**
    * @brief “G‚Ìs“®ˆ—
    */
-  void EnemyAction(player::Player* player = nullptr);
+  void EnemyAction(player::Player* player);
   /**
    * @brief “G‚ğ’Ç‰Á
    */
-  void Add(math::Vector3 min_pos, math::Vector3 max_pos,
-           system::PhysicsField* physics_field = nullptr);
+  void Add(const Enemy::InitializeParameter& paramater,
+           system::PhysicsField* physics_field);
   /**
    * @brief “G‚ğíœ
    */
-  void Destroy(i32 index, system::PhysicsField* physics_field = nullptr);
+  void Destroy(i32 index, system::PhysicsField* physics_field);
 
   void SetPosition(Enemy* enemy);
 

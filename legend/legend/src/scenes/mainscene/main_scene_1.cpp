@@ -59,7 +59,7 @@ bool MainScene1::Initialize() {
   math::Vector3 max = math::Vector3(
       desk_.GetPosition().x + desk_.GetCollisionRef().GetLength(0), 0,
       desk_.GetPosition().z + desk_.GetCollisionRef().GetLength(2));
-  if (!enemy_manager_.Initilaize(min, max, &physics_field_)) {
+  if (!enemy_manager_.Initilaize()) {
     return false;
   }
 

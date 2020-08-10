@@ -107,6 +107,7 @@
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
+    <ClCompile Include="src\object\obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
+    <ClInclude Include="src\object\obstacle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

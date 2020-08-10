@@ -122,6 +122,11 @@ void PhysicsField::AddDesk(physics::BoundingBox& desk_obb) {
   desk_obbs_.emplace_back(desk_obb);
 }
 
+//障害物の当たり判定の登録
+void PhysicsField::AddObstacle(const physics::BoundingBox& obstacle_obb) {
+  obstacle_obbs_.emplace_back(obstacle_obb);
+}
+
 //エネミーあたり判定の削除
 void PhysicsField::RemoveEnemy(i32 index_num) {
   if (index_num < 0 || enemy_obbs_.size() <= 0 ||

@@ -52,6 +52,20 @@ bool MainScene1::Initialize() {
     }
     physics_field_.AddDesk(desk_.GetCollisionRef());
   }
+  //è·äQï®ÇÃèâä˙âª
+  {
+    object::Obstacle::InitializeParameter params;
+    params.position = math::Vector3(0.15f, 0.1f, 0.03f);
+    params.model_id = 0;
+    params.rotation =
+        math::Quaternion::FromEular(0.0f, 28.12f * math::util::DEG_2_RAD, 0.0f);
+    params.bounding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+    auto& obs = obstacles_.emplace_back();
+    if (!obs.Init(params)) {
+      return false;
+    }
+    physics_field_.AddObstacle(obs.GetCollisionRef());
+  }
 
   math::Vector3 min = math::Vector3(
       desk_.GetPosition().x - desk_.GetCollisionRef().GetLength(0), 0,
@@ -183,6 +197,9 @@ void MainScene1::Draw() {
   player_.Draw();
   desk_.Draw();
   enemy_manager_.Draw();
+  for (auto&& obs : obstacles_) {
+    obs.Draw();
+  }
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
@@ -190,6 +207,9 @@ void MainScene1::Draw() {
   device.GetHeapManager().UpdateGlobalHeap(device, command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
   desk_.GetCollisionRef().DebugDraw(command_list);
+  for (auto&& obs : obstacles_) {
+    obs.GetCollisionRef().DebugDraw(command_list);
+  }
   enemy_manager_.DebugDraw(command_list);
 }
 

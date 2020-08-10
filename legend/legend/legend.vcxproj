@@ -136,6 +136,7 @@
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\object\desk.cpp" />
     <ClCompile Include="src\object\graffiti.cpp" />
+    <ClCompile Include="src\object\obstacle.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collider.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\object\desk.h" />
     <ClInclude Include="src\object\graffiti.h" />
+    <ClInclude Include="src\object\obstacle.h" />
     <ClInclude Include="src\physics\bounding_box.h" />
     <ClInclude Include="src\physics\capsule.h" />
     <ClInclude Include="src\physics\collider.h" />

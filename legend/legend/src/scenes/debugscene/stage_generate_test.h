@@ -5,8 +5,12 @@
  * @brief ステージ生成テスト
  */
 
+#include "src/camera/perspective_camera.h"
+#include "src/object/desk.h"
+#include "src/player/player.h"
 #include "src/scenes/scene.h"
 #include "src/stage_generate/stage_generator.h"
+#include "src/enemy/enemy_manager.h"
 
 namespace legend {
 namespace scenes {
@@ -44,8 +48,18 @@ class StageGenerateTest : public Scene {
   void Finalize() override;
 
  private:
+  //! ステージ生成クラス
   std::unique_ptr<stage_generate::StageGenerator> stage_generator_;
+  //! 読み込んだステージデータ格納用
   std::vector<std::string> indexs_;
+  //! メインカメラ
+  camera::PerspectiveCamera camera_;
+  //! プレイヤー
+  player::Player player_;
+  //! 机
+  object::Desk desk_;
+  //! 敵管理システム
+  enemy::EnemyManager enemy_manager_;
 };
 
 }  // namespace debugscene

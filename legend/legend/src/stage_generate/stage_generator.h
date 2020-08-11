@@ -3,7 +3,9 @@
 
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
+#include "src/object/obstacle.h"
 #include "src/player/player.h"
+#include "src/system/physics_field.h"
 namespace legend {
 namespace stage_generate {
 
@@ -27,7 +29,14 @@ class StageGenerator {
    * @brief 読み込み&生成処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool LoadStage(std::filesystem::path filepath, object::Desk* desk,
+  // bool LoadStage(std::filesystem::path filepath, const std::string map_name,
+  //               system::PhysicsField* physics_field,
+  //               std::vector<actor::Actor<physics::BoundingBox>>* actors,
+  //               enemy::EnemyManager* enemy_manager);
+  bool LoadStage(std::filesystem::path filepath, const std::string map_name,
+                 system::PhysicsField* physics_field,
+                 std::vector<object::Desk>* desks,
+                 std::vector<object::Obstacle>* obstacles,
                  player::Player* player, enemy::EnemyManager* enemy_manager);
   /**
    * @brief テキストの読み込み処理
@@ -38,7 +47,16 @@ class StageGenerator {
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool SetMapActors(std::vector<std::string> indexs, object::Desk* desk,
+  // bool SetMapActors(const std::string map_name,
+  //                  const std::vector<std::string>& indexs,
+  //                  system::PhysicsField* physics_field,
+  //                  std::vector<actor::Actor<physics::BoundingBox>>* actors,
+  //                  enemy::EnemyManager* enemy_manager);
+  bool SetMapActors(const std::string map_name,
+                    const std::vector<std::string>& indexs,
+                    system::PhysicsField* physics_field,
+                    std::vector<object::Desk>* desks,
+                    std::vector<object::Obstacle>* obstacles,
                     player::Player* player, enemy::EnemyManager* enemy_manager);
 
  private:

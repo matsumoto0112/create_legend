@@ -6,11 +6,13 @@
  */
 
 #include "src/camera/perspective_camera.h"
+#include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
+#include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
 #include "src/stage_generate/stage_generator.h"
-#include "src/enemy/enemy_manager.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace scenes {
@@ -52,12 +54,18 @@ class StageGenerateTest : public Scene {
   std::unique_ptr<stage_generate::StageGenerator> stage_generator_;
   //! 読み込んだステージデータ格納用
   std::vector<std::string> indexs_;
+  //! 物理管理クラス
+  system::PhysicsField physics_field_;
   //! メインカメラ
   camera::PerspectiveCamera camera_;
+  //! アクター格納リスト
+  //std::vector<actor::Actor<physics::BoundingBox>> map_actors_;
   //! プレイヤー
   player::Player player_;
-  //! 机
-  object::Desk desk_;
+  //! 机リスト
+  std::vector<object::Desk> desks_;
+  //! 障害物リスト
+  std::vector<object::Obstacle> obstacles_;
   //! 敵管理システム
   enemy::EnemyManager enemy_manager_;
 };

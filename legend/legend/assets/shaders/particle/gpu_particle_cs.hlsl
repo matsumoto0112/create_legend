@@ -7,6 +7,22 @@
 
 #include "gpu_particle_test.hlsli"
 
+struct CSInput
+{
+    uint3 group_thread : SV_GroupThreadID;
+    uint3 group : SV_GroupID;
+    uint group_index : SV_GroupIndex;
+    uint3 dispatch : SV_DispatchThreadID;
+};
+
+#define SEED_START (4 * 0)
+#define LIFETIME_START (4 * 1)
+#define POSITION_START (4 * 2)
+#define COLOR_START (4 * 5)
+#define PARTICLE_SIZE (4 * 9)
+
+RWByteAddressBuffer particles : register(u0);
+
 void SetLifeTime(uint addr, float value)
 {
     particles.Store(addr + LIFETIME_START, asuint(value));
@@ -68,6 +84,7 @@ void main(const CSInput input)
         + input.dispatch.x;
 
     const uint addr = index * PARTICLE_SIZE;
+    particles.Store(addr, asuint(index));
 
     float lifetime = GetLifeTime(addr);
     if (lifetime <= 0.0)

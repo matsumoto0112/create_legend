@@ -50,10 +50,10 @@ class HeapManager {
    */
   void BeginFrame();
   /**
-   * @brief コマンドリストにセットする
+   * @brief グラフィックスコマンドリストにセットする
    * @param command_list コマンドリスト
    */
-  void SetGraphicsCommandList(device::CommandList& command_list) const;
+  void SetCommandList(device::CommandList& command_list) const;
   /**
    * @brief ハンドルをグローバルに登録する
    * @param register_num シェーダーのレジスター番号
@@ -63,12 +63,19 @@ class HeapManager {
   void RegisterHandle(u32 register_num, shader::ResourceType type,
                       DescriptorHandle handle);
   /**
-   * @brief グローバルヒープを更新する
+   * @brief グローバルヒープを更新し、グラフィックスコマンドリストにセットする
    * @param accessor DirectXデバイスアクセサ
    * @param command_list コマンドリスト
    */
-  void UpdateGlobalHeap(device::IDirectXAccessor& accessor,
-                        device::CommandList& command_list);
+  void SetHeapTableToGraphicsCommandList(device::IDirectXAccessor& accessor,
+                                         device::CommandList& command_list);
+  /**
+   * @brief グローバルヒープを更新し、コンピュートコマンドリストにセットする
+   * @param accessor DirectXデバイスアクセサ
+   * @param command_list コマンドリスト
+   */
+  void SetHeapTableToComputeCommandList(device::IDirectXAccessor& accessor,
+                                        device::CommandList& command_list);
   /**
    * @brief ローカルヒープを追加する
    * @param accessor DirectXデバイスアクセサ
@@ -99,7 +106,7 @@ class HeapManager {
    */
   CountingDescriptorHeap* GetDsvHeap() { return &dsv_heap_; }
 
- //private:
+  // private:
   //! レンダーターゲットヒープ
   CountingDescriptorHeap rtv_heap_;
   //! デプス・ステンシルヒープ

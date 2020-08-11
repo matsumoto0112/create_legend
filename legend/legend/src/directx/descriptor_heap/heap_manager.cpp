@@ -98,8 +98,7 @@ bool HeapManager::Init(device::IDirectXAccessor& accessor) {
 
 void HeapManager::BeginFrame() { global_heap_allocated_count_ = 0; }
 
-void HeapManager::SetGraphicsCommandList(
-    device::CommandList& command_list) const {
+void HeapManager::SetCommandList(device::CommandList& command_list) const {
   ID3D12DescriptorHeap* const heaps[] = {global_heap_.GetHeap()};
   command_list.GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
@@ -139,8 +138,8 @@ void HeapManager::RegisterHandle(u32 register_num, shader::ResourceType type,
   }
 }
 
-void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
-                                   device::CommandList& command_list) {
+void HeapManager::SetHeapTableToGraphicsCommandList(
+    device::IDirectXAccessor& accessor, device::CommandList& command_list) {
   auto PaddingNullHandle = [&](std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handle,
                                D3D12_CPU_DESCRIPTOR_HANDLE default_handle) {
     const u32 size = static_cast<u32>(handle->size());
@@ -169,6 +168,48 @@ void HeapManager::UpdateGlobalHeap(device::IDirectXAccessor& accessor,
             D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
         command_list.GetCommandList()->SetGraphicsRootDescriptorTable(
+            index, global_handle.gpu_handle_);
+        global_heap_allocated_count_ += count;
+      };
+
+  CopyAndSetToCommandList(shader::root_parameter_index::CBV,
+                          current_local_handles_.cbv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::SRV,
+                          current_local_handles_.srv_handles_);
+  CopyAndSetToCommandList(shader::root_parameter_index::UAV,
+                          current_local_handles_.uav_handles_);
+}
+
+void HeapManager::SetHeapTableToComputeCommandList(
+    device::IDirectXAccessor& accessor, device::CommandList& command_list) {
+  auto PaddingNullHandle = [&](std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>* handle,
+                               D3D12_CPU_DESCRIPTOR_HANDLE default_handle) {
+    const u32 size = static_cast<u32>(handle->size());
+    for (u32 i = 0; i < size; i++) {
+      if ((*handle)[i].ptr == 0) (*handle)[i] = default_handle;
+    }
+  };
+
+  PaddingNullHandle(&current_local_handles_.cbv_handles_,
+                    default_handle_.default_cbv_handle_.cpu_handle_);
+  PaddingNullHandle(&current_local_handles_.srv_handles_,
+                    default_handle_.default_srv_handle_.cpu_handle_);
+  PaddingNullHandle(&current_local_handles_.uav_handles_,
+                    default_handle_.default_uav_handle_.cpu_handle_);
+
+  auto CopyAndSetToCommandList =
+      [&](u32 index, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& handles) {
+        //必要な数だけローカルからグローバルにコピーする
+        const u32 count = static_cast<u32>(handles.size());
+        if (count == 0) return;
+        const DescriptorHandle global_handle =
+            global_heap_.GetHandle(global_heap_allocated_count_);
+        D3D12_CPU_DESCRIPTOR_HANDLE dst_handle = global_handle.cpu_handle_;
+        accessor.GetDevice()->CopyDescriptors(
+            1, &dst_handle, &count, count, handles.data(), nullptr,
+            D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+        command_list.GetCommandList()->SetComputeRootDescriptorTable(
             index, global_handle.gpu_handle_);
         global_heap_allocated_count_ += count;
       };

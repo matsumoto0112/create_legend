@@ -124,7 +124,7 @@ bool Model::Init(const std::filesystem::path& path,
 void Model::Draw(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   albedo_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

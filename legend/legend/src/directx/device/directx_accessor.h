@@ -49,6 +49,10 @@ class IDirectXAccessor {
    */
   virtual void RegisterHandle(u32 register_num, shader::ResourceType type,
                               descriptor_heap::DescriptorHandle handle) = 0;
+  /**
+   * @brief 現在のフレームインデックスを取得する
+   */
+  virtual u32 GetCurrentBackBufferIndex() const = 0;
 };
 
 }  // namespace device

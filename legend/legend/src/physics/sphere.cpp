@@ -109,7 +109,7 @@ void Sphere::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
   transform_constant_buffer_.SetToHeap(device);
-  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  device.GetHeapManager().SetCommandList(command_list);
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.Draw(command_list);

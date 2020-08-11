@@ -212,7 +212,12 @@ class MyApp final : public device::Application {
     //  return false;
     //}
 
-    if (!particle_.Init()) return false;
+    auto p = std::make_unique<draw::particle::ParticleSystem>();
+    if (!p->Init()) {
+      return false;
+    }
+    game::GameDevice::GetInstance()->GetParticleManager().AddParticle(
+        std::move(p));
     return true;
   }
   bool Update() override {
@@ -256,6 +261,8 @@ class MyApp final : public device::Application {
     //  ImGui::Text("FrameRate: %.1f", fps.GetFPS());
     //}
     // ImGui::End();
+    game::GameDevice::GetInstance()->GetParticleManager().Update();
+
     return true;
   }
 
@@ -264,7 +271,12 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    particle_.Execute();
+    game::GameDevice::GetInstance()->GetParticleManager().Render(
+        game::GameDevice::GetInstance()
+            ->GetDevice()
+            .GetCurrentFrameResource()
+            ->GetCommandList());
+
     // scene_manager_.Draw();
     return true;
   }

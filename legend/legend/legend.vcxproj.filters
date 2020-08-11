@@ -109,6 +109,7 @@
     <ClCompile Include="src\draw\particle\particle_system.cpp" />
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\object\obstacle.cpp" />
+    <ClCompile Include="src\draw\particle\particle_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="src\draw\particle\particle_system.h" />
     <ClInclude Include="src\object\obstacle.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\draw\particle\particle_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

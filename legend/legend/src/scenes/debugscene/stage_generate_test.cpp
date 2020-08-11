@@ -114,7 +114,7 @@ bool StageGenerateTest::Update() {
 void StageGenerateTest::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  device.GetHeapManager().SetCommandList(command_list);
   auto& render_resource_manager = device.GetRenderResourceManager();
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
@@ -128,7 +128,7 @@ void StageGenerateTest::Draw() {
    render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER,
       false, directx::render_target::DepthStencilTargetID::NONE, false);
-   device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
    player_.GetCollisionRef().DebugDraw(command_list);
    desk_.GetCollisionRef().DebugDraw(command_list);
 }

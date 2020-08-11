@@ -53,10 +53,6 @@ bool ParticleSystem::Init() {
     return false;
   }
 
-  for (auto&& res : frame_resources_) {
-    res.Init(device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_COMPUTE);
-  }
-
   {
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
     pso_desc.pRootSignature =
@@ -109,17 +105,6 @@ bool ParticleSystem::Init() {
     return false;
   }
 
-  D3D12_DESCRIPTOR_HEAP_DESC heap_desc = {};
-  heap_desc.NumDescriptors = 1;
-  heap_desc.Type =
-      D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-  heap_desc.Flags =
-      D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-  if (Failed(device.GetDevice()->CreateDescriptorHeap(&heap_desc,
-                                                      IID_PPV_ARGS(&heaps_)))) {
-    return false;
-  }
-
   {
     auto AlignForUAVCounter = [](u32 size) {
       const u32 alignment = D3D12_UAV_COUNTER_PLACEMENT_ALIGNMENT;
@@ -158,9 +143,8 @@ bool ParticleSystem::Init() {
             IID_PPV_ARGS(&particle_uav_upload_)))) {
       return false;
     }
-    handle_ = directx::descriptor_heap::DescriptorHandle{
-        heaps_->GetCPUDescriptorHandleForHeapStart(),
-        heaps_->GetGPUDescriptorHandleForHeapStart()};
+    handle_ = device.GetLocalHandle(
+        directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
 
     D3D12_SUBRESOURCE_DATA sub_resource = {};
     sub_resource.pData = particles.data();
@@ -196,17 +180,30 @@ bool ParticleSystem::Init() {
   device.ExecuteCommandList({command_list});
   device.WaitExecute();
 
-  if (Failed(device.GetDevice()->CreateFence(
-          fence_value_, D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
-          IID_PPV_ARGS(&fence_)))) {
-    return false;
-  }
-  fence_value_++;
   return true;
 }
 
-void ParticleSystem::Execute() {
-  using directx::directx_helper::Failed;
+void ParticleSystem::Update(
+    directx::device::CommandList& compute_command_list) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& graphics_command_list =
+      device.GetCurrentFrameResource()->GetCommandList();
+
+  device.GetHeapManager().SetCommandList(compute_command_list);
+  compute_command_list.GetCommandList()->SetComputeRootSignature(
+      device.GetDefaultRootSignature()->GetRootSignature());
+  device.GetHeapManager().RegisterHandle(0, directx::shader::ResourceType::UAV,
+                                         handle_);
+  device.GetHeapManager().SetHeapTableToComputeCommandList(
+      device, compute_command_list);
+  compute_command_list.GetCommandList()->SetPipelineState(
+      compute_pipeline_state_.Get());
+  compute_command_list.GetCommandList()->Dispatch(DISPATCH_X, DISPATCH_Y, 1);
+}
+
+void ParticleSystem::Render(
+    directx::device::CommandList& graphics_command_list) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
   transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
   transform_cb_.UpdateStaging();
   world_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
@@ -216,64 +213,10 @@ void ParticleSystem::Execute() {
       45.0f * math::util::DEG_2_RAD, 1280.0f / 720.0f, 0.1f, 200.0f);
   world_cb_.UpdateStaging();
 
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& graphics_command_list =
-      device.GetCurrentFrameResource()->GetCommandList();
-
-  current_resource_ = &frame_resources_[device.GetRenderResourceManager()
-                                            .GetCurrentBackBufferIndex()];
-  const UINT64 last_completed_fence = fence_->GetCompletedValue();
-
-  if (current_resource_->fence_value_ > last_completed_fence) {
-    HANDLE event_handle = CreateEvent(nullptr, false, false, nullptr);
-    if (!event_handle) {
-      return;
-    }
-    if (Failed(fence_->SetEventOnCompletion(current_resource_->fence_value_,
-                                            event_handle))) {
-      return;
-    }
-    WaitForSingleObject(event_handle, INFINITE);
-    CloseHandle(event_handle);
-  }
-  current_resource_->Ready();
-
-  ID3D12DescriptorHeap* heaps[] = {heaps_.Get()};
-
-  current_resource_->GetCommandList().GetCommandList()->SetDescriptorHeaps(
-      1, heaps);
-  current_resource_->GetCommandList().GetCommandList()->SetComputeRootSignature(
-      device.GetDefaultRootSignature()->GetRootSignature());
-  current_resource_->GetCommandList()
-      .GetCommandList()
-      ->SetComputeRootDescriptorTable(
-          2, heaps_->GetGPUDescriptorHandleForHeapStart());
-  current_resource_->GetCommandList().GetCommandList()->SetPipelineState(
-      compute_pipeline_state_.Get());
-  current_resource_->GetCommandList().GetCommandList()->Dispatch(DISPATCH_X,
-                                                                 DISPATCH_Y, 1);
-
-  current_resource_->GetCommandList().Close();
-  ID3D12CommandList* command_lists[] = {
-      current_resource_->GetCommandList().GetCommandList()};
-  compute_command_queue_->ExecuteCommandLists(1, command_lists);
-
-  const UINT64 fence_to_wait_for = fence_value_;
-  if (Failed(compute_command_queue_->Signal(fence_.Get(), fence_to_wait_for))) {
-    return;
-  }
-  fence_value_++;
-
-  HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
-  if (Failed(fence_->SetEventOnCompletion(fence_to_wait_for, fence_event))) {
-    return;
-  }
-  WaitForSingleObject(fence_event, INFINITE);
-  CloseHandle(fence_event);
-
   world_cb_.SetToHeap(device);
   transform_cb_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device, graphics_command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(
+      device, graphics_command_list);
   graphics_command_list.GetCommandList()->SetPipelineState(
       graphics_pipeline_state_.Get());
   graphics_command_list.GetCommandList()->IASetPrimitiveTopology(
@@ -282,6 +225,7 @@ void ParticleSystem::Execute() {
       0, 1, &vertex_buffer_view_);
   graphics_command_list.GetCommandList()->DrawInstanced(PARTICLE_NUM, 1, 0, 0);
 }
+
 }  // namespace particle
 }  // namespace draw
 }  // namespace legend

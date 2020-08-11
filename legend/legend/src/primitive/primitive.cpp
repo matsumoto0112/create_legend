@@ -27,7 +27,7 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

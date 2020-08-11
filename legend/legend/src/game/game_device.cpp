@@ -1,5 +1,6 @@
 #include "src/game/game_device.h"
 
+#include "src/directx/device/device_option.h"
 #include "src/window/window_procedure.h"
 
 namespace {
@@ -53,9 +54,15 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
     return false;
   }
 
+  if (!particle_manager_.Init(GetDevice(),
+                              directx::device::defines::FRAME_COUNT)) {
+    return false;
+  }
+
   // ImGui
   if (!imgui_manager_.Init(window_->GetHWND(), device_->GetDevice(),
-                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3, true)) {
+                           DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+                           directx::device::defines::FRAME_COUNT, true)) {
     return false;
   }
 
@@ -72,6 +79,7 @@ bool GameDevice::BeginFrame() {
   if (!device_->Prepare()) {
     return false;
   }
+  particle_manager_.BeginFrame(GetDevice());
 
   return true;
 }

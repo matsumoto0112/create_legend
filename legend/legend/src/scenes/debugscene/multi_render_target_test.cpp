@@ -336,7 +336,7 @@ void MultiRenderTargetTest::Draw() {
   render_resource_manager.SetRenderTargets(
       command_list, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, true,
       DepthStencilTarget_ID::DEPTH_ONLY, true);
-  device.GetHeapManager().SetGraphicsCommandList(command_list);
+  device.GetHeapManager().SetCommandList(command_list);
   camera_.RenderStart();
   game::GameDevice::GetInstance()
       ->GetResource()
@@ -368,7 +368,7 @@ void MultiRenderTargetTest::Draw() {
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   post_process_local_cb_.SetToHeap(device);
-  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
 
   post_process_vertex_buffer_.SetGraphicsCommandList(command_list);
   post_process_index_buffer_.SetGraphicsCommandList(command_list);

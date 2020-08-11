@@ -19,7 +19,7 @@ bool FrameResource::Init(device::IDirectXAccessor& accessor,
   if (!command_lists_.Close()) {
     return false;
   }
-
+  fence_value_ = 0;
   return true;
 }
 

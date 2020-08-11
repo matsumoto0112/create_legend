@@ -22,7 +22,7 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
       flags |= DeviceOptionFlags::USE_WARP_DEVICE;
     }
     return flags;
-  }(USE_WARP_DEVICE);
+  }(defines::USE_WARP_DEVICE);
 
   //デバイス回りの初期化をまずやる
   if (!adapter_.Init(flags)) {
@@ -56,8 +56,8 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   }
 
   //描画リソース管理オブジェクトを作成する
-  if (!render_resource_manager_.Init(*this, adapter_, FRAME_COUNT, width,
-                                     height,
+  if (!render_resource_manager_.Init(*this, adapter_, defines::FRAME_COUNT,
+                                     width, height,
                                      DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
                                      hwnd, command_queue_.Get())) {
     return false;
@@ -66,7 +66,7 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   //今後、毎描画後に更新していく
   frame_index_ = render_resource_manager_.GetCurrentBackBufferIndex();
 
-  for (u32 i = 0; i < FRAME_COUNT; i++) {
+  for (u32 i = 0; i < defines::FRAME_COUNT; i++) {
     FrameResource& resource = resources_[i];
     if (!resource.Init(
             *this, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
@@ -113,7 +113,7 @@ bool DirectXDevice::Prepare() {
 
   default_root_signature_->SetGraphicsCommandList(
       current_resource_->GetCommandList());
-  heap_manager_->SetGraphicsCommandList(current_resource_->GetCommandList());
+  heap_manager_->SetCommandList(current_resource_->GetCommandList());
   return true;
 }
 
@@ -142,7 +142,7 @@ bool DirectXDevice::Present() {
 
   // WARPデバイスを使用する環境だとwaitがおかしい？
   //うまく機能しないためコマンドを逐次待機するようにする
-  if (USE_WARP_DEVICE) {
+  if (defines::USE_WARP_DEVICE) {
     WaitExecute();
   }
 
@@ -170,7 +170,7 @@ void DirectXDevice::Destroy() {
   }
   CloseHandle(fence_event);
 
-  for (UINT i = 0; i < FRAME_COUNT; i++) {
+  for (UINT i = 0; i < defines::FRAME_COUNT; i++) {
     resources_[i].Destroy();
   }
 }
@@ -227,6 +227,11 @@ void DirectXDevice::WaitExecute() {
   }
   WaitForSingleObject(fence_event, INFINITE);
   CloseHandle(fence_event);
+}
+
+//フレームインデックスを取得する
+u32 DirectXDevice::GetCurrentBackBufferIndex() const {
+  return render_resource_manager_.GetCurrentBackBufferIndex();
 }
 
 }  // namespace device

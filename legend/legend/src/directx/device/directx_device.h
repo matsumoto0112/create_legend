@@ -26,13 +26,6 @@ namespace device {
  */
 class DirectXDevice : public IDirectXAccessor {
  public:
-  //! 使用するフレーム数
-  static constexpr u32 FRAME_COUNT = 3;
-  //! WARPデバイスを使用するか
-  //! 現在特定環境下においてDeviceの不具合があるためその時はtrueにする
-  static constexpr bool USE_WARP_DEVICE = false;
-
- public:
   /**
    * @brief コンストラクタ
    */
@@ -122,6 +115,10 @@ class DirectXDevice : public IDirectXAccessor {
   shader::RootSignature* GetDefaultRootSignature() const {
     return default_root_signature_.get();
   }
+  /**
+   * @brief 現在のフレームインデックスを取得する
+   */
+  u32 GetCurrentBackBufferIndex() const override;
 
  private:
   //! アダプター
@@ -139,7 +136,7 @@ class DirectXDevice : public IDirectXAccessor {
   UINT64 fence_value_;
 
   //! フレームリソース
-  FrameResource resources_[FRAME_COUNT];
+  FrameResource resources_[defines::FRAME_COUNT];
   //! 現在のフレームリソース
   FrameResource* current_resource_;
   //! ヒープ管理オブジェクト

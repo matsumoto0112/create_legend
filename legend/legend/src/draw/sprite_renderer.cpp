@@ -114,7 +114,7 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   for (auto&& sp : draw_items_) {
     if (!sp) continue;
     sp->SetToGraphicsCommandList(command_list);
-    device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+    device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
     index_buffer_.Draw(command_list);
   }
   draw_items_.clear();

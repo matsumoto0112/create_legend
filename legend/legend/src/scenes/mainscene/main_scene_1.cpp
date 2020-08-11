@@ -204,7 +204,7 @@ void MainScene1::Draw() {
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  device.GetHeapManager().UpdateGlobalHeap(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
   desk_.GetCollisionRef().DebugDraw(command_list);
   for (auto&& obs : obstacles_) {

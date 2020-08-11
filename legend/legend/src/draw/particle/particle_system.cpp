@@ -190,40 +190,6 @@ bool ParticleSystem::Init() {
     vertex_buffer_view_.StrideInBytes = sizeof(Particle);
   }
 
-  {
-    D3D12_INDIRECT_ARGUMENT_DESC argumentDescs[1] = {};
-    argumentDescs[0].Type =
-        D3D12_INDIRECT_ARGUMENT_TYPE::D3D12_INDIRECT_ARGUMENT_TYPE_DRAW;
-
-    D3D12_COMMAND_SIGNATURE_DESC comDesc{};
-    comDesc.pArgumentDescs = argumentDescs;
-    comDesc.NumArgumentDescs = _countof(argumentDescs);
-    comDesc.ByteStride = sizeof(IndirectCommand);
-
-    if (Failed(device.GetDevice()->CreateCommandSignature(
-            &comDesc, nullptr, IID_PPV_ARGS(&command_signature_)))) {
-      return false;
-    }
-  }
-  {
-    command_.draw_argument.VertexCountPerInstance = PARTICLE_NUM;
-    command_.draw_argument.InstanceCount = 1;
-    if (Failed(device.GetDevice()->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
-            D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer(sizeof(IndirectCommand)),
-            D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-            IID_PPV_ARGS(&command_resource_)))) {
-      return false;
-    }
-    void* data;
-    if (Failed(command_resource_->Map(0, nullptr, &data))) {
-      return false;
-    }
-    memcpy(data, &command_, sizeof(command_));
-    command_resource_->Unmap(0, nullptr);
-  }
-
   if (!command_list.Close()) {
     return false;
   }
@@ -310,12 +276,11 @@ void ParticleSystem::Execute() {
   device.GetHeapManager().UpdateGlobalHeap(device, graphics_command_list);
   graphics_command_list.GetCommandList()->SetPipelineState(
       graphics_pipeline_state_.Get());
-  graphics_command_list.GetCommandList()->IASetVertexBuffers(
-      0, 1, &vertex_buffer_view_);
   graphics_command_list.GetCommandList()->IASetPrimitiveTopology(
       D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
-  graphics_command_list.GetCommandList()->ExecuteIndirect(
-      command_signature_.Get(), 1, command_resource_.Get(), 0, nullptr, 0);
+  graphics_command_list.GetCommandList()->IASetVertexBuffers(
+      0, 1, &vertex_buffer_view_);
+  graphics_command_list.GetCommandList()->DrawInstanced(PARTICLE_NUM, 1, 0, 0);
 }
 }  // namespace particle
 }  // namespace draw

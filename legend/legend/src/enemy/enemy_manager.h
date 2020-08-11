@@ -42,11 +42,11 @@ class EnemyManager {
   /**
    * @brief 敵を追加
    */
-  void Add(const Enemy::InitializeParameter& paramater);
+  void Add(const Enemy::InitializeParameter& paramater, system::PhysicsField& physics_field);
   /**
    * @brief 敵を削除
    */
-  void Destroy(i32 index);
+  void Destroy(i32 index, system::PhysicsField& physics_field);
 
   void SetPosition(Enemy* enemy);
 
@@ -57,7 +57,7 @@ class EnemyManager {
   /**
    * @brief obbの座標を基に座標更新
    */
-  void SetPosition();
+  void SetPosition(system::PhysicsField& physics_field);
   /**
    * @brief 敵の数を取得
    */
@@ -65,7 +65,7 @@ class EnemyManager {
   /**
    * @brief obbの速度を基に速度更新
    */
-  void SetVelocity();
+  void SetVelocity(system::PhysicsField& physics_field);
   /**
    * @brief 各敵の速度を取得
    */
@@ -74,6 +74,8 @@ class EnemyManager {
    * @brief 最後の敵の移動終了判定の取得
    */
   bool LastEnemyMoveEnd() const;
+
+  void SetPlayer(const physics::BoundingBox& player_obb);
 
   void DebugDraw(directx::device::CommandList& command_list);
 
@@ -86,8 +88,7 @@ class EnemyManager {
 
   //! 各敵の速度格納リスト
   std::vector<math::Vector3> velocities_;
-  std::unique_ptr<player::Player> player_;
-  std::unique_ptr<system::PhysicsField> physics_field_;
+  physics::BoundingBox player_obb_;
 };
 }  // namespace enemy
 }  // namespace legend

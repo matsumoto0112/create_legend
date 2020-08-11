@@ -41,17 +41,27 @@ bool MainScene1::Initialize() {
   {
     //本来はステージデータから読み込む
     object::Desk::InitializeParameter desk_parameter;
-    desk_parameter.transform =
-        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
-                        math::Vector3::kUnitVector);
     desk_parameter.bounding_box_length =
         math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
     desk_parameter.normal = math::Vector3::kUpVector;
-    if (!desk_.Init(desk_parameter)) {
-      return false;
+    for (i32 i = 0; i < 4; i++) {
+      math::Vector3 pos = math::Vector3(-1.2f, 0, -0.8f) / 4.0f;
+      if (i == 1)
+        pos.x *= -1;
+      else if (i == 2)
+        pos *= -1;
+      else if (i == 3)
+        pos.z *= -1;
+      desk_parameter.transform = util::Transform(
+          pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+      auto& desk = desks_.emplace_back();
+      if (!desk.Init(desk_parameter)) {
+        return false;
+      }
+      physics_field_.AddDesk(desk.GetCollisionRef());
     }
-    physics_field_.AddDesk(desk_.GetCollisionRef());
   }
+
   //障害物の初期化
   {
     object::Obstacle::InitializeParameter params;
@@ -67,18 +77,18 @@ bool MainScene1::Initialize() {
     physics_field_.AddObstacle(obs.GetCollisionRef());
   }
 
-  //{
-  //  if (!enemy_manager_.Initilaize()) {
-  //    return false;
-  //  }
-  //  enemy::Enemy::InitializeParameter enemy_parameter;
-  //  enemy_parameter.transform = util::Transform(math::Vector3(-0.04f, 0.1f, 0),
-  //                                              math::Quaternion::kIdentity,
-  //                                              math::Vector3::kUnitVector);
-  //  enemy_parameter.bouding_box_length =
-  //      math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
-  //  enemy_manager_.Add(enemy_parameter);
-  //}
+  {
+    if (!enemy_manager_.Initilaize()) {
+      return false;
+    }
+    enemy::Enemy::InitializeParameter enemy_parameter;
+    enemy_parameter.transform = util::Transform(math::Vector3(-0.04f, 0.1f, 0),
+                                                math::Quaternion::kIdentity,
+                                                math::Vector3::kUnitVector);
+    enemy_parameter.bouding_box_length =
+        math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
 
   //カメラの初期化
   {
@@ -110,10 +120,10 @@ bool MainScene1::Update() {
   }
 
   player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
-  enemy_manager_.SetPosition();
   player_.SetVelocity(physics_field_.GetPlayerVelocity());
-  enemy_manager_.SetVelocity();
-  player_.SetRotation(physics_field_.GetPlayerRotation());
+  player_.SetRotation(physics_field_.GetPlayerOBB().GetRotation());
+  enemy_manager_.SetPosition(physics_field_);
+  enemy_manager_.SetVelocity(physics_field_);
 
   if (ImGui::Begin("Camera")) {
     //カメラ座標
@@ -182,7 +192,9 @@ void MainScene1::Draw() {
 
   camera_.RenderStart();
   player_.Draw();
-  desk_.Draw();
+  for (auto&& desk : desks_) {
+    desk.Draw();
+  }
   enemy_manager_.Draw();
   for (auto&& obs : obstacles_) {
     obs.Draw();
@@ -193,7 +205,9 @@ void MainScene1::Draw() {
       directx::render_target::DepthStencilTargetID::NONE, false);
   device.GetHeapManager().UpdateGlobalHeap(device, command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
-  desk_.GetCollisionRef().DebugDraw(command_list);
+  for (auto&& desk : desks_) {
+    desk.GetCollisionRef().DebugDraw(command_list);
+  }
   for (auto&& obs : obstacles_) {
     obs.GetCollisionRef().DebugDraw(command_list);
   }
@@ -222,6 +236,7 @@ bool MainScene1::UpdateTurn() {
       break;
     case legend::system::Turn::ENEMY_TURN:
       MY_LOG(L"ENEMY TURN");
+      enemy_manager_.SetPlayer(player_.GetCollisionRef());
       if (!enemy_manager_.Update()) {
         return false;
       }

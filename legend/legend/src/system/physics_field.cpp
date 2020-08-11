@@ -39,20 +39,29 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   }
 
   //プレイヤーと各机との衝突判定を調べる
+  bool is_on_ground = false;
   for (i32 i = 0; i < desk_obbs_.size(); i++) {
+    if (is_on_ground) break;
+
     if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
             player_obb_, desk_obbs_[i])) {
       // MY_LOG(L"プレイヤー消しゴムと机が衝突しました");
-      break;
+      is_on_ground = true;
     }
   }
 
   //各エネミーと各机の衝突判定を調べる
-  for (i32 i = 0; i < desk_obbs_.size(); i++) {
-    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+  std::vector<bool> is_on_grounds;
+  is_on_grounds.resize(enemy_obbs_.size());
+  for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+    is_on_grounds[j] = false;
+    for (i32 i = 0; i < desk_obbs_.size(); i++) {
+      if (is_on_grounds[j]) continue;
+
       if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
               enemy_obbs_[j], desk_obbs_[i])) {
         // MY_LOG(L"エネミー消しゴムと机が衝突しました");
+        is_on_grounds[j] = true;
       }
     }
   }
@@ -77,9 +86,9 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], obstacle_obbs_[j])) {
         MY_LOG(L"エネミーと障害物が衝突しました");
-        math::Vector3 o_v = math::Vector3(obstacle_obbs_[i].GetLength(0), 0,
-                                          obstacle_obbs_[i].GetLength(2));
-        enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() + o_v);
+        math::Vector3 o = math::Vector3(obstacle_obbs_[i].GetLength(0), 0,
+                                        obstacle_obbs_[i].GetLength(2));
+        enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() + o);
 
         Deceleration(player_velocity_, 8, player_deceleration_x_,
                      player_deceleration_z_);
@@ -203,8 +212,7 @@ void PhysicsField::UpdateGravity(float gravity) {
   //プレイヤーの重力落下処理
   if (!player_obb_.GetOnGround()) {
     g = player_velocity_ + math::Vector3(0, gravity, 0);
-    math::Vector3 player_pos =
-        player_obb_.GetPosition() + g * update_time_ * 0.5f;
+    math::Vector3 player_pos = player_obb_.GetPosition() + g * update_time_;
     player_obb_.SetPosition(player_pos);
   }
 
@@ -212,8 +220,7 @@ void PhysicsField::UpdateGravity(float gravity) {
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (!enemy_obbs_[i].GetOnGround()) {
       g = enemy_velocities_[i] + math::Vector3(0, gravity, 0);
-      math::Vector3 enemy_pos =
-          enemy_obbs_[i].GetPosition() + g * update_time_ * 0.5f;
+      math::Vector3 enemy_pos = enemy_obbs_[i].GetPosition() + g * update_time_;
       enemy_obbs_[i].SetPosition(enemy_pos);
     }
   }

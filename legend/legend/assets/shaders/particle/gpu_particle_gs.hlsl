@@ -28,6 +28,13 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
         float4(-0.5f, -0.5f, 0.0f, 1.0f),
     };
 
+    float2 uv[4] = {
+        float2(0.0, 0.0),
+        float2(1.0, 0.0),
+        float2(1.0, 1.0),
+        float2(0.0, 1.0)
+    };
+
     uint indices[MAX_VERTEX_COUNT] =
     {
         0, 1, 2, 0, 2, 3,
@@ -39,9 +46,11 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
     [unroll]
     for (i = 1; i <= MAX_VERTEX_COUNT; i++)
     {
-        o.position = pos[indices[i - 1]];
+        const uint index = indices[i - 1];
+        o.position = pos[index];
         o.position += input[0].position;
         o.position = mul(o.position, m);
+        o.uv = uv[index];
         o.color = input[0].color;
         output.Append(o);
         if (i % 3 == 0)

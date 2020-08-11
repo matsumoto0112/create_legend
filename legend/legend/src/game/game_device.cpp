@@ -1,6 +1,7 @@
 #include "src/game/game_device.h"
 
 #include "src/directx/device/device_option.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/window/window_procedure.h"
 
 namespace {
@@ -66,6 +67,16 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
     return false;
   }
 
+  if (!global_cb_.Init(
+          GetDevice(), directx::shader::ConstantBufferRegisterID::GLOBAL_DATA,
+          GetDevice().GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Global_ConstantBuffer")) {
+    return false;
+  }
+  global_cb_.GetStagingRef().time = 0.0f;
+  global_cb_.GetStagingRef().delta_time = 0.0f;
+
   return true;
 }
 
@@ -81,6 +92,10 @@ bool GameDevice::BeginFrame() {
   }
   particle_manager_.BeginFrame(GetDevice());
 
+  global_cb_.GetStagingRef().time = fps_counter_.GetTotalSeconds<float>();
+  global_cb_.GetStagingRef().delta_time = fps_counter_.GetDeltaSeconds<float>();
+  global_cb_.UpdateStaging();
+  global_cb_.SetToHeap(GetDevice());
   return true;
 }
 

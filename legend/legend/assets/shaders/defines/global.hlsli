@@ -9,11 +9,18 @@
 /**
 * @brief トランスフォーム構造体
 */
+
+struct GlobalData{
+    float time;
+    float delta_time;
+};
+ConstantBuffer<GlobalData> g_global : register(b0);
+
 struct Transform {
     float4x4 world;
 };
 
-ConstantBuffer<Transform> g_transform : register(b0);
+ConstantBuffer<Transform> g_transform : register(b1);
 
 /**
 * @brief ビュー・プロジェクション行列構造体
@@ -23,7 +30,7 @@ struct WorldContext {
     float4x4 projection;
 };
 
-ConstantBuffer<WorldContext> g_world_context : register(b1);
+ConstantBuffer<WorldContext> g_world_context : register(b2);
 
 /**
 * @brief UV矩形
@@ -35,7 +42,7 @@ struct UVRect {
     float height;
 };
 
-ConstantBuffer<UVRect> g_uv_rect : register(b2);
+ConstantBuffer<UVRect> g_uv_rect : register(b3);
 
 
 Texture2D<float4> g_albedo : register(t0);

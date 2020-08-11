@@ -352,6 +352,7 @@
     <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
+    <None Include="assets\shaders\util\util.hlsli" />
     <None Include="packages.config" />
     <None Include="src\.clang-format" />
   </ItemGroup>

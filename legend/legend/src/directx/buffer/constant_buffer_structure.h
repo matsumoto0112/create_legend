@@ -13,6 +13,11 @@ namespace directx {
 namespace buffer {
 namespace constant_buffer_structure {
 
+struct GlobalData {
+  float time;
+  float delta_time;
+};
+
 /**
  * @struct Transform
  * @brief ワールド行列データ構造体

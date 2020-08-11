@@ -89,6 +89,10 @@ class GameDevice : public util::Singleton<GameDevice> {
   util::resource::Resource resource_;
   draw::SpriteRenderer sprite_renderer_;
   draw::particle::ParticleManager particle_manager_;
+
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::GlobalData>
+      global_cb_;
 };
 
 }  // namespace game

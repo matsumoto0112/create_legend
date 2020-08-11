@@ -273,6 +273,7 @@
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
     <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
+    <None Include="assets\shaders\util\util.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />

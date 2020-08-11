@@ -3,6 +3,7 @@
 #include "src/directx/device/command_list.h"
 #include "src/directx/directx_helper.h"
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/shader/vertex_shader.h"
 #include "src/game/game_device.h"
 
@@ -91,14 +92,14 @@ bool ParticleSystem::Init() {
   }
 
   if (!transform_cb_.Init(
-          device, 0,
+          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"")) {
     return false;
   }
   if (!world_cb_.Init(
-          device, 1,
+          device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"")) {
@@ -215,6 +216,11 @@ void ParticleSystem::Render(
 
   world_cb_.SetToHeap(device);
   transform_cb_.SetToHeap(device);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetTexture()
+      .Get(util::resource::id::Texture::TEX)
+      ->SetToHeap(device);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
   graphics_command_list.GetCommandList()->SetPipelineState(

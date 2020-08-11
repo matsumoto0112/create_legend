@@ -14,10 +14,12 @@ namespace shader {
  */
 namespace ConstantBufferRegisterID {
 enum Enum : u32 {
-  TRANSFORM = 0,     //! トランスフォーム情報
-  WORLD_CONTEXT = 1,  //! ビュー、プロジェクション情報
-  UV_RECT = 2,
+  GLOBAL_DATA = 0,    //! グローバル情報
+  TRANSFORM = 1,      //! トランスフォーム情報
+  WORLD_CONTEXT = 2,  //! ビュー、プロジェクション情報
+  UV_RECT = 3,
 };
+
 }  // namespace ConstantBufferRegisterID
 
 /**

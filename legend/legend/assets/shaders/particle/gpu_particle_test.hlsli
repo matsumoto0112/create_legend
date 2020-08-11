@@ -17,6 +17,7 @@ struct VSInput
 {
     uint seed : IN_SEED;
     float lifetime : IN_LIFETIME;
+    float3 velocity : IN_VELOCITY;
     float3 position : POSITION;
     float4 color : COLOR;
 };
@@ -32,6 +33,7 @@ typedef VSOutput GSInput;
 struct GSOutput
 {
     float4 position : SV_POSITION;
+    float2 uv : TEXCOORD0;
     float4 color : COLOR;
 };
 

@@ -28,7 +28,7 @@ bool EnemyMoveViewer::Initialize() {
 
   math::Vector3 min = math::Vector3::kUnitVector * -1;
   math::Vector3 max = math::Vector3::kUnitVector;
-  if (!enemy_manager_.Initilaize(min, max)) {
+  if (!enemy_manager_.Initilaize()) {
     return false;
   }
 

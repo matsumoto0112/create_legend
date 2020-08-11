@@ -44,6 +44,11 @@ class PhysicsField {
    */
   void AddDesk(physics::BoundingBox& desk_obb);
   /**
+   * @brief áŠQ•¨‚Ì‚ ‚½‚è”»’è‚Ì“o˜^
+   * @param áŠQ•¨‚Ì’¼•û‘Ì
+   */
+  void AddObstacle(const physics::BoundingBox& obstacle_obb);
+  /**
    * @brief ƒGƒlƒ~[‚ ‚½‚è”»’è‚Ìíœ
    * @param Ši”[”Ô†
    */
@@ -107,6 +112,8 @@ class PhysicsField {
   std::vector<physics::BoundingBox> desk_obbs_;
   //! Š÷‚Ì’¼•û‘Ì
   std::vector<physics::BoundingBox> enemy_obbs_;
+  //! áŠQ•¨‚Ì’¼•û‘Ì
+  std::vector<physics::BoundingBox> obstacle_obbs_;
 
   //! d—Í
   float gravity_;
@@ -115,8 +122,8 @@ class PhysicsField {
 
   float player_deceleration_x_;
   float player_deceleration_z_;
-  std::vector<float>enemy_deceleration_x_;
-  std::vector<float>enemy_deceleration_z_;
+  std::vector<float> enemy_deceleration_x_;
+  std::vector<float> enemy_deceleration_z_;
 
   //! ƒvƒŒƒCƒ„[‚ªˆÚ“®’†‚©
   bool is_player_move_;

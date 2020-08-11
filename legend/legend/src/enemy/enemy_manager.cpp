@@ -8,16 +8,7 @@ EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
-bool EnemyManager::Initilaize(math::Vector3 min_pos, math::Vector3 max_pos,
-                              system::PhysicsField* physics_field) {
-  i32 max = 4;
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-  for (i32 i = 0; i < max; i++) {
-    Add(min_pos, max_pos, physics_field);
-  }
-  return true;
-}
+bool EnemyManager::Initilaize() { return true; }
 
 bool EnemyManager::Update(player::Player* player,
                           system::PhysicsField* physics_field) {
@@ -101,7 +92,7 @@ void EnemyManager::EnemyAction(player::Player* player) {
   }
 }
 
-void EnemyManager::Add(math::Vector3 min_pos, math::Vector3 max_pos,
+void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
                        system::PhysicsField* physics_field) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
@@ -111,15 +102,6 @@ void EnemyManager::Add(math::Vector3 min_pos, math::Vector3 max_pos,
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
 
-  auto x =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.x, max_pos.x);
-  auto z =
-      game::GameDevice::GetInstance()->GetRandom().Range(min_pos.z, max_pos.z);
-  auto paramater = enemy::Enemy::InitializeParameter();
-  paramater.transform =
-      util::Transform(math::Vector3(x, 0.1f, z), math::Quaternion::kIdentity,
-                      math::Vector3::kUnitVector);
-  paramater.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
   enemy->Init(paramater);
   if (physics_field != nullptr) {
     physics_field->AddEnemy(enemy->GetCollisionRef());
@@ -189,6 +171,11 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
 
 //最後の敵の移動終了判定を取得
 bool EnemyManager::LastEnemyMoveEnd() const {
+  //空かどうかチェック
+  if (enemys_.empty()) {
+    return false;
+  }
+
   bool end = false;
   if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
     end = true;

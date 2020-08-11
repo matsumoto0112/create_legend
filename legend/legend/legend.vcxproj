@@ -193,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
+    <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
@@ -346,6 +347,7 @@
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
+    <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="packages.config" />
@@ -394,9 +396,7 @@
     </FxCompile>
     <FxCompile Include="assets\shaders\particle\gpu_particle_cs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="assets\shaders\particle\gpu_particle_gs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>

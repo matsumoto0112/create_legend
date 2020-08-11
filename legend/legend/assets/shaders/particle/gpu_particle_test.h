@@ -1,0 +1,30 @@
+#ifndef LEGEND_ASSETS_SHADERS_PARTICLE_GPU_PARTICLE_TEST_H_
+#define LEGEND_ASSETS_SHADERS_PARTICLE_GPU_PARTICLE_TEST_H_
+
+/**
+* @file gpu_particle_test.h
+*/
+
+#ifdef HLSL
+typedef const uint U32;
+#else
+#include "src/math/vector_3.h"
+#include "src/math/vector_4.h"
+using U32 = const legend::u32;
+using float3 = legend::math::Vector3;
+using float4 = legend::math::Vector4;
+#endif //! HLSL
+
+static U32 THREAD_X = 1;
+static U32 THREAD_Y = 1;
+static U32 DISPATCH_X = 4;
+static U32 DISPATCH_Y = 4;
+
+struct Particle
+{
+    float lifetime;
+    float3 position;
+    float4 color;
+};
+
+#endif //! LEGEND_ASSETS_SHADERS_PARTICLE_GPU_PARTICLE_TEST_H_

@@ -42,6 +42,7 @@ static D3D12_RENDER_TARGET_BLEND_DESC BLEND_DESC_ADD = []() {
   desc.LogicOp = D3D12_LOGIC_OP::D3D12_LOGIC_OP_NOOP;
   desc.RenderTargetWriteMask =
       D3D12_COLOR_WRITE_ENABLE::D3D12_COLOR_WRITE_ENABLE_ALL;
+
   return desc;
 }();
 

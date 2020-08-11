@@ -5,22 +5,14 @@
 * @file gpu_particle_vs.hlsl
 */
 
-struct VSInput
-{
-    float3 position : POSITION; //!< À•W
-};
-
-struct GSInput
-{
-    float4 position : SV_POSITION;
-};
-
+#include "gpu_particle_test.hlsli"
 
 GSInput main(VSInput input)
 {
     GSInput result = (GSInput)0;
 
     result.position = float4(input.position, 1.0f);
+    result.color = input.color;
     return result;
 }
 

@@ -257,6 +257,7 @@
     <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
     <ClInclude Include="src\draw\particle\particle_system.h" />
     <ClInclude Include="src\object\obstacle.h" />
+    <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -269,6 +270,7 @@
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
     <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
+    <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />

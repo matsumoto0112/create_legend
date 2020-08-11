@@ -31,7 +31,8 @@ class FrameResource {
    * @param accessor DirectXデバイスアクセサ
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(device::IDirectXAccessor& accessor);
+  bool Init(device::IDirectXAccessor& accessor,
+            D3D12_COMMAND_LIST_TYPE command_list_type);
   /**
    * @brief リソースの準備をする
    * @return 成功したらtrueを返す

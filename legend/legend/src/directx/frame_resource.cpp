@@ -10,9 +10,9 @@ FrameResource::FrameResource() {}
 FrameResource::~FrameResource() {}
 
 //èâä˙âª
-bool FrameResource::Init(device::IDirectXAccessor& accessor) {
-  if (!command_lists_.Init(
-          accessor, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+bool FrameResource::Init(device::IDirectXAccessor& accessor,
+                         D3D12_COMMAND_LIST_TYPE command_list_type) {
+  if (!command_lists_.Init(accessor, command_list_type)) {
     return false;
   }
 

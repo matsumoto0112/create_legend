@@ -99,7 +99,7 @@ class HeapManager {
    */
   CountingDescriptorHeap* GetDsvHeap() { return &dsv_heap_; }
 
- private:
+ //private:
   //! レンダーターゲットヒープ
   CountingDescriptorHeap rtv_heap_;
   //! デプス・ステンシルヒープ

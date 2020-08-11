@@ -68,7 +68,8 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
 
   for (u32 i = 0; i < FRAME_COUNT; i++) {
     FrameResource& resource = resources_[i];
-    if (!resource.Init(*this)) {
+    if (!resource.Init(
+            *this, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
       return false;
     }
   }
@@ -139,7 +140,7 @@ bool DirectXDevice::Present() {
   }
   fence_value_++;
 
-  //WARPデバイスを使用する環境だとwaitがおかしい？
+  // WARPデバイスを使用する環境だとwaitがおかしい？
   //うまく機能しないためコマンドを逐次待機するようにする
   if (USE_WARP_DEVICE) {
     WaitExecute();

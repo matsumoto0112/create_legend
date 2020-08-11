@@ -5,17 +5,7 @@
 * @file gpu_particle_gs.hlsl
 */
 
-#include "../defines/global.hlsli"
-
-struct GSInput
-{
-    float4 position : SV_POSITION;
-};
-
-struct GSOutput
-{
-    float4 position : SV_POSITION;
-};
+#include "gpu_particle_test.hlsli"
 
 float4x4 CreateMVPMatrix()
 {
@@ -23,7 +13,6 @@ float4x4 CreateMVPMatrix()
     mat = mul(mat, g_world_context.projection);
     return mat;
 }
-
 
 #define MAX_VERTEX_COUNT 6
 [maxvertexcount(MAX_VERTEX_COUNT)]
@@ -53,6 +42,7 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
         o.position = pos[indices[i - 1]];
         o.position += input[0].position;
         o.position = mul(o.position, m);
+        o.color = input[0].color;
         output.Append(o);
         if (i % 3 == 0)
             output.RestartStrip();

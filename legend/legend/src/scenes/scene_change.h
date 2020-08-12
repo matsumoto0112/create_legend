@@ -22,6 +22,7 @@ enum class SceneType {
   MAIN_SCENE_1,
   STAGE_GENERATE_TEST,
   GRAFFITI_TEST,
+  GPU_PARTICLE_TEST,
 };
 
 class ISceneChange {

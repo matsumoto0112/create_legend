@@ -27,7 +27,6 @@ class ParticleSystem {
       THREAD_X * THREAD_Y * DISPATCH_X * DISPATCH_Y;
 
  private:
-  ComPtr<ID3D12CommandQueue> compute_command_queue_;
   ComPtr<ID3D12PipelineState> graphics_pipeline_state_;
   ComPtr<ID3D12PipelineState> compute_pipeline_state_;
 

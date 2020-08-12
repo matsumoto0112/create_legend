@@ -10,7 +10,7 @@
 float4 main(const PSInput input) : SV_TARGET
 {
     float4 color = g_albedo.Sample(g_sampler_warp, input.uv);
-    color.a = 0.05f;
+    color *= input.color;
     return color;
 }
 

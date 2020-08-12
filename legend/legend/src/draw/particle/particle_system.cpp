@@ -20,16 +20,6 @@ bool ParticleSystem::Init() {
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  D3D12_COMMAND_QUEUE_DESC compute_queue_desc = {};
-  compute_queue_desc.Flags =
-      D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
-  compute_queue_desc.Type =
-      D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_COMPUTE;
-  if (Failed(device.GetDevice()->CreateCommandQueue(
-          &compute_queue_desc, IID_PPV_ARGS(&compute_command_queue_)))) {
-    return false;
-  }
-
   const auto shader_path = util::Path::GetInstance()->shader() / "particle";
   directx::shader::VertexShader vs;
   if (!vs.Init(device, shader_path / "gpu_particle_vs.cso")) {

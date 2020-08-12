@@ -98,7 +98,7 @@ void ResetParticle(uint addr, uint index)
     const float vz = RandomRange(-1.0, 1.0, u, seed++);
     SetVelocity(addr, float3(vx, vy, vz));
 
-    SetColor(addr, float4(1.0, 0.0, 0.0, 1.0));
+    SetColor(addr, float4(1.0, 1.0, 1.0, 0.05));
     SetSeed(addr, seed);
 }
 

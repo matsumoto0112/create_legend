@@ -31,6 +31,12 @@ enum Enum : u32 {
 };
 }  // namespace TextureRegisterID
 
+namespace UnorderedAccessID {
+enum Enum : u32 {
+  Particle = 0,  //! GPUパーティクルの構造体配列バッファ
+};
+}  // namespace UnorderedAccessID
+
 /**
  * @brief サンプラーのレジスター番号
  */

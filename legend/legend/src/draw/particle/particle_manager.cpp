@@ -43,7 +43,7 @@ bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
   return true;
 }
 
-void ParticleManager::AddParticle(std::unique_ptr<ParticleSystem> particle) {
+void ParticleManager::AddParticle(std::unique_ptr<ParticleEmitter> particle) {
   particles_.emplace_back(std::move(particle));
 }
 
@@ -68,7 +68,16 @@ void ParticleManager::BeginFrame(directx::device::IDirectXAccessor& accessor) {
   current_frame_resource_->Ready();
 }
 
-void ParticleManager::Update() {
+void ParticleManager::Update(directx::device::DirectXDevice& device) {
+  device.GetHeapManager().SetCommandList(
+      current_frame_resource_->GetCommandList());
+  current_frame_resource_->GetCommandList()
+      .GetCommandList()
+      ->SetComputeRootSignature(
+          device.GetDefaultRootSignature()->GetRootSignature());
+  device.GetHeapManager().SetHeapTableToComputeCommandList(
+      device, current_frame_resource_->GetCommandList());
+
   for (auto&& particle : particles_) {
     particle->Update(current_frame_resource_->GetCommandList());
   }
@@ -84,7 +93,11 @@ void ParticleManager::Update() {
   fence_value_++;
 }
 
-void ParticleManager::Render(directx::device::CommandList& command_list) {
+void ParticleManager::Render(directx::device::DirectXDevice& device,
+                             directx::device::CommandList& command_list) {
+  command_list.GetCommandList()->IASetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+
   for (auto&& particle : particles_) {
     particle->Render(command_list);
   }

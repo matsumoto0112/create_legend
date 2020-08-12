@@ -208,56 +208,50 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    auto p = std::make_unique<draw::particle::ParticleSystem>();
-    if (!p->Init()) {
-      return false;
-    }
-    game::GameDevice::GetInstance()->GetParticleManager().AddParticle(
-        std::move(p));
     return true;
   }
   bool Update() override {
     if (!Application::Update()) {
       return false;
     }
-    // if (!scene_manager_.Update()) {
-    //  return false;
-    //}
+    if (!scene_manager_.Update()) {
+      return false;
+    }
 
-    // if (ImGui::Begin("Scenes")) {
-    //  ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
-    //                                      scene_manager_.GetCurrentSceneType()))
-    //                  .c_str());
+    if (ImGui::Begin("Scenes")) {
+      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
+                                          scene_manager_.GetCurrentSceneType()))
+                      .c_str());
 
-    //  constexpr scenes::SceneType SCENES[] = {
-    //      scenes::SceneType::TITLE,
-    //      scenes::SceneType::GAMEOVER,
-    //      scenes::SceneType::MODEL_VIEW,
-    //      scenes::SceneType::SOUND_TEST,
-    //      scenes::SceneType::PHYSICS_TEST,
-    //      scenes::SceneType::SPRITE_TEST,
-    //      scenes::SceneType::MULTI_RENDER_TARGET_TEST,
-    //      scenes::SceneType::ENEMY_MOVE_VIEWER,
-    //      scenes::SceneType::PLAYER_MOVE_VIEWER,
-    //      scenes::SceneType::MAIN_SCENE_1,
-    //      scenes::SceneType::STAGE_GENERATE_TEST,
-    //      scenes::SceneType::GRAFFITI_TEST,
-    //  };
-    //  for (auto&& scene : SCENES) {
-    //    if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
-    //      scene_manager_.ChangeScene(scene);
-    //    }
-    //  }
-    //}
-    // ImGui::End();
+      constexpr scenes::SceneType SCENES[] = {
+          scenes::SceneType::TITLE,
+          scenes::SceneType::GAMEOVER,
+          scenes::SceneType::MODEL_VIEW,
+          scenes::SceneType::SOUND_TEST,
+          scenes::SceneType::PHYSICS_TEST,
+          scenes::SceneType::SPRITE_TEST,
+          scenes::SceneType::MULTI_RENDER_TARGET_TEST,
+          scenes::SceneType::ENEMY_MOVE_VIEWER,
+          scenes::SceneType::PLAYER_MOVE_VIEWER,
+          scenes::SceneType::MAIN_SCENE_1,
+          scenes::SceneType::STAGE_GENERATE_TEST,
+          scenes::SceneType::GRAFFITI_TEST,
+          scenes::SceneType::GPU_PARTICLE_TEST,
+      };
+      for (auto&& scene : SCENES) {
+        if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
+          scene_manager_.ChangeScene(scene);
+        }
+      }
+    }
+    ImGui::End();
 
-    // if (ImGui::Begin("Debug")) {
-    //  auto& fps = game::GameDevice::GetInstance()->GetFPSCounter();
-    //  ImGui::Text("TotalTime: %f", fps.GetTotalSeconds());
-    //  ImGui::Text("FrameRate: %.1f", fps.GetFPS());
-    //}
-    // ImGui::End();
-    game::GameDevice::GetInstance()->GetParticleManager().Update();
+    if (ImGui::Begin("Debug")) {
+      auto& fps = game::GameDevice::GetInstance()->GetFPSCounter();
+      ImGui::Text("TotalTime: %f", fps.GetTotalSeconds());
+      ImGui::Text("FrameRate: %.1f", fps.GetFPS());
+    }
+    ImGui::End();
 
     return true;
   }
@@ -267,17 +261,11 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    game::GameDevice::GetInstance()->GetParticleManager().Render(
-        game::GameDevice::GetInstance()
-            ->GetDevice()
-            .GetCurrentFrameResource()
-            ->GetCommandList());
-
-    // scene_manager_.Draw();
+    scene_manager_.Draw();
     return true;
   }
   void Destroy() override {
-    // scene_manager_.Finalize();
+    scene_manager_.Finalize();
     Application::Destroy();
   }
 

@@ -110,6 +110,9 @@
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\object\obstacle.cpp" />
     <ClCompile Include="src\draw\particle\particle_manager.cpp" />
+    <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
+    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
+    <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -260,6 +263,9 @@
     <ClInclude Include="src\object\obstacle.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />
+    <ClInclude Include="src\draw\particle\smoke_particle.h" />
+    <ClInclude Include="src\draw\particle\particle_emitter.h" />
+    <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

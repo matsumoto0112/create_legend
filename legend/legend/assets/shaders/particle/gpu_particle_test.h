@@ -16,10 +16,10 @@ using float3 = legend::math::Vector3;
 using float4 = legend::math::Vector4;
 #endif //! HLSL
 
-static CU32 THREAD_X = 8;
-static CU32 THREAD_Y = 8;
-static CU32 DISPATCH_X = 8;
-static CU32 DISPATCH_Y = 8;
+static CU32 THREAD_X = 2;
+static CU32 THREAD_Y = 2;
+static CU32 DISPATCH_X = 2;
+static CU32 DISPATCH_Y = 2;
 
 struct Particle
 {

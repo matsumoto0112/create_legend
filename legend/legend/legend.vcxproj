@@ -104,8 +104,10 @@
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\draw\model.cpp" />
+    <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
     <ClCompile Include="src\draw\particle\particle_manager.cpp" />
     <ClCompile Include="src\draw\particle\particle_system.cpp" />
+    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
@@ -151,6 +153,7 @@
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\primitive\primitive.cpp" />
     <ClCompile Include="src\scenes\debugscene\enemy_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
@@ -234,8 +237,10 @@
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
     <ClInclude Include="src\directx\shader\vertex_shader.h" />
     <ClInclude Include="src\draw\model.h" />
+    <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />
     <ClInclude Include="src\draw\particle\particle_system.h" />
+    <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\draw\texture_char.h" />
@@ -294,6 +299,7 @@
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\scenes\debugscene\enemy_move_viewer.h" />
+    <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
     <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />

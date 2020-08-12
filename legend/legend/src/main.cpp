@@ -1,7 +1,6 @@
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/directx/shader/shader_register_id.h"
-#include "src/draw/particle/particle_system.h"
 #include "src/game/application.h"
 #include "src/game/game_device.h"
 #include "src/scenes/scene_manager.h"
@@ -271,7 +270,6 @@ class MyApp final : public device::Application {
 
  private:
   scenes::SceneManager scene_manager_;
-  draw::particle::ParticleSystem particle_;
 };
 }  // namespace legend
 

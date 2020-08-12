@@ -8,6 +8,7 @@
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
+#include "src/draw/particle/particle_manager.h"
 
 namespace legend {
 namespace draw {

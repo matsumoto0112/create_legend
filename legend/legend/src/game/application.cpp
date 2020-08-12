@@ -64,6 +64,11 @@ void Application::Paint() {
     return;
   }
 
+  if (!this->LateUpdate()) {
+    SendCloseMessage();
+    return;
+  }
+
   if (!this->Render()) {
     SendCloseMessage();
     return;
@@ -80,44 +85,27 @@ bool Application::Init() {
   if (!game::GameDevice::GetInstance()->Init(this)) {
     return false;
   }
-  // if (!imgui_manager_.Init(
-  //        main_window_->GetHWND(),
-  //        game::GameDevice::GetInstance()->GetDevice().GetDevice(),
-  //        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 3)) {
-  //  return false;
-  //}
 
   return true;
 }
 
 //XV
 bool Application::Update() {
-  // game::GameDevice::GetInstance()->Update();
-  // if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-  //        input::input_code::End)) {
-  //  return false;
-  //}
+  if (game::GameDevice::GetInstance()->GetInput().GetCommand(
+          input::input_code::End)) {
+    return false;
+  }
+  return true;
+}
+
+bool Application::LateUpdate() {
+  if (!game::GameDevice::GetInstance()->MidFrame()) {
+    return false;
+  }
   return true;
 }
 
 bool Application::Render() { return true; }
-
-////•`‰æ
-// bool Application::Draw() { return true; }
-
-// bool Application::FrameBegin() {
-//  // if (!game::GameDevice::GetInstance()->GetDevice().Prepare()) return
-//  false;
-//  // imgui_manager_.BeginFrame();
-//  return true;
-//}
-//
-// bool Application::FrameEnd() {
-//  // imgui_manager_.EndFrame(
-//  //    game::GameDevice::GetInstance()->GetDevice().GetCommandList());
-//  // if (!game::GameDevice::GetInstance()->GetDevice().Present()) return
-//  false; return true;
-//}
 
 }  // namespace device
 }  // namespace legend

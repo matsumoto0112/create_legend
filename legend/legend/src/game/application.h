@@ -23,6 +23,7 @@ class Application : public window::IWindowProcedureEventCallback {
 
   virtual bool Init();
   virtual bool Update();
+  virtual bool LateUpdate();
   virtual bool Render();
   virtual void Destroy();
 

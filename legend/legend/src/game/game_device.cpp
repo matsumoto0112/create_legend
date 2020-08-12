@@ -96,15 +96,18 @@ bool GameDevice::BeginFrame() {
   global_cb_.GetStagingRef().delta_time = fps_counter_.GetDeltaSeconds<float>();
   global_cb_.UpdateStaging();
   global_cb_.SetToHeap(GetDevice());
-  particle_manager_.Update(GetDevice());
 
+  return true;
+}
+
+bool GameDevice::MidFrame() {
+  particle_manager_.Execute();
   return true;
 }
 
 bool GameDevice::EndFrame() {
   auto& command_list = device_->GetCurrentFrameResource()->GetCommandList();
 
-  particle_manager_.Render(GetDevice(), command_list);
   imgui_manager_.EndFrame(command_list.GetCommandList());
   if (!device_->Present()) {
     return false;

@@ -1,5 +1,5 @@
 #ifndef LEGEND_DRAW_PARTICLE_PARTICLE_MANAGER_H_
-#define LEGEND_DRAW_PARTICL_PARTICLE_MANAGER_H_
+#define LEGEND_DRAW_PARTICLE_PARTICLE_MANAGER_H_
 
 /**
  * @file particle_manager.h
@@ -8,7 +8,6 @@
 #include "src/directx/device/directx_accessor.h"
 #include "src/directx/device/directx_device.h"
 #include "src/directx/frame_resource.h"
-#include "src/draw/particle/particle_emitter.h"
 
 namespace legend {
 namespace draw {
@@ -18,14 +17,13 @@ class ParticleManager {
   ParticleManager();
   ~ParticleManager();
   bool Init(directx::device::IDirectXAccessor& accessor, u32 frame_count);
-  void AddParticle(std::unique_ptr<ParticleEmitter> particle);
-  void BeginFrame(directx::device::IDirectXAccessor& accessor);
-  void Update(directx::device::DirectXDevice& device);
-  void Render(directx::device::DirectXDevice& device,
-              directx::device::CommandList& command_list);
+  void BeginFrame(directx::device::DirectXDevice& device);
+  void Execute();
+  directx::device::CommandList& GetCommandList() {
+    return current_frame_resource_->GetCommandList();
+  }
 
  private:
-  std::vector<std::unique_ptr<ParticleEmitter>> particles_;
   std::vector<directx::FrameResource> frame_resources_;
   directx::FrameResource* current_frame_resource_;
   ComPtr<ID3D12CommandQueue> command_queue_;

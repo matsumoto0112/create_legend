@@ -28,19 +28,16 @@ bool GPUParticleTest::Initialize() {
     return false;
   }
 
-  auto p = std::make_unique<draw::particle::SmokeParticle>();
-
   directx::device::CommandList command_list;
   if (!command_list.Init(
           device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
 
-  if (!p->Init(command_list)) {
+  if (!smoke_particle_.Init(command_list)) {
     return false;
   }
-  game::GameDevice::GetInstance()->GetParticleManager().AddParticle(
-      std::move(p));
+
   command_list.Close();
   device.ExecuteCommandList({command_list});
   device.WaitExecute();
@@ -48,9 +45,25 @@ bool GPUParticleTest::Initialize() {
   return true;
 }
 
-bool GPUParticleTest::Update() { return true; }
+bool GPUParticleTest::Update() {
+  auto& particle_compute_command_list =
+      game::GameDevice::GetInstance()->GetParticleManager().GetCommandList();
+  if (!smoke_particle_.Update(particle_compute_command_list)) {
+    return false;
+  }
 
-void GPUParticleTest::Draw() { camera_.RenderStart(); }
+  return true;
+}
+
+void GPUParticleTest::Draw() {
+  camera_.RenderStart();
+
+  auto& command_list = game::GameDevice::GetInstance()
+                           ->GetDevice()
+                           .GetCurrentFrameResource()
+                           ->GetCommandList();
+  smoke_particle_.Render(command_list);
+}
 
 void GPUParticleTest::Finalize() {}
 

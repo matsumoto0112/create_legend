@@ -106,7 +106,6 @@
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
     <ClCompile Include="src\draw\particle\particle_manager.cpp" />
-    <ClCompile Include="src\draw\particle\particle_system.cpp" />
     <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
@@ -239,7 +238,6 @@
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />
-    <ClInclude Include="src\draw\particle\particle_system.h" />
     <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />

@@ -43,13 +43,9 @@ bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
   return true;
 }
 
-void ParticleManager::AddParticle(std::unique_ptr<ParticleEmitter> particle) {
-  particles_.emplace_back(std::move(particle));
-}
-
-void ParticleManager::BeginFrame(directx::device::IDirectXAccessor& accessor) {
+void ParticleManager::BeginFrame(directx::device::DirectXDevice& device) {
   current_frame_resource_ =
-      &frame_resources_[accessor.GetCurrentBackBufferIndex()];
+      &frame_resources_[device.GetCurrentBackBufferIndex()];
 
   const UINT64 last_completed_fence = fence_->GetCompletedValue();
 
@@ -66,9 +62,7 @@ void ParticleManager::BeginFrame(directx::device::IDirectXAccessor& accessor) {
     CloseHandle(event_handle);
   }
   current_frame_resource_->Ready();
-}
 
-void ParticleManager::Update(directx::device::DirectXDevice& device) {
   device.GetHeapManager().SetCommandList(
       current_frame_resource_->GetCommandList());
   current_frame_resource_->GetCommandList()
@@ -77,10 +71,9 @@ void ParticleManager::Update(directx::device::DirectXDevice& device) {
           device.GetDefaultRootSignature()->GetRootSignature());
   device.GetHeapManager().SetHeapTableToComputeCommandList(
       device, current_frame_resource_->GetCommandList());
+}
 
-  for (auto&& particle : particles_) {
-    particle->Update(current_frame_resource_->GetCommandList());
-  }
+void ParticleManager::Execute() {
   current_frame_resource_->GetCommandList().Close();
   ID3D12CommandList* command_lists[] = {
       current_frame_resource_->GetCommandList().GetCommandList()};
@@ -91,16 +84,6 @@ void ParticleManager::Update(directx::device::DirectXDevice& device) {
     return;
   }
   fence_value_++;
-}
-
-void ParticleManager::Render(directx::device::DirectXDevice& device,
-                             directx::device::CommandList& command_list) {
-  command_list.GetCommandList()->IASetPrimitiveTopology(
-      D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-  for (auto&& particle : particles_) {
-    particle->Render(command_list);
-  }
 }
 
 }  // namespace particle

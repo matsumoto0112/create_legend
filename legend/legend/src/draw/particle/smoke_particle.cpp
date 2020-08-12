@@ -94,6 +94,9 @@ bool SmokeParticle::Update(directx::device::CommandList& compute_command_list) {
 
 bool SmokeParticle::Render(
     directx::device::CommandList& graphics_command_list) {
+    graphics_command_list.GetCommandList()->IASetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
   if (!ParticleEmitter::Render(graphics_command_list)) {
     return false;
   }

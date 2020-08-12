@@ -6,6 +6,7 @@
  */
 
 #include "src/camera/perspective_camera.h"
+#include "src/draw/particle/smoke_particle.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -36,6 +37,8 @@ class GPUParticleTest : public Scene {
 
  private:
   camera::PerspectiveCamera camera_;
+
+  draw::particle::SmokeParticle smoke_particle_;
 };
 
 }  // namespace debugscene

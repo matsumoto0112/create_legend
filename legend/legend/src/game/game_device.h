@@ -30,6 +30,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   bool Init(window::IWindowProcedureEventCallback* callback);
 
   bool BeginFrame();
+  bool MidFrame();
   bool EndFrame();
 
   void Finalize();

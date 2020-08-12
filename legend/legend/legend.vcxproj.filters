@@ -106,7 +106,6 @@
     <ClCompile Include="src\primitive\box.cpp" />
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\directx\shader\graphics_pipeline_state_desc.cpp" />
-    <ClCompile Include="src\draw\particle\particle_system.cpp" />
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\object\obstacle.cpp" />
     <ClCompile Include="src\draw\particle\particle_manager.cpp" />
@@ -259,7 +258,6 @@
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
-    <ClInclude Include="src\draw\particle\particle_system.h" />
     <ClInclude Include="src\object\obstacle.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\draw\particle\particle_manager.h" />

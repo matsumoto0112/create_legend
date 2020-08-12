@@ -4,10 +4,13 @@ namespace legend {
 namespace directx {
 namespace shader {
 
-void ComputePipelineStateDesc::SetComputeShader(RootSignature* root_signature) {
+//ルートシグネチャのセット
+void ComputePipelineStateDesc::SetRootSignature(RootSignature* root_signature) {
   this->pRootSignature = root_signature->GetRootSignature();
 }
-void ComputePipelineStateDesc::SetRootSignature(ComputeShader* shader) {
+
+//コンピュートシェーダーをセットする
+void ComputePipelineStateDesc::SetComputeShader(ComputeShader* shader) {
   this->CS = shader->GetShaderBytecode();
 }
 

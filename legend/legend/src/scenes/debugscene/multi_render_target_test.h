@@ -37,8 +37,6 @@ class MultiRenderTargetTest : public Scene {
   virtual void Finalize() override;
 
  private:
-  directx::shader::RootSignature root_signature_;
-
   std::vector<util::Transform> transforms_;
   std::vector<directx::buffer::ConstantBuffer<Transform_CBStruct>>
       transform_cbs_;

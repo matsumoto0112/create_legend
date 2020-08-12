@@ -7,6 +7,8 @@
 namespace legend {
 namespace draw {
 namespace particle {
+
+//コンストラクタ
 ParticleEmitter::ParticleEmitter(u32 particle_max_size,
                                  u32 particle_structure_size, u32 dispatch_x,
                                  u32 dispatch_y, const std::wstring& name)
@@ -16,8 +18,10 @@ ParticleEmitter::ParticleEmitter(u32 particle_max_size,
       dispatch_y_(dispatch_y),
       name_(name) {}
 
+//デストラクタ
 ParticleEmitter::~ParticleEmitter() {}
 
+//初期化
 bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
                            const void* data,
                            D3D12_GRAPHICS_PIPELINE_STATE_DESC graphics_desc,
@@ -25,6 +29,7 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   using directx::directx_helper::Failed;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
+  //コンスタントバッファの初期化
   const u32 transform_id = directx::shader::ConstantBufferRegisterID::TRANSFORM;
   const directx::descriptor_heap::DescriptorHandle transform_handle =
       device.GetLocalHandle(
@@ -34,6 +39,7 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
     return false;
   }
 
+  //パーティクルリソースの作成
   const u32 size = particle_max_num_ * particle_structure_size_;
   if (Failed(device.GetDevice()->CreateCommittedResource(
           &CD3DX12_HEAP_PROPERTIES(
@@ -85,6 +91,7 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   vertex_buffer_view_.SizeInBytes = size;
   vertex_buffer_view_.StrideInBytes = particle_structure_size_;
 
+  //パイプラインの作成
   if (!graphics_pipeline_state_.Init(device, graphics_desc)) {
     return false;
   }
@@ -96,33 +103,32 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   return true;
 }
 
-void ParticleEmitter::Update(
-    directx::device::CommandList& compute_command_list) {
+//更新
+void ParticleEmitter::Update(ParticleCommandList& particle_command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& graphics_command_list =
-      device.GetCurrentFrameResource()->GetCommandList();
+  auto& command_list = particle_command_list.GetCommandList();
 
+  //リソースを登録していく
   device.GetHeapManager().RegisterHandle(
       directx::shader::UnorderedAccessID::Particle,
       directx::shader::ResourceType::UAV, handle_);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
-  device.GetHeapManager().SetHeapTableToComputeCommandList(
-      device, compute_command_list);
-  compute_pipeline_state_.SetCommandList(compute_command_list);
-  compute_command_list.GetCommandList()->Dispatch(dispatch_x_, dispatch_y_, 1);
+  device.GetHeapManager().SetHeapTableToComputeCommandList(device,
+                                                           command_list);
+
+  compute_pipeline_state_.SetCommandList(command_list);
+  // CSの実行
+  command_list.GetCommandList()->Dispatch(dispatch_x_, dispatch_y_, 1);
 }
 
+//描画
 void ParticleEmitter::Render(
     directx::device::CommandList& graphics_command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  game::GameDevice::GetInstance()
-      ->GetResource()
-      .GetTexture()
-      .Get(util::resource::id::Texture::TEX)
-      ->SetToHeap(device);
+  transform_cb_.SetToHeap(device);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
   graphics_pipeline_state_.SetCommandList(graphics_command_list);

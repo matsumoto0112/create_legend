@@ -96,10 +96,14 @@ bool MultiRenderTargetTest::Initialize() {
 
     const u32 w = static_cast<u32>(screen_size.x);
     const u32 h = static_cast<u32>(screen_size.y);
+
+    // multi_render_target_ppのテクスチャのレジスター番号
+    constexpr u32 OUTPUT_1_ID = 0;
+    constexpr u32 OUTPUT_2_ID = 1;
     std::vector<directx::render_target::RenderResourceManager::Info> infos{
-        {3, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
+        {OUTPUT_1_ID, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
          util::Color4(1.0f, 0.0f, 0.0f, 1.0f), L"RenderTarget_0"},
-        {5, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
+        {OUTPUT_2_ID, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, w, h,
          util::Color4(0.0f, 1.0f, 0.0f, 1.0f), L"RenderTarget_1"}};
 
     //レンダーターゲットが登録済みでなければ登録する
@@ -111,16 +115,11 @@ bool MultiRenderTargetTest::Initialize() {
       }
     }
 
-    if (!root_signature_.InitByDefault(device, L"DefaultRootSignature")) {
-      return false;
-    }
-
     auto ps = std::make_shared<directx::shader::PipelineState>();
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
     pso_desc.BlendState.RenderTarget[0] =
         directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
-    pso_desc.BlendState.AlphaToCoverageEnable = true;
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC1(D3D12_DEFAULT);
     pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
     pso_desc.Flags = D3D12_PIPELINE_STATE_FLAGS::D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -131,13 +130,13 @@ bool MultiRenderTargetTest::Initialize() {
     pso_desc.NumRenderTargets = 2;
     pso_desc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.pRootSignature =
+        device.GetDefaultRootSignature()->GetRootSignature();
     pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     pso_desc.RTVFormats[0] = pso_desc.RTVFormats[1] =
         DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
     pso_desc.SampleDesc.Count = 1;
     pso_desc.SampleMask = UINT_MAX;
-    pso_desc.pRootSignature = root_signature_.GetRootSignature();
     pso_desc.PS = resource.GetPixelShader()
                       .Get(PixelShader_ID::MULTI_RENDER_TARGET_TEST)
                       ->GetShaderBytecode();
@@ -174,7 +173,8 @@ bool MultiRenderTargetTest::Initialize() {
     pso_desc.NumRenderTargets = 1;
     pso_desc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    pso_desc.pRootSignature = root_signature_.GetRootSignature();
+    pso_desc.pRootSignature =
+        device.GetDefaultRootSignature()->GetRootSignature();
     pso_desc.PS = resource.GetPixelShader()
                       .Get(PixelShader_ID::MULTI_RENDER_TARGET_TEST_PP)
                       ->GetShaderBytecode();
@@ -247,8 +247,9 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
 
+    constexpr u32 POST_PROCESS_LOCAL_CONSTANT_BUFFER_ID = 4;
     if (!post_process_local_cb_.Init(
-            device, 2,
+            device, POST_PROCESS_LOCAL_CONSTANT_BUFFER_ID,
             device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
                                       LocalHeapID::GLOBAL_ID),
             L"Local")) {
@@ -336,14 +337,12 @@ void MultiRenderTargetTest::Draw() {
   render_resource_manager.SetRenderTargets(
       command_list, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, true,
       DepthStencilTarget_ID::DEPTH_ONLY, true);
-  device.GetHeapManager().SetCommandList(command_list);
   camera_.RenderStart();
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST)
       ->SetCommandList(command_list);
-  root_signature_.SetGraphicsCommandList(command_list);
 
   for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
     transform_cbs_[i].SetToHeap(device);
@@ -352,7 +351,7 @@ void MultiRenderTargetTest::Draw() {
 
   //バックバッファに切り替え、ポストプロセスを利用して描画をする
   render_resource_manager.SetRenderTargets(command_list,
-                                           RenderTarget_ID::BACK_BUFFER, true,
+                                           RenderTarget_ID::BACK_BUFFER, false,
                                            DepthStencilTarget_ID::NONE, false);
   game::GameDevice::GetInstance()
       ->GetResource()

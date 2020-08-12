@@ -10,7 +10,7 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
 #include "src/directx/shader/pipeline_state.h"
-#include "src/draw/particle/particle_manager.h"
+#include "src/draw/particle/particle_command_list.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -46,6 +46,8 @@ class ParticleEmitter {
    * @brief 初期化
    * @param command_list バッファをコピーするのに使用するコマンドリスト
    * @param data コピー元のデータ
+   * @param graphics_desc グラフィックスパイプラインステートディスク
+   * @param compute_desc コンピュートパイプラインステートディスク
    * @return 初期化に成功したらtrueを返す
    */
   virtual bool Init(directx::device::CommandList& command_list,
@@ -54,9 +56,9 @@ class ParticleEmitter {
                     D3D12_COMPUTE_PIPELINE_STATE_DESC compute_desc);
   /**
    * @brief 更新処理
-   * @param compute_command_list コンピュートシェーダーを実行するコマンドリスト
+   * @param command_list パーティクルの更新処理用のコマンドリスト
    */
-  virtual void Update(directx::device::CommandList& compute_command_list);
+  virtual void Update(ParticleCommandList& command_list);
   /**
    * @brief 描画処理
    * @param graphics_command_list 描画処理を実行するコマンドリスト
@@ -81,15 +83,23 @@ class ParticleEmitter {
   const u32 dispatch_y_;
 
  protected:
+  //! グラフィックスパイプライン
   directx::shader::PipelineState graphics_pipeline_state_;
+  //! コンピュートパイプライン
   directx::shader::PipelineState compute_pipeline_state_;
 
+  //! トランスフォーム
   util::Transform transform_;
+  //! トランスフォームコンスタントバッファ
   TransformConstantBuffer transform_cb_;
 
+  //! パーティクルデータのUAV兼頂点バッファ
   ComPtr<ID3D12Resource> particle_uav_;
+  //! パーティクルデータのアップロード用バッファ
   ComPtr<ID3D12Resource> particle_uav_upload_;
+  //! UAVハンドル
   directx::descriptor_heap::DescriptorHandle handle_;
+  //! 頂点バッファビュー
   D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
 };
 

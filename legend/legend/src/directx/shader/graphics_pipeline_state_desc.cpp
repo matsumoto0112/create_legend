@@ -21,6 +21,7 @@ void GraphicsPipelineStateDesc::SetPixelShader(PixelShader* shader) {
   this->PS = shader->GetShaderBytecode();
 }
 
+//ジオメトリシェーダー
 void GraphicsPipelineStateDesc::SetGeometryShader(GeometryShader* shader) {
   this->GS = shader->GetShaderBytecode();
 }

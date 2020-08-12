@@ -51,11 +51,11 @@ bool GPUParticleTest::Initialize() {
 }
 
 bool GPUParticleTest::Update() {
-  auto& particle_compute_command_list =
-      game::GameDevice::GetInstance()->GetParticleManager().GetCommandList();
+  auto& particle_command_list =
+      game::GameDevice::GetInstance()->GetParticleCommandList();
 
   for (auto&& p : smoke_particles_) {
-    p.Update(particle_compute_command_list);
+    p.Update(particle_command_list);
   }
 
   return true;

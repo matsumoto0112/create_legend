@@ -2,6 +2,7 @@
 
 #include "src/directx/directx_helper.h"
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/compute_pipeline_state_desc.h"
 #include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/directx/shader/vertex_shader.h"
 #include "src/game/game_device.h"
@@ -60,10 +61,9 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   graphics_pso_desc.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-  D3D12_COMPUTE_PIPELINE_STATE_DESC compute_pso_desc = {};
-  compute_pso_desc.pRootSignature =
-      device.GetDefaultRootSignature()->GetRootSignature();
-  compute_pso_desc.CS = cs.GetShaderBytecode();
+  directx::shader::ComputePipelineStateDesc compute_pso_desc = {};
+  compute_pso_desc.SetRootSignature(device.GetDefaultRootSignature());
+  compute_pso_desc.SetComputeShader(&cs);
 
   if (!ParticleEmitter::Init(copy_command_list, particles.data(),
                              graphics_pso_desc, compute_pso_desc)) {
@@ -73,14 +73,22 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   return true;
 }
 
-void SmokeParticle::Update(directx::device::CommandList& compute_command_list) {
-  ParticleEmitter::Update(compute_command_list);
+void SmokeParticle::Update(ParticleCommandList& command_list) {
+  ParticleEmitter::Update(command_list);
 }
 
 void SmokeParticle::Render(
     directx::device::CommandList& graphics_command_list) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+
   graphics_command_list.GetCommandList()->IASetPrimitiveTopology(
       D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetTexture()
+      .Get(util::resource::id::Texture::TEX)
+      ->SetToHeap(device);
+
   ParticleEmitter::Render(graphics_command_list);
 }
 

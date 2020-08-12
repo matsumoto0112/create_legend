@@ -3,14 +3,14 @@
 
 #include "../defines/global.hlsli"
 
-Texture2D<float4> g_output1 : register(t3);
-Texture2D<float4> g_output2 : register(t5);
+Texture2D<float4> g_output1 : register(t0);
+Texture2D<float4> g_output2 : register(t1);
 
 struct MultiRenderTargetTestPP_ConstantBufferStructure {
     float border;
 };
 
-ConstantBuffer<MultiRenderTargetTestPP_ConstantBufferStructure> g_local_cb : register(b2);
+ConstantBuffer<MultiRenderTargetTestPP_ConstantBufferStructure> g_local_cb : register(b4);
 
 struct VSInput{
     float3 pos : POSITION;
@@ -26,16 +26,16 @@ typedef VSOutput PSInput;
 
 VSOutput VSMain(const VSInput v){
     VSOutput o = (VSOutput)0;
-    o.pos = mul(float4(v.pos,1.0),g_transform.world);
-    o.pos = mul(o.pos,g_world_context.view);
-    o.pos = mul(o.pos,g_world_context.projection);
+    o.pos = mul(float4(v.pos,1.0) ,g_transform.world);
+    o.pos = mul(o.pos, g_world_context.view);
+    o.pos = mul(o.pos, g_world_context.projection);
     
     o.uv = v.uv;
     
     return o;
 }
 
-float4 PSMain(const PSInput i){
+float4 PSMain(const PSInput i) {
     float4 color;
     if(i.uv.x <= g_local_cb.border) {
         color = g_output1.Sample(g_sampler_warp, i.uv);

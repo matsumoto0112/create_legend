@@ -8,7 +8,7 @@
 
 #include "src/audio/audio_manager.h"
 #include "src/directx/device/directx_device.h"
-#include "src/draw/particle/particle_manager.h"
+#include "src/draw/particle/particle_command_list.h"
 #include "src/draw/sprite_renderer.h"
 #include "src/input/input_manager.h"
 #include "src/util/fps_counter.h"
@@ -61,8 +61,8 @@ class GameDevice : public util::Singleton<GameDevice> {
 
   util::resource::Resource& GetResource() { return resource_; }
   draw::SpriteRenderer& GetSpriteRenderer() { return sprite_renderer_; }
-  draw::particle::ParticleManager& GetParticleManager() {
-    return particle_manager_;
+  draw::particle::ParticleCommandList& GetParticleCommandList() {
+    return particle_command_list_;
   }
 
  protected:
@@ -89,7 +89,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   util::ImguiManager imgui_manager_;
   util::resource::Resource resource_;
   draw::SpriteRenderer sprite_renderer_;
-  draw::particle::ParticleManager particle_manager_;
+  draw::particle::ParticleCommandList particle_command_list_;
 
   directx::buffer::ConstantBuffer<
       directx::buffer::constant_buffer_structure::GlobalData>

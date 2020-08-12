@@ -1,4 +1,4 @@
-#include "src/draw/particle/particle_manager.h"
+#include "src/draw/particle/particle_command_list.h"
 
 #include "src/directx/directx_helper.h"
 
@@ -8,12 +8,16 @@ namespace particle {
 
 using directx::directx_helper::Failed;
 
-ParticleManager::ParticleManager() {}
+//コンストラクタ
+ParticleCommandList::ParticleCommandList() {}
 
-ParticleManager::~ParticleManager() {}
+//デストラクタ
+ParticleCommandList::~ParticleCommandList() {}
 
-bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
-                           u32 frame_count) {
+//初期化
+bool ParticleCommandList::Init(directx::device::IDirectXAccessor& accessor,
+                               u32 frame_count) {
+  //コンピュートシェーダー実行用キュー作成
   D3D12_COMMAND_QUEUE_DESC compute_queue_desc = {};
   compute_queue_desc.Flags =
       D3D12_COMMAND_QUEUE_FLAGS::D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -24,6 +28,7 @@ bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
     return false;
   }
 
+  //フレームリソースの作成
   frame_resources_.resize(frame_count);
   for (u32 i = 0; i < frame_count; i++) {
     if (!frame_resources_[i].Init(
@@ -33,6 +38,7 @@ bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
     }
   }
 
+  //同期用オブジェクト作成
   if (Failed(accessor.GetDevice()->CreateFence(
           fence_value_, D3D12_FENCE_FLAGS::D3D12_FENCE_FLAG_NONE,
           IID_PPV_ARGS(&fence_)))) {
@@ -43,12 +49,14 @@ bool ParticleManager::Init(directx::device::IDirectXAccessor& accessor,
   return true;
 }
 
-void ParticleManager::BeginFrame(directx::device::DirectXDevice& device) {
+//フレーム開始時
+void ParticleCommandList::BeginFrame(directx::device::DirectXDevice& device) {
   current_frame_resource_ =
       &frame_resources_[device.GetCurrentBackBufferIndex()];
 
   const UINT64 last_completed_fence = fence_->GetCompletedValue();
 
+  //待機が必要なら待機する
   if (current_frame_resource_->fence_value_ > last_completed_fence) {
     HANDLE event_handle = CreateEvent(nullptr, false, false, nullptr);
     if (!event_handle) {
@@ -73,7 +81,8 @@ void ParticleManager::BeginFrame(directx::device::DirectXDevice& device) {
       device, current_frame_resource_->GetCommandList());
 }
 
-void ParticleManager::Execute() {
+// CSの実行
+void ParticleCommandList::Execute() {
   current_frame_resource_->GetCommandList().Close();
   ID3D12CommandList* command_lists[] = {
       current_frame_resource_->GetCommandList().GetCommandList()};

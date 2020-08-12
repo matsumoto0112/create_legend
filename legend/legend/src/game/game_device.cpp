@@ -55,8 +55,8 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
     return false;
   }
 
-  if (!particle_manager_.Init(GetDevice(),
-                              directx::device::defines::FRAME_COUNT)) {
+  if (!particle_command_list_.Init(GetDevice(),
+                                   directx::device::defines::FRAME_COUNT)) {
     return false;
   }
 
@@ -90,7 +90,7 @@ bool GameDevice::BeginFrame() {
   if (!device_->Prepare()) {
     return false;
   }
-  particle_manager_.BeginFrame(GetDevice());
+  particle_command_list_.BeginFrame(GetDevice());
 
   global_cb_.GetStagingRef().time = fps_counter_.GetTotalSeconds<float>();
   global_cb_.GetStagingRef().delta_time = fps_counter_.GetDeltaSeconds<float>();
@@ -101,7 +101,7 @@ bool GameDevice::BeginFrame() {
 }
 
 bool GameDevice::MidFrame() {
-  particle_manager_.Execute();
+    particle_command_list_.Execute();
   return true;
 }
 

@@ -83,7 +83,8 @@ bool MainScene1::Initialize() {
         math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
     for (i32 i = 0; i < 2; i++) {
       float x = game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f);
-      float z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
+      float z =
+          game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
       math::Vector3 pos = math::Vector3(x, 0.1f, z);
       enemy_parameter.transform = util::Transform(
           pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
@@ -113,6 +114,7 @@ bool MainScene1::Update() {
   if (!UpdateTurn()) {
     return false;
   }
+
   if (!physics_field_.Update(turn_, player_.GetVelocity(), player_.GetIsMove(),
                              player_.GetImpulse(), player_.GetPower(),
                              enemy_manager_.GetVelocities(),
@@ -204,7 +206,8 @@ void MainScene1::Draw() {
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
   for (auto&& desk : desks_) {
     desk.GetCollisionRef().DebugDraw(command_list);

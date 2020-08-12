@@ -10,6 +10,7 @@
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/debugscene/stage_generate_test.h"
+#include "src/scenes/decorator/pausable.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/mainscene/main_scene_1.h"
 #include "src/scenes/title.h"
@@ -79,7 +80,8 @@ bool SceneManager::Update() {
         case SceneType::ENEMY_MOVE_VIEWER:
           return std::make_unique<debugscene::EnemyMoveViewer>(this);
         case SceneType::MAIN_SCENE_1:
-          return std::make_unique<mainscene::MainScene1>(this);
+          return std::make_unique<decorator::Pausable>(
+              this, std::make_unique<mainscene::MainScene1>(this));
         case SceneType::STAGE_GENERATE_TEST:
           return std::make_unique<debugscene::StageGenerateTest>(this);
         case SceneType::GRAFFITI_TEST:

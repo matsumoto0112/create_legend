@@ -32,17 +32,17 @@ class PhysicsField {
    * @brief プレイヤーあたり判定の登録
    * @param プレイヤーの直方体
    */
-  void SetPlayer(physics::BoundingBox& player_obb);
+  void SetPlayer(const physics::BoundingBox& player_obb);
   /**
    * @brief エネミーあたり判定の登録
    * @param エネミーの直方体
    */
-  void AddEnemy(physics::BoundingBox& enemy_obb);
+  void AddEnemy(const physics::BoundingBox& enemy_obb);
   /**
    * @brief 机のあたり判定の登録
    * @param 机の直方体
    */
-  void AddDesk(physics::BoundingBox& desk_obb);
+  void AddDesk(const physics::BoundingBox& desk_obb);
   /**
    * @brief 障害物のあたり判定の登録
    * @param 障害物の直方体
@@ -95,6 +95,10 @@ class PhysicsField {
    * @brief 更新したプレイヤーの速度の取得
    */
   math::Vector3 GetPlayerVelocity() const;
+  /**
+   * @brief 更新したプレイヤーの回転の取得
+   */
+  math::Quaternion GetPlayerRotation() const;
 
   /**
    * @brief 更新した各エネミーの速度の取得

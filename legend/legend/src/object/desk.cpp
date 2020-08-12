@@ -20,9 +20,7 @@ bool Desk::Init(const InitializeParameter& parameter) {
   this->collision_.SetPosition(transform_.GetPosition());
   this->collision_.SetRotation(transform_.GetRotation());
   this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(parameter.bounding_box_length.x,
-                             parameter.bounding_box_length.y,
-                             parameter.bounding_box_length.z);
+  this->collision_.SetLength(parameter.bounding_box_length);
   SetNormal(parameter.normal);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();

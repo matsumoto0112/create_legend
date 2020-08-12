@@ -10,8 +10,7 @@ EnemyManager::~EnemyManager() {}
 
 bool EnemyManager::Initilaize() { return true; }
 
-bool EnemyManager::Update(player::Player* player,
-                          system::PhysicsField* physics_field) {
+bool EnemyManager::Update() {
   // 敵追加
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
@@ -23,9 +22,8 @@ bool EnemyManager::Update(player::Player* player,
                .GetKeyboard()
                ->GetKeyDown(input::key_code::D)) {
     if (0 < enemys_.size()) {
-      Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
-                  0, static_cast<i32>(enemys_.size())),
-              physics_field);
+      // Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
+      //    0, static_cast<i32>(enemys_.size())));
     }
   }
 
@@ -51,7 +49,7 @@ bool EnemyManager::Update(player::Player* player,
     }
   }
   // 敵行動
-  EnemyAction(player);
+  EnemyAction();
 
   for (auto&& enemy : enemys_) {
     enemy->Update();
@@ -65,21 +63,15 @@ void EnemyManager::Draw() {
   }
 }
 
-void EnemyManager::EnemyAction(player::Player* player) {
+void EnemyManager::EnemyAction() {
   if ((action_enemy_index_ < 0) || (enemys_.size() <= action_enemy_index_)) {
     return;
   }
   if (move_timer_ <= 0.0f) {
-    math::Vector3 velocity;
-    if (player == nullptr) {
-      auto h = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
-      auto v = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
-      velocity = (math::Vector3(v, 0, h)).Normalized();
-    } else {
-      velocity =
-          (player->GetPosition() - enemys_[action_enemy_index_]->GetPosition())
-              .Normalized();
-    }
+    math::Vector3 velocity = (player_obb_.GetPosition() -
+                              enemys_[action_enemy_index_]->GetPosition())
+                                 .Normalized();
+
     enemys_[action_enemy_index_]->SetVelocity(velocity);
   }
   move_timer_ +=
@@ -93,7 +85,7 @@ void EnemyManager::EnemyAction(player::Player* player) {
 }
 
 void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
-                       system::PhysicsField* physics_field) {
+                       system::PhysicsField& physics_field) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
@@ -103,15 +95,13 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
   auto enemy = std::make_unique<Enemy>();
 
   enemy->Init(paramater);
-  if (physics_field != nullptr) {
-    physics_field->AddEnemy(enemy->GetCollisionRef());
-  }
+  physics_field.AddEnemy(enemy->GetCollisionRef());
 
   enemys_.emplace_back(std::move(enemy));
   // SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
-void EnemyManager::Destroy(i32 index, system::PhysicsField* physics_field) {
+void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
   if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
     return;
   }
@@ -121,9 +111,7 @@ void EnemyManager::Destroy(i32 index, system::PhysicsField* physics_field) {
     action_enemy_index_--;
   }
 
-  if (physics_field != nullptr) {
-    physics_field->RemoveEnemy(index);
-  }
+  physics_field.RemoveEnemy(index);
 }
 
 void EnemyManager::SetPosition(Enemy* enemy) {
@@ -139,9 +127,9 @@ Enemy* EnemyManager::GetLastEnemy() const {
 }
 
 // obbの座標を基に座標更新
-void EnemyManager::SetPosition(system::PhysicsField* physics_field) {
+void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
-    enemys_[i]->SetPosition(physics_field->GetEnemyOBB(i).GetPosition());
+    enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
     if (enemys_[i]->GetPosition().y <= -5.0f) Destroy(i, physics_field);
   }
 }
@@ -152,10 +140,10 @@ i32 EnemyManager::GetEnemiesSize() const {
 }
 
 // obbの速度を基に速度更新
-void EnemyManager::SetVelocity(system::PhysicsField* physics_field) {
+void EnemyManager::SetVelocity(system::PhysicsField& physics_field) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     if (enemys_[i]->GetMoveEnd()) continue;
-    enemys_[i]->SetVelocity(physics_field->GetEnemyVelocity(i));
+    enemys_[i]->SetVelocity(physics_field.GetEnemyVelocity(i));
   }
 }
 
@@ -184,6 +172,10 @@ bool EnemyManager::LastEnemyMoveEnd() const {
     }
   }
   return end;
+}
+
+void EnemyManager::SetPlayer(const physics::BoundingBox& player_obb) {
+  player_obb_ = player_obb;
 }
 
 void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {

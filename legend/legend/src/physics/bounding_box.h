@@ -48,12 +48,12 @@ class BoundingBox : public Collider {
    * @brief 長さを取得
    * @param 軸番号
    */
-  float GetLength(i32 length_num) const;
+  math::Vector3 GetLength() const;
   /**
    * @brief スケール倍の長さを取得
    * @param 軸番号
    */
-  float GetLengthByScale(i32 length_num) const;
+  math::Vector3 GetLengthByScale() const;
   /**
    * @brief 現在の位置を取得
    */
@@ -92,30 +92,39 @@ class BoundingBox : public Collider {
    * @param Y方向
    * @param Z方向
    */
-  void SetDirection(math::Vector3 direction_x, math::Vector3 direction_y,
-                    math::Vector3 direction_z);
+  void SetDirection(const math::Vector3& direction_x,
+                    const math::Vector3& direction_y,
+                    const math::Vector3& direction_z);
   /**
    * @brief 各方向の長さの設定
    * @param X方向の長さ
    * @param Y方向の長さ
    * @param Z方向の長さ
    */
-  void SetLength(float length_x, float length_y, float length_z);
+  void SetLength(const math::Vector3& length);
+  /**
+   * @brief 各方向の長さの設定
+   * @param X方向の長さ
+   * @param Y方向の長さ
+   * @param Z方向の長さ
+   */
+  void SetLength(const float& length_x, const float& length_y,
+                 const float& length_z);
   /**
    * @brief 中心座標の更新
    * @param 座標
    */
-  void SetPosition(math::Vector3 position);
+  void SetPosition(const math::Vector3& position);
   /**
    * @brief 回転角度の更新
    * @param 角度
    */
-  void SetRotation(math::Quaternion rotate);
+  void SetRotation(const math::Quaternion& rotate);
   /**
    * @brief 拡大縮小の更新
    * @param スケール
    */
-  void SetScale(math::Vector3 scale);
+  void SetScale(const math::Vector3& scale);
   /**
    * @brief 分離軸の更新
    */
@@ -130,21 +139,21 @@ class BoundingBox : public Collider {
   void SetOnGround(bool is_ground);
   /**
    * @brief デバッグ描画
-   * @param command_list コマンドリスト 
-  */
+   * @param command_list コマンドリスト
+   */
   void DebugDraw(directx::device::CommandList& command_list) override;
 
  private:
   //!方向ベクトル
   std::vector<math::Vector3> directions_;
   //!各軸方向の長さ(半径)
-  std::vector<float> lengthes_;
+  math::Vector3 length_;
   //!分離軸X
-  math::Vector3 axis_x;
+  math::Vector3 axis_x_ = math::Vector3::kRightVector;
   //!分離軸Y
-  math::Vector3 axis_y;
+  math::Vector3 axis_y_ = math::Vector3::kUpVector;
   //!分離軸Z
-  math::Vector3 axis_z;
+  math::Vector3 axis_z_ = math::Vector3::kForwardVector;
 
   //! トリガーかどうか
   bool is_trigger_;

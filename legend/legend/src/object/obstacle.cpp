@@ -24,9 +24,7 @@ bool Obstacle::Init(const InitializeParameter& params) {
   this->collision_.SetPosition(transform_.GetPosition());
   this->collision_.SetRotation(transform_.GetRotation());
   this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(params.bounding_box_length.x,
-                             params.bounding_box_length.y,
-                             params.bounding_box_length.z);
+  this->collision_.SetLength(params.bounding_box_length);
 
   model_ = game::GameDevice::GetInstance()->GetResource().GetModel().Get(
       MODEL_ID.at(params.model_id));

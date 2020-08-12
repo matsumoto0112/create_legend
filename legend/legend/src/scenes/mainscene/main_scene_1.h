@@ -57,7 +57,7 @@ class MainScene1 : public Scene {
   //! プレイヤー
   player::Player player_;
   //! 机
-  object::Desk desk_;
+  std::vector<object::Desk> desks_;
   //! エネミー
   enemy::EnemyManager enemy_manager_;
   //! 障害物リスト

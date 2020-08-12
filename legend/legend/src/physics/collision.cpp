@@ -10,32 +10,33 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   //分離軸の更新
   obb1.SetAxis();
   obb2.SetAxis();
+
   //距離を算出
   math::Vector3 distance = obb2.GetPosition() - obb1.GetPosition();
 
   //分離軸の比較
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisX(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisY(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisZ(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisX(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisY(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisZ(), distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
 
@@ -43,52 +44,49 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   math::Vector3 v_sep;
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
-
-  obb1.SetPosition(obb1.GetPosition() + return_vector_);
-  obb2.SetPosition(obb2.GetPosition() - return_vector_);
   return true;
 }
 
@@ -99,29 +97,28 @@ bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
   //分離軸上の距離
   float length = math::util::Abs(math::Vector3::Dot(v_sep, distance));
 
+  float obb1_x =
+      math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLength().x;
+  float obb1_y =
+      math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLength().y;
+  float obb1_z =
+      math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLength().z;
+  float obb2_x =
+      math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLength().x;
+  float obb2_y =
+      math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLength().y;
+  float obb2_z =
+      math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLength().z;
+
   //分離軸上で最も遠いobb1の頂点までの距離
-  float len_a = math::util::Abs(
-      math::Vector3::Dot(obb1.GetAxisX(), v_sep) * obb1.GetLengthByScale(0) +
-      math::Vector3::Dot(obb1.GetAxisY(), v_sep) * obb1.GetLengthByScale(1) +
-      math::Vector3::Dot(obb1.GetAxisZ(), v_sep) * obb1.GetLengthByScale(2));
+  float len_a = math::util::Abs(obb1_x + obb1_y + obb1_z);
 
   //分離軸上で最も遠いobb2の頂点までの距離
-  float len_b = math::util::Abs(
-      math::Vector3::Dot(obb2.GetAxisX(), v_sep) * obb2.GetLengthByScale(0) +
-      math::Vector3::Dot(obb2.GetAxisY(), v_sep) * obb2.GetLengthByScale(1) +
-      math::Vector3::Dot(obb2.GetAxisZ(), v_sep) * obb2.GetLengthByScale(2));
+  float len_b = math::util::Abs(obb2_x + obb2_y + obb2_z);
 
   if (length > len_a + len_b) {
     //衝突していない
     return false;
-  }
-
-  if (v_sep.x >= v_sep.y && v_sep.x > v_sep.z) {
-    return_vector_ += math::Vector3(len_a - len_b, 0, 0);
-  } else if (v_sep.y > v_sep.x && v_sep.y >= v_sep.z) {
-    return_vector_ += math::Vector3(0, len_a - len_b, 0);
-  } else if (v_sep.z > v_sep.x && v_sep.z > v_sep.y) {
-    return_vector_ += math::Vector3(0, 0, len_a - len_b);
   }
 
   //衝突している
@@ -133,11 +130,17 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
   //平面の法線に対するOBBの射影線の長さを算出
   //近接距離
   float proximity_distance = 0;
-  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
-      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
+  math::Matrix4x4 rotate_matrix = obb.GetRotation().ToMatrix();
 
+  float length = 0;
   for (i32 i = 0; i < 3; i++) {
-    math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i);
+    if (i == 0)
+      length = obb.GetLength().x;
+    else if (i == 1)
+      length = obb.GetLength().y;
+    else
+      length = obb.GetLength().z;
+    math::Vector3 axis = obb.GetDirection(i) * length;
     proximity_distance += math::util::Abs(
         math::Vector3::Dot(math::Matrix4x4::MultiplyCoord(axis, rotate_matrix),
                            plane.GetNormal()));
@@ -148,13 +151,13 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
                                       plane.GetNormal());
 
   if (math::util::Abs(distance) - proximity_distance > 0) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     return false;
   }
 
   if (obb.GetIsTrigger()) {
     //トリガーならばここまで
-    MY_LOG(L"トリガー判定です");
+    // MY_LOG(L"トリガー判定です");
     return true;
   }
 
@@ -184,48 +187,50 @@ bool Collision::Collision_OBB_Plane(BoundingBox& obb, Plane& plane) {
 bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
   //近接距離
   float proximity_distance = 0;
-  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
-      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
+  math::Matrix4x4 rotate_matrix = obb.GetRotation().ToMatrix();
 
   math::Vector3 normal = math::Vector3::kUpVector;
-  math::Vector3 desk_surface = math::Vector3(0, desk_obb.GetLength(1), 0);
+  math::Vector3 desk_surface = math::Vector3(0, desk_obb.GetLength().y, 0);
+  float length = 0;
   for (i32 i = 0; i < 3; i++) {
-    math::Vector3 axis = obb.GetDirection(i) * obb.GetLength(i);
+    if (i == 0)
+      length = obb.GetLength().x;
+    else if (i == 1)
+      length = obb.GetLength().y;
+    else
+      length = obb.GetLength().z;
+    math::Vector3 axis = obb.GetDirection(i) * length;
     proximity_distance += math::util::Abs(
         math::Vector3::Dot(math::Matrix4x4::MultiplyCoord(axis, rotate_matrix),
                            normal) +
-        desk_obb.GetLength(1));
+        desk_obb.GetLength().y);
   }
 
   //直方体と机の距離を算出
   float distance = math::Vector3::Dot(
       obb.GetPosition() - desk_obb.GetPosition() + desk_surface, normal);
 
-  float obb_right = obb.GetPosition().x + obb.GetLength(0);
-  float obb_left = obb.GetPosition().x - obb.GetLength(0);
-  float obb_forward = obb.GetPosition().z + obb.GetLength(2);
-  float obb_back = obb.GetPosition().z - obb.GetLength(2);
-  float desk_right = desk_obb.GetPosition().x + desk_obb.GetLength(0);
-  float desk_left = desk_obb.GetPosition().x - desk_obb.GetLength(0);
-  float desk_forward = desk_obb.GetPosition().z + desk_obb.GetLength(2);
-  float desk_back = desk_obb.GetPosition().z - desk_obb.GetLength(2);
+  float desk_right = desk_obb.GetPosition().x + desk_obb.GetLength().x;
+  float desk_left = desk_obb.GetPosition().x - desk_obb.GetLength().x;
+  float desk_forward = desk_obb.GetPosition().z + desk_obb.GetLength().z;
+  float desk_back = desk_obb.GetPosition().z - desk_obb.GetLength().z;
 
-  if (obb_right < desk_left || obb_left > desk_right ||
-      obb_forward < desk_back || obb_back > desk_forward) {
-    MY_LOG(L"机の外にいます");
+  if (obb.GetPosition().x < desk_left || obb.GetPosition().x > desk_right ||
+      obb.GetPosition().z < desk_back || obb.GetPosition().z > desk_forward) {
+    // MY_LOG(L"机の外にいます");
     obb.SetOnGround(false);
     return false;
   }
 
   if (math::util::Abs(distance) - proximity_distance > 0) {
-    MY_LOG(L"衝突しませんでした");
+    // MY_LOG(L"衝突しませんでした");
     obb.SetOnGround(false);
     return false;
   }
 
   if (obb.GetIsTrigger()) {
     //トリガーならばここまで
-    MY_LOG(L"トリガー判定です");
+    // MY_LOG(L"トリガー判定です");
     return true;
   }
 
@@ -254,12 +259,12 @@ bool Collision::Collision_OBB_DeskOBB(BoundingBox& obb, BoundingBox& desk_obb) {
 
 //球と直方体の衝突判定
 bool Collision::Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb) {
-  float left = obb.GetPosition().x - obb.GetLengthByScale(0);
-  float right = obb.GetPosition().x + obb.GetLengthByScale(0);
-  float down = obb.GetPosition().y - obb.GetLengthByScale(1);
-  float up = obb.GetPosition().y + obb.GetLengthByScale(1);
-  float front = obb.GetPosition().z - obb.GetLengthByScale(2);
-  float back = obb.GetPosition().z + obb.GetLengthByScale(2);
+  float left = obb.GetPosition().x - obb.GetLength().x;
+  float right = obb.GetPosition().x + obb.GetLength().x;
+  float down = obb.GetPosition().y - obb.GetLength().y;
+  float up = obb.GetPosition().y + obb.GetLength().y;
+  float front = obb.GetPosition().z - obb.GetLength().z;
+  float back = obb.GetPosition().z + obb.GetLength().z;
 
   std::vector<math::Vector3> vertices(8);
   vertices[0] = {left, down, front};
@@ -271,8 +276,7 @@ bool Collision::Collision_Sphere_OBB(Sphere& sphere, BoundingBox& obb) {
   vertices[6] = {right, up, back};
   vertices[7] = {right, up, front};
 
-  math::Matrix4x4 rotate_matrix = math::Matrix4x4::CreateRotation(
-      obb.GetRotation().ToEular() * math::util::RAD_2_DEG);
+  math::Matrix4x4 rotate_matrix = obb.GetRotation().ToMatrix();
   for (i32 i = 0; i < vertices.size(); i++) {
     vertices[i] = math::Matrix4x4::MultiplyCoord(vertices[i], rotate_matrix);
   }
@@ -577,9 +581,9 @@ bool Collision::IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb,
 
   //分離軸上で最も遠いobbの頂点までの距離
   float len_a = math::util::Abs(
-      math::Vector3::Dot(obb.GetAxisX(), v_sep) * obb.GetLength(0) +
-      math::Vector3::Dot(obb.GetAxisY(), v_sep) * obb.GetLength(1) +
-      math::Vector3::Dot(obb.GetAxisZ(), v_sep) * obb.GetLength(2));
+      math::Vector3::Dot(obb.GetAxisX(), v_sep) * obb.GetLength().z +
+      math::Vector3::Dot(obb.GetAxisY(), v_sep) * obb.GetLength().y +
+      math::Vector3::Dot(obb.GetAxisZ(), v_sep) * obb.GetLength().z);
 
   float len_b = math::util::Abs(math::Vector3::Dot(ray.GetDirection(), v_sep) *
                                 ray.GetDistance());

@@ -15,12 +15,26 @@ StageGenerator::StageGenerator() {}
 //デストラクタ
 StageGenerator::~StageGenerator() {}
 
-bool StageGenerator::LoadStage(std::filesystem::path filepath, object::Desk* desk, player::Player* player, enemy::EnemyManager* enemy_manager)
-{
-    //テキストデータを読み込み
-    std::vector<std::string> indexs = LoadStringStageData(filepath);
+/*bool StageGenerator::LoadStage(
+    std::filesystem::path filepath, const std::string map_name,
+    system::PhysicsField* physics_field,
+    std::vector<actor::Actor<physics::BoundingBox>>* actors,
+    enemy::EnemyManager* enemy_manager)*/
+bool StageGenerator::LoadStage(std::filesystem::path filepath,
+                               const std::string map_name,
+                               system::PhysicsField* physics_field,
+                               std::vector<object::Desk>* desks,
+                               std::vector<object::Obstacle>* obstacles,
+                               player::Player* player,
+                               enemy::EnemyManager* enemy_manager) {
+  //テキストデータを読み込み
+  std::vector<std::string> indexs = LoadStringStageData(filepath);
 
-    return SetMapActors(indexs, desk, player, enemy_manager);
+  //各アクターを生成
+  // return SetMapActors(map_name, indexs, physics_field, actors,
+  // enemy_manager);
+  return SetMapActors(map_name, indexs, physics_field, desks, obstacles, player,
+                      enemy_manager);
 }
 
 //ファイルの読み込み処理
@@ -52,48 +66,98 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
   return indexs;
 }
 
-bool StageGenerator::SetMapActors(std::vector<std::string> indexs,
-                                  object::Desk* desk, player::Player* player,
+// bool StageGenerator::SetMapActors(
+//    const std::string map_name, const std::vector<std::string>& indexs,
+//    system::PhysicsField* physics_field,
+//    std::vector<actor::Actor<physics::BoundingBox>>* actors,
+//    enemy::EnemyManager* enemy_manager)
+bool StageGenerator::SetMapActors(const std::string map_name,
+                                  const std::vector<std::string>& indexs,
+                                  system::PhysicsField* physics_field,
+                                  std::vector<object::Desk>* desks,
+                                  std::vector<object::Obstacle>* obstacles,
+                                  player::Player* player,
                                   enemy::EnemyManager* enemy_manager) {
+  bool is_all_ok = true;
+
   for (auto&& index : indexs) {
+    //文字列を分割
     std::vector<std::string> infomation = StringSplit(index, ',');
 
-    if (infomation[0] == "aaaa") continue;
+    //本来は背景IDなどを読み込むが現在は無視
+    if (infomation[0] == map_name) continue;
 
-    util::Transform transform =
-        String_2_Transform(infomation[1], infomation[2], infomation[3],
-                           infomation[4], infomation[5], infomation[6],
-                           "1", "1", "1");
-
-    //プレイヤーの初期化
-    if (infomation[0] == "startpoint") {
-      player::Player::InitializeParameter player_parameter;
-      player_parameter.transform = transform;
-      player_parameter.bouding_box_length = math::Vector3(0.1f, 0.05f, 0.2f);
-      player_parameter.min_power = 0;
-      player_parameter.max_power = 1;
-      if (!player->Init(player_parameter)) {
-        MY_LOG(L"プレイヤーの初期化に失敗しました。");
-      }
-    }
+    // Transformを読み込み(scaleは現状無視)
+    util::Transform transform = String_2_Transform(
+        infomation[1], infomation[2], infomation[3], infomation[4],
+        infomation[5], infomation[6], "1", "1", "1");
 
     //机の初期化
     if (infomation[0] == "floor") {
-        object::Desk::InitializeParameter desk_parameter;
-        desk_parameter.transform = transform;
-        desk_parameter.bounding_box_length = math::Vector3(0.3f, 0.05f, 0.2f);
-        desk_parameter.normal = math::Vector3::kUpVector;
-        if (!desk->Init(desk_parameter)) {
-            MY_LOG(L"机の初期化に失敗しました。");
-        }
+      object::Desk::InitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.bounding_box_length = math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
+      parameter.normal = math::Vector3::kUpVector;
+
+      auto& desk = desks->emplace_back();
+
+      if (!desk.Init(parameter)) {
+        MY_LOG(L"机の生成に失敗しました。");
+        is_all_ok = false;
+        continue;
+      }
+      physics_field->AddObstacle(desk.GetCollisionRef());
+      continue;
     }
 
-    //if (infomation[0] == "enemy") {
-    //    enemy_manager->Add()
-    //}
+    //プレイヤーの生成
+    if (infomation[0] == "startpoint") {
+      player::Player::InitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+      parameter.min_power = 0;
+      parameter.max_power = 1;
+
+      if (!player->Init(parameter)) {
+        MY_LOG(L"プレイヤーの生成に失敗しました");
+        is_all_ok = false;
+        continue;
+      }
+      // physics_field->AddObstacle(player->GetCollisionRef());
+      continue;
+    }
+
+    //敵の生成
+    if (infomation[0] == "enemy") {
+      enemy::Enemy::InitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+      enemy_manager->Add(parameter, *physics_field);
+      continue;
+    }
+
+    //障害物の生成
+    if (infomation[0] == "obstacle") {
+      object::Obstacle::InitializeParameter parameter;
+      parameter.position = transform.GetPosition();
+      parameter.rotation = transform.GetRotation();
+      parameter.model_id = 0;
+      parameter.bounding_box_length =
+          math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+
+      auto& obstacle = obstacles->emplace_back();
+
+      if (!obstacle.Init(parameter)) {
+        MY_LOG(L"障害物の生成に失敗しました。");
+        is_all_ok = false;
+        continue;
+      }
+      physics_field->AddObstacle(obstacle.GetCollisionRef());
+      continue;
+    }
   }
 
-  return true;
+  return is_all_ok;
 }
 
 float StageGenerator::String_2_Float(const std::string& string) {

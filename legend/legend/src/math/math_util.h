@@ -62,6 +62,44 @@ inline float Sqrt(float X) { return std::sqrtf(X); }
 inline float Abs(float X) { return std::abs(X); }
 
 /**
+ * @brief X^Pを計算する
+ */
+inline float Pow(float X, float P) { return std::pow(X, P); }
+
+/**
+ * @brief xとyのうち小さいほうを返す
+ */
+template <class T>
+inline constexpr T Min(T x, T y) {
+  return std::min(x, y);
+}
+
+/**
+ * @brief xとyのうち大きいほうを返す
+ */
+template <class T>
+inline constexpr T Max(T x, T y) {
+  return std::max(x, y);
+}
+
+/**
+ * @brief Xの値の正負を判定する
+ * @param X 判定する数
+ * @param eps 許容誤差
+ * @return
+ * Xがepsより大きいなら1、-epsより小さいなら-1、-eps以上eps以下なら0を返す
+ */
+inline constexpr i32 Sign(float X, float eps = 0.01f) {
+  if (X > eps) {
+    return 1;
+  } else if (X < -eps) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+/**
  * @brief 2の累乗にアライメントする
  * @return numをalignmentでアライメントされた値を返す
  * @details 例)

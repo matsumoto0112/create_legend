@@ -93,7 +93,7 @@ inline void Actor<T>::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   resource.GetPipeline()
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
+      ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();

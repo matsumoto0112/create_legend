@@ -8,6 +8,7 @@
 
 #include "src/directx/render_target/depth_stencil.h"
 #include "src/directx/render_target/multi_render_target_texture.h"
+#include "src/directx/shader/geometry_shader.h"
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
@@ -36,9 +37,12 @@ struct GraphicsPipelineStateDesc : public D3D12_GRAPHICS_PIPELINE_STATE_DESC {
   void SetVertexShader(VertexShader* shader);
   /**
    * @brief ピクセルシェーダーの情報をセットする
-   * @param shader
    */
   void SetPixelShader(PixelShader* shader);
+  /**
+   * @brief ジオメトリシェーダーの情報をセットする
+   */
+  void SetGeometryShader(GeometryShader* shader);
   /**
    * @brief レンダーターゲットの情報をセットする
    */

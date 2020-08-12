@@ -55,7 +55,7 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
     return false;
   }
 
-  directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+  directx::shader::PipelineState::GraphicsPipelineStateDesc pso_desc = {};
   pso_desc.BlendState.RenderTarget[0] =
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
   pso_desc.BlendState.AlphaToCoverageEnable = true;
@@ -104,7 +104,7 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   }
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  pipeline_state_.SetGraphicsCommandList(command_list);
+  pipeline_state_.SetCommandList(command_list);
   world_cb_.SetToHeap(device);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
@@ -114,7 +114,8 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   for (auto&& sp : draw_items_) {
     if (!sp) continue;
     sp->SetToGraphicsCommandList(command_list);
-    device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+    device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                              command_list);
     index_buffer_.Draw(command_list);
   }
   draw_items_.clear();

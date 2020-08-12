@@ -10,7 +10,7 @@
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/shader/pipeline_state.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/draw/model.h"
 #include "src/scenes/scene.h"

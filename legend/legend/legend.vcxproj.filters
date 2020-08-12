@@ -58,7 +58,6 @@
     <ClCompile Include="src\directx\shader\vertex_shader.cpp" />
     <ClCompile Include="src\directx\shader\shader_base.cpp" />
     <ClCompile Include="src\directx\buffer\texture_2d.cpp" />
-    <ClCompile Include="src\directx\shader\grahpics_pipeline_state.cpp" />
     <ClCompile Include="src\util\resource\resource.cpp" />
     <ClCompile Include="src\util\resource\vertex_shader.cpp" />
     <ClCompile Include="src\util\resource\texture.cpp" />
@@ -112,6 +111,8 @@
     <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
     <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
     <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
+    <ClCompile Include="src\directx\shader\compute_pipeline_state_desc.cpp" />
+    <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -204,7 +205,6 @@
     <ClInclude Include="src\directx\buffer\texture_2d.h" />
     <ClInclude Include="src\directx\shader\alpha_blend_desc.h" />
     <ClInclude Include="src\directx\shader\shader_register_id.h" />
-    <ClInclude Include="src\directx\shader\graphics_pipeline_state.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
     <ClInclude Include="src\util\resource\resource.h" />
     <ClInclude Include="src\util\resource\vertex_shader.h" />
@@ -264,6 +264,10 @@
     <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
+    <ClInclude Include="src\directx\shader\geometry_shader.h" />
+    <ClInclude Include="src\directx\shader\compute_pipeline_state_desc.h" />
+    <ClInclude Include="src\directx\shader\compute_shader.h" />
+    <ClInclude Include="src\directx\shader\pipeline_state.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

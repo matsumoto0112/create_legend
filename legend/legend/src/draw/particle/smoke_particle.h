@@ -17,8 +17,8 @@ class SmokeParticle : public ParticleEmitter {
   ~SmokeParticle();
 
   bool Init(directx::device::CommandList& copy_command_list);
-  bool Update(directx::device::CommandList& compute_command_list) override;
-  bool Render(directx::device::CommandList& graphics_command_list) override;
+  void Update(directx::device::CommandList& compute_command_list) override;
+  void Render(directx::device::CommandList& graphics_command_list) override;
 
  private:
   static constexpr u32 PARTICLE_NUM =

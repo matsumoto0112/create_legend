@@ -91,12 +91,14 @@ void ResetParticle(uint addr, uint index)
     const float px = RandomRange(-1.0, 1.0, u, seed++);
     const float py = 0.0;
     const float pz = RandomRange(-1.0, 1.0, u, seed++);
-    SetPosition(addr, float3(px, py, pz));
+    const float3 pos = float3(px, py, pz) + g_transform.world._m30_m31_m32;
+    SetPosition(addr, pos);
 
     const float vx = RandomRange(-1.0, 1.0, u, seed++);
     const float vy = RandomRange(1.0, 3.0, u, seed++);
     const float vz = RandomRange(-1.0, 1.0, u, seed++);
-    SetVelocity(addr, float3(vx, vy, vz));
+    const float3 velocity = float3(vx, vy, vz);
+    SetVelocity(addr, velocity);
 
     SetColor(addr, float4(1.0, 1.0, 1.0, 0.05));
     SetSeed(addr, seed);

@@ -118,7 +118,7 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
 
   resource.GetPipeline()
       .Get(util::resource::id::Pipeline::GRAFFITI)
-      ->SetGraphicsCommandList(command_list);
+      ->SetCommandList(command_list);
 
   constexpr u32 MASK_TEXTURE_ID = 1;
   device.GetHeapManager().RegisterHandle(

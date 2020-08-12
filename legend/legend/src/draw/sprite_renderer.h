@@ -8,7 +8,7 @@
 
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/shader/pipeline_state.h"
 #include "src/draw/sprite_2d.h"
 
 namespace legend {
@@ -55,7 +55,7 @@ class SpriteRenderer {
   //! ワールド情報コンスタントバッファ
   directx::buffer::ConstantBuffer<WorldContext_CBStruct> world_cb_;
   //! 描画パイプライン
-  directx::shader::GraphicsPipelineState pipeline_state_;
+  directx::shader::PipelineState pipeline_state_;
   //! スプライトリスト
   std::vector<Sprite2D*> draw_items_;
 };

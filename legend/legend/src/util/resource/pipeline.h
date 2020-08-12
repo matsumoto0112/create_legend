@@ -6,7 +6,7 @@
  * @brief パイプラインリソース管理クラス定義
  */
 
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/shader/pipeline_state.h"
 #include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
@@ -20,7 +20,7 @@ namespace resource {
  */
 class Pipeline : public ResourceManager<
                      id::Pipeline,
-                     std::shared_ptr<directx::shader::GraphicsPipelineState>> {
+                     std::shared_ptr<directx::shader::PipelineState>> {
  public:
   /**
    * @brief コンストラクタ

@@ -34,8 +34,13 @@ bool GPUParticleTest::Initialize() {
     return false;
   }
 
-  if (!smoke_particle_.Init(command_list)) {
-    return false;
+  smoke_particles_.resize(5);
+  for (u32 i = 0; i < 5; i++) {
+    if (!smoke_particles_[i].Init(command_list)) {
+      return false;
+    }
+    smoke_particles_[i].GetTransformRef().SetPosition(
+        math::Vector3(i * 1.0f, 0.0f, i * 1.0f));
   }
 
   command_list.Close();
@@ -48,8 +53,9 @@ bool GPUParticleTest::Initialize() {
 bool GPUParticleTest::Update() {
   auto& particle_compute_command_list =
       game::GameDevice::GetInstance()->GetParticleManager().GetCommandList();
-  if (!smoke_particle_.Update(particle_compute_command_list)) {
-    return false;
+
+  for (auto&& p : smoke_particles_) {
+    p.Update(particle_compute_command_list);
   }
 
   return true;
@@ -62,7 +68,10 @@ void GPUParticleTest::Draw() {
                            ->GetDevice()
                            .GetCurrentFrameResource()
                            ->GetCommandList();
-  smoke_particle_.Render(command_list);
+
+  for (auto&& p : smoke_particles_) {
+    p.Render(command_list);
+  }
 }
 
 void GPUParticleTest::Finalize() {}

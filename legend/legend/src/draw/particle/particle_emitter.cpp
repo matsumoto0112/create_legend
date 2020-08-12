@@ -19,7 +19,9 @@ ParticleEmitter::ParticleEmitter(u32 particle_max_size,
 ParticleEmitter::~ParticleEmitter() {}
 
 bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
-                           const void* data) {
+                           const void* data,
+                           D3D12_GRAPHICS_PIPELINE_STATE_DESC graphics_desc,
+                           D3D12_COMPUTE_PIPELINE_STATE_DESC compute_desc) {
   using directx::directx_helper::Failed;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
@@ -83,10 +85,18 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   vertex_buffer_view_.SizeInBytes = size;
   vertex_buffer_view_.StrideInBytes = particle_structure_size_;
 
+  if (!graphics_pipeline_state_.Init(device, graphics_desc)) {
+    return false;
+  }
+
+  if (!compute_pipeline_state_.Init(device, compute_desc)) {
+    return false;
+  }
+
   return true;
 }
 
-bool ParticleEmitter::Update(
+void ParticleEmitter::Update(
     directx::device::CommandList& compute_command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& graphics_command_list =
@@ -95,21 +105,18 @@ bool ParticleEmitter::Update(
   device.GetHeapManager().RegisterHandle(
       directx::shader::UnorderedAccessID::Particle,
       directx::shader::ResourceType::UAV, handle_);
-  device.GetHeapManager().SetHeapTableToComputeCommandList(
-      device, compute_command_list);
-  compute_command_list.GetCommandList()->SetPipelineState(
-      compute_pipeline_state_.Get());
-  compute_command_list.GetCommandList()->Dispatch(dispatch_x_, dispatch_y_, 1);
-
-  return true;
-}
-
-bool ParticleEmitter::Render(
-    directx::device::CommandList& graphics_command_list) {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  transform_cb_.GetStagingRef().world = math::Matrix4x4::kIdentity;
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
+  device.GetHeapManager().SetHeapTableToComputeCommandList(
+      device, compute_command_list);
+  compute_pipeline_state_.SetCommandList(compute_command_list);
+  compute_command_list.GetCommandList()->Dispatch(dispatch_x_, dispatch_y_, 1);
+}
+
+void ParticleEmitter::Render(
+    directx::device::CommandList& graphics_command_list) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   game::GameDevice::GetInstance()
       ->GetResource()
@@ -118,14 +125,11 @@ bool ParticleEmitter::Render(
       ->SetToHeap(device);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
-  graphics_command_list.GetCommandList()->SetPipelineState(
-      graphics_pipeline_state_.Get());
+  graphics_pipeline_state_.SetCommandList(graphics_command_list);
   graphics_command_list.GetCommandList()->IASetVertexBuffers(
       0, 1, &vertex_buffer_view_);
   graphics_command_list.GetCommandList()->DrawInstanced(particle_max_num_, 1, 0,
                                                         0);
-
-  return true;
 }
 
 }  // namespace particle

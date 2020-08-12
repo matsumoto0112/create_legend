@@ -1,7 +1,7 @@
 //#include "src/directx/buffer/index_buffer.h"
 //#include "src/directx/buffer/texture_2d.h"
 //#include "src/directx/buffer/vertex_buffer.h"
-//#include "src/directx/shader/graphics_pipeline_state.h"
+//#include "src/directx/shader/pipeline_state.h"
 //#include "src/directx/shader/pixel_shader.h"
 //#include "src/directx/shader/root_signature.h"
 //#include "src/directx/shader/vertex_shader.h"

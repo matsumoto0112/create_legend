@@ -115,7 +115,7 @@ bool MultiRenderTargetTest::Initialize() {
       return false;
     }
 
-    auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
+    auto ps = std::make_shared<directx::shader::PipelineState>();
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
     pso_desc.BlendState.RenderTarget[0] =
@@ -161,8 +161,8 @@ bool MultiRenderTargetTest::Initialize() {
 
   //ポストプロセス描画用パラメータ
   {
-    auto ps = std::make_shared<directx::shader::GraphicsPipelineState>();
-    directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+    auto ps = std::make_shared<directx::shader::PipelineState>();
+    directx::shader::PipelineState::GraphicsPipelineStateDesc pso_desc = {};
     pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
     pso_desc.DepthStencilState.DepthEnable = false;
@@ -342,7 +342,7 @@ void MultiRenderTargetTest::Draw() {
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST)
-      ->SetGraphicsCommandList(command_list);
+      ->SetCommandList(command_list);
   root_signature_.SetGraphicsCommandList(command_list);
 
   for (u32 i = 0; i < static_cast<u32>(transforms_.size()); i++) {
@@ -358,7 +358,7 @@ void MultiRenderTargetTest::Draw() {
       ->GetResource()
       .GetPipeline()
       .Get(util::resource::id::Pipeline::MULTI_RENDER_TARGET_TEST_PP)
-      ->SetGraphicsCommandList(command_list);
+      ->SetCommandList(command_list);
 
   render_resource_manager.UseAsSRV(
       device, RenderTarget_ID::MULTI_RENDER_TARGET_TEST, 0);
@@ -368,7 +368,8 @@ void MultiRenderTargetTest::Draw() {
   post_process_world_cb_.SetToHeap(device);
   post_process_transform_cb_.SetToHeap(device);
   post_process_local_cb_.SetToHeap(device);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
 
   post_process_vertex_buffer_.SetGraphicsCommandList(command_list);
   post_process_index_buffer_.SetGraphicsCommandList(command_list);

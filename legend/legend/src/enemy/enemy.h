@@ -2,7 +2,7 @@
 #define LEGEND_ENEMY_ENEMY_H_
 
 #include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/graphics_pipeline_state.h"
+#include "src/directx/shader/pipeline_state.h"
 #include "src/draw/model.h"
 #include "src/physics/collision.h"
 #include "src/util/transform.h"

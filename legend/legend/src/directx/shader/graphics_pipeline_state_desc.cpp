@@ -21,6 +21,10 @@ void GraphicsPipelineStateDesc::SetPixelShader(PixelShader* shader) {
   this->PS = shader->GetShaderBytecode();
 }
 
+void GraphicsPipelineStateDesc::SetGeometryShader(GeometryShader* shader) {
+  this->GS = shader->GetShaderBytecode();
+}
+
 //レンダーターゲット
 void GraphicsPipelineStateDesc::SetRenderTargets(
     const render_target::MultiRenderTargetTexture& render_target) {

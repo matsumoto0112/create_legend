@@ -90,7 +90,7 @@ void ModelView::Draw() {
   camera_.RenderStart();
   resource.GetPipeline()
       .Get(util::resource::id::Pipeline::MODEL_VIEW)
-      ->SetGraphicsCommandList(command_list);
+      ->SetCommandList(command_list);
   for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
     transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
     transform_cb_[i].UpdateStaging();

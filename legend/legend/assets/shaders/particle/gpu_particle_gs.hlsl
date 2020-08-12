@@ -7,20 +7,13 @@
 
 #include "gpu_particle_test.hlsli"
 
-float4x4 CreateMVPMatrix()
-{
-    float4x4 mat = mul(g_transform.world, g_world_context.view);
-    mat = mul(mat, g_world_context.projection);
-    return mat;
-}
-
 #define MAX_VERTEX_COUNT 6
 [maxvertexcount(MAX_VERTEX_COUNT)]
 void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
 {
-    float4x4 m = CreateMVPMatrix();
+    const float4x4 m = mul(g_world_context.view, g_world_context.projection);
 
-    float4 pos[4] =
+    const float4 pos[4] =
     {
         float4(-0.5f, 0.5f, 0.0f, 1.0f),
         float4(0.5f, 0.5f, 0.0f, 1.0f),
@@ -28,14 +21,14 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
         float4(-0.5f, -0.5f, 0.0f, 1.0f),
     };
 
-    float2 uv[4] = {
+    const float2 uv[4] = {
         float2(0.0, 0.0),
         float2(1.0, 0.0),
         float2(1.0, 1.0),
         float2(0.0, 1.0)
     };
 
-    uint indices[MAX_VERTEX_COUNT] =
+    const uint indices[MAX_VERTEX_COUNT] =
     {
         0, 1, 2, 0, 2, 3,
     };

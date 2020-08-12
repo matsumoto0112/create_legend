@@ -38,7 +38,7 @@ class GPUParticleTest : public Scene {
  private:
   camera::PerspectiveCamera camera_;
 
-  draw::particle::SmokeParticle smoke_particle_;
+  std::vector<draw::particle::SmokeParticle> smoke_particles_;
 };
 
 }  // namespace debugscene

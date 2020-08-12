@@ -138,15 +138,14 @@ class MyApp final : public device::Application {
         pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
         pso_desc.SampleDesc.Count = 1;
         pso_desc.SampleMask = UINT_MAX;
-        auto pipeline =
-            std::make_shared<directx::shader::GraphicsPipelineState>();
+        auto pipeline = std::make_shared<directx::shader::PipelineState>();
         if (!pipeline->Init(device, pso_desc)) {
           return false;
         }
         resource.GetPipeline().Register(
             util::resource::id::Pipeline::MODEL_VIEW, pipeline);
         auto pipeline_graffiti =
-            std::make_shared<directx::shader::GraphicsPipelineState>();
+            std::make_shared<directx::shader::PipelineState>();
         pso_desc.SetVertexShader(
             resource.GetVertexShader().Get(VertexShader::ID::GRAFFITI).get());
         pso_desc.SetPixelShader(
@@ -162,7 +161,7 @@ class MyApp final : public device::Application {
         pso_desc.RasterizerState.FillMode =
             D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME;
         auto pipeline_wireframe =
-            std::make_shared<directx::shader::GraphicsPipelineState>();
+            std::make_shared<directx::shader::PipelineState>();
         if (!pipeline_wireframe->Init(device, pso_desc)) {
           return false;
         }
@@ -170,9 +169,8 @@ class MyApp final : public device::Application {
             util::resource::id::Pipeline::OBJECT_WIREFRAME, pipeline_wireframe);
       }
       {
-        auto pipeline =
-            std::make_shared<directx::shader::GraphicsPipelineState>();
-        directx::shader::GraphicsPipelineState::PSODesc pso_desc = {};
+        auto pipeline = std::make_shared<directx::shader::PipelineState>();
+        directx::shader::PipelineState::GraphicsPipelineStateDesc pso_desc = {};
         auto vs = resource.GetVertexShader().Get(VertexShader::ID::OBB);
         auto ps = resource.GetPixelShader().Get(PixelShader::ID::OBB);
         pso_desc.BlendState.RenderTarget[0] =

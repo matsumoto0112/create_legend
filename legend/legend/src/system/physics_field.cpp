@@ -207,9 +207,8 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   }
 
   //各エネミー同士の衝突判定を調べる
-  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
-      if (i == j) continue;
+  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
+    for (i32 j = i + 1; j < enemy_obbs_.size(); j++) {
 
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], enemy_obbs_[j])) {

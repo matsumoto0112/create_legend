@@ -113,6 +113,7 @@
     <ClCompile Include="src\directx\shader\compute_pipeline_state_desc.cpp" />
     <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
+    <ClCompile Include="src\skill\skill_select_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -268,6 +269,10 @@
     <ClInclude Include="src\directx\shader\compute_shader.h" />
     <ClInclude Include="src\directx\shader\pipeline_state.h" />
     <ClInclude Include="src\draw\particle\particle_command_list.h" />
+    <ClInclude Include="src\skill\skill.h" />
+    <ClInclude Include="src\skill\skill_type.h" />
+    <ClInclude Include="src\skill\skill_select_ui.h" />
+    <ClInclude Include="src\scenes\debugscene\skill_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

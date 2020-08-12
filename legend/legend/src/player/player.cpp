@@ -23,9 +23,7 @@ bool Player::Init(const InitializeParameter& parameter) {
   this->collision_.SetScale(transform_.GetScale());
   //= physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
   //                       transform_.GetScale() * 0.1f);
-  this->collision_.SetLength(parameter.bouding_box_length.x,
-                             parameter.bouding_box_length.y,
-                             parameter.bouding_box_length.z);
+  this->collision_.SetLength(parameter.bouding_box_length);
   min_power_ = parameter.min_power;
   max_power_ = parameter.max_power;
 

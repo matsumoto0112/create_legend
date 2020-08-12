@@ -78,16 +78,17 @@ bool MainScene1::Initialize() {
   }
 
   {
-    if (!enemy_manager_.Initilaize()) {
-      return false;
-    }
     enemy::Enemy::InitializeParameter enemy_parameter;
-    enemy_parameter.transform = util::Transform(math::Vector3(-0.04f, 0.1f, 0),
-                                                math::Quaternion::kIdentity,
-                                                math::Vector3::kUnitVector);
     enemy_parameter.bouding_box_length =
         math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
-    enemy_manager_.Add(enemy_parameter, physics_field_);
+    for (i32 i = 0; i < 2; i++) {
+      float x = game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f);
+      float z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
+      math::Vector3 pos = math::Vector3(x, 0.1f, z);
+      enemy_parameter.transform = util::Transform(
+          pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+      enemy_manager_.Add(enemy_parameter, physics_field_);
+    }
   }
 
   //ƒJƒƒ‰‚Ì‰Šú‰»

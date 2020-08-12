@@ -95,7 +95,8 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
 //アダプターの初期化
 bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
                                     IDXGIAdapter1** adapter) {
-  DXGI_GPU_PREFERENCE pref = (DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE);
+  const DXGI_GPU_PREFERENCE pref =
+      DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE;
 
   *adapter = nullptr;
   ComPtr<IDXGIAdapter1> test_adapter;

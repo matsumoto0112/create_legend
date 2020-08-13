@@ -94,8 +94,8 @@ bool Model::Init(const std::filesystem::path& path,
   const std::vector<u8> albedo = loader.GetAlbedo();
   if (albedo.size() != 0) {
     if (!albedo_.InitAndWrite(
-            device, command_list, directx::shader::TextureRegisterID::ALBEDO,
-            DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, albedo,
+            device, command_list, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+            albedo,
             device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
                                       LocalHeapID::GLOBAL_ID),
             model_name_ + L"_Albedo")) {
@@ -105,10 +105,7 @@ bool Model::Init(const std::filesystem::path& path,
     //テクスチャがなければ仮のテクスチャを作る
     const std::vector<u8> tex_white = {0xff, 0xff, 0xff, 0xff};
     const directx::buffer::Texture2D::Desc desc{
-        directx::shader::TextureRegisterID::ALBEDO,
-        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-        1,
-        1,
+        DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1,
         device.GetLocalHandle(
             directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
         model_name_ + L"_Albedo"};
@@ -123,8 +120,9 @@ bool Model::Init(const std::filesystem::path& path,
 //描画
 void Model::Draw(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  albedo_.SetToHeap(device);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  albedo_.RegisterHandle(device, directx::shader::TextureRegisterID::ALBEDO);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

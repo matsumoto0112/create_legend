@@ -41,7 +41,7 @@ bool ModelView::Initialize() {
   transforms_.resize(OBJ_NUM);
   for (u32 i = 0; i < OBJ_NUM; i++) {
     if (!transform_cb_[i].Init(
-            device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+            device,
             device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
                                       LocalHeapID::GLOBAL_ID),
             L"Transform")) {
@@ -95,7 +95,8 @@ void ModelView::Draw() {
   for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
     transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
     transform_cb_[i].UpdateStaging();
-    transform_cb_[i].SetToHeap(device);
+    transform_cb_[i].RegisterHandle(
+        device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
     resource.GetModel()
         .Get(util::resource::resource_names::model::DESK)
         ->Draw(command_list);

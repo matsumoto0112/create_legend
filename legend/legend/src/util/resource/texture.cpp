@@ -25,7 +25,7 @@ bool Texture::Load(const std::wstring& name) {
   auto texture_path = Path::GetInstance()->texture();
   auto texture = std::make_shared<directx::buffer::Texture2D>();
   if (!texture->InitAndWrite(
-          device, command_list, 0, texture_path / name,
+          device, command_list, texture_path / name,
           device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
                                     LocalHeapID::GLOBAL_ID))) {
     MY_LOG(L"テクスチャの初期化に失敗しました。");

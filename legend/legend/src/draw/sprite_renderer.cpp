@@ -75,7 +75,7 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   }
 
   if (!world_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT,
+          device,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"SpriteRenderer_WorldContextConstantBuffer")) {
@@ -102,7 +102,8 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   pipeline_state_.SetCommandList(command_list);
-  world_cb_.SetToHeap(device);
+  world_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

@@ -4,9 +4,11 @@
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/compute_pipeline_state_desc.h"
 #include "src/directx/shader/graphics_pipeline_state_desc.h"
+#include "src/directx/shader/shader_register_id.h"
 #include "src/directx/shader/vertex_shader.h"
 #include "src/game/game_device.h"
 #include "src/util/path.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace draw {
@@ -86,8 +88,8 @@ void SmokeParticle::Render(
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetTexture()
-      .Get(L"tex.png")
-      ->SetToHeap(device);
+      .Get(util::resource::resource_names::texture::TEX)
+      ->RegisterHandle(device, directx::shader::TextureRegisterID::ALBEDO);
 
   ParticleEmitter::Render(graphics_command_list);
 }

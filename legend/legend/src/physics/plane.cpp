@@ -74,7 +74,7 @@ bool Plane::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
@@ -92,7 +92,8 @@ void Plane::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetModel()

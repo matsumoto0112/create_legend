@@ -98,7 +98,8 @@ inline void Actor<T>::Draw() {
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   model_->Draw(command_list);
 }
@@ -109,7 +110,7 @@ inline bool Actor<T>::InitBuffer() {
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           name_ + L"_TransformConstantBuffer")) {

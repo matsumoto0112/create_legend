@@ -24,9 +24,11 @@ bool TextureChar::Init(
 
   auto texture = std::make_shared<directx::buffer::Texture2D>();
   const directx::buffer::Texture2D::Desc desc{
-      register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-      width,        height,
-      handle,       L"TextureChar_" + c,
+      DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+      width,
+      height,
+      handle,
+      L"TextureChar_" + c,
   };
 
   if (!texture->Init(game::GameDevice::GetInstance()->GetDevice(), desc)) {

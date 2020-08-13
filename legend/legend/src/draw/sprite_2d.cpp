@@ -44,13 +44,12 @@ bool Sprite2D::Init(
 
   this->texture_ = texture;
 
-  if (!transform_constant_buffer_.Init(device, ConstantBufferID::TRANSFORM,
+  if (!transform_constant_buffer_.Init(device,
                                        device.GetLocalHandle(cbv_heap_id),
                                        L"Sprite_TransformConstantBuffer")) {
     return false;
   }
-  if (!uv_rect_constant_buffer_.Init(device, ConstantBufferID::UV_RECT,
-                                     device.GetLocalHandle(cbv_heap_id),
+  if (!uv_rect_constant_buffer_.Init(device, device.GetLocalHandle(cbv_heap_id),
                                      L"Sprite_UVRectConstantBuffer")) {
     return false;
   }
@@ -85,7 +84,7 @@ void Sprite2D::SetToGraphicsCommandList(
     directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  texture_->SetToHeap(device);
+  texture_->RegisterHandle(device, directx::shader::TextureRegisterID::ALBEDO);
 
   // 2Dカメラに映ることを考慮したワールド行列を作成する
   transform_constant_buffer_.GetStagingRef().world =
@@ -95,10 +94,12 @@ void Sprite2D::SetToGraphicsCommandList(
       math::Matrix4x4::CreateTranslate(
           math::Vector3(position_.x, position_.y, z_order_));
   transform_constant_buffer_.UpdateStaging();
-  transform_constant_buffer_.SetToHeap(device);
+  transform_constant_buffer_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   uv_rect_constant_buffer_.UpdateStaging();
-  uv_rect_constant_buffer_.SetToHeap(device);
+  uv_rect_constant_buffer_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::UV_RECT);
 }
 
 }  // namespace draw

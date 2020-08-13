@@ -24,7 +24,8 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                             command_list);
 
@@ -59,10 +60,8 @@ bool PrimitiveBase::InitBuffer(
     return false;
   }
 
-  constexpr auto TRANSFORM_ID =
-      directx::shader::ConstantBufferRegisterID::TRANSFORM;
   if (!transform_cb_.Init(
-          device, TRANSFORM_ID,
+          device,
           device.GetHeapManager().GetLocalHeap(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           name_ + L"_TransformConstantBuffer")) {

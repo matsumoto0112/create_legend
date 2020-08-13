@@ -67,39 +67,9 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   //プレイヤーと障害物の衝突判定
   for (i32 i = 0; i < obstacle_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-            player_obb_, obstacle_obbs_[i])) {
-      MY_LOG(L"プレイヤーと障害物が衝突しました");
-      math::Vector3 player_len = math::Matrix4x4::MultiplyCoord(
-          player_obb_.GetLength(), player_obb_.GetRotation().ToMatrix());
-      math::Vector3 obstacle_len = math::Matrix4x4::MultiplyCoord(
-          obstacle_obbs_[i].GetLength(),
-          obstacle_obbs_[i].GetRotation().ToMatrix());
-      float player_left = player_obb_.GetPosition().x - player_len.x;
-      float player_right = player_obb_.GetPosition().x + player_len.x;
-      float player_back = player_obb_.GetPosition().z - player_len.z;
-      float player_front = player_obb_.GetPosition().z + player_len.z;
-      float obstacle_left = obstacle_obbs_[i].GetPosition().x - obstacle_len.x;
-      float obstacle_right = obstacle_obbs_[i].GetPosition().x + obstacle_len.x;
-      float obstacle_back = obstacle_obbs_[i].GetPosition().z - obstacle_len.z;
-      float obstacle_front = obstacle_obbs_[i].GetPosition().z + obstacle_len.z;
-      math::Vector3 adjust_pos = math::Vector3::kZeroVector;
-      if (player_left < obstacle_right) {
-        adjust_pos.x = (player_left - obstacle_right);
-      }
-      if (player_right > obstacle_left) {
-        adjust_pos.x = (player_right - obstacle_left);
-      }
-      if (player_back < obstacle_front) {
-        adjust_pos.z = (player_back - obstacle_front);
-      }
-      if (player_front > obstacle_back) {
-        adjust_pos.z = (player_front - obstacle_back);
-      }
-
+            player_obb_, obstacle_obbs_[i], true, false)) {
       Deceleration(player_velocity_, 15, player_deceleration_x_,
                    player_deceleration_z_);
-      adjust_pos *= update_time_;
-      player_obb_.SetPosition(player_obb_.GetPosition() + adjust_pos);
     }
   }
 
@@ -107,165 +77,57 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     for (i32 j = 0; j < obstacle_obbs_.size(); j++) {
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-              enemy_obbs_[i], obstacle_obbs_[j])) {
-        MY_LOG(L"エネミーと障害物が衝突しました");
-        math::Vector3 enemy_len = math::Matrix4x4::MultiplyCoord(
-            enemy_obbs_[i].GetLength(),
-            enemy_obbs_[i].GetRotation().ToMatrix());
-        math::Vector3 obstacle_len = math::Matrix4x4::MultiplyCoord(
-            obstacle_obbs_[j].GetLength(),
-            obstacle_obbs_[j].GetRotation().ToMatrix());
-        float enemy_left = enemy_obbs_[i].GetPosition().x - enemy_len.x;
-        float enemy_right = enemy_obbs_[i].GetPosition().x + enemy_len.x;
-        float enemy_back = enemy_obbs_[i].GetPosition().z - enemy_len.z;
-        float enemy_front = enemy_obbs_[i].GetPosition().z + enemy_len.z;
-        float obstacle_left =
-            obstacle_obbs_[j].GetPosition().x - obstacle_len.x;
-        float obstacle_right =
-            obstacle_obbs_[j].GetPosition().x + obstacle_len.x;
-        float obstacle_back =
-            obstacle_obbs_[j].GetPosition().z - obstacle_len.z;
-        float obstacle_front =
-            obstacle_obbs_[j].GetPosition().z + obstacle_len.z;
-        math::Vector3 adjust_pos = math::Vector3::kZeroVector;
-        if (enemy_left < obstacle_right) {
-          adjust_pos.x = (enemy_left - obstacle_right);
-        }
-        if (enemy_right > obstacle_left) {
-          adjust_pos.x = (enemy_right - obstacle_left);
-        }
-        if (enemy_back < obstacle_front) {
-          adjust_pos.z = (enemy_back - obstacle_front);
-        }
-        if (enemy_front > obstacle_back) {
-          adjust_pos.z = (enemy_front - obstacle_back);
-        }
-
+              enemy_obbs_[i], obstacle_obbs_[j], true, false)) {
         Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
                      enemy_deceleration_z_[i]);
-        adjust_pos *= update_time_;
-        enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() + adjust_pos);
       }
     }
   }
 
   //プレイヤーと各エネミーの衝突判定を調べる
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-    if (physics::Collision::GetInstance()->Collision_OBB_OBB(player_obb_,
-                                                             enemy_obbs_[i])) {
-      math::Vector3 player_len = math::Matrix4x4::MultiplyCoord(
-          player_obb_.GetLength(), player_obb_.GetRotation().ToMatrix());
-      math::Vector3 enemy_len = math::Matrix4x4::MultiplyCoord(
-          enemy_obbs_[i].GetLength(), enemy_obbs_[i].GetRotation().ToMatrix());
-      float player_left = player_obb_.GetPosition().x - player_len.x;
-      float player_right = player_obb_.GetPosition().x + player_len.x;
-      float player_back = player_obb_.GetPosition().z - player_len.z;
-      float player_front = player_obb_.GetPosition().z + player_len.z;
-      float enemy_left = enemy_obbs_[i].GetPosition().x - enemy_len.x;
-      float enemy_right = enemy_obbs_[i].GetPosition().x + enemy_len.x;
-      float enemy_back = enemy_obbs_[i].GetPosition().z - enemy_len.z;
-      float enemy_front = enemy_obbs_[i].GetPosition().z + enemy_len.z;
-      math::Vector3 adjust_pos = math::Vector3::kZeroVector;
-      if (player_left < enemy_right) {
-        adjust_pos.x = (player_left - enemy_right) / 2.0f;
-      }
-      if (player_right > enemy_left) {
-        adjust_pos.x = (player_right - enemy_left) / 2.0f;
-      }
-      if (player_back < enemy_front) {
-        adjust_pos.z = (player_back - enemy_front) / 2.0f;
-      }
-      if (player_front > enemy_back) {
-        adjust_pos.z = (player_front - enemy_back) / 2.0f;
-      }
-      adjust_pos *= update_time_;
-
+    if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+            player_obb_, enemy_obbs_[i], true, true)) {
       if (turn == Turn::PLAYER_TURN) {
         Deceleration(player_velocity_, 5, player_deceleration_x_,
                      player_deceleration_z_);
 
-        if (player_velocity_ != math::Vector3::kZeroVector) {
-          math::Vector3 vel = player_velocity_ * update_time_;
-          math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * player_power;
-          enemy_obbs_[i].SetPosition(pos);
-        } else {
-          enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() - adjust_pos);
-        }
+        math::Vector3 vel = player_velocity_ * update_time_;
+        math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * player_power;
+        enemy_obbs_[i].SetPosition(pos);
       } else {
         Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
                      enemy_deceleration_z_[i]);
 
-        if (enemy_velocities_[i] != math::Vector3::kZeroVector) {
-          math::Vector3 vel = enemy_velocities_[i] * update_time_;
-          math::Vector3 pos = player_obb_.GetPosition() + vel * 2.0f;
-          player_obb_.SetPosition(pos);
-        } else {
-          player_obb_.SetPosition(player_obb_.GetPosition() + adjust_pos);
-        }
+        math::Vector3 vel = enemy_velocities_[i] * update_time_;
+        math::Vector3 pos = player_obb_.GetPosition() + vel * 2.0f;
+        player_obb_.SetPosition(pos);
       }
     }
   }
 
   //各エネミー同士の衝突判定を調べる
-  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
-    for (i32 j = i + 1; j < enemy_obbs_.size(); j++) {
+  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
+    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+      if (i == j) continue;
 
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-              enemy_obbs_[i], enemy_obbs_[j])) {
-        math::Vector3 enemy1_len = math::Matrix4x4::MultiplyCoord(
-            enemy_obbs_[i].GetLength(),
-            enemy_obbs_[i].GetRotation().ToMatrix());
-        math::Vector3 enemy2_len = math::Matrix4x4::MultiplyCoord(
-            enemy_obbs_[j].GetLength(),
-            enemy_obbs_[j].GetRotation().ToMatrix());
-        float enemy1_left = enemy_obbs_[i].GetPosition().x - enemy1_len.x;
-        float enemy1_right = enemy_obbs_[i].GetPosition().x + enemy1_len.x;
-        float enemy1_back = enemy_obbs_[i].GetPosition().z - enemy1_len.z;
-        float enemy1_front = enemy_obbs_[i].GetPosition().z + enemy1_len.z;
-        float enemy2_left = enemy_obbs_[j].GetPosition().x - enemy2_len.x;
-        float enemy2_right = enemy_obbs_[j].GetPosition().x + enemy2_len.x;
-        float enemy2_back = enemy_obbs_[j].GetPosition().z - enemy2_len.z;
-        float enemy2_front = enemy_obbs_[j].GetPosition().z + enemy2_len.z;
-        math::Vector3 adjust_pos = math::Vector3::kZeroVector;
-        if (enemy1_left < enemy2_right) {
-          adjust_pos.x = (enemy1_left - enemy2_right) / 2.0f;
-        }
-        if (enemy1_right > enemy2_left) {
-          adjust_pos.x = (enemy1_right - enemy2_left) / 2.0f;
-        }
-        if (enemy1_back < enemy2_front) {
-          adjust_pos.z = (enemy1_back - enemy2_front) / 2.0f;
-        }
-        if (enemy1_front > enemy2_back) {
-          adjust_pos.z = (enemy1_front - enemy2_back) / 2.0f;
-        }
-        adjust_pos *= update_time_;
-
+              enemy_obbs_[i], enemy_obbs_[j], true, true)) {
         {
           Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
                        enemy_deceleration_z_[i]);
 
-          if (enemy_velocities_[i] != math::Vector3::kZeroVector) {
-            math::Vector3 vel = enemy_velocities_[i] * update_time_;
-            math::Vector3 pos = enemy_obbs_[j].GetPosition() + vel * 2.0f;
-            enemy_obbs_[j].SetPosition(pos);
-          } else {
-            enemy_obbs_[j].SetPosition(enemy_obbs_[j].GetPosition() -
-                                       adjust_pos);
-          }
+          math::Vector3 vel = enemy_velocities_[i] * update_time_;
+          math::Vector3 pos = enemy_obbs_[j].GetPosition() + vel * 2.0f;
+          enemy_obbs_[j].SetPosition(pos);
         }
         {
           Deceleration(enemy_velocities_[j], 15, enemy_deceleration_x_[j],
                        enemy_deceleration_z_[j]);
 
-          if (enemy_velocities_[j] != math::Vector3::kZeroVector) {
-            math::Vector3 vel = enemy_velocities_[j] * update_time_;
-            math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * 2.0f;
-            enemy_obbs_[i].SetPosition(pos);
-          } else {
-            enemy_obbs_[i].SetPosition(enemy_obbs_[i].GetPosition() +
-                                       adjust_pos);
-          }
+          math::Vector3 vel = enemy_velocities_[j] * update_time_;
+          math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * 2.0f;
+          enemy_obbs_[i].SetPosition(pos);
         }
       }
     }
@@ -346,7 +208,7 @@ void PhysicsField::UpdateGravity(float gravity) {
 
   //プレイヤーの重力落下処理
   if (!player_obb_.GetOnGround()) {
-    g = player_velocity_ + math::Vector3(0, gravity, 0);
+    g = math::Vector3(0, gravity, 0);
     math::Vector3 player_pos = player_obb_.GetPosition() + g * update_time_;
     player_obb_.SetPosition(player_pos);
   }
@@ -354,7 +216,7 @@ void PhysicsField::UpdateGravity(float gravity) {
   //エネミーの重力落下処理
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (!enemy_obbs_[i].GetOnGround()) {
-      g = enemy_velocities_[i] + math::Vector3(0, gravity, 0);
+      g = math::Vector3(0, gravity, 0);
       math::Vector3 enemy_pos = enemy_obbs_[i].GetPosition() + g * update_time_;
       enemy_obbs_[i].SetPosition(enemy_pos);
     }
@@ -478,8 +340,35 @@ math::Vector3 PhysicsField::GetEnemyVelocity(i32 index_num) const {
 
 //エネミーの移動判定のリセット
 void PhysicsField::ResetEnemyMove() {
+  if (enemy_obbs_.size() == 0) return;
+
   for (i32 i = 0; i < is_enemy_move_.size(); i++) {
     is_enemy_move_[i] = false;
+  }
+}
+void PhysicsField::AdjustPosition(math::Vector3& adjust_pos, float left1,
+                                  float right1, float front1, float back1,
+                                  float left2, float right2, float front2,
+                                  float back2) {
+  if (left1 < right2 || right1 > left2) {
+    if (back1 < front2) {
+      adjust_pos.z = back1 - front2;
+    } else if (front1 > back2) {
+      adjust_pos.z = front1 - back2;
+    }
+  }
+  if (back1 < front2 || front1 > back2) {
+    if (left1 < right2) {
+      adjust_pos.x = left1 - right2;
+    } else if (right1 > left2) {
+      adjust_pos.x = right1 - left2;
+    }
+  }
+
+  if (math::util::Abs(adjust_pos.x) <= math::util::Abs(adjust_pos.z)) {
+    adjust_pos.z = 0;
+  } else {
+    adjust_pos.x = 0;
   }
 }
 }  // namespace system

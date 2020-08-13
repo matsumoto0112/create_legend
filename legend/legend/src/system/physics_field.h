@@ -109,6 +109,10 @@ class PhysicsField {
    */
   void ResetEnemyMove();
 
+  void AdjustPosition(math::Vector3& adjust_pos, float left1, float right1,
+                      float front1, float back1, float left2, float right2,
+                      float front2, float back2);
+
  private:
   //! ƒvƒŒƒCƒ„[‚Ì’¼•û‘Ì
   physics::BoundingBox player_obb_;

@@ -22,7 +22,8 @@ class Collision : public util::Singleton<Collision> {
    * @param ’¼•û‘Ì1
    * @param ’¼•û‘Ì2
    */
-  bool Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2);
+  bool Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2, bool obb1_move,
+                         bool obb2_move);
   /**
    * @brief OBB‚Ì“Š‰e‹——£”äŠr
    * @param ’¼•û‘Ì1
@@ -32,6 +33,10 @@ class Collision : public util::Singleton<Collision> {
    */
   bool IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
                           math::Vector3 v_sep, math::Vector3 distance);
+
+  void AdjustPosition(math::Vector3& adjust_pos, float left1, float right1,
+                      float front1, float back1, float left2, float right2,
+                      float front2, float back2);
   /**
    * @brief ’¼•û‘Ì‚Æ•½–Ê‚ÌÕ“Ë”»’è
    * @param ’¼•û‘Ì

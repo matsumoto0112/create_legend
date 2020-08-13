@@ -25,7 +25,7 @@ public:
 
     void Draw();
 
-    void AddSkill(const Skill* skill);
+    void AddSkill(/*const Skill* skill*/);
 
 private:
     math::Vector2 icon_base_position_;

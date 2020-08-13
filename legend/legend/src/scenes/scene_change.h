@@ -23,6 +23,7 @@ enum class SceneType {
   STAGE_GENERATE_TEST,
   GRAFFITI_TEST,
   GPU_PARTICLE_TEST,
+  SKILL_TEST,
 };
 
 class ISceneChange {

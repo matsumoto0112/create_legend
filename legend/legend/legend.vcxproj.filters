@@ -114,6 +114,8 @@
     <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
+    <ClCompile Include="src\skill\skill.cpp" />
+    <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

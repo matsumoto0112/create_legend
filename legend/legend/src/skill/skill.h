@@ -13,25 +13,35 @@ namespace skill {
     class Skill {
     public:
         //virtual void Init();
-        //virtual void Update();
+        //virtual void Action();
         //virtual void Draw();
-    public:
+        i32 GetModelID();
+        i32 GetRemainingUsableCount();
+        i32 GetRemainingRecastTurn();
+        SkillActivationTiming GetActivetionTiming();
+        SkillEffectEndTiming GetEndTiming();
+        i32 GetIconID();
+        i32 GetExplanationID();
+
+    protected:
         //! モデルのID
         i32 model_id_;
-        //! 使用可能回数
+        //! 規定使用可能回数
         i32 usable_count_;
-        //! 再使用までのターン数
+        //! 残り使用可能回数
+        i32 remaining_usable_count_;
+        //! 再使用まで規定のターン数
         i32 recast_turn_;
+        //! 残り再使用までのターン数
+        i32 remaining_recast_turn_;
         //! スキルの発動タイミング
         SkillActivationTiming activetion_timing_;
         //! スキルの効果終了タイミング
         SkillEffectEndTiming end_timing_;
-        //! 名前
-        std::wstring name_;
-        //! 説明文
-        std::wstring explanatory_text_;
         //! スキルアイコンのID
         i32 skill_icon_id_;
+        //! スキル説明の画像のID
+        i32 skill_explanation_id_;
 };
 
 }  // namespace skill

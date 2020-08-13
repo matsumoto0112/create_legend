@@ -159,6 +159,7 @@
     <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
+    <ClCompile Include="src\skill\skill.cpp" />
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
     <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\stdafx.cpp">

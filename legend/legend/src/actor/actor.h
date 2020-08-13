@@ -112,7 +112,7 @@ inline bool Actor<T>::InitBuffer() {
   if (!transform_cb_.Init(
           device,
           device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
           name_ + L"_TransformConstantBuffer")) {
     return false;
   }

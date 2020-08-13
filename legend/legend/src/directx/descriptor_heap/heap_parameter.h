@@ -27,22 +27,12 @@ constexpr u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
 /**
  * @brief ローカルヒープの登録ID
  * @details
- * できるだけ細かく分けたほうが各ヒープの必要量が抑えられるため、シーンごと、もしくはシチュエーションごとに分けるのを想定
+ * ヒープを確保するたびに領域が減っていくので1ゲームごとにリセットしないとそのうち足りなくなる。
+ * そのため、常に存在するヒープ（モデルのテクスチャデータなど）と、1ゲームごとのヒープ（敵のトランスフォームコンスタントバッファなど）に分ける必要がある
  */
 enum class LocalHeapID : u32 {
-  //! 常に存在するヒープ
-  GLOBAL_ID = 0,
-  GAME_OVER,
-  TITLE,
-
-  MODEL_VIEW_SCENE = 100,
-  MULTI_RENDER_TARGET_TEST_SCENE,
-  PHYSICS_TEST,
-  SOUND_TEST,
-  ENEMY_MOVE_TEST,
-  SPRITE_RENDER_TEST,
-  PLAYER_MOVE_VIEWER,
-  MAIN_SCENE_1,
+  GLOBAL_ID = 0,  //! 常に存在するヒープ
+  ONE_PLAY = 1,   //! 1ゲームごとにリセットされる
 };
 
 namespace local {
@@ -57,26 +47,8 @@ inline constexpr u32 GetDefinedLocalDescriptorNum(LocalHeapID id) {
   switch (id) {
     case LocalHeapID::GLOBAL_ID:
       return 20000;
-    case LocalHeapID::GAME_OVER:
-      return 10000;
-    case LocalHeapID::TITLE:
-      return 10000;
-    case LocalHeapID::MODEL_VIEW_SCENE:
-      return 100;
-    case LocalHeapID::MULTI_RENDER_TARGET_TEST_SCENE:
-      return 200000;
-    case LocalHeapID::PHYSICS_TEST:
-      return 100;
-    case LocalHeapID::SOUND_TEST:
-      return 100;
-    case LocalHeapID::ENEMY_MOVE_TEST:
-      return 100;
-    case LocalHeapID::SPRITE_RENDER_TEST:
-      return 2000;
-    case LocalHeapID::PLAYER_MOVE_VIEWER:
-      return 100;
-    case LocalHeapID::MAIN_SCENE_1:
-      return 100;
+    case LocalHeapID::ONE_PLAY:
+      return 20000;
     default:
       MY_LOG(L"未定義のIDが選択されました。");
       break;

@@ -9,7 +9,11 @@ namespace scenes {
 Title::Title(ISceneChange* scene_change) : Scene(scene_change) {}
 
 //‰Šú‰»
-bool Title::Initialize() { return true; }
+bool Title::Initialize() {
+  game::GameDevice::GetInstance()->GetDevice().GetHeapManager().ResetLocalHeap(
+      directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
+  return true;
+}
 
 //XV
 bool Title::Update() {

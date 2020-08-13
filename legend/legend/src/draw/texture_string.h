@@ -32,14 +32,12 @@ class TextureString {
    * @brief 初期化
    * @param command_list コマンドリスト
    * @param str 初期化する文字列
-   * @param register_num シェーダーのレジスター番号
    * @param use_heap_id 使用するローカルヒープID
    * @param font 使用するフォント
    * @param font_size フォントサイズ
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(directx::device::CommandList& command_list, const std::wstring& str,
-            u32 register_num,
             directx::descriptor_heap::heap_parameter::LocalHeapID use_heap_id,
             const std::wstring& font = L"メイリオ", i32 font_size = 32);
 

@@ -20,10 +20,15 @@ bool SpriteRenderTest::Initialize() {
       util::Path::GetInstance()->exe() / "assets" / "fonts" / "みかちゃん.ttf";
   const std::wstring name = util::loader::FontLoader::GetInstance()->Load(font);
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-
   directx::device::CommandList command_list;
   if (!command_list.Init(
           device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
+  if (!string_.Init(command_list, L"HOGE",
+                    legend::directx::descriptor_heap::heap_parameter::
+                        LocalHeapID::GLOBAL_ID,
+                    name, 128)) {
     return false;
   }
 

@@ -31,12 +31,11 @@ class TextureChar : public Sprite2D {
    * @param c 初期化する文字
    * @param font フォント
    * @param font_size フォントサイズ
-   * @param register_num シェーダーのレジスター番号
    * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(directx::device::CommandList& command_list, wchar_t c,
-            const std::wstring& font, i32 font_size, u32 register_num,
+            const std::wstring& font, i32 font_size,
             const directx::descriptor_heap::DescriptorHandle& handle);
 
  private:

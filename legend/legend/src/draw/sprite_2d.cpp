@@ -94,12 +94,11 @@ void Sprite2D::SetToGraphicsCommandList(
       math::Matrix4x4::CreateTranslate(
           math::Vector3(position_.x, position_.y, z_order_));
   transform_constant_buffer_.UpdateStaging();
-  transform_constant_buffer_.RegisterHandle(
-      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+  transform_constant_buffer_.RegisterHandle(device,
+                                            ConstantBufferID::TRANSFORM);
 
   uv_rect_constant_buffer_.UpdateStaging();
-  uv_rect_constant_buffer_.RegisterHandle(
-      device, directx::shader::ConstantBufferRegisterID::UV_RECT);
+  uv_rect_constant_buffer_.RegisterHandle(device, ConstantBufferID::UV_RECT);
 }
 
 }  // namespace draw

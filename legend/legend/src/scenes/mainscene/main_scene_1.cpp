@@ -159,19 +159,19 @@ bool MainScene1::Update() {
     camera_.SetFov(fov * math::util::DEG_2_RAD);
 
     if (ImGui::Button("BackCamera")) {
-      camera_.SetPosition(math::Vector3(0, 0.5f, -0.5f));
+      camera_.SetPosition(math::Vector3(0, 50.0f, -50.0f));
       camera_.SetRotation(math::Quaternion::FromEular(
           math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f));
       camera_.SetUpVector(math::Vector3::kUpVector);
     }
     if (ImGui::Button("RightCamera")) {
-      camera_.SetPosition(math::Vector3(0.5f, 0.05f, 0));
+      camera_.SetPosition(math::Vector3(50.0f, 5.0f, 0));
       camera_.SetRotation(math::Quaternion::FromEular(
           0.0f, math::util::DEG_2_RAD * -90.0f, 0.0f));
       camera_.SetUpVector(math::Vector3::kUpVector);
     }
     if (ImGui::Button("UpCamera")) {
-      camera_.SetPosition(math::Vector3(0, 1.0f, 0));
+      camera_.SetPosition(math::Vector3(0, 100.0f, 0));
       camera_.SetRotation(math::Quaternion::FromEular(
           math::util::DEG_2_RAD * 90.0f, 0.0f, 0.0f));
       camera_.SetUpVector(math::Vector3::kForwardVector);

@@ -23,31 +23,34 @@ SmokeParticle::~SmokeParticle() {}
 bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   using directx::directx_helper::Failed;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   std::vector<Particle> particles(PARTICLE_NUM);
 
-  const auto shader_path = util::Path::GetInstance()->shader();
-  directx::shader::VertexShader vs;
-  if (!vs.Init(device, shader_path / "gpu_particle_vs.cso")) {
-    return false;
-  }
-  directx::shader::ShaderBase ps;
-  if (!ps.Init(device, shader_path / "gpu_particle_ps.cso")) {
-    return false;
-  }
-  directx::shader::ShaderBase gs;
-  if (!gs.Init(device, shader_path / "gpu_particle_gs.cso")) {
-    return false;
-  }
-  directx::shader::ShaderBase cs;
-  if (!cs.Init(device, shader_path / "gpu_particle_cs.cso")) {
-    return false;
-  }
+  auto SetVertexShader = [&](directx::shader::GraphicsPipelineStateDesc& desc) {
+    constexpr auto name =
+        util::resource::resource_names::vertex_shader::GPU_PARTICLE;
+    auto shader = resource.GetVertexShader().Get(name).get();
+    desc.SetVertexShader(shader);
+  };
+  auto SetPixelShader = [&](directx::shader::GraphicsPipelineStateDesc& desc) {
+    constexpr auto name =
+        util::resource::resource_names::pixel_shader::GPU_PARTICLE;
+    auto shader = resource.GetPixelShader().Get(name).get();
+    desc.SetPixelShader(shader);
+  };
+  auto SetGeometryShader =
+      [&](directx::shader::GraphicsPipelineStateDesc& desc) {
+        constexpr auto name =
+            util::resource::resource_names::geometry_shader::GPU_PARTICLE;
+        auto shader = resource.GetGeometryShader().Get(name).get();
+        desc.SetGeometryShader(shader);
+      };
 
   directx::shader::GraphicsPipelineStateDesc graphics_pso_desc = {};
-  graphics_pso_desc.SetPixelShader(&ps);
-  graphics_pso_desc.SetVertexShader(&vs);
-  graphics_pso_desc.SetGeometryShader(&gs);
+  SetVertexShader(graphics_pso_desc);
+  SetPixelShader(graphics_pso_desc);
+  SetGeometryShader(graphics_pso_desc);
   graphics_pso_desc.SetRootSignature(device.GetDefaultRootSignature());
   graphics_pso_desc.SetRenderTargets(
       device.GetRenderResourceManager().GetRenderTarget(
@@ -63,9 +66,16 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   graphics_pso_desc.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
+  auto SetComputeShader = [&](directx::shader::ComputePipelineStateDesc& desc) {
+    constexpr auto name =
+        util::resource::resource_names::compute_shader::GPU_PARTICLE;
+    auto shader = resource.GetComputeShader().Get(name).get();
+    desc.SetComputeShader(shader);
+  };
+
   directx::shader::ComputePipelineStateDesc compute_pso_desc = {};
+  SetComputeShader(compute_pso_desc);
   compute_pso_desc.SetRootSignature(device.GetDefaultRootSignature());
-  compute_pso_desc.SetComputeShader(&cs);
 
   if (!ParticleEmitter::Init(copy_command_list, particles.data(),
                              graphics_pso_desc, compute_pso_desc)) {

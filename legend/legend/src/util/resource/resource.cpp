@@ -14,6 +14,8 @@ Resource::~Resource() {}
 bool Resource::Init() {
   if (!pixel_shader_.Init()) return false;
   if (!vertex_shader_.Init()) return false;
+  if (!geometry_shader_.Init()) return false;
+  if (!compute_shader_.Init()) return false;
   if (!pipeline_.Init()) return false;
   if (!model_.Init()) return false;
 

@@ -113,6 +113,8 @@
     <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
     <ClCompile Include="src\scenes\decorator\pausable.cpp" />
+    <ClCompile Include="src\util\resource\geometry_shader.cpp" />
+    <ClCompile Include="src\util\resource\compute_shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -268,6 +270,8 @@
     <ClInclude Include="src\draw\particle\particle_command_list.h" />
     <ClInclude Include="src\scenes\decorator\pausable.h" />
     <ClInclude Include="src\util\resource\resource_names.h" />
+    <ClInclude Include="src\util\resource\geometry_shader.h" />
+    <ClInclude Include="src\util\resource\compute_shader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

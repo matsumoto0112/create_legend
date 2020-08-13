@@ -49,6 +49,14 @@ constexpr const wchar_t* GPU_PARTICLE = L"gpu_particle_ps.cso";
 constexpr const wchar_t* OBB = L"obb_ps.cso";
 }  // namespace pixel_shader
 
+namespace geometry_shader {
+constexpr const wchar_t* GPU_PARTICLE = L"gpu_particle_gs.cso";
+}  // namespace geometry_shader
+
+namespace compute_shader {
+constexpr const wchar_t* GPU_PARTICLE = L"gpu_particle_cs.cso";
+}  // namespace compute_shader
+
 namespace pipeline {
 constexpr const wchar_t* SPRITE = L"sprite";
 constexpr const wchar_t* GRAFFITI = L"graffiti";

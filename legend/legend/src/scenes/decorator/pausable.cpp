@@ -1,10 +1,9 @@
 #include "src/scenes/decorator/pausable.h"
 
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 
 namespace {
-constexpr legend::util::resource::id::Texture PAUSE_IMAGE =
-    legend::util::resource::id::Texture::TEX;
 constexpr legend::directx::descriptor_heap::heap_parameter::LocalHeapID
     USE_HEAP_ID = legend::directx::descriptor_heap::heap_parameter::
         LocalHeapID::GLOBAL_ID;
@@ -21,7 +20,9 @@ Pausable::~Pausable() {}
 
 bool Pausable::Initialize() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-  if (!pause_image_.Init(resource.GetTexture().Get(PAUSE_IMAGE), USE_HEAP_ID)) {
+  if (!pause_image_.Init(resource.GetTexture().Get(
+                             util::resource::resource_names::texture::TEX),
+                         USE_HEAP_ID)) {
     return false;
   }
 

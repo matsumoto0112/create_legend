@@ -2,6 +2,7 @@
 
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 
 namespace {
 DXGI_FORMAT GetFormat(legend::u32 size) {
@@ -117,7 +118,7 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::GRAFFITI)
+      .Get(util::resource::resource_names::pipeline::GRAFFITI)
       ->SetCommandList(command_list);
 
   constexpr u32 MASK_TEXTURE_ID = 1;
@@ -125,7 +126,7 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
       MASK_TEXTURE_ID, directx::shader::ResourceType::SRV, handle_);
   transform_cb_.SetToHeap(device);
   resource.GetModel()
-      .Get(util::resource::id::Model::OBJECT_1000CM)
+      .Get(util::resource::resource_names::model::GRAFFITI)
       ->Draw(command_list);
 }
 

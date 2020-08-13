@@ -25,10 +25,10 @@ bool MainScene1::Initialize() {
   {
     player::Player::InitializeParameter player_parameter;
     player_parameter.transform =
-        util::Transform(math::Vector3(0, 0.1f, 0), math::Quaternion::kIdentity,
+        util::Transform(math::Vector3(0, 10.0f, 0), math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
     player_parameter.bouding_box_length =
-        math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+        math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -42,10 +42,10 @@ bool MainScene1::Initialize() {
     //本来はステージデータから読み込む
     object::Desk::InitializeParameter desk_parameter;
     desk_parameter.bounding_box_length =
-        math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
+        math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
     desk_parameter.normal = math::Vector3::kUpVector;
     for (i32 i = 0; i < 4; i++) {
-      math::Vector3 pos = math::Vector3(-1.2f, 0, -0.8f) / 4.0f;
+      math::Vector3 pos = math::Vector3(-120.0f, 0.0f, -80.0f) / 4.0f;
       if (i == 1)
         pos.x *= -1;
       else if (i == 2)
@@ -65,11 +65,11 @@ bool MainScene1::Initialize() {
   //障害物の初期化
   {
     object::Obstacle::InitializeParameter params;
-    params.position = math::Vector3(0.15f, 0.03f, 0.03f);
+    params.position = math::Vector3(15.0f, 3.0f, 3.0f);
     params.model_id = 0;
     params.rotation =
         math::Quaternion::FromEular(0.0f, 28.12f * math::util::DEG_2_RAD, 0.0f);
-    params.bounding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+    params.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
     auto& obs = obstacles_.emplace_back();
     if (!obs.Init(params)) {
       return false;
@@ -80,12 +80,15 @@ bool MainScene1::Initialize() {
   {
     enemy::Enemy::InitializeParameter enemy_parameter;
     enemy_parameter.bouding_box_length =
-        math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+        math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
     for (i32 i = 0; i < 2; i++) {
-      float x = game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f);
+      float x =
+          game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
+          100.0f;
       float z =
-          game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
-      math::Vector3 pos = math::Vector3(x, 0.1f, z);
+          game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f) *
+          100.0f;
+      math::Vector3 pos = math::Vector3(x, 10.0f, z);
       enemy_parameter.transform = util::Transform(
           pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
       enemy_manager_.Add(enemy_parameter, physics_field_);
@@ -94,7 +97,7 @@ bool MainScene1::Initialize() {
 
   //カメラの初期化
   {
-    const math::Vector3 camera_position = math::Vector3(0, 0.5f, -0.5f);
+    const math::Vector3 camera_position = math::Vector3(0, 50.0f, -50.0f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -184,13 +187,9 @@ void MainScene1::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  device.GetRenderResourceManager().SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-
   auto& render_resource_manager = device.GetRenderResourceManager();
   render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   camera_.RenderStart();
@@ -206,8 +205,6 @@ void MainScene1::Draw() {
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
-                                                            command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
   for (auto&& desk : desks_) {
     desk.GetCollisionRef().DebugDraw(command_list);

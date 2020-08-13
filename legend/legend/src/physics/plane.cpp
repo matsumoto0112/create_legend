@@ -5,6 +5,7 @@
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
+#include "src/util/resource/resource_names.h"
 #include "src/util/resource/vertex_shader.h"
 
 namespace legend {
@@ -95,7 +96,7 @@ void Plane::Draw() {
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetModel()
-      .Get(util::resource::id::Model::DESK)
+      .Get(util::resource::resource_names::model::DESK)
       ->Draw(command_list);
 }
 

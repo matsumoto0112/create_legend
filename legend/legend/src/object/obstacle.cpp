@@ -1,11 +1,6 @@
 #include "src/object/obstacle.h"
 
-namespace {
-using ModelID = legend::util::resource::id::Model;
-std::unordered_map<legend::u32, ModelID> MODEL_ID{
-    {0, ModelID::ERASER},
-};
-}  // namespace
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace object {
@@ -27,7 +22,7 @@ bool Obstacle::Init(const InitializeParameter& params) {
   this->collision_.SetLength(params.bounding_box_length);
 
   model_ = game::GameDevice::GetInstance()->GetResource().GetModel().Get(
-      MODEL_ID.at(params.model_id));
+      util::resource::resource_names::model::OBSTACLE);
   return true;
 }
 bool Obstacle::Update() { return true; }

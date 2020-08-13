@@ -29,7 +29,7 @@ class Resource {
   /**
    * @brief デストラクタ
    */
-  ~Resource();
+  virtual ~Resource();
   /**
    * @brief 初期化
    * @return 初期化に成功したらtrueを返す
@@ -51,7 +51,9 @@ class Resource {
    * @brief モデルを取得する
    */
   resource::Model& GetModel() { return model_; }
-
+  /**
+   * @brief テクスチャを取得する
+   */
   resource::Texture& GetTexture() { return texture_; }
 
  private:

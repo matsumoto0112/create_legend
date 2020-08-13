@@ -7,7 +7,6 @@
  */
 
 #include "src/draw/model.h"
-#include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
 namespace legend {
@@ -17,7 +16,7 @@ namespace resource {
  * @class Model
  * @brief モデルリソース管理クラス
  */
-class Model : public ResourceManager<id::Model, std::shared_ptr<draw::Model>> {
+class Model : public ResourceManager<std::shared_ptr<draw::Model>> {
  public:
   /**
    * @brief コンストラクタ
@@ -26,15 +25,13 @@ class Model : public ResourceManager<id::Model, std::shared_ptr<draw::Model>> {
   /**
    * @brief デストラクタ
    */
-  ~Model();
+  virtual ~Model();
   /**
    * @brief リソースを読み込む
-   * @param key モデルを一意に特定するID
-   * @param filepath ファイルへのパス
+   * @param name リソース名
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(id::Model key, const std::filesystem::path& filepath,
-            directx::device::CommandList& command_list);
+  bool Load(const std::wstring& name);
 };
 
 }  // namespace resource

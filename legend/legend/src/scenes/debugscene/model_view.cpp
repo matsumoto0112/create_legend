@@ -10,6 +10,7 @@
 #include "src/primitive/box.h"
 #include "src/primitive/line.h"
 #include "src/util/path.h"
+#include "src/util/resource/resource_names.h"
 
 namespace {
 legend::primitive::Line line_;
@@ -89,14 +90,14 @@ void ModelView::Draw() {
 
   camera_.RenderStart();
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
       ->SetCommandList(command_list);
   for (i32 i = OBJ_NUM - 1; i >= 0; i--) {
     transform_cb_[i].GetStagingRef().world = transforms_[i].CreateWorldMatrix();
     transform_cb_[i].UpdateStaging();
     transform_cb_[i].SetToHeap(device);
     resource.GetModel()
-        .Get(util::resource::id::Model::DESK)
+        .Get(util::resource::resource_names::model::DESK)
         ->Draw(command_list);
   }
 

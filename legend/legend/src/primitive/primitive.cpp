@@ -2,11 +2,7 @@
 
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
-
-namespace {
-constexpr auto PIPELINE_ID =
-    legend::util::resource::id::Pipeline::PRIMITIVE_LINE;
-}  // namespace
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace primitive {
@@ -22,12 +18,15 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  resource.GetPipeline().Get(PIPELINE_ID)->SetCommandList(command_list);
+  resource.GetPipeline()
+      .Get(util::resource::resource_names::pipeline::OBB)
+      ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   transform_cb_.SetToHeap(device);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
 
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

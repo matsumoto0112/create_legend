@@ -4,6 +4,7 @@
 #include "src/game/game_device.h"
 #include "src/util/loader/font_loader.h"
 #include "src/util/path.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace scenes {
@@ -43,7 +44,7 @@ bool SpriteRenderTest::Update() {
       draw::Sprite2D sprite;
       if (!sprite.Init(
               game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-                  util::resource::id::Texture::TEX),
+                  util::resource::resource_names::texture::TEX),
               directx::descriptor_heap::heap_parameter::LocalHeapID::
                   GLOBAL_ID)) {
         return false;

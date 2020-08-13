@@ -14,21 +14,31 @@ Texture::Texture() {}
 Texture::~Texture() {}
 
 //“Ç‚İ‚İ
-bool Texture::Load(
-    directx::device::CommandList& command_list, id::Texture key,
-    const std::filesystem::path& filepath, u32 register_num,
-    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
-  MY_ASSERTION(!IsLoaded(key), L"“o˜^Ï‚İ‚ÌƒL[‚ªÄ“o˜^‚³‚ê‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·B");
-
+bool Texture::Load(const std::wstring& name) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto tex = std::make_shared<directx::buffer::Texture2D>();
-  if (!tex->InitAndWrite(device, command_list, register_num, filepath,
-                         device.GetLocalHandle(heap_id))) {
+  auto command_list = directx::device::CommandList();
+  if (!command_list.Init(
+          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
   }
 
-  resources_.emplace(key, tex);
-  return true;
+  auto texture_path = Path::GetInstance()->texture();
+  auto texture = std::make_shared<directx::buffer::Texture2D>();
+  if (!texture->InitAndWrite(
+          device, command_list, 0, texture_path / name,
+          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
+                                    LocalHeapID::GLOBAL_ID))) {
+    MY_LOG(L"ƒeƒNƒXƒ`ƒƒ‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B");
+    return false;
+  }
+
+  if (!command_list.Close()) {
+    return false;
+  }
+  device.ExecuteCommandList({command_list});
+  device.WaitExecute();
+
+  return Register(name, texture);
 }
 
 }  // namespace resource

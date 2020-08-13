@@ -6,6 +6,10 @@
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/vertex_shader.h"
 
+namespace {
+constexpr const wchar_t* MODEL_NAME = L"enemy_eraser_01.glb";
+}  // namespace
+
 namespace legend {
 namespace enemy {
 //コンストラクタ
@@ -35,7 +39,7 @@ bool Enemy::Init(const InitializeParameter& parameter) {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  model_ = resource.GetModel().Get(util::resource::id::Model::ERASER);
+  model_ = resource.GetModel().Get(MODEL_NAME);
 
   move_end_ = false;
 

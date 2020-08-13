@@ -24,7 +24,7 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
 
   std::vector<Particle> particles(PARTICLE_NUM);
 
-  const auto shader_path = util::Path::GetInstance()->shader() / "particle";
+  const auto shader_path = util::Path::GetInstance()->shader();
   directx::shader::VertexShader vs;
   if (!vs.Init(device, shader_path / "gpu_particle_vs.cso")) {
     return false;
@@ -86,7 +86,7 @@ void SmokeParticle::Render(
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetTexture()
-      .Get(util::resource::id::Texture::TEX)
+      .Get(L"tex.png")
       ->SetToHeap(device);
 
   ParticleEmitter::Render(graphics_command_list);

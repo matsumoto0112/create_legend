@@ -1,9 +1,11 @@
 #include "src/draw/sprite_renderer.h"
 
 #include "src/directx/shader/alpha_blend_desc.h"
+#include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace draw {
@@ -43,35 +45,30 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
     return false;
   }
 
-  directx::shader::VertexShader vs;
-  const std::filesystem::path shader_path =
-      util::Path::GetInstance()->shader() / "draw2d";
-  if (!vs.Init(device, shader_path / "sprite_vs.cso")) {
-    return false;
-  }
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  directx::shader::GraphicsPipelineStateDesc pso_desc = {};
+  pso_desc.SetVertexShader(
+      resource.GetVertexShader()
+          .Get(util::resource::resource_names::vertex_shader::SPRITE)
+          .get());
+  pso_desc.SetPixelShader(
+      resource.GetPixelShader()
+          .Get(util::resource::resource_names::pixel_shader::SPRITE)
+          .get());
 
-  directx::shader::PixelShader ps;
-  if (!ps.Init(device, shader_path / "sprite_ps.cso")) {
-    return false;
-  }
-
-  directx::shader::PipelineState::GraphicsPipelineStateDesc pso_desc = {};
   pso_desc.BlendState.RenderTarget[0] =
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
   pso_desc.BlendState.AlphaToCoverageEnable = true;
   pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC();
-  pso_desc.InputLayout = vs.GetInputLayout();
   pso_desc.NumRenderTargets = 1;
   pso_desc.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
   pso_desc.pRootSignature =
       device.GetDefaultRootSignature()->GetRootSignature();
-  pso_desc.PS = ps.GetShaderBytecode();
   pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
   pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
   pso_desc.SampleDesc.Count = 1;
   pso_desc.SampleMask = UINT_MAX;
-  pso_desc.VS = vs.GetShaderBytecode();
 
   if (!pipeline_state_.Init(device, pso_desc)) {
     return false;

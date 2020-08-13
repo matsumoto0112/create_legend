@@ -156,7 +156,6 @@
     <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
-    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
@@ -305,7 +304,6 @@
     <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
     <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
-    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
@@ -337,8 +335,8 @@
     <ClInclude Include="src\util\resource\pipeline.h" />
     <ClInclude Include="src\util\resource\pixel_shader.h" />
     <ClInclude Include="src\util\resource\resource.h" />
-    <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\util\resource\resource_manager.h" />
+    <ClInclude Include="src\util\resource\resource_names.h" />
     <ClInclude Include="src\util\resource\texture.h" />
     <ClInclude Include="src\util\resource\vertex_shader.h" />
     <ClInclude Include="src\util\singleton.h" />

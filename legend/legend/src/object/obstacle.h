@@ -27,9 +27,6 @@ class Obstacle : public actor::Actor<physics::BoundingBox> {
   virtual ~Obstacle();
   bool Init(const InitializeParameter& params);
   virtual bool Update() override;
-
- private:
-  util::resource::id::Model model_id_;
 };
 
 }  // namespace object

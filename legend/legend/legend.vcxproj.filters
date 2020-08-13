@@ -88,7 +88,6 @@
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
-    <ClCompile Include="src\scenes\debugscene\multi_render_target_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\physics\collider.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
@@ -210,7 +209,6 @@
     <ClInclude Include="src\util\resource\resource.h" />
     <ClInclude Include="src\util\resource\vertex_shader.h" />
     <ClInclude Include="src\util\resource\texture.h" />
-    <ClInclude Include="src\util\resource\resource_id.h" />
     <ClInclude Include="src\util\resource\resource_manager.h" />
     <ClInclude Include="src\util\resource\pixel_shader.h" />
     <ClInclude Include="src\util\resource\model.h" />
@@ -242,7 +240,6 @@
     <ClInclude Include="src\physics\sphere.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
-    <ClInclude Include="src\scenes\debugscene\multi_render_target_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\physics\collider.h" />
     <ClInclude Include="src\scenes\game_over.h" />
@@ -270,6 +267,7 @@
     <ClInclude Include="src\directx\shader\pipeline_state.h" />
     <ClInclude Include="src\draw\particle\particle_command_list.h" />
     <ClInclude Include="src\scenes\decorator\pausable.h" />
+    <ClInclude Include="src\util\resource\resource_names.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

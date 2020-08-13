@@ -7,7 +7,6 @@
  */
 
 #include "src/directx/shader/vertex_shader.h"
-#include "src/util/resource/resource_id.h"
 #include "src/util/resource/resource_manager.h"
 
 namespace legend {
@@ -18,9 +17,8 @@ namespace resource {
  * @class VertexShader
  * @brief 頂点シェーダーリソース管理クラス
  */
-class VertexShader final
-    : public ResourceManager<id::VertexShader,
-                             std::shared_ptr<directx::shader::VertexShader>> {
+class VertexShader
+    : public ResourceManager<std::shared_ptr<directx::shader::VertexShader>> {
  public:
   /**
    * @brief コンストラクタ
@@ -29,15 +27,13 @@ class VertexShader final
   /**
    * @brief デストラクタ
    */
-  ~VertexShader();
+  virtual ~VertexShader();
   /**
    * @brief リソースを読み込む
-   * @param key リソースを一意に特定するID
-   * @param filepath ファイルへのパス
+   * @param name リソース名
    * @return 読み込みに成功したらtrueを返す
    */
-  bool Load(id::VertexShader key,
-            const std::filesystem::path& filepath) override;
+  bool Load(const std::wstring& name) override;
 };
 }  // namespace resource
 }  // namespace util

@@ -10,6 +10,7 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -92,7 +93,7 @@ inline void Actor<T>::Draw() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
       ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();

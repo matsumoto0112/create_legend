@@ -93,9 +93,8 @@ void Player::SetVelocity() {
   velocity_update_time_ += update_time_;
   if (velocity_update_time_ < change_time_) return;
 
-  velocity_.x = input_velocity_.x;
-  velocity_.z = input_velocity_.z;
-  if (velocity_.Magnitude() >= 0.1f) is_input_ = true;
+  velocity_ = input_velocity_;
+  if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
 
   change_amount_velocity_ = velocity_;
   velocity_update_time_ = 0;

@@ -79,18 +79,18 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2,
   }
 
   math::Vector3 adjust_pos = math::Vector3::kZeroVector;
-  math::Vector3 obb1_len = math::Matrix4x4::MultiplyCoord(
-      obb1.GetLength(), obb1.GetRotation().ToMatrix());
-  math::Vector3 obb2_len = math::Matrix4x4::MultiplyCoord(
-      obb2.GetLength(), obb2.GetRotation().ToMatrix());
-  float obb1_left = obb1.GetPosition().x - obb1_len.x;
-  float obb1_right = obb1.GetPosition().x + obb1_len.x;
-  float obb1_back = obb1.GetPosition().z - obb1_len.z;
-  float obb1_front = obb1.GetPosition().z + obb1_len.z;
-  float obb2_left = obb2.GetPosition().x - obb2_len.x;
-  float obb2_right = obb2.GetPosition().x + obb2_len.x;
-  float obb2_back = obb2.GetPosition().z - obb2_len.z;
-  float obb2_front = obb2.GetPosition().z + obb2_len.z;
+  // math::Vector3 obb1_len = math::Matrix4x4::MultiplyCoord(
+  //    obb1.GetLength(), obb1.GetRotation().ToMatrix());
+  // math::Vector3 obb2_len = math::Matrix4x4::MultiplyCoord(
+  //    obb2.GetLength(), obb2.GetRotation().ToMatrix());
+  float obb1_left = obb1.GetPosition().x - obb1.GetLength().x;
+  float obb1_right = obb1.GetPosition().x + obb1.GetLength().x;
+  float obb1_back = obb1.GetPosition().z - obb1.GetLength().z;
+  float obb1_front = obb1.GetPosition().z + obb1.GetLength().z;
+  float obb2_left = obb2.GetPosition().x - obb1.GetLength().x;
+  float obb2_right = obb2.GetPosition().x + obb1.GetLength().x;
+  float obb2_back = obb2.GetPosition().z - obb1.GetLength().z;
+  float obb2_front = obb2.GetPosition().z + obb1.GetLength().z;
   AdjustPosition(adjust_pos, obb1_left, obb1_right, obb1_front, obb1_back,
                  obb2_left, obb2_right, obb2_front, obb2_back);
   if (obb1_move && obb2_move) {

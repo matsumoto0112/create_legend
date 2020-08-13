@@ -94,15 +94,13 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2,
   AdjustPosition(adjust_pos, obb1_left, obb1_right, obb1_front, obb1_back,
                  obb2_left, obb2_right, obb2_front, obb2_back);
   if (obb1_move && obb2_move) {
-      adjust_pos /= 2.0f;
-      obb1.SetPosition(obb1.GetPosition() - adjust_pos);
-      obb2.SetPosition(obb2.GetPosition() + adjust_pos);
-  }
-  else if(obb1_move) {
-      obb1.SetPosition(obb1.GetPosition() - adjust_pos);
-  }
-  else if (obb2_move) {
-      obb2.SetPosition(obb2.GetPosition() + adjust_pos);
+    adjust_pos /= 2.0f;
+    obb1.SetPosition(obb1.GetPosition() - adjust_pos);
+    obb2.SetPosition(obb2.GetPosition() + adjust_pos);
+  } else if (obb1_move) {
+    obb1.SetPosition(obb1.GetPosition() - adjust_pos);
+  } else if (obb2_move) {
+    obb2.SetPosition(obb2.GetPosition() + adjust_pos);
   }
   return true;
 }
@@ -146,15 +144,19 @@ void Collision::AdjustPosition(math::Vector3& adjust_pos, float left1,
                                float right1, float front1, float back1,
                                float left2, float right2, float front2,
                                float back2) {
-  if (left1 < right2) {
-    adjust_pos.x = left1 - right2;
-  } else if (right1 > left2) {
-    adjust_pos.x = right1 - left2;
+  if (left1 < right2 || right1 > left2) {
+    if (back1 < front2) {
+      adjust_pos.z = back1 - front2;
+    } else if (front1 > back2) {
+      adjust_pos.z = front1 - back2;
+    }
   }
-  if (back1 < front2) {
-    adjust_pos.z = back1 - front2;
-  } else if (front1 > back2) {
-    adjust_pos.z = front1 - back2;
+  if (back1 < front2 || front1 > back2) {
+    if (left1 < right2) {
+      adjust_pos.x = left1 - right2;
+    } else if (right1 > left2) {
+      adjust_pos.x = right1 - left2;
+    }
   }
 
   if (math::util::Abs(adjust_pos.x) <= math::util::Abs(adjust_pos.z)) {

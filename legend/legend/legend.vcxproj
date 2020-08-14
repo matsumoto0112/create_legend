@@ -159,6 +159,7 @@
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\physics_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
+    <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
@@ -169,6 +170,9 @@
     <ClCompile Include="src\scenes\scene_manager.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
+    <ClCompile Include="src\skill\skill.cpp" />
+    <ClCompile Include="src\skill\skill_manager.cpp" />
+    <ClCompile Include="src\skill\skill_select_ui.cpp" />
     <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -311,6 +315,7 @@
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\physics_test.h" />
     <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
+    <ClInclude Include="src\scenes\debugscene\skill_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
@@ -323,6 +328,11 @@
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\scenes\title.h" />
+    <ClInclude Include="src\skill\skill.h" />
+    <ClInclude Include="src\skill\skill_manager.h" />
+    <ClInclude Include="src\skill\skill_pencil.h" />
+    <ClInclude Include="src\skill\skill_select_ui.h" />
+    <ClInclude Include="src\skill\skill_type.h" />
     <ClInclude Include="src\stage_generate\stage_generator.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\system\physics_field.h" />

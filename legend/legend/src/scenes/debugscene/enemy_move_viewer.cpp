@@ -19,6 +19,7 @@ EnemyMoveViewer::~EnemyMoveViewer() {}
 bool EnemyMoveViewer::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
+  physics_field_.Init();
 
   directx::device::CommandList command_list;
   if (!command_list.Init(
@@ -26,10 +27,33 @@ bool EnemyMoveViewer::Initialize() {
     return false;
   }
 
-  math::Vector3 min = math::Vector3::kUnitVector * -1;
-  math::Vector3 max = math::Vector3::kUnitVector;
   if (!enemy_manager_.Initilaize()) {
     return false;
+  }
+
+  //机の初期化
+  {
+    //本来はステージデータから読み込む
+    object::Desk::InitializeParameter desk_parameter;
+    desk_parameter.bounding_box_length =
+        math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
+    desk_parameter.normal = math::Vector3::kUpVector;
+    for (i32 i = 0; i < 4; i++) {
+      math::Vector3 pos = math::Vector3(-1.2f, 0, -0.8f) / 4.0f;
+      if (i == 1)
+        pos.x *= -1;
+      else if (i == 2)
+        pos *= -1;
+      else if (i == 3)
+        pos.z *= -1;
+      desk_parameter.transform = util::Transform(
+          pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+      auto& desk = desks_.emplace_back();
+      if (!desk.Init(desk_parameter)) {
+        return false;
+      }
+      physics_field_.AddDesk(desk.GetCollisionRef());
+    }
   }
 
   //カメラの初期化
@@ -54,6 +78,9 @@ bool EnemyMoveViewer::Initialize() {
 
 //更新
 bool EnemyMoveViewer::Update() {
+  enemy_manager_.SetPosition(physics_field_);
+  enemy_manager_.SetVelocity(physics_field_);
+
   if (ImGui::Begin("Transform")) {
     //カメラ座標
     math::Vector3 camera_position = camera_.GetPosition();
@@ -93,6 +120,26 @@ bool EnemyMoveViewer::Update() {
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   // transform_cb_.UpdateStaging();
 
+  // 敵追加
+  if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
+          input::key_code::A)) {
+    enemy::Enemy::InitializeParameter enemy_parameter;
+    enemy_parameter.bouding_box_length =
+        math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+    float x = game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f);
+    float z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
+    math::Vector3 pos = math::Vector3(x, 0.1f, z);
+    enemy_parameter.transform = util::Transform(
+        pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
+  // 敵削除
+  else if (game::GameDevice::GetInstance()
+               ->GetInput()
+               .GetKeyboard()
+               ->GetKeyDown(input::key_code::D)) {
+    enemy_manager_.RandomDestroy(physics_field_);
+  }
   enemy_manager_.Update();
 
   return true;
@@ -113,6 +160,9 @@ void EnemyMoveViewer::Draw() {
 
   camera_.RenderStart();
 
+  for (auto&& desk : desks_) {
+    desk.Draw();
+  }
   enemy_manager_.Draw();
 }
 

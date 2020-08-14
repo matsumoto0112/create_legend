@@ -113,6 +113,9 @@
     <ClCompile Include="src\directx\shader\compute_pipeline_state_desc.cpp" />
     <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
+    <ClCompile Include="src\search\search_ai.cpp" />
+    <ClCompile Include="src\search\search_course.cpp" />
+    <ClCompile Include="src\search\search_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -268,6 +271,9 @@
     <ClInclude Include="src\directx\shader\compute_shader.h" />
     <ClInclude Include="src\directx\shader\pipeline_state.h" />
     <ClInclude Include="src\draw\particle\particle_command_list.h" />
+    <ClInclude Include="src\search\search_ai.h" />
+    <ClInclude Include="src\search\search_course.h" />
+    <ClInclude Include="src\search\search_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

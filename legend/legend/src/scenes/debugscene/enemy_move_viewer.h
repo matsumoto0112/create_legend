@@ -52,7 +52,9 @@ class EnemyMoveViewer : public Scene {
   camera::PerspectiveCamera camera_;
   //! “GŠÇ—ƒVƒXƒeƒ€
   enemy::EnemyManager enemy_manager_;
-  physics::Plane plane_;
+  system::PhysicsField physics_field_;
+  //! Š÷
+  std::vector<object::Desk> desks_;
 };
 
 }  // namespace debugscene

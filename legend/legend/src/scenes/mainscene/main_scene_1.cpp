@@ -106,6 +106,7 @@ bool MainScene1::Initialize() {
     if (!frag.Init(params)) {
       return false;
     }
+    physics_field_.AddFragment(frag.GetCollisionRef());
   }
 
   //ƒJƒƒ‰‚Ì‰Šú‰»

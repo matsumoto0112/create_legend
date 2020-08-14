@@ -202,6 +202,7 @@
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\actor\actor_type.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />

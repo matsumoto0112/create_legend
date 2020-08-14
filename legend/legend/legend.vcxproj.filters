@@ -274,6 +274,7 @@
     <ClInclude Include="src\util\resource\geometry_shader.h" />
     <ClInclude Include="src\util\resource\compute_shader.h" />
     <ClInclude Include="src\object\fragment.h" />
+    <ClInclude Include="src\actor\actor_type.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

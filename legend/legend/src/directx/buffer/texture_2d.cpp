@@ -11,7 +11,6 @@ namespace buffer {
 Texture2D::Texture2D()
     : texture_{},
       texture_immediate_{},
-      register_num_{0},
       format_{DXGI_FORMAT::DXGI_FORMAT_UNKNOWN},
       width_{0},
       height_{0},
@@ -28,16 +27,14 @@ bool Texture2D::Init(device::IDirectXAccessor& accessor, const Desc& desc) {
 //初期化と書き込み
 bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
                              device::CommandList& command_list,
-                             u32 register_num,
                              const std::filesystem::path& filename,
                              const descriptor_heap::DescriptorHandle& handle) {
   //テクスチャを読み込む
   const util::loader::texture_loader::LoadedTextureData data =
       util::loader::texture_loader::Load(filename);
 
-  const Desc desc{register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-                  data.width,   data.height,
-                  handle,       data.name};
+  const Desc desc{DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, data.width,
+                  data.height, handle, data.name};
   if (!InitTexBuffer(accessor, desc)) {
     return false;
   }
@@ -49,15 +46,13 @@ bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
 //初期化と書き込み
 bool Texture2D::InitAndWrite(device::IDirectXAccessor& accessor,
                              device::CommandList& command_list,
-                             u32 register_num, DXGI_FORMAT format,
-                             const std::vector<u8>& data,
+                             DXGI_FORMAT format, const std::vector<u8>& data,
                              const descriptor_heap::DescriptorHandle& handle,
                              const std::wstring& name) {
   const util::loader::texture_loader::LoadedTextureData loaded_data =
       util::loader::texture_loader::LoadFromMemory(data);
 
-  const Desc desc{register_num,       format, loaded_data.width,
-                  loaded_data.height, handle, name};
+  const Desc desc{format, loaded_data.width, loaded_data.height, handle, name};
   if (!Init(accessor, desc)) {
     return false;
   }
@@ -82,8 +77,9 @@ void Texture2D::WriteResource(device::CommandList& command_list,
 }
 
 //ヒープに追加する
-void Texture2D::SetToHeap(device::IDirectXAccessor& accessor) {
-  accessor.RegisterHandle(register_num_, shader::ResourceType::SRV, handle_);
+void Texture2D::RegisterHandle(device::IDirectXAccessor& accessor,
+                               u32 register_num) {
+  accessor.RegisterHandle(register_num, shader::ResourceType::SRV, handle_);
 }
 
 //テクスチャバッファを初期化する
@@ -113,7 +109,6 @@ bool Texture2D::InitTexBuffer(device::IDirectXAccessor& accessor,
   }
 
   //パラメータの設定
-  this->register_num_ = desc.register_num;
   this->format_ = desc.format;
   this->width_ = desc.width;
   this->height_ = desc.height;

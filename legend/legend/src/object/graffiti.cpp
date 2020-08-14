@@ -2,6 +2,7 @@
 
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 
 namespace {
 DXGI_FORMAT GetFormat(legend::u32 size) {
@@ -79,7 +80,7 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
                                  handle_.cpu_handle_);
 
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetHeapManager().GetLocalHeap(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Graffiti_TransformConstantBuffer")) {
@@ -117,15 +118,16 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::GRAFFITI)
+      .Get(util::resource::resource_names::pipeline::GRAFFITI)
       ->SetCommandList(command_list);
 
   constexpr u32 MASK_TEXTURE_ID = 1;
   device.GetHeapManager().RegisterHandle(
       MASK_TEXTURE_ID, directx::shader::ResourceType::SRV, handle_);
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   resource.GetModel()
-      .Get(util::resource::id::Model::OBJECT_1000CM)
+      .Get(util::resource::resource_names::model::GRAFFITI)
       ->Draw(command_list);
 }
 

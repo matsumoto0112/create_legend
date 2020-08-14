@@ -6,7 +6,8 @@ namespace legend {
 namespace physics {
 
 //íºï˚ëÃìØémÇÃè’ìÀîªíË
-bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
+bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2,
+                                  bool obb1_move, bool obb2_move) {
   //ï™ó£é≤ÇÃçXêV
   obb1.SetAxis();
   obb2.SetAxis();
@@ -16,27 +17,21 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
 
   //ï™ó£é≤ÇÃî‰är
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisX(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisY(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb1.GetAxisZ(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisX(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisY(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   if (!IsCompareLengthOBB(obb1, obb2, obb2.GetAxisZ(), distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
 
@@ -44,48 +39,68 @@ bool Collision::Collision_OBB_OBB(BoundingBox& obb1, BoundingBox& obb2) {
   math::Vector3 v_sep;
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisX(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisY(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisX());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisY());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
   }
   v_sep = math::Vector3::Cross(obb1.GetAxisZ(), obb2.GetAxisZ());
   if (!IsCompareLengthOBB(obb1, obb2, v_sep, distance)) {
-    // MY_LOG(L"è’ìÀÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
     return false;
+  }
+
+  if (obb1.GetIsTrigger() || obb2.GetIsTrigger()) {
+    return true;
+  }
+
+  math::Vector3 adjust_pos = math::Vector3::kZeroVector;
+  // math::Vector3 obb1_len = math::Matrix4x4::MultiplyCoord(
+  //    obb1.GetLength(), obb1.GetRotation().ToMatrix());
+  // math::Vector3 obb2_len = math::Matrix4x4::MultiplyCoord(
+  //    obb2.GetLength(), obb2.GetRotation().ToMatrix());
+  float obb1_left = obb1.GetPosition().x - obb1.GetLength().x;
+  float obb1_right = obb1.GetPosition().x + obb1.GetLength().x;
+  float obb1_back = obb1.GetPosition().z - obb1.GetLength().z;
+  float obb1_front = obb1.GetPosition().z + obb1.GetLength().z;
+  float obb2_left = obb2.GetPosition().x - obb1.GetLength().x;
+  float obb2_right = obb2.GetPosition().x + obb1.GetLength().x;
+  float obb2_back = obb2.GetPosition().z - obb1.GetLength().z;
+  float obb2_front = obb2.GetPosition().z + obb1.GetLength().z;
+  AdjustPosition(adjust_pos, obb1_left, obb1_right, obb1_front, obb1_back,
+                 obb2_left, obb2_right, obb2_front, obb2_back);
+  if (obb1_move && obb2_move) {
+    adjust_pos /= 2.0f;
+    obb1.SetPosition(obb1.GetPosition() - adjust_pos);
+    obb2.SetPosition(obb2.GetPosition() + adjust_pos);
+  } else if (obb1_move) {
+    obb1.SetPosition(obb1.GetPosition() - adjust_pos);
+  } else if (obb2_move) {
+    obb2.SetPosition(obb2.GetPosition() + adjust_pos);
   }
   return true;
 }
@@ -123,6 +138,32 @@ bool Collision::IsCompareLengthOBB(BoundingBox& obb1, BoundingBox& obb2,
 
   //è’ìÀÇµÇƒÇ¢ÇÈ
   return true;
+}
+
+void Collision::AdjustPosition(math::Vector3& adjust_pos, float left1,
+                               float right1, float front1, float back1,
+                               float left2, float right2, float front2,
+                               float back2) {
+  if (left1 < right2 || right1 > left2) {
+    if (back1 < front2) {
+      adjust_pos.z = back1 - front2;
+    } else if (front1 > back2) {
+      adjust_pos.z = front1 - back2;
+    }
+  }
+  if (back1 < front2 || front1 > back2) {
+    if (left1 < right2) {
+      adjust_pos.x = left1 - right2;
+    } else if (right1 > left2) {
+      adjust_pos.x = right1 - left2;
+    }
+  }
+
+  if (math::util::Abs(adjust_pos.x) <= math::util::Abs(adjust_pos.z)) {
+    adjust_pos.z = 0;
+  } else {
+    adjust_pos.x = 0;
+  }
 }
 
 //íºï˚ëÃÇ∆ïΩñ ÇÃè’ìÀîªíË

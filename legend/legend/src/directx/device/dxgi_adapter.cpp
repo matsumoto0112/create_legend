@@ -95,10 +95,14 @@ bool DXGIAdapter::Init(DeviceOptionFlags required_option,
 //アダプターの初期化
 bool DXGIAdapter::InitializeAdapter(u32 adapter_id_override,
                                     IDXGIAdapter1** adapter) {
+  const DXGI_GPU_PREFERENCE pref =
+      DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE;
+
   *adapter = nullptr;
   ComPtr<IDXGIAdapter1> test_adapter;
   for (u32 adapter_id = 0; DXGI_ERROR_NOT_FOUND !=
-                           factory_->EnumAdapters1(adapter_id, &test_adapter);
+                           factory_->EnumAdapterByGpuPreference(
+                               adapter_id, pref, IID_PPV_ARGS(&test_adapter));
        adapter_id++) {
     //アダプターIDを上書きする設定ならそのIDと一致するまでループさせる
     if (adapter_id_override != UINT_MAX && adapter_id != adapter_id_override) {

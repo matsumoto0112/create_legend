@@ -1,6 +1,7 @@
 #include "src/object/desk.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace object {
@@ -29,7 +30,7 @@ bool Desk::Init(const InitializeParameter& parameter) {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  model_ = resource.GetModel().Get(util::resource::id::Model::DESK);
+  model_ = resource.GetModel().Get(util::resource::resource_names::model::DESK);
   return true;
 }
 

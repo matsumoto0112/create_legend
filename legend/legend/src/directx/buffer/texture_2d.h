@@ -25,8 +25,6 @@ class Texture2D {
    * @brief テクスチャデスク
    */
   struct Desc {
-    //! シェーダーのレジスター番号
-    u32 register_num;
     //! フォーマット
     DXGI_FORMAT format;
     //! 幅
@@ -59,21 +57,19 @@ class Texture2D {
    * @brief テクスチャを読み込みつつ初期化する
    * @param accessor DirectXデバイスアクセサ
    * @param command_list コマンドリスト
-   * @param register_num シェーダーのレジスター番号
    * @param filename ファイル名
    * @param handle テクスチャハンドル
    * @return 初期化に成功したらtrueを返す
    * @details リソースのコピーのためにコマンドリストが必要
    */
   bool InitAndWrite(device::IDirectXAccessor& accessor,
-                    device::CommandList& command_list, u32 register_num,
+                    device::CommandList& command_list,
                     const std::filesystem::path& filename,
                     const descriptor_heap::DescriptorHandle& handle);
   /**
    * @brief テクスチャを書き込みつつ初期化する
    * @param accessor DirectXデバイスアクセサ
    * @param command_list コマンドリスト
-   * @param register_num シェーダーのレジスター番号
    * @param format テクスチャのフォーマット
    * @param data テクスチャデータ
    * @param handle テクスチャハンドル
@@ -82,8 +78,8 @@ class Texture2D {
    * @details リソースのコピーのためにコマンドリストが必要
    */
   bool InitAndWrite(device::IDirectXAccessor& accessor,
-                    device::CommandList& command_list, u32 register_num,
-                    DXGI_FORMAT format, const std::vector<u8>& data,
+                    device::CommandList& command_list, DXGI_FORMAT format,
+                    const std::vector<u8>& data,
                     const descriptor_heap::DescriptorHandle& handle,
                     const std::wstring& name);
   /**
@@ -96,8 +92,9 @@ class Texture2D {
   /**
    * @brief ヒープに自身を追加する
    * @param accessor DirectXデバイスアクセサ
+   * @param register_num シェーダーのレジスター番号
    */
-  void SetToHeap(device::IDirectXAccessor& accessor);
+  void RegisterHandle(device::IDirectXAccessor& accessor, u32 register_num);
 
  public:
   /**
@@ -123,8 +120,6 @@ class Texture2D {
   buffer::CommittedResource texture_;
   //! コピー用のテクスチャリソース
   buffer::CommittedResource texture_immediate_;
-  //! シェーダーのレジスター番号
-  u32 register_num_;
   //! テクスチャのフォーマット
   DXGI_FORMAT format_;
   //! テクスチャの幅

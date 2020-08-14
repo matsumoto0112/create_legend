@@ -58,7 +58,7 @@ class DXGIAdapter {
 
  private:
   //! ファクトリ
-  ComPtr<IDXGIFactory4> factory_;
+  ComPtr<IDXGIFactory6> factory_;
   //! アダプター
   ComPtr<IDXGIAdapter1> adapter_;
   //! デバイスオプション

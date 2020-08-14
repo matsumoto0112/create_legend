@@ -11,28 +11,43 @@ EnemyManager::~EnemyManager() {}
 bool EnemyManager::Initilaize() { return true; }
 
 bool EnemyManager::Update() {
+  // “G’Ç‰Á
+  // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
+  //        input::key_code::A)) {
+  //  // Add(physics_field);
+  //}
+  //// “Gíœ
+  // else if (game::GameDevice::GetInstance()
+  //             ->GetInput()
+  //             .GetKeyboard()
+  //             ->GetKeyDown(input::key_code::D)) {
+  //  if (0 < enemys_.size()) {
+  //    // Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
+  //    //    0, static_cast<i32>(enemys_.size())));
+  //  }
+  //}
 
   // “Gs“®
-  if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-          input::input_code::Pause)) {
-    if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
-      action_enemy_index_ = -1;
-      move_timer_ = 0.0f;
-      for (i32 index = 0; index < enemys_.size(); index++) {
-        auto enemy = enemys_[index].get();
-        SetPosition(enemy);
-        enemy->SetVelocity(math::Vector3::kZeroVector);
-      }
-    }
+  // if (game::GameDevice::GetInstance()->GetInput().GetCommand(
+  //        input::input_code::Pause)) {
+  //  if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
+  //    action_enemy_index_ = -1;
+  //    move_timer_ = 0.0f;
+  //    for (i32 index = 0; index < enemys_.size(); index++) {
+  //      auto enemy = enemys_[index].get();
+  //      SetPosition(enemy);
+  //      enemy->SetVelocity(math::Vector3::kZeroVector);
+  //    }
+  //  }
+  //}
+  //// “GÄŽn“®
+  // else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
+  //             input::input_code::Decide)) {
+  if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
+    action_enemy_index_ = 0;
+    move_timer_ = 0.0f;
   }
-  // “GÄŽn“®
-  else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-               input::input_code::Decide)) {
-    if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
-      action_enemy_index_ = 0;
-      move_timer_ = 0.0f;
-    }
-  }
+  //}
   // “Gs“®
   EnemyAction();
 
@@ -91,25 +106,16 @@ void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
     return;
   }
 
+  //physics_field.RemoveEnemy(index);
   enemys_.erase(enemys_.begin() + index);
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;
   }
-
-  physics_field.RemoveEnemy(index);
-}
-void EnemyManager::RandomDestroy(system::PhysicsField& physics_field) {
-  if (enemys_.size() <= 0) {
-    return;
-  }
-  i32 index = game::GameDevice::GetInstance()->GetRandom().Range(
-      0, static_cast<i32>(enemys_.size()));
-  Destroy(index, physics_field);
 }
 
 void EnemyManager::SetPosition(Enemy* enemy) {
-  auto x = game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f);
-  auto z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f);
+  auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
+  auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   math::Vector3 position(x, 0.0f, z);
   enemy->SetPosition(position);
 }

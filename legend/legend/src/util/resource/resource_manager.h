@@ -15,11 +15,13 @@ namespace resource {
 /**
  * @class ResourceManager
  * @brief リソース管理システム基底クラス
- * @tparam TKey リソースを特定するキー
  * @tparam TResource 管理するリソース
  */
-template <typename TKey, typename TResource>
+template <typename TResource>
 class ResourceManager {
+ protected:
+  using ResourceMap = std::unordered_map<std::wstring, TResource>;
+
  public:
   /**
    * @brief デストラクタ
@@ -31,68 +33,74 @@ class ResourceManager {
    */
   virtual bool Init();
   /**
-   * @brief リソースを読み込む
-   * @param key リソースを特定するキー
-   * @param filepath ファイルへのパス
+   * @brief リソースをロードする
+   * @param name リソース名
    * @return 読み込みに成功したらtrueを返す
    */
-  virtual bool Load(TKey key, const std::filesystem::path& filepath) {
-    return false;
-  }
+  virtual bool Load(const std::wstring& name);
   /**
    * @brief リソースを登録する
-   * @param key リソースを特定するキー
-   * @param resource リソース
-   * @return 登録に成功したらtrueを返す
+   * @param name リソース名
+   * @param resource 登録するリソース
    */
-  virtual bool Register(TKey key, TResource resource);
-  /**
-   * @brief リソースを破棄する
-   * @param key リソースを特定するキー
-   * @return 破棄に成功したらtrueを返す
-   */
-  virtual bool Unload(TKey key);
-  /**
-   * @brief すでに読み込んでいるかどうか
-   * @param key リソースを特定するキー
-   * @return 読み込んでいたらtrueを返す
-   */
-  virtual bool IsLoaded(TKey key) const { return util::Exist(resources_, key); }
+  virtual bool Register(const std::wstring& name, TResource resource);
   /**
    * @brief リソースを取得する
-   * @param key リソースを特定するキー
+   * @param name リソース名
    */
-  virtual TResource Get(TKey key) const {
-    MY_ASSERTION(IsLoaded(key), L"未読み込みのリソースキーが選択されました。");
-    return resources_.at(key);
-  }
+  virtual TResource Get(const std::wstring& name);
+  /**
+   * @brief すでに読み込んでいるかどうか
+   * @param name リソース名
+   * @return 読み込んでいたらtrueを返す
+   */
+  virtual bool IsLoaded(const std::wstring& name) const;
 
  protected:
   //! 読み込んだリソースマップ
-  std::unordered_map<TKey, TResource> resources_;
+  ResourceMap resources_;
 };
 
-//初期化
-template <typename TKey, typename TResource>
-inline bool ResourceManager<TKey, TResource>::Init() {
-  resources_.clear();
+template <typename TResource>
+inline bool ResourceManager<TResource>::Init() {
   return true;
 }
 
-//リソースを登録する
-template <typename TKey, typename TResource>
-inline bool ResourceManager<TKey, TResource>::Register(TKey key,
-                                                       TResource resource) {
-  MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再選択されました。");
-  resources_.emplace(key, resource);
+template <typename TResource>
+inline bool ResourceManager<TResource>::Load(const std::wstring& name) {
+  return false;
+}
+
+template <typename TResource>
+inline bool ResourceManager<TResource>::Register(const std::wstring& name,
+                                                 TResource resource) {
+  if (IsLoaded(name)) {
+    MY_LOG(L"登録済みのリソースを上書きしようとしました。");
+    resources_[name] = resource;
+    return true;
+  }
+  resources_.emplace(name, resource);
   return true;
 }
 
-//破棄
-template <typename TKey, typename TResource>
-inline bool ResourceManager<TKey, TResource>::Unload(TKey key) {
-  MY_ASSERTION(IsLoaded(key), L"未登録のキーが削除されようとしています。");
-  return resources_.erase(key) == 1;
+template <typename TResource>
+inline TResource ResourceManager<TResource>::Get(const std::wstring& name) {
+  //読み込まれていたらそのまま返す
+  if (IsLoaded(name)) {
+    return resources_.at(name);
+  }
+
+  //読み込まれていなければ読み込む
+  if (Load(name)) {
+    return resources_.at(name);
+  }
+  return TResource();
+}
+
+template <typename TResource>
+inline bool ResourceManager<TResource>::IsLoaded(
+    const std::wstring& name) const {
+  return util::Exist(resources_, name);
 }
 
 }  // namespace resource

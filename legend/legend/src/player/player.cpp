@@ -1,6 +1,7 @@
 #include "src/player/player.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace player {
@@ -37,7 +38,8 @@ bool Player::Init(const InitializeParameter& parameter) {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  model_ = resource.GetModel().Get(util::resource::id::Model::ERASER);
+  model_ =
+      resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
   return true;
 }
@@ -93,9 +95,8 @@ void Player::SetVelocity() {
   velocity_update_time_ += update_time_;
   if (velocity_update_time_ < change_time_) return;
 
-  velocity_.x = input_velocity_.x;
-  velocity_.z = input_velocity_.z;
-  if (velocity_.Magnitude() >= 0.1f) is_input_ = true;
+  velocity_ = input_velocity_;
+  if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
 
   change_amount_velocity_ = velocity_;
   velocity_update_time_ = 0;

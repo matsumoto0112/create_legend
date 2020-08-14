@@ -68,7 +68,7 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
   }
 
   if (!global_cb_.Init(
-          GetDevice(), directx::shader::ConstantBufferRegisterID::GLOBAL_DATA,
+          GetDevice(),
           GetDevice().GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Global_ConstantBuffer")) {
@@ -95,13 +95,14 @@ bool GameDevice::BeginFrame() {
   global_cb_.GetStagingRef().time = fps_counter_.GetTotalSeconds<float>();
   global_cb_.GetStagingRef().delta_time = fps_counter_.GetDeltaSeconds<float>();
   global_cb_.UpdateStaging();
-  global_cb_.SetToHeap(GetDevice());
+  global_cb_.RegisterHandle(
+      GetDevice(), directx::shader::ConstantBufferRegisterID::GLOBAL_DATA);
 
   return true;
 }
 
 bool GameDevice::MidFrame() {
-    particle_command_list_.Execute();
+  particle_command_list_.Execute();
   return true;
 }
 

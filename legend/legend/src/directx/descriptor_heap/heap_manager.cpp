@@ -23,21 +23,31 @@ bool HeapManager::Init(device::IDirectXAccessor& accessor) {
     if (!global_heap_.Init(accessor, global_desc)) {
       return false;
     }
-  }
+  }  // namespace descriptor_heap
 
   //グローバルで使用するローカルヒープ
   {
-    const u32 descriptor_num =
-        heap_parameter::local::GetDefinedLocalDescriptorNum(
-            heap_parameter::LocalHeapID::GLOBAL_ID);
-    const DescriptorHeap::Desc local_desc{L"LocalHeap", descriptor_num,
-                                          DescriptorHeapType::CBV_SRV_UAV,
-                                          DescriptorHeapFlag::NONE};
-    if (!local_heaps_[heap_parameter::LocalHeapID::GLOBAL_ID].Init(
-            accessor, local_desc)) {
+    auto CreateLocalHeap = [&](heap_parameter::LocalHeapID id,
+                               const std::wstring& name) {
+      const u32 descriptor_num =
+          heap_parameter::local::GetDefinedLocalDescriptorNum(id);
+      const DescriptorHeap::Desc local_desc{name, descriptor_num,
+                                            DescriptorHeapType::CBV_SRV_UAV,
+                                            DescriptorHeapFlag::NONE};
+      if (!local_heaps_[id].Init(accessor, local_desc)) {
+        return false;
+      }
+      return true;
+    };
+    if (!CreateLocalHeap(heap_parameter::LocalHeapID::GLOBAL_ID,
+                         L"GlobalHeap")) {
       return false;
     }
-  }
+    if (!CreateLocalHeap(heap_parameter::LocalHeapID::ONE_PLAY,
+                         L"OnePlayHeap")) {
+      return false;
+    }
+  }  // namespace directx
 
   // RTVヒープ
   {
@@ -94,7 +104,7 @@ bool HeapManager::Init(device::IDirectXAccessor& accessor) {
       this->default_handle_.default_uav_handle_.cpu_handle_);
 
   return true;
-}
+}  // namespace legend
 
 void HeapManager::BeginFrame() { global_heap_allocated_count_ = 0; }
 
@@ -253,6 +263,11 @@ void HeapManager::RemoveLocalHeap(heap_parameter::LocalHeapID heap_id) {
 
   local_heaps_.erase(heap_id);
   MY_LOG(L"%d", local_heaps_.size());
+}
+
+void HeapManager::ResetLocalHeap(heap_parameter::LocalHeapID heap_id) {
+  MY_ASSERTION(util::Exist(local_heaps_, heap_id), L"heap_idが無効です。");
+  local_heaps_.at(heap_id).ResetAllocateCounter();
 }
 
 DescriptorHandle HeapManager::GetLocalHeap(

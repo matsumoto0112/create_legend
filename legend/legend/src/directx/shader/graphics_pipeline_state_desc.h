@@ -12,7 +12,6 @@
 #include "src/directx/shader/pixel_shader.h"
 #include "src/directx/shader/root_signature.h"
 #include "src/directx/shader/vertex_shader.h"
-#include "src/util/resource/resource_id.h"
 
 namespace legend {
 namespace directx {

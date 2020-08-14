@@ -59,7 +59,7 @@ bool Ray::Initialize() {
   }
 
   if (!transform_constant_buffer_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
@@ -84,7 +84,8 @@ void Ray::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
-  transform_constant_buffer_.SetToHeap(device);
+  transform_constant_buffer_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   device.GetHeapManager().SetCommandList(command_list);
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);

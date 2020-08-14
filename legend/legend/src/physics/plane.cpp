@@ -5,6 +5,7 @@
 #include "src/game/game_device.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
+#include "src/util/resource/resource_names.h"
 #include "src/util/resource/vertex_shader.h"
 
 namespace legend {
@@ -73,7 +74,7 @@ bool Plane::Initialize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
           L"Transform ConstantBuffer")) {
@@ -91,11 +92,12 @@ void Plane::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   game::GameDevice::GetInstance()
       ->GetResource()
       .GetModel()
-      .Get(util::resource::id::Model::DESK)
+      .Get(util::resource::resource_names::model::DESK)
       ->Draw(command_list);
 }
 

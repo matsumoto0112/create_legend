@@ -14,7 +14,7 @@ TextureChar::~TextureChar() {}
 //èâä˙âª
 bool TextureChar::Init(
     directx::device::CommandList& command_list, wchar_t c,
-    const std::wstring& font, i32 font_size, u32 register_num,
+    const std::wstring& font, i32 font_size,
     const directx::descriptor_heap::DescriptorHandle& handle) {
   std::vector<u8> data;
   u32 width, height;
@@ -24,9 +24,11 @@ bool TextureChar::Init(
 
   auto texture = std::make_shared<directx::buffer::Texture2D>();
   const directx::buffer::Texture2D::Desc desc{
-      register_num, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
-      width,        height,
-      handle,       L"TextureChar_" + c,
+      DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM,
+      width,
+      height,
+      handle,
+      L"TextureChar_" + c,
   };
 
   if (!texture->Init(game::GameDevice::GetInstance()->GetDevice(), desc)) {
@@ -82,30 +84,27 @@ bool TextureChar::CreateChar(directx::device::CommandList& command_list,
   DeleteObject(fn);
   ReleaseDC(nullptr, hdc);
 
-  const u32 tex_width = gm.gmCellIncX;
+  const u32 tex_width = gm.gmBlackBoxX + (4 - (gm.gmBlackBoxX % 4)) % 4;
   const u32 tex_height = tm.tmHeight;
-  const u32 ofs_x = gm.gmptGlyphOrigin.x;
-  const u32 ofs_y = tm.tmAscent - gm.gmptGlyphOrigin.y;
   const u32 bmp_w = gm.gmBlackBoxX + (4 - (gm.gmBlackBoxX % 4)) % 4;
   const u32 bmp_h = gm.gmBlackBoxY;
   const int level = 17;
 
   std::vector<byte> texture_data(tex_width * tex_height * 4);
-  for (u32 y = ofs_y; y < ofs_y + bmp_h; y++) {
-    for (u32 x = ofs_x; x < ofs_x + bmp_w; x++) {
-      const DWORD alpha =
-          (255 * ptr[x - ofs_x + bmp_w * (y - ofs_y)]) / (level - 1);
+  for (u32 y = 0; y < bmp_h; y++) {
+    for (u32 x = 0; x < bmp_w; x++) {
+      const u32 pos = x + bmp_w * y;
+      const DWORD alpha = (255 * ptr[pos]) / (level - 1);
       const DWORD color = 0x00ffffff | (alpha << 24);
       //êFèÓïÒÇÕARGBÇÃèáÇ…8bitíPà Ç≈ì¸Ç¡ÇƒÇ¢ÇÈ
       const u8 r = color >> 16 & 0xff;
       const u8 g = color >> 8 & 0xff;
       const u8 b = color >> 0 & 0xff;
       const u8 a = color >> 24 & 0xff;
-      const u32 pos = y * tex_width * 4 + x * 4;
-      texture_data[pos + 0] = r;
-      texture_data[pos + 1] = g;
-      texture_data[pos + 2] = b;
-      texture_data[pos + 3] = a;
+      texture_data[pos * 4 + 0] = r;
+      texture_data[pos * 4 + 1] = g;
+      texture_data[pos * 4 + 2] = b;
+      texture_data[pos * 4 + 3] = a;
     }
   }
   delete[] ptr;

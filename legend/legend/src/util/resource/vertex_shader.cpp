@@ -13,18 +13,17 @@ VertexShader::VertexShader() {}
 VertexShader::~VertexShader() { resources_.clear(); }
 
 //読み込み
-bool VertexShader::Load(id::VertexShader key,
-                        const std::filesystem::path& filepath) {
-  MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再登録されようとしています。");
+bool VertexShader::Load(const std::wstring& name) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto shader_path = Path::GetInstance()->shader();
 
-  auto vs = std::make_shared<directx::shader::VertexShader>();
-  if (!vs->Init(game::GameDevice::GetInstance()->GetDevice(), filepath)) {
+  auto vertex_shader = std::make_shared<directx::shader::VertexShader>();
+  if (!vertex_shader->Init(device, shader_path / name)) {
     MY_LOG(L"頂点シェーダーの初期化に失敗しました。");
     return false;
   }
 
-  resources_.emplace(key, vs);
-  return true;
+  return Register(name, vertex_shader);
 }
 
 }  // namespace resource

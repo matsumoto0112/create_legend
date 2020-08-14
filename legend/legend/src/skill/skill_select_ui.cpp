@@ -1,7 +1,7 @@
 #include "skill_select_ui.h"
 
 #include "src/game/game_device.h"
-#include "src\\stdafx.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace skill {
@@ -50,7 +50,7 @@ void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
   draw::Sprite2D sprite;
   if (!sprite.Init(
           game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              util::resource::id::Texture::TEX),
+              util::resource::resource_names::texture::TEX),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル取得時のスキルアイコンの初期化に失敗しました。");
   }

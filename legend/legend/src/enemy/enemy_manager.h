@@ -42,7 +42,8 @@ class EnemyManager {
   /**
    * @brief “G‚ğ’Ç‰Á
    */
-  void Add(const Enemy::InitializeParameter& paramater, system::PhysicsField& physics_field);
+  void Add(const Enemy::InitializeParameter& paramater,
+           system::PhysicsField& physics_field);
   /**
    * @brief “G‚ğíœ
    */
@@ -78,6 +79,8 @@ class EnemyManager {
   void SetPlayer(const physics::BoundingBox& player_obb);
 
   void DebugDraw(directx::device::CommandList& command_list);
+
+  std::vector<Enemy*> GetEnemyPointers() const;
 
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;

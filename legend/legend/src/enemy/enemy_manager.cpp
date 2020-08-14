@@ -183,5 +183,14 @@ void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
   }
 }
 
+std::vector<Enemy*> EnemyManager::GetEnemyPointers() const {
+  std::vector<Enemy*> res(enemys_.size());
+  const u32 size = static_cast<u32>(enemys_.size());
+  for (u32 i = 0; i < size; i++) {
+    res[i] = enemys_[i].get();
+  }
+  return res;
+}
+
 }  // namespace enemy
 }  // namespace legend

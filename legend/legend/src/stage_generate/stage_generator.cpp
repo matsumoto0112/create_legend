@@ -54,7 +54,7 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
   std::vector<std::string> indexs;
   if (ifstream.fail()) {
     MY_LOG(L"ステージデータを開けませんでした。");
-    indexs[0] = "error";
+    indexs.push_back("error");
     return indexs;
   }
   std::string index;
@@ -90,7 +90,7 @@ bool StageGenerator::SetMapActors(const std::string map_name,
     // Transformを読み込み(scaleは現状無視)
     util::Transform transform = String_2_Transform(
         infomation[1], infomation[2], infomation[3], infomation[4],
-        infomation[5], infomation[6], "1", "1", "1");
+        infomation[5], infomation[6], infomation[7], infomation[8], infomation[9]);
 
     //机の初期化
     if (infomation[0] == "floor") {
@@ -181,7 +181,8 @@ util::Transform StageGenerator::String_2_Transform(
     const std::string& sclaey, const std::string& sclaez) {
   //各要素をVector3へ
   math::Vector3 position = String_2_Vector3(posx, posy, posz);
-  math::Vector3 eular = String_2_Vector3(eularx, eulary, eularz);
+  math::Vector3 eular = String_2_Vector3(eularx, eulary, eularz) * math::util::DEG_2_RAD;
+  eular.y += math::util::DEG_2_RAD * 180;
   math::Vector3 scale = String_2_Vector3(sclaex, sclaey, sclaez);
   return util::Transform(position, math::Quaternion::FromEular(eular), scale);
 }

@@ -172,6 +172,7 @@
     <ClCompile Include="src\scenes\title.cpp" />
     <ClCompile Include="src\skill\skill.cpp" />
     <ClCompile Include="src\skill\skill_manager.cpp" />
+    <ClCompile Include="src\skill\skill_pencil.cpp" />
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
     <ClCompile Include="src\stage_generate\stage_generator.cpp" />
     <ClCompile Include="src\stdafx.cpp">
@@ -461,6 +462,9 @@
     <Media Include="assets\audios\free_4.wav" />
     <Media Include="assets\audios\free_5.wav" />
     <Media Include="assets\audios\free_6.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\stage\bbbb.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

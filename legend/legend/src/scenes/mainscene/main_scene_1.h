@@ -4,6 +4,7 @@
 #include "src/camera/perspective_camera.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
+#include "src/object/fragment.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
@@ -62,6 +63,8 @@ class MainScene1 : public Scene {
   enemy::EnemyManager enemy_manager_;
   //! áŠQ•¨ƒŠƒXƒg
   std::vector<object::Obstacle> obstacles_;
+
+  std::vector<object::Fragment> fragments_;
 };
 
 }  // namespace mainscene

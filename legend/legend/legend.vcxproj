@@ -139,6 +139,7 @@
     <ClCompile Include="src\math\vector_3.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
     <ClCompile Include="src\object\desk.cpp" />
+    <ClCompile Include="src\object\fragment.cpp" />
     <ClCompile Include="src\object\graffiti.cpp" />
     <ClCompile Include="src\object\obstacle.cpp" />
     <ClCompile Include="src\physics\bounding_box.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\actor\actor_type.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />
     <ClInclude Include="src\directx\buffer\committed_resource.h" />
     <ClInclude Include="src\directx\buffer\constant_buffer.h" />
@@ -289,6 +291,7 @@
     <ClInclude Include="src\math\vector_3.h" />
     <ClInclude Include="src\math\vector_4.h" />
     <ClInclude Include="src\object\desk.h" />
+    <ClInclude Include="src\object\fragment.h" />
     <ClInclude Include="src\object\graffiti.h" />
     <ClInclude Include="src\object\obstacle.h" />
     <ClInclude Include="src\physics\bounding_box.h" />

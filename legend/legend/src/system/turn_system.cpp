@@ -158,7 +158,7 @@ bool TurnSystem::PlayerSkillAfterModed() {
 //“G‚ÌˆÚ“®ˆ—
 bool TurnSystem::EnemyMove() {
   MY_LOG(L"EnemyMove");
-  enemy_manager_.Update();
+  enemy_manager_.Update(nullptr);
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
       enemy_manager_.LastEnemyMoveEnd()) {

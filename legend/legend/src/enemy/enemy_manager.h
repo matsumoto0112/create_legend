@@ -5,6 +5,7 @@
 
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
+#include "src/search/search_manager.h"
 #include "src/system/physics_field.h"
 
 namespace legend {
@@ -30,7 +31,7 @@ class EnemyManager {
   /**
    * @brief XV
    */
-  bool Update();
+  bool Update(search::SearchManager* search_manaegr);
   /**
    * @brief •`‰æ
    */
@@ -38,7 +39,7 @@ class EnemyManager {
   /**
    * @brief “G‚Ìs“®ˆ—
    */
-  void EnemyAction();
+  void EnemyAction(search::SearchManager* search_manaegr);
   /**
    * @brief “G‚ğ’Ç‰Á
    */
@@ -48,6 +49,10 @@ class EnemyManager {
    * @brief “G‚ğíœ
    */
   void Destroy(i32 index, system::PhysicsField& physics_field);
+  /**
+   * @brief “G‚ğíœ
+   */
+  // void RandomDestroy(system::PhysicsField& physics_field);
 
   void SetPosition(Enemy* enemy);
 
@@ -87,7 +92,7 @@ class EnemyManager {
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
   float move_timer_ = 0.0f;
-  const float move_time_ = 0.25f;
+  const float move_time_ = 0.5f;
 
   //! Še“G‚Ì‘¬“xŠi”[ƒŠƒXƒg
   std::vector<math::Vector3> velocities_;

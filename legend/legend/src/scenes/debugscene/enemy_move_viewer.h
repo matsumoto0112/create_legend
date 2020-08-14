@@ -1,23 +1,23 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_ENEMY_MOVE_VIEWER_H_
 #define LEGEND_SCENES_DEBUGSCENE_ENEMY_MOVE_VIEWER_H_
 
-/**
- * @brief モデル描画テストシーン
- * @details モデルを一つ読み込み、アルベドテクスチャを張った状態で描画するシーン
- パラメータとしてモデルの座標、回転、スケーリング、カメラの座標、回転、fovが操作できる
- */
-
 #include "src/camera/perspective_camera.h"
-#include "src/scenes/scene.h"
 #include "src/enemy/enemy_manager.h"
+#include "src/object/desk.h"
+#include "src/object/obstacle.h"
+#include "src/player/player.h"
+#include "src/scenes/scene.h"
+#include "src/search/search_manager.h"
+#include "src/system/physics_field.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
 namespace debugscene {
 
 /**
- * @class ModelView
- * @brief モデル描画テストシーン
+ * @class EnemyMoveViewer
+ * @brief 敵挙動シーン1
  */
 class EnemyMoveViewer : public Scene {
  public:
@@ -41,18 +41,30 @@ class EnemyMoveViewer : public Scene {
    * @brief 描画
    */
   void Draw() override;
-
   /**
-   * @brief 終了処理
+   * @brief 終了
    */
   void Finalize() override;
+  /**
+   * @brief ターン別の更新処理
+   */
+  bool UpdateTurn();
 
  private:
-  //! メインカメラ
   camera::PerspectiveCamera camera_;
-  //! 敵管理システム
+  system::Mode turn_;
+  system::TurnSystem current_turn_;
+  system::PhysicsField physics_field_;
+  //! プレイヤー
+  player::Player player_;
+  //! 机
+  std::vector<object::Desk> desks_;
+  //! エネミー
   enemy::EnemyManager enemy_manager_;
-  physics::Plane plane_;
+  //! 探索管理
+  search::SearchManager search_manager_;
+  //! 障害物リスト
+  std::vector<object::Obstacle> obstacles_;
 };
 
 }  // namespace debugscene

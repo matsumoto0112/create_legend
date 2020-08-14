@@ -4,13 +4,14 @@
 
 namespace legend {
 namespace enemy {
+
 EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
 bool EnemyManager::Initilaize() { return true; }
 
-bool EnemyManager::Update() {
+bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   // “G’Ç‰Á
   // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
   //        input::key_code::A)) {
@@ -49,7 +50,7 @@ bool EnemyManager::Update() {
   }
   //}
   // “Gs“®
-  EnemyAction();
+  EnemyAction(search_manaegr);
 
   for (auto&& enemy : enemys_) {
     enemy->Update();
@@ -63,16 +64,29 @@ void EnemyManager::Draw() {
   }
 }
 
-void EnemyManager::EnemyAction() {
+void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) || (enemys_.size() <= action_enemy_index_)) {
     return;
   }
   if (move_timer_ <= 0.0f) {
-    math::Vector3 velocity = (player_obb_.GetPosition() -
-                              enemys_[action_enemy_index_]->GetPosition())
-                                 .Normalized();
+    if (search_manaegr == nullptr) {
+      math::Vector3 velocity = (player_obb_.GetPosition() -
+                                enemys_[action_enemy_index_]->GetPosition())
+                                   .Normalized();
 
-    enemys_[action_enemy_index_]->SetVelocity(velocity);
+      enemys_[action_enemy_index_]->SetVelocity(velocity);
+    } else {
+      std::vector<physics::BoundingBox*> collisions;
+      for (i32 i = 0; i < enemys_.size(); i++) {
+        collisions.emplace_back(&enemys_[i]->GetCollisionRef());
+      }
+      auto next = search_manaegr->NextSearch(
+                      &enemys_[action_enemy_index_].get()->GetCollisionRef(),
+                      collisions) -
+                  enemys_[action_enemy_index_].get()->GetPosition();
+      next.y = 0;
+      enemys_[action_enemy_index_]->SetVelocity(next);
+    }
   }
   move_timer_ +=
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();

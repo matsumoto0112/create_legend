@@ -1,6 +1,6 @@
 #include "src/scenes/game_over.h"
 
-#include "src/libs/imgui/imgui.h"
+#include "src/game/game_device.h"
 
 namespace legend {
 namespace scenes {
@@ -13,15 +13,17 @@ bool GameOver::Initialize() { return true; }
 
 //XV
 bool GameOver::Update() {
-  //if (ImGui::Begin("Debug Window")) {
-  //  ImGui::Text("GameOver");
-  //  if (ImGui::Button("Title")) {
-  //    scene_change_->ChangeScene(SceneType::TITLE);
-  //  }
-  //}
-  //ImGui::End();
+  if (ImGui::Begin("Text")) {
+    ImGui::Text("Push A to return title");
+  }
+  ImGui::End();
 
-    return true;
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  if (input.GetCommand(input::input_code::Decide)) {
+    scene_change_->ChangeScene(SceneType::TITLE);
+  }
+
+  return true;
 }
 
 //•`‰æ

@@ -14,14 +14,12 @@ TextureString::~TextureString() { Clear(); }
 //‰Šú‰»
 bool TextureString::Init(
     directx::device::CommandList& command_list, const std::wstring& str,
-    u32 register_num,
     directx::descriptor_heap::heap_parameter::LocalHeapID use_heap_id,
     const std::wstring& font, i32 font_size) {
   this->position_ = math::Vector2::kZeroVector;
   this->scale_ = math::Vector2::kUnitVector;
   this->font_ = font;
   this->font_size_ = font_size;
-  this->register_num_ = register_num;
   this->use_heap_id_ = use_heap_id;
 
   return Append(command_list, str);
@@ -66,7 +64,7 @@ bool TextureString::Append(directx::device::CommandList& command_list,
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   for (auto&& c : str) {
     TextureChar& ch = chars_.emplace_back(TextureChar());
-    if (!ch.Init(command_list, c, font_, font_size_, register_num_,
+    if (!ch.Init(command_list, c, font_, font_size_,
                  device.GetLocalHandle(use_heap_id_))) {
       return false;
     }

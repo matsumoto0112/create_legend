@@ -90,6 +90,11 @@ class HeapManager {
    */
   void RemoveLocalHeap(heap_parameter::LocalHeapID heap_id);
   /**
+   * @brief ローカルヒープのカウンターをリセットする
+   * @param heap_id 対象のヒープID
+   */
+  void ResetLocalHeap(heap_parameter::LocalHeapID heap_id);
+  /**
    * @brief ローカルヒープのディスクリプタハンドルを取得する
    * @param heap_id ヒープを一意に特定するID
    * @return 対象のヒープのハンドル

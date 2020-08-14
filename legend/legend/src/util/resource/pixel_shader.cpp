@@ -13,17 +13,17 @@ PixelShader::PixelShader() {}
 PixelShader::~PixelShader() {}
 
 //読み込む
-bool PixelShader::Load(id::PixelShader key,
-                       const std::filesystem::path& filepath) {
-  MY_ASSERTION(!IsLoaded(key), L"登録済みのキーが再登録されようとしています。");
-  auto ps = std::make_shared<directx::shader::PixelShader>();
-  if (!ps->Init(game::GameDevice::GetInstance()->GetDevice(), filepath)) {
+bool PixelShader::Load(const std::wstring& name) {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto shader_path = Path::GetInstance()->shader();
+
+  auto pixel_shader = std::make_shared<directx::shader::PixelShader>();
+  if (!pixel_shader->Init(device, shader_path / name)) {
     MY_LOG(L"ピクセルシェーダーの初期化に失敗しました。");
     return false;
   }
 
-  resources_.emplace(key, ps);
-  return true;
+  return Register(name, pixel_shader);
 }
 
 }  // namespace resource

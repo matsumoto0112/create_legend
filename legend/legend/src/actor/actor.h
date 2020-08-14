@@ -10,6 +10,7 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -92,12 +93,13 @@ inline void Actor<T>::Draw() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   resource.GetPipeline()
-      .Get(util::resource::id::Pipeline::MODEL_VIEW)
+      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
       ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   model_->Draw(command_list);
 }
@@ -108,9 +110,9 @@ inline bool Actor<T>::InitBuffer() {
 
   //トランスフォームバッファを作成する
   if (!transform_cb_.Init(
-          device, directx::shader::ConstantBufferRegisterID::TRANSFORM,
+          device,
           device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
           name_ + L"_TransformConstantBuffer")) {
     return false;
   }

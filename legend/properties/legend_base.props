@@ -31,10 +31,13 @@
 xcopy $(ProjectDir)\config $(OutDir)\config /I /Y /D /S</Command>
     </PostBuildEvent>
     <FxCompile>
-      <ObjectFileOutput>$(OutDir)%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput>$(OutDir)assets\shaders\%(Filename).cso</ObjectFileOutput>
       <ShaderModel>5.1</ShaderModel>
       <AdditionalOptions>/Zpr</AdditionalOptions>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>if not exist  $(OutDir)\assets\shaders mkdir $(OutDir)\assets\shaders</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

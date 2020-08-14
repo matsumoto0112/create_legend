@@ -30,12 +30,10 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //コンスタントバッファの初期化
-  const u32 transform_id = directx::shader::ConstantBufferRegisterID::TRANSFORM;
   const directx::descriptor_heap::DescriptorHandle transform_handle =
       device.GetLocalHandle(
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
-  if (!transform_cb_.Init(device, transform_id, transform_handle,
-                          name_ + L"Transform")) {
+  if (!transform_cb_.Init(device, transform_handle, name_ + L"Transform")) {
     return false;
   }
 
@@ -114,7 +112,8 @@ void ParticleEmitter::Update(ParticleCommandList& particle_command_list) {
       directx::shader::ResourceType::UAV, handle_);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   device.GetHeapManager().SetHeapTableToComputeCommandList(device,
                                                            command_list);
 
@@ -128,7 +127,8 @@ void ParticleEmitter::Render(
     directx::device::CommandList& graphics_command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  transform_cb_.SetToHeap(device);
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
   graphics_pipeline_state_.SetCommandList(graphics_command_list);

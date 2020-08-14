@@ -52,12 +52,11 @@ class ConstantBuffer {
   /**
    * @brief 初期化
    * @param accessor DirectXデバイスアクセサ
-   * @param register_num シェーダーのレジスター番号
    * @param handle ディスクリプタハンドル
    * @param name リソース名
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(device::IDirectXAccessor& accessor, u32 register_num,
+  bool Init(device::IDirectXAccessor& accessor,
             descriptor_heap::DescriptorHandle handle, const std::wstring& name);
 
   /**
@@ -73,10 +72,12 @@ class ConstantBuffer {
    */
   void UpdateStaging() const;
   /**
-   * @brief ヒープに自身を追加する
+   * @brief ハンドルを登録する
    * @param accessor DirectX12デバイスアクセサ
+   * @param register_num シェーダーのレジスター番号
    */
-  void SetToHeap(device::IDirectXAccessor& accessor) const;
+  void RegisterHandle(device::IDirectXAccessor& accessor,
+                      u32 register_num) const;
 
  private:
   /**
@@ -97,8 +98,6 @@ class ConstantBuffer {
   T staging_;
   //! CPU上のリソースの書き込み領域
   void* resource_begin_;
-  //! シェーダーのレジスター番号
-  u32 register_num_;
   //! アライメントされたバッファサイズ
   u32 buffer_aligned_size_;
 };
@@ -110,7 +109,6 @@ inline ConstantBuffer<T>::ConstantBuffer()
       resource_handle_{},
       staging_{},
       resource_begin_{nullptr},
-      register_num_{0},
       buffer_aligned_size_{0} {}
 
 //デストラクタ
@@ -134,7 +132,6 @@ inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     this->resource_handle_ = other.resource_handle_;
     this->staging_ = other.staging_;
     this->resource_begin_ = nullptr;
-    this->register_num_ = other.register_num_;
     this->buffer_aligned_size_ = other.buffer_aligned_size_;
 
     if (this->resource_.GetResource()) {
@@ -159,7 +156,6 @@ inline ConstantBuffer<T>& ConstantBuffer<T>::operator=(
     this->resource_handle_ = other.resource_handle_;
     this->staging_ = other.staging_;
     this->resource_begin_ = nullptr;
-    this->register_num_ = other.register_num_;
     this->buffer_aligned_size_ = other.buffer_aligned_size_;
 
     if (this->resource_.GetResource()) {
@@ -177,14 +173,12 @@ inline void ConstantBuffer<T>::Reset() {
   resource_.Reset();
   resource_handle_ = descriptor_heap::DescriptorHandle{};
   staging_ = T{};
-  u32 buffer_aligned_size_ = 0;
-  register_num_ = 0;
+  buffer_aligned_size_ = 0;
 }
 
 //初期化
 template <class T>
 inline bool ConstantBuffer<T>::Init(device::IDirectXAccessor& accessor,
-                                    u32 register_num,
                                     descriptor_heap::DescriptorHandle handle,
                                     const std::wstring& name) {
   Reset();
@@ -201,7 +195,6 @@ inline bool ConstantBuffer<T>::Init(device::IDirectXAccessor& accessor,
     return false;
   }
 
-  this->register_num_ = register_num;
   this->resource_handle_ = handle;
 
   D3D12_CONSTANT_BUFFER_VIEW_DESC cbv_desc = {};
@@ -242,9 +235,9 @@ inline void ConstantBuffer<T>::UpdateStaging() const {
 
 //ヒープにセットする
 template <class T>
-inline void ConstantBuffer<T>::SetToHeap(
-    device::IDirectXAccessor& accessor) const {
-  accessor.RegisterHandle(this->register_num_, shader::ResourceType::CBV,
+inline void ConstantBuffer<T>::RegisterHandle(
+    device::IDirectXAccessor& accessor, u32 register_num) const {
+  accessor.RegisterHandle(register_num, shader::ResourceType::CBV,
                           this->resource_handle_);
 }
 

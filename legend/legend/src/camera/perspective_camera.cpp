@@ -48,17 +48,17 @@ bool PerspectiveCamera::Init(const std::wstring& name,
 void PerspectiveCamera::RenderStart() {
   UpdateConstantBufferStaging();
 
-  world_context_constant_buffer_.SetToHeap(
-      game::GameDevice::GetInstance()->GetDevice());
+  world_context_constant_buffer_.RegisterHandle(
+      game::GameDevice::GetInstance()->GetDevice(),
+      directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT);
 }
 
 //コンスタントバッファの初期化
 bool PerspectiveCamera::InitConstantBuffer() {
   if (!world_context_constant_buffer_.Init(
           game::GameDevice::GetInstance()->GetDevice(),
-          directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT,
           game::GameDevice::GetInstance()->GetDevice().GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
           name_ + L"_WorldContext_ConstantBuffer")) {
     return false;
   }

@@ -666,11 +666,6 @@ bool Collision::Collision_Ray_Sphere(Ray& ray, Sphere& sphere) {
     return false;
   }
 
-  if (a1 > ray.GetDistance()) {
-    MY_LOG(L"ƒŒƒC‚Ì”ÍˆÍŠO‚Å‚µ‚½");
-    return false;
-  }
-
   return true;
 }
 }  // namespace physics

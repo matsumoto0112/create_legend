@@ -6,6 +6,7 @@
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/system/physics_field.h"
+
 namespace legend {
 namespace stage_generate {
 

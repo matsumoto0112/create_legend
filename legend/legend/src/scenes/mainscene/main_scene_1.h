@@ -51,20 +51,20 @@ class MainScene1 : public Scene {
   bool UpdateTurn();
 
  private:
-  camera::PerspectiveCamera camera_;
-  system::Turn turn_;
-  system::TurnSystem current_turn_;
-  system::PhysicsField physics_field_;
-  //! プレイヤー
-  player::Player player_;
-  //! 机
-  std::vector<object::Desk> desks_;
-  //! エネミー
-  enemy::EnemyManager enemy_manager_;
-  //! 障害物リスト
-  std::vector<object::Obstacle> obstacles_;
-
-  std::vector<object::Fragment> fragments_;
+  system::TurnSystem turn_system_;
+  //  camera::PerspectiveCamera camera_;
+  //  system::Turn turn_;
+  //  system::PhysicsField physics_field_;
+  //  //! プレイヤー
+  //  player::Player player_;
+  //  //! 机
+  //  std::vector<object::Desk> desks_;
+  //  //! エネミー
+  //  enemy::EnemyManager enemy_manager_;
+  //  //! 障害物リスト
+  //  std::vector<object::Obstacle> obstacles_;
+  //
+  //  std::vector<object::Fragment> fragments_;
 };
 
 }  // namespace mainscene

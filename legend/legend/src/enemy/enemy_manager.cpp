@@ -106,7 +106,7 @@ void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
     return;
   }
 
-  //physics_field.RemoveEnemy(index);
+  physics_field.RemoveEnemy(index);
   enemys_.erase(enemys_.begin() + index);
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;

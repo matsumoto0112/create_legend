@@ -285,6 +285,8 @@
     <ClInclude Include="src\scenes\debugscene\skill_test.h" />
     <ClInclude Include="src\skill\skill_manager.h" />
     <ClInclude Include="src\skill\skill_pencil.h" />
+    <ClInclude Include="src\system\mode.h" />
+    <ClInclude Include="src\actor\actor_mediator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

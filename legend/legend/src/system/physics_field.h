@@ -2,7 +2,7 @@
 #define LEGEND_SYSTEM_PHYSICS_FIELD_H_
 
 #include "src/physics/bounding_box.h"
-#include "src/system/turn_system.h"
+#include "src/system/mode.h"
 
 namespace legend {
 namespace system {
@@ -25,7 +25,7 @@ class PhysicsField {
   /**
    * @brief 更新
    */
-  bool Update(Turn turn, math::Vector3 player_vel, bool player_move,
+  bool Update(Mode turn, math::Vector3 player_vel, bool player_move,
               float player_impulse, float player_power,
               std::vector<math::Vector3> enemies_vel, bool enemy_move);
   /**
@@ -49,8 +49,8 @@ class PhysicsField {
    */
   void AddObstacle(const physics::BoundingBox& obstacle_obb);
   /**
-  * @brief 消しカスのあたり判定の登録
-  */
+   * @brief 消しカスのあたり判定の登録
+   */
   void AddFragment(const physics::BoundingBox& fragment_obb);
   /**
    * @brief エネミーあたり判定の削除

@@ -57,6 +57,7 @@ bool Player::Update() {
       change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
           0.5f) {
     is_move_ = true;
+    mediator_->PlayerMoveStartEvent();
   }
 
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -65,6 +66,7 @@ bool Player::Update() {
   if (is_move_ && velocity_ == math::Vector3::kZeroVector) {
     ResetParameter();
     move_end_ = true;
+    mediator_->PlayerMoveEndEvent();
   }
 
   SetVelocity();
@@ -184,11 +186,11 @@ bool Player::GetMoveEnd() const { return move_end_; }
 bool Player::GetIsMove() const { return is_move_; }
 
 void Player::OnCollisionHit(actor::ActorType type) {
-  MY_LOG(L"Collision Hit: %d", type);
+  //MY_LOG(L"Collision Hit: %d", type);
 }
 
 void Player::OnTriggerHit(actor::ActorType type) {
-  MY_LOG(L"Trigger Hit: %d", type);
+  //MY_LOG(L"Trigger Hit: %d", type);
 }
 }  // namespace player
 }  // namespace legend

@@ -53,7 +53,8 @@ bool Enemy::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  if (is_move_ && velocity_ == math::Vector3::kZeroVector) move_end_ = true;
+  const bool is_nearly_zero_vector = velocity_.MagnitudeSquared() < 0.01f;
+  if (is_move_ && is_nearly_zero_vector) move_end_ = true;
   is_move_ = (0.01f < velocity_.Magnitude());
   // Move();
 

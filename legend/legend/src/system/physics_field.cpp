@@ -22,14 +22,14 @@ bool PhysicsField::Init() {
 }
 
 //çXêV
-bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
+bool PhysicsField::Update(Mode turn, math::Vector3 player_vel, bool player_move,
                           float player_impulse, float player_power,
                           std::vector<math::Vector3> enemies_vel,
                           bool enemy_move) {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  if (turn == Turn::PLAYER_TURN) {
+  if (turn == Mode::PLAYER_MOVING) {
     if (player_move)
       PlayerMove(player_vel, player_impulse, player_power);
     else
@@ -94,7 +94,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(
             player_obb_, enemy_obbs_[i], true, true)) {
-      if (turn == Turn::PLAYER_TURN) {
+      if (turn == Mode::PLAYER_MOVE || turn == Mode::PLAYER_MOVING) {
         Deceleration(player_velocity_, 75, player_deceleration_x_,
                      player_deceleration_z_);
 

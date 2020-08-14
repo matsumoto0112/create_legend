@@ -6,6 +6,7 @@
  * @brief アクタークラス定義
  */
 
+#include "src/actor/actor_mediator.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/shader/shader_register_id.h"
@@ -47,6 +48,10 @@ class Actor {
    */
   physics::BoundingBox& GetCollisionRef() { return collision_; }
 
+  virtual void SetMediator(IActorMediator* mediator) {
+    this->mediator_ = mediator;
+  }
+
  protected:
   /**
    * @brief バッファの初期化
@@ -73,6 +78,9 @@ class Actor {
   std::shared_ptr<draw::Model> model_;
   //! コリジョン
   physics::BoundingBox collision_;
+
+  //! 仲介者
+  IActorMediator* mediator_;
 };
 
 //コンストラクタk

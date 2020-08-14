@@ -96,7 +96,7 @@ bool StageGenerator::SetMapActors(const std::string map_name,
     if (infomation[0] == "floor") {
       object::Desk::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
+      parameter.bounding_box_length = math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
       parameter.normal = math::Vector3::kUpVector;
 
       auto& desk = desks->emplace_back();
@@ -106,7 +106,7 @@ bool StageGenerator::SetMapActors(const std::string map_name,
         is_all_ok = false;
         continue;
       }
-      physics_field->AddObstacle(desk.GetCollisionRef());
+      // physics_field->AddObstacle(desk.GetCollisionRef());
       continue;
     }
 
@@ -114,7 +114,9 @@ bool StageGenerator::SetMapActors(const std::string map_name,
     if (infomation[0] == "startpoint") {
       player::Player::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
       parameter.min_power = 0;
       parameter.max_power = 1;
 
@@ -131,7 +133,9 @@ bool StageGenerator::SetMapActors(const std::string map_name,
     if (infomation[0] == "enemy") {
       enemy::Enemy::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bouding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
       enemy_manager->Add(parameter, *physics_field);
       continue;
     }
@@ -142,8 +146,7 @@ bool StageGenerator::SetMapActors(const std::string map_name,
       parameter.position = transform.GetPosition();
       parameter.rotation = transform.GetRotation();
       parameter.model_id = 0;
-      parameter.bounding_box_length =
-          math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
+      parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
 
       auto& obstacle = obstacles->emplace_back();
 
@@ -152,7 +155,7 @@ bool StageGenerator::SetMapActors(const std::string map_name,
         is_all_ok = false;
         continue;
       }
-      physics_field->AddObstacle(obstacle.GetCollisionRef());
+      // physics_field->AddObstacle(obstacle.GetCollisionRef());
       continue;
     }
   }

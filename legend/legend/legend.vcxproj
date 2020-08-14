@@ -335,6 +335,8 @@
     <ClInclude Include="src\skill\skill_type.h" />
     <ClInclude Include="src\stage_generate\stage_generator.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\actor\actor_mediator.h" />
+    <ClInclude Include="src\system\mode.h" />
     <ClInclude Include="src\system\physics_field.h" />
     <ClInclude Include="src\system\turn_system.h" />
     <ClInclude Include="src\util\byte_reader.h" />

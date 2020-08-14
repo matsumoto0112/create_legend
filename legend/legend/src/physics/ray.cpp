@@ -1,4 +1,4 @@
-ï»¿#include "src/physics/ray.h"
+#include "src/physics/ray.h"
 
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
@@ -10,24 +10,11 @@ namespace physics {
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray()
     : start_position_(math::Vector3::kZeroVector),
-      direction_(math::Vector3::kRightVector),
-      max_distance_(1),
-      rotation_(math::Quaternion::kIdentity) {}
+      direction_(math::Vector3::kRightVector) {}
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-Ray::Ray(math::Vector3 direction, float max_distance)
-    : start_position_(math::Vector3::kZeroVector),
-      direction_(direction),
-      max_distance_(max_distance),
-      rotation_(math::Quaternion::kIdentity) {}
-
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
-         float max_distance, math::Quaternion rotation)
-    : start_position_(start_position),
-      direction_(direction),
-      max_distance_(max_distance),
-      rotation_(rotation) {}
+Ray::Ray(math::Vector3 start_position, math::Vector3 direction)
+    : start_position_(start_position), direction_(direction) {}
 
 //ƒfƒXƒgƒ‰ƒNƒ^
 Ray::~Ray() {}
@@ -40,13 +27,17 @@ bool Ray::Initialize() {
   return true;
 }
 
+//XV
 void Ray::Update() {
-  draw_line_.SetTransform(util::Transform(GetStartPosition(), GetRotation(),
+  draw_line_.SetTransform(util::Transform(GetStartPosition(),
+                                          math::Quaternion::kIdentity,
                                           math::Vector3::kUnitVector));
 }
 
+//•`‰æ
 void Ray::Draw(directx::device::CommandList& command_list) {
-  draw_line_.SetTransform(util::Transform(GetStartPosition(), GetRotation(),
+  draw_line_.SetTransform(util::Transform(GetStartPosition(),
+                                          math::Quaternion::kIdentity,
                                           math::Vector3::kUnitVector));
   draw_line_.Render(command_list);
 }
@@ -57,17 +48,14 @@ math::Vector3 Ray::GetStartPosition() const { return start_position_; }
 //•ûŒüƒxƒNƒgƒ‹‚Ìæ“¾
 math::Vector3 Ray::GetDirection() const { return direction_; }
 
-//Å‘å”ÍˆÍ‚Ìæ“¾
-float Ray::GetDistance() const { return max_distance_; }
-
-math::Quaternion Ray::GetRotation() const { return rotation_; }
-
+//n“_‚Ìİ’è
 void Ray::SetStartPosition(const math::Vector3& start_position) {
   start_position_ = start_position;
 }
 
-void Ray::SetRotation(const math::Quaternion& rotation) {
-  rotation_ = rotation;
+//•ûŒüƒxƒNƒgƒ‹‚Ìİ’è
+void Ray::SetDirection(const math::Vector3& direction) {
+  direction_ = direction;
 }
 }  // namespace physics
 }  // namespace legend

@@ -7,6 +7,7 @@
  */
 
 #include "src/actor/actor_mediator.h"
+#include "src/camera/follow_camera.h"
 #include "src/camera/perspective_camera.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
@@ -116,7 +117,7 @@ class TurnSystem : public actor::IActorMediator {
   //! ステージ生成
   stage_generate::StageGenerator stage_generator_;
   //! メインカメラ
-  camera::PerspectiveCamera main_camera_;
+  camera::FollowCamera main_camera_;
   //! プレイヤー
   player::Player player_;
   //! 机

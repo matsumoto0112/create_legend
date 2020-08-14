@@ -48,8 +48,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
     const math::IntVector2 screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-    if (!main_camera_.Init(L"MainCamera", camera_position, camera_rotation,
-                           math::util::DEG_2_RAD * 50.0f, aspect_ratio)) {
+    if (!main_camera_.Init(L"MainCamera", &player_,
+                           math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
+                           math::util::DEG_2_RAD * 50.0f, aspect_ratio,
+                           math::Vector3::kUpVector, 0.1f, 300.0f)) {
       return false;
     }
   }

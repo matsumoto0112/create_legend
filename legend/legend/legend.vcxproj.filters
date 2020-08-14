@@ -125,6 +125,8 @@
     <ClCompile Include="src\skill\skill_manager.cpp" />
     <ClCompile Include="src\skill\skill_pencil.cpp" />
     <ClCompile Include="src\enemy\boss.cpp" />
+    <ClCompile Include="src\camera\camera.cpp" />
+    <ClCompile Include="src\camera\follow_camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -296,6 +298,8 @@
     <ClInclude Include="src\system\mode.h" />
     <ClInclude Include="src\actor\actor_mediator.h" />
     <ClInclude Include="src\enemy\boss.h" />
+    <ClInclude Include="src\camera\camera.h" />
+    <ClInclude Include="src\camera\follow_camera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

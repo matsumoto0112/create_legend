@@ -60,6 +60,8 @@ class Actor {
   bool InitBuffer();
 
  public:
+  util::Transform& GetTransformRef() { return transform_; }
+  util::Transform GetTransform() const { return transform_; }
   /**
    * @brief トランスフォームコンスタントバッファの参照を取得する
    */

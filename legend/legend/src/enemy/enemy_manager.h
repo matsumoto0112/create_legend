@@ -50,7 +50,7 @@ class EnemyManager {
   /**
    * @brief “G‚ğíœ
    */
-  void RandomDestroy(system::PhysicsField& physics_field);
+  //void RandomDestroy(system::PhysicsField& physics_field);
 
   void SetPosition(Enemy* enemy);
 

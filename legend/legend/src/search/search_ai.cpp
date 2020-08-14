@@ -11,6 +11,11 @@ math::Vector3 SearchAI::GetPosition() { return position_; }
 
 std::vector<SearchAI*> legend::search::SearchAI::GetBranch() { return branch_; }
 
+std::vector<SearchAI*> SearchAI::SetBranch(std::vector<SearchAI*> _branch) {
+  branch_ = _branch;
+  return branch_;
+}
+
 SearchAI* legend::search::SearchAI::GetRandomSearch(
     std::vector<SearchAI*> remove) {
   std::vector<SearchAI*> result;

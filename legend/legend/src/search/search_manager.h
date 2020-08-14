@@ -25,6 +25,15 @@ class SearchManager {
   /**
    * @brief Ÿ‚ÌÀ•W
    */
+  void Add(math::Vector3 _position);
+  /**
+   * @brief Ÿ‚ÌÀ•W
+   */
+  void Add(std::vector<math::Vector3> _positions);
+
+  /**
+   * @brief Ÿ‚ÌÀ•W
+   */
   math::Vector3 NextSearch(math::Vector3 _position);
   /**
    * @brief Œo˜H’Tõ
@@ -49,9 +58,13 @@ class SearchManager {
    * @brief ’Tõ‰ÓŠƒ‰ƒ“ƒ_ƒ€‚Åæ“¾
    */
   SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);
+  /**
+   * @brief ‹ßê‚Ì’Tõ‰ÓŠ‚ğæ“¾
+   */
+  SearchAI* NearSearch(math::Vector3 _position);
 
  private:
-  std::vector<SearchAI*> searchList;
+  std::vector<std::unique_ptr<SearchAI>> searchList;
   std::vector<SearchAI*> courseList;
 };
 }  // namespace search

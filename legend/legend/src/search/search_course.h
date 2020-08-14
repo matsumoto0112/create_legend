@@ -34,7 +34,7 @@ struct SearchCourse {
   /**
    * @brief ’Tõæİ’è
    */
-  std::vector<SearchAI*> SetChild(std::vector<SearchAI*> rem);
+  std::vector<SearchCourse*> SetChild(std::vector<SearchCourse*> rem);
   /**
    * @brief Œ´“_‚Ü‚Å‚Ì•ªŠòŒ³æ“¾
    */
@@ -46,7 +46,7 @@ struct SearchCourse {
   /**
    * @brief •ªŠòŒ³‚ÌŒ´“_‚Ü‚Å‚Ì‹——£
    */
-  float Length();
+  const float Length();
 
   private:
   std::vector<SearchCourse*> GetParents(std::vector<SearchCourse*> _parents);
@@ -54,7 +54,7 @@ struct SearchCourse {
  private:
   SearchAI* baseSearch_;
   SearchCourse* parentSearch_;
-  std::vector<SearchAI*> childSearch_ = {};
+  std::vector<SearchCourse*> childSearch_ = {};
 };
 }  // namespace search
 }  // namespace legend

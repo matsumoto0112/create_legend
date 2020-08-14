@@ -14,15 +14,15 @@ SearchCourse::~SearchCourse() {}
 
 SearchAI* SearchCourse::GetBaseSeach() { return baseSearch_; }
 
-std::vector<SearchAI*> SearchCourse::SetChild(std::vector<SearchAI*> remove) {
+std::vector<SearchCourse*> SearchCourse::SetChild(std::vector<SearchCourse*> remove) {
   childSearch_.clear();
 
-  for (auto b : baseSearch_->GetBranch()) {
-    if (std::find(remove.begin(), remove.end(), b) != remove.end()) {
-      continue;
-    }
-    childSearch_.emplace_back(b);
-  }
+  //for (auto b : baseSearch_->GetBranch()) {
+  //  if (std::find(remove.begin(), remove.end(), b) != remove.end()) {
+  //    continue;
+  //  }
+  //  childSearch_.emplace_back(&SearchCourse(b, this));
+  //}
 
   return childSearch_;
 }
@@ -45,7 +45,7 @@ SearchCourse* SearchCourse::GetMostParent() {
   return (parentSearch_ != nullptr) ? parentSearch_->GetMostParent() : this;
 }
 
-float SearchCourse::Length() {
+const float SearchCourse::Length() {
   auto parents = GetParents();
   float length = 0.0f;
   for (int i = 0; i < parents.size() - 1; i++) {

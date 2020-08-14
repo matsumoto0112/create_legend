@@ -31,6 +31,10 @@ class SearchAI {
    */
   std::vector<SearchAI*> GetBranch();
   /**
+   * @brief •ªŠòİ’è
+   */
+  std::vector<SearchAI*> SetBranch(std::vector<SearchAI*> _branch);
+  /**
    * @brief •ªŠòæ‚©‚çƒ‰ƒ“ƒ_ƒ€‚Åæ“¾
    */
   SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);

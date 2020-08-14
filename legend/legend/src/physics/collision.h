@@ -99,11 +99,6 @@ class Collision : public util::Singleton<Collision> {
    */
   bool Collision_Capsule_Plane(Capsule& capsule, Plane& plane);
   /**
-   * @brief レイの長さを調べる
-   * @param レイ
-   */
-  float GetRayLength(Ray& ray) const;
-  /**
    * @brief レイと直方体の衝突判定
    * @param レイ
    * @param 直方体
@@ -116,8 +111,13 @@ class Collision : public util::Singleton<Collision> {
    * @param 分離軸
    * @param 距離
    */
-  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep,
-                             math::Vector3 distance);
+  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep, math::Vector3 distance);
+  /**
+   * @brief レイと直方体の衝突地点の取得
+   * @param レイ
+   * @param 直方体
+   */
+  float GetCollisioinPoint(Ray& ray, BoundingBox& obb);
   /**
    * @brief レイと平面の衝突判定
    * @param レイ

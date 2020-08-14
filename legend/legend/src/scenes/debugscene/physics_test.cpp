@@ -34,17 +34,17 @@ bool PhysicsTest::Initialize() {
     }
   }
 
-  if (!plane_.Initialize()) {
-    return false;
-  }
+  // if (!plane_.Initialize()) {
+  //  return false;
+  //}
 
   // if (!sphere_.Initialize(device)) {
   //  return false;
   //}
 
-  // if (!ray_.Initialize(device)) {
-  //  return false;
-  //}
+  if (!ray_.Initialize()) {
+    return false;
+  }
 
   //カメラの初期化
   {
@@ -142,7 +142,8 @@ bool PhysicsTest::Update() {
   // sphere_.Update();
 
   // if (physics::Collision::GetInstance()->Collision_OBB_OBB(obbs_[0],
-  //                                                         obbs_[1])) {
+  // obbs_[1],
+  //                                                         true, true)) {
   //  MY_LOG(L"直方体1と直方体2が衝突しました");
   //}
 
@@ -166,9 +167,9 @@ bool PhysicsTest::Update() {
   //    MY_LOG(L"レイと球が衝突しました");
   //}
 
-  // if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray_, obbs_[0])) {
-  //    MY_LOG(L"レイと直方体が衝突しました");
-  //}
+  if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray_, obbs_[0])) {
+    MY_LOG(L"レイと直方体が衝突しました");
+  }
 
   return true;
 }
@@ -187,10 +188,10 @@ void PhysicsTest::Draw() {
   for (i32 i = 0; i < obb_num_; i++) {
     obbs_[i].DebugDraw(command_list);
   }
+  ray_.Draw(command_list);
 
   // plane_.Draw();
   // sphere_.Draw(device);
-  // ray_.Draw(device);
 }
 
 //終了

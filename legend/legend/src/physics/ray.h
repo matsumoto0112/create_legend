@@ -1,11 +1,7 @@
 #ifndef LEGEND_PHYSICS_RAY_H_
 #define LEGEND_PHYSICS_RAY_H_
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/constant_buffer_structure.h"
-#include "src/directx/buffer/index_buffer.h"
-#include "src/directx/buffer/vertex_buffer.h"
-#include "src/math/quaternion.h"
+#include "src/primitive/line.h"
 
 namespace legend {
 namespace physics {
@@ -27,13 +23,14 @@ class Ray {
    */
   Ray(math::Vector3 direction, float max_distance);
   /**
-   * @brief デフォルトコンストラクタ
+   * @brief コンストラクタ
    * @param 始点
    * @param 方向ベクトル
    * @param 最大範囲
+   * @param 回転
    */
   Ray(math::Vector3 start_position, math::Vector3 direction,
-      float max_distance);
+      float max_distance, math::Quaternion rotation);
   /**
    * @brief デストラクタ
    */
@@ -49,7 +46,7 @@ class Ray {
   /**
    * @brief 描画
    */
-  void Draw();
+  void Draw(directx::device::CommandList& command_list);
   /**
    * @brief 始点の取得
    */
@@ -62,20 +59,30 @@ class Ray {
    * @brief 最大範囲の取得
    */
   float GetDistance() const;
+  /**
+   * @brief 回転の取得
+   */
+  math::Quaternion GetRotation() const;
+  /**
+   * @brief 始点の設定
+   */
+  void SetStartPosition(const math::Vector3& start_position);
+  /**
+   * @brief 回転の設定
+   */
+  void SetRotation(const math::Quaternion& rotation);
 
  private:
-  // !始点
+  //! 始点
   math::Vector3 start_position_;
-  // !方向ベクトル
+  //! 方向ベクトル
   math::Vector3 direction_;
-  // !衝突範囲
+  //! 衝突範囲
   float max_distance_;
+  //! 回転
+  math::Quaternion rotation_;
 
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_constant_buffer_;
+  primitive::Line draw_line_;
 };
 
 }  // namespace physics

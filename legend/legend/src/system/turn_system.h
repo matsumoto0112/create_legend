@@ -20,6 +20,9 @@
 
 namespace legend {
 namespace system {
+namespace camera_mode {
+enum Enum { Main, Sub1, Sub2, COUNT };
+}  // namespace camera_mode
 
 /**
  * @class TurnSystem
@@ -107,6 +110,11 @@ class TurnSystem : public actor::IActorMediator {
    */
   bool EnemyMoveEnd();
 
+  /**
+   * @brief カメラの初期化
+   */
+  bool InitCameras();
+
  private:
   //! 現在ターン数
   i32 current_turn_;
@@ -116,8 +124,8 @@ class TurnSystem : public actor::IActorMediator {
   PhysicsField physics_field_;
   //! ステージ生成
   stage_generate::StageGenerator stage_generator_;
-  //! メインカメラ
-  camera::FollowCamera main_camera_;
+  ////! メインカメラ
+  // camera::FollowCamera main_camera_;
   //! プレイヤー
   player::Player player_;
   //! 机
@@ -130,6 +138,11 @@ class TurnSystem : public actor::IActorMediator {
   enemy::EnemyManager enemy_manager_;
   //! タイマー
   util::CountDownTimer countdown_timer_;
+
+  //! 使用するカメラ
+  std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
+  //! 現在使用しているカメラ
+  camera_mode::Enum current_camera_;
 };
 
 }  // namespace system

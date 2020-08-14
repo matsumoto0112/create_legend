@@ -4,7 +4,8 @@ namespace legend {
 namespace system {
 
 //コンストラクタ
-TurnSystem::TurnSystem() : current_turn_(0) {}
+TurnSystem::TurnSystem()
+    : current_turn_(0), current_camera_(camera_mode::Sub1) {}
 
 //デストラクタ
 TurnSystem::~TurnSystem() {}
@@ -40,20 +41,8 @@ bool TurnSystem::Init(const std::string& stage_name) {
     obs.SetMediator(this);
   }
 
-  //カメラの初期化
-  {
-    const math::Vector3 camera_position = math::Vector3(0, 50.0f, -50.0f);
-    const math::Quaternion camera_rotation =
-        math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
-    const math::IntVector2 screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-    const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-    if (!main_camera_.Init(L"MainCamera", &player_,
-                           math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
-                           math::util::DEG_2_RAD * 50.0f, aspect_ratio,
-                           math::Vector3::kUpVector, 0.1f, 300.0f)) {
-      return false;
-    }
+  if (!InitCameras()) {
+    return false;
   }
 
   return true;
@@ -91,53 +80,14 @@ bool TurnSystem::Update() {
   enemy_manager_.SetVelocity(physics_field_);
 
   if (ImGui::Begin("Camera")) {
-    //カメラ座標
-    math::Vector3 camera_position = main_camera_.GetPosition();
-    ImGui::SliderFloat3("Position", &camera_position.x, -100.0f, 100.0f);
-    main_camera_.SetPosition(camera_position);
-    //カメラ回転角
-    math::Vector3 camera_rotation =
-        math::Quaternion::ToEular(main_camera_.GetRotation()) *
-        math::util::RAD_2_DEG;
-    ImGui::SliderFloat3("Rotation", &camera_rotation.x, -180.0f, 180.0f);
-    main_camera_.SetRotation(
-        math::Quaternion::FromEular(camera_rotation * math::util::DEG_2_RAD));
-
-    //カメラの上方向ベクトルを変更する
-    if (ImGui::Button("X_UP")) {
-      main_camera_.SetUpVector(math::Vector3::kRightVector);
+    if (ImGui::Button("Main")) {
+      current_camera_ = camera_mode::Main;
     }
-    if (ImGui::Button("Y_UP")) {
-      main_camera_.SetUpVector(math::Vector3::kUpVector);
-    }
-    if (ImGui::Button("Z_UP")) {
-      main_camera_.SetUpVector(math::Vector3::kForwardVector);
-    }
-    float fov = main_camera_.GetFov() * math::util::RAD_2_DEG;
-    ImGui::SliderFloat("FOV", &fov, 0.01f, 90.0f);
-    main_camera_.SetFov(fov * math::util::DEG_2_RAD);
-
-    if (ImGui::Button("BackCamera")) {
-      main_camera_.SetPosition(math::Vector3(0, 50.0f, -50.0f));
-      main_camera_.SetRotation(math::Quaternion::FromEular(
-          math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f));
-      main_camera_.SetUpVector(math::Vector3::kUpVector);
-    }
-    if (ImGui::Button("RightCamera")) {
-      main_camera_.SetPosition(math::Vector3(50.0f, 5.0f, 0));
-      main_camera_.SetRotation(math::Quaternion::FromEular(
-          0.0f, math::util::DEG_2_RAD * -90.0f, 0.0f));
-      main_camera_.SetUpVector(math::Vector3::kUpVector);
-    }
-    if (ImGui::Button("UpCamera")) {
-      main_camera_.SetPosition(math::Vector3(0, 100.0f, 0));
-      main_camera_.SetRotation(math::Quaternion::FromEular(
-          math::util::DEG_2_RAD * 90.0f, 0.0f, 0.0f));
-      main_camera_.SetUpVector(math::Vector3::kForwardVector);
+    if (ImGui::Button("Sub1")) {
+      current_camera_ = camera_mode::Sub1;
     }
   }
   ImGui::End();
-
   return true;
 }
 
@@ -177,9 +127,49 @@ bool TurnSystem::EnemyMoveEnd() {
   return true;
 }
 
+//カメラの初期化
+bool TurnSystem::InitCameras() {
+  const math::IntVector2 screen_size =
+      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+  const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
+
+  auto InitMainCamera = [&]() {
+    const math::Quaternion camera_rotation =
+        math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
+    auto main_camera = std::make_unique<camera::FollowCamera>();
+    if (!main_camera->Init(L"MainCamera", &player_,
+                           math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
+                           math::util::DEG_2_RAD * 50.0f, aspect_ratio,
+                           math::Vector3::kUpVector, 0.1f, 300.0f)) {
+      return false;
+    }
+    cameras_[camera_mode::Main] = std::move(main_camera);
+    return true;
+  };
+
+  auto InitSub1Camera = [&]() {
+    auto camera = std::make_unique<camera::PerspectiveCamera>();
+    if (!camera->Init(L"Sub1Camera", math::Vector3(0.0f, 100.0f, 0.0f),
+                      math::Quaternion::FromEular(90.0f * math::util::DEG_2_RAD,
+                                                  0.0f, 0.0f),
+                      50.0f * math::util::DEG_2_RAD, aspect_ratio,
+                      math::Vector3::kForwardVector, 0.1f, 300.0f)) {
+      return false;
+    }
+
+    cameras_[camera_mode::Sub1] = std::move(camera);
+    return true;
+  };
+
+  if (!InitMainCamera()) return false;
+  if (!InitSub1Camera()) return false;
+
+  return true;
+}
+
 //描画
 void TurnSystem::Draw() {
-  main_camera_.RenderStart();
+  cameras_[current_camera_]->RenderStart();
   player_.Draw();
   for (auto&& desk : desks_) {
     desk.Draw();

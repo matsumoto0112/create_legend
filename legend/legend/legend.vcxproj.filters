@@ -120,6 +120,7 @@
     <ClCompile Include="src\skill\skill.cpp" />
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\skill\skill_manager.cpp" />
+    <ClCompile Include="src\skill\skill_pencil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -328,5 +329,8 @@
     <Media Include="assets\audios\free_4.wav" />
     <Media Include="assets\audios\free_5.wav" />
     <Media Include="assets\audios\free_6.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\stage\bbbb.txt" />
   </ItemGroup>
 </Project>

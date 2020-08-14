@@ -7,8 +7,15 @@ namespace legend {
 namespace skill {
 
 class SkillPencil : public Skill {
-protected:
-
+public:
+    /**
+     * @brief コンストラクタ
+     */
+    SkillPencil();
+    /**
+     * @brief デストラクタ
+     */
+    ~SkillPencil();
 
 };
 

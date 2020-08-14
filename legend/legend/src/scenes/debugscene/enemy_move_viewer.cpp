@@ -263,6 +263,23 @@ bool EnemyMoveViewer::UpdateTurn() {
           enemy_manager_.GetEnemiesSize() == 0) {
         turn_ = system::Mode::PLAYER_MOVING;
         //current_turn_.AddCurrentTurn();
+
+        //{ //ƒ{ƒX’Ç‰Á
+        //  enemy::Boss::InitializeParameter boss_parameter;
+        //  boss_parameter.bouding_box_length =
+        //      math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 2.0f;
+        //  float x =
+        //      game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
+        //      100.0f;
+        //  float z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f,
+        //                                                               0.25f) *
+        //            100.0f;
+        //  math::Vector3 pos = math::Vector3(x, 10.0f, z);
+        //  boss_parameter.transform =
+        //      util::Transform(pos, math::Quaternion::kIdentity,
+        //                      math::Vector3::kUnitVector * 2.0f);
+        //  enemy_manager_.Add(boss_parameter, physics_field_);
+        //}
         physics_field_.ResetEnemyMove();
       }
       break;

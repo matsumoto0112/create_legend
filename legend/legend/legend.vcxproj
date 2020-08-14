@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\search\search_manager.cpp" />
     <ClCompile Include="src\search\search_course.cpp" />
     <ClCompile Include="src\search\search_ai.cpp" />
@@ -209,6 +210,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />
     <ClInclude Include="src\search\search_ai.h" />

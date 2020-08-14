@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
 #include "src/search/search_manager.h"
@@ -44,6 +45,11 @@ class EnemyManager {
    * @brief “G‚ğ’Ç‰Á
    */
   void Add(const Enemy::InitializeParameter& paramater,
+           system::PhysicsField& physics_field);
+  /**
+   * @brief ƒ{ƒX‚ğ’Ç‰Á
+   */
+  void Add(const Boss::InitializeParameter& paramater,
            system::PhysicsField& physics_field);
   /**
    * @brief “G‚ğíœ
@@ -89,6 +95,7 @@ class EnemyManager {
 
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;
+  std::unique_ptr<Boss> boss_;
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
   float move_timer_ = 0.0f;

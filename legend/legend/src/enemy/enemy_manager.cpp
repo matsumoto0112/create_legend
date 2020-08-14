@@ -55,12 +55,18 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   for (auto&& enemy : enemys_) {
     enemy->Update();
   }
+  if (boss_ != nullptr) {
+    boss_->Update();
+  }
   return true;
 }
 
 void EnemyManager::Draw() {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->Draw();
+  }
+  if (boss_ != nullptr) {
+    boss_->Draw();
   }
 }
 
@@ -69,25 +75,43 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
     return;
   }
   if (move_timer_ <= 0.0f) {
-    if (search_manaegr == nullptr) {
-      math::Vector3 velocity = (player_obb_.GetPosition() -
-                                enemys_[action_enemy_index_]->GetPosition())
-                                   .Normalized();
-
-      enemys_[action_enemy_index_]->SetVelocity(velocity);
+    actor::Actor* _actor;
+    if ((boss_ != nullptr) && (enemys_.size() <= action_enemy_index_)) {
+      _actor = boss_.get();
     } else {
+      _actor = enemys_[action_enemy_index_].get();
+    }
+
+    // ë¨ìxê›íË
+    if (search_manaegr == nullptr) {  //íTçıä«óùÇ™Ç»Ç¢èÍçá
+      auto pos = _actor->GetCollisionRef().GetPosition();
+      math::Vector3 velocity = (player_obb_.GetPosition() - pos).Normalized();
+
+      if (_actor == boss_.get()) {
+        boss_->SetVelocity(velocity);
+      } else {
+        enemys_[action_enemy_index_]->SetVelocity(velocity);
+      }
+    } else {  //íTçıä«óùÇ™Ç†ÇÈèÍçá
       std::vector<physics::BoundingBox*> collisions;
       for (i32 i = 0; i < enemys_.size(); i++) {
         collisions.emplace_back(&enemys_[i]->GetCollisionRef());
       }
-      auto next = search_manaegr->NextSearch(
-                      &enemys_[action_enemy_index_].get()->GetCollisionRef(),
-                      collisions) -
-                  enemys_[action_enemy_index_].get()->GetPosition();
+      if (boss_ != nullptr) {
+        collisions.emplace_back(&boss_->GetCollisionRef());
+      }
+      auto next =
+          search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions) -
+          _actor->GetCollisionRef().GetPosition();
       next.y = 0;
-      enemys_[action_enemy_index_]->SetVelocity(next);
+      if (_actor == boss_.get()) {
+        boss_->SetVelocity(next);
+      } else {
+        enemys_[action_enemy_index_]->SetVelocity(next);
+      }
     }
   }
+
   move_timer_ +=
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
   if (move_time_ <= move_timer_) {
@@ -95,6 +119,13 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
     action_enemy_index_ = (action_enemy_index_ + 1 < enemys_.size())
                               ? (action_enemy_index_ + 1)
                               : -1;
+    if (boss_ != nullptr) {
+      action_enemy_index_ = (enemys_.size() <= action_enemy_index_)
+                                ? -1
+                                : (action_enemy_index_ < 0)
+                                      ? static_cast<i32>(enemys_.size())
+                                      : action_enemy_index_;
+    }
   }
 }
 
@@ -104,15 +135,23 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
     return;
   }
 
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto enemy = std::make_unique<Enemy>();
-
   enemy->Init(paramater);
   physics_field.AddEnemy(enemy->GetCollisionRef());
 
   enemys_.emplace_back(std::move(enemy));
   // SetPosition(enemys_[enemys_.size() - 1].get());
+}
+
+void EnemyManager::Add(const Boss::InitializeParameter& paramater,
+                       system::PhysicsField& physics_field) {
+  if (boss_ != nullptr) {
+    return;
+  }
+
+  boss_ = std::make_unique<Boss>();
+  boss_->Init(paramater);
+  physics_field.AddEnemy(boss_->GetCollisionRef());
 }
 
 void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
@@ -178,10 +217,14 @@ bool EnemyManager::LastEnemyMoveEnd() const {
   }
 
   bool end = false;
-  if (enemys_[enemys_.size() - 1]->GetMoveEnd()) {
+  if ((boss_ == nullptr && enemys_[enemys_.size() - 1]->GetMoveEnd()) ||
+      (boss_ != nullptr && boss_->GetMoveEnd())) {
     end = true;
     for (i32 i = 0; i < enemys_.size(); i++) {
       enemys_[i]->ResetMoveEnd();
+    }
+    if (boss_ != nullptr) {
+      boss_->ResetMoveEnd();
     }
   }
   return end;
@@ -194,6 +237,9 @@ void EnemyManager::SetPlayer(const physics::BoundingBox& player_obb) {
 void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->GetCollisionRef().DebugDraw(command_list);
+  }
+  if (boss_ != nullptr) {
+    boss_->GetCollisionRef().DebugDraw(command_list);
   }
 }
 

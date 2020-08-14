@@ -124,6 +124,7 @@
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\skill\skill_manager.cpp" />
     <ClCompile Include="src\skill\skill_pencil.cpp" />
+    <ClCompile Include="src\enemy\boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -294,6 +295,7 @@
     <ClInclude Include="src\skill\skill_pencil.h" />
     <ClInclude Include="src\system\mode.h" />
     <ClInclude Include="src\actor\actor_mediator.h" />
+    <ClInclude Include="src\enemy\boss.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

@@ -23,6 +23,13 @@ class Ray {
    */
   Ray(math::Vector3 start_position, math::Vector3 direction);
   /**
+   * @brief コンストラクタ
+   * @param 始点
+   * @param 方向ベクトル
+   * @param 飛ばす距離
+   */
+  Ray(math::Vector3 start_position, math::Vector3 direction, float distance);
+  /**
    * @brief デストラクタ
    */
   ~Ray();
@@ -47,6 +54,10 @@ class Ray {
    */
   math::Vector3 GetDirection() const;
   /**
+   * @brief 距離の取得
+   */
+  float GetDistance() const;
+  /**
    * @brief 始点の設定
    */
   void SetStartPosition(const math::Vector3& start_position);
@@ -54,12 +65,18 @@ class Ray {
    * @brief 始点の設定
    */
   void SetDirection(const math::Vector3& direction);
+  /**
+   * @brief 始点の設定
+   */
+  void SetDistance(const float& distance);
 
  private:
   //! 始点
   math::Vector3 start_position_;
   //! 方向ベクトル
   math::Vector3 direction_;
+  //! 飛ばす距離
+  float distance_;
 
   primitive::Line draw_line_;
 };

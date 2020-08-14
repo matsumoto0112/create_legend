@@ -15,6 +15,13 @@ namespace skill {
         //virtual void Init();
         //virtual void Action();
         //virtual void Draw();
+
+        virtual void Use();
+        virtual void Action();
+
+
+        void RemaingRecastTurnUpdate();
+
         i32 GetModelID();
         i32 GetRemainingUsableCount();
         i32 GetRemainingRecastTurn();
@@ -22,6 +29,7 @@ namespace skill {
         SkillEffectEndTiming GetEndTiming();
         i32 GetIconID();
         i32 GetExplanationID();
+        bool GetUseFlag();
 
     protected:
         //! モデルのID
@@ -42,6 +50,8 @@ namespace skill {
         i32 skill_icon_id_;
         //! スキル説明の画像のID
         i32 skill_explanation_id_;
+        //! 使用されるかのフラグ
+        bool is_use_;
 };
 
 }  // namespace skill

@@ -9,21 +9,21 @@ namespace debugscene {
 SkillTest::SkillTest(ISceneChange* scene_change) : Scene(scene_change) {}
 SkillTest::~SkillTest() {}
 bool SkillTest::Initialize() {
-  skill_select_ui_.Init();
+  skill_manager_.Init();
 
   return true;
 }
 bool SkillTest::Update() {
   if (ImGui::Begin("Skill Test")) {
     if (ImGui::Button("Add Skill")) {
-      skill_select_ui_.AddSkill();
+        skill_manager_.AddSkill();
     }
   }
   ImGui::End();
 
   return true;
 }
-void SkillTest::Draw() { skill_select_ui_.Draw(); }
+void SkillTest::Draw() { skill_manager_.Draw(); }
 void SkillTest::Finalize() {}
 }  // namespace debugscene
 }  // namespace scenes

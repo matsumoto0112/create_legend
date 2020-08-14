@@ -2,7 +2,7 @@
 #define LEGEND_SCENES_DEBUGSCENE_SKILL_TEST_H_
 
 #include "src/scenes/scene.h"
-#include "src/skill/skill_select_ui.h"
+#include "src/skill/skill_manager.h"
 
 namespace legend {
 namespace scenes {
@@ -36,7 +36,7 @@ public:
      */
     void Finalize() override;
 private:
-    skill::SkillSelectUI skill_select_ui_;
+    skill::SkillSelectUI skill_manager_;
 };
 
 }  // namespace debugscene

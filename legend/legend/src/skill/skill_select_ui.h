@@ -15,23 +15,35 @@ namespace skill {
 class SkillSelectUI {
 
 public:
+    /**
+     * @brief コンストラクタ
+     */
     SkillSelectUI();
-
+    /**
+     * @brief デストラクタ
+     */
     ~SkillSelectUI();
-
+    /**
+     * @brief 初期化処理
+     */
     void Init();
-
+    /**
+     * @brief 更新処理
+     */
     void Update();
-
+    /**
+     * @brief 描画処理
+     */
     void Draw();
-
+    /**
+     * @brief デストラクタ
+     */
     void AddSkill(/*const Skill* skill*/);
 
 private:
     math::Vector2 icon_base_position_;
     math::Vector2 icon_scale_;
 
-    std::vector<Skill> skills_;
     std::vector<draw::Sprite2D> skill_icons_;
     draw::Sprite2D skill_explanatory_;
 

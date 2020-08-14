@@ -116,6 +116,7 @@
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
     <ClCompile Include="src\skill\skill.cpp" />
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
+    <ClCompile Include="src\skill\skill_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -275,6 +276,8 @@
     <ClInclude Include="src\skill\skill_type.h" />
     <ClInclude Include="src\skill\skill_select_ui.h" />
     <ClInclude Include="src\scenes\debugscene\skill_test.h" />
+    <ClInclude Include="src\skill\skill_manager.h" />
+    <ClInclude Include="src\skill\skill_pencil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

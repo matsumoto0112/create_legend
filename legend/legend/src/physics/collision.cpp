@@ -611,7 +611,7 @@ bool Collision::IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb,
   float len_a = math::util::Abs(x + y + z);
 
   math::Vector3 s = ray.GetStartPosition();
-  float t = 100.0f;
+  float t = ray.GetDirection().Magnitude();
   math::Vector3 d = ray.GetDirection();
   math::Vector3 p = s + t * d;
   float len_b = p.Magnitude();

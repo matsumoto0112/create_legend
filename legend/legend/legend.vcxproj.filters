@@ -115,6 +115,7 @@
     <ClCompile Include="src\scenes\decorator\pausable.cpp" />
     <ClCompile Include="src\util\resource\geometry_shader.cpp" />
     <ClCompile Include="src\util\resource\compute_shader.cpp" />
+    <ClCompile Include="src\object\fragment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -272,6 +273,7 @@
     <ClInclude Include="src\util\resource\resource_names.h" />
     <ClInclude Include="src\util\resource\geometry_shader.h" />
     <ClInclude Include="src\util\resource\compute_shader.h" />
+    <ClInclude Include="src\object\fragment.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

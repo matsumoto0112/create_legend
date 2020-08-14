@@ -69,8 +69,8 @@ bool Player::Update() {
     mediator_->PlayerMoveEndEvent();
   }
 
-  SetVelocity();
-  SetImpulse();
+  //SetVelocity();
+  //SetImpulse();
 
   return true;
 }

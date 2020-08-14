@@ -94,7 +94,7 @@ bool PhysicsField::Update(Mode turn, math::Vector3 player_vel, bool player_move,
   for (i32 i = 0; i < enemy_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(
             player_obb_, enemy_obbs_[i], true, true)) {
-      if (turn == Mode::PLAYER_MOVE || turn == Mode::PLAYER_MOVING) {
+      if (turn == Mode::PLAYER_MOVE_READY || turn == Mode::PLAYER_MOVING) {
         Deceleration(player_velocity_, 75, player_deceleration_x_,
                      player_deceleration_z_);
 

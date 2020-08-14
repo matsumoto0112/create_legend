@@ -13,10 +13,11 @@ namespace system {
  * @brief ゲームモード列挙
  */
 enum class Mode {
-  PLAYER_MOVE,
-  PLAYER_MOVING,
-  ENEMY_MOVE,
-  ENEMY_MOVE_END,
+  PLAYER_MOVE_READY,         //! プレイヤーの移動準備
+  PLAYER_MOVING,             //! プレイヤーの移動中
+  PLAYER_SKILL_AFTER_MOVED,  //! プレイヤーの移動終了後スキル発動処理Ak
+  ENEMY_MOVING,              //! 敵の移動中
+  ENEMY_MOVE_END,            //! 敵の移動終了
 };
 
 }  // namespace system

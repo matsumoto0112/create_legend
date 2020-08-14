@@ -2,6 +2,7 @@
 #define LEGEND_SYSTEM_TURN_SYSTEM_H_
 
 /**
+ * @file turn_system.h
  * @brief ターンによるゲーム進行管理クラス定義
  */
 
@@ -33,18 +34,39 @@ class TurnSystem : public actor::IActorMediator {
    * @brief デストラクタ
    */
   virtual ~TurnSystem();
+  /**
+   * @brief 初期化
+   * @param stage_name ステージ名
+   */
   bool Init(const std::string& stage_name);
+  /**
+   * @brief 更新処理
+   */
   bool Update();
-
-  bool PlayerMove();
-  bool EnemyMove();
-  bool EnemyMoveEnd();
-
+  /**
+   * @brief 描画処理
+   */
   void Draw();
+  /**
+   * @brief デバッグ描画
+   */
   void DebugDraw();
+  /**
+   * @brief プレイヤーの移動開始時イベント
+   */
   virtual void PlayerMoveStartEvent() override;
+  /**
+   * @brief プレイヤーの移動終了時イベント
+   */
   virtual void PlayerMoveEndEvent() override;
+  /**
+   * @brief プレイヤーのスキル発動開始時イベント
+   */
   virtual void PlayerSkillActivate() override;
+  /**
+   * @brief プレイヤーのスキル発動終了時イベント
+   */
+  virtual void PlayerSkillDeactivate() override;
 
  private:
   /**
@@ -55,19 +77,49 @@ class TurnSystem : public actor::IActorMediator {
    * @brief 現在のターン数を取得
    */
   i32 GetCurrentTurn();
+  /**
+   * @brief プレイヤーの移動前準備処理
+   */
+  bool PlayerMoveReady();
+  /**
+   * @brief プレイヤーの移動処理
+   */
+  bool PlayerMoving();
+  /**
+   * @brief プレイヤーの移動終了後のスキル発動処理
+   */
+  bool PlayerSkillAfterModed();
+  /**
+   * @brief 敵の移動処理
+   */
+  bool EnemyMove();
+  /**
+   * @brief 敵の移動終了時処理
+   */
+  bool EnemyMoveEnd();
 
  private:
+  //! 現在ターン数
   i32 current_turn_;
+  //! 現在のプレイ状態
   Mode current_mode_;
+  //! 物理フィールド
   PhysicsField physics_field_;
+  //! ステージ生成
   stage_generate::StageGenerator stage_generator_;
-
+  //! メインカメラ
   camera::PerspectiveCamera main_camera_;
+  //! プレイヤー
   player::Player player_;
+  //! 机
   std::vector<object::Desk> desks_;
+  //! 障害物
   std::vector<object::Obstacle> obstacles_;
+  //! 落書き
   std::vector<object::Graffiti> graffities_;
+  //! 敵管理
   enemy::EnemyManager enemy_manager_;
+  //! タイマー
   util::CountDownTimer countdown_timer_;
 };
 

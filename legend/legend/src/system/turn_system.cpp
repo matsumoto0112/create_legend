@@ -9,7 +9,9 @@ TurnSystem::TurnSystem() : current_turn_(0) {}
 //デストラクタ
 TurnSystem::~TurnSystem() {}
 
+//初期化
 bool TurnSystem::Init(const std::string& stage_name) {
+  //ステージデータの拡張子は.txt
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
 
@@ -37,6 +39,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
     physics_field_.AddObstacle(obs.GetCollisionRef());
     obs.SetMediator(this);
   }
+
   //カメラの初期化
   {
     const math::Vector3 camera_position = math::Vector3(0, 50.0f, -50.0f);
@@ -57,25 +60,20 @@ bool TurnSystem::Init(const std::string& stage_name) {
 bool TurnSystem::Update() {
   countdown_timer_.Update();
   player_.Update();
-  switch (current_mode_) {
-    case Mode::PLAYER_MOVE:
-      if (!PlayerMove()) {
-        return false;
-      }
-      break;
-    case Mode::ENEMY_MOVE:
-      if (!EnemyMove()) {
-        return false;
-      }
 
-      break;
-    case Mode::ENEMY_MOVE_END:
-      if (!EnemyMoveEnd()) {
-        return false;
-      }
-      break;
+  const std::unordered_map<Mode, std::function<bool()>> switcher = {
+      {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
+      {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
+      {Mode::PLAYER_SKILL_AFTER_MOVED,
+       [&]() { return PlayerSkillAfterModed(); }},
+      {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
+      {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
+  };
+  if (!switcher.at(current_mode_)()) {
+    return false;
   }
 
+  //物理処理の適用
   if (!physics_field_.Update(current_mode_, player_.GetVelocity(),
                              player_.GetIsMove(), player_.GetImpulse(),
                              player_.GetPower(), enemy_manager_.GetVelocities(),
@@ -83,6 +81,7 @@ bool TurnSystem::Update() {
     return false;
   }
 
+  //物理処理の結果を各オブジェクトに更新させる
   player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
   player_.SetVelocity(physics_field_.GetPlayerVelocity());
   player_.SetRotation(physics_field_.GetPlayerOBB().GetRotation());
@@ -140,16 +139,29 @@ bool TurnSystem::Update() {
   return true;
 }
 
-bool TurnSystem::PlayerMove() {
-  MY_LOG(L"PlayerMove");
+//プレイヤーの移動準備
+bool TurnSystem::PlayerMoveReady() {
+  //プレイヤーの速度更新は入力を受け取って処理する
+  player_.SetVelocity();
+  player_.SetImpulse();
   return true;
 }
 
+//プレイヤーの移動中処理
+bool TurnSystem::PlayerMoving() { return true; }
+
+bool TurnSystem::PlayerSkillAfterModed() {
+  current_mode_ = Mode::ENEMY_MOVING;
+  return true;
+}
+
+//敵の移動処理
 bool TurnSystem::EnemyMove() {
   MY_LOG(L"EnemyMove");
   enemy_manager_.Update();
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
-  if (enemy_manager_.LastEnemyMoveEnd()) {
+  if (enemy_manager_.GetEnemiesSize() == 0 ||
+      enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     physics_field_.ResetEnemyMove();
     AddCurrentTurn();
@@ -157,11 +169,13 @@ bool TurnSystem::EnemyMove() {
   return true;
 }
 
+//敵の移動終了時処理
 bool TurnSystem::EnemyMoveEnd() {
-  current_mode_ = Mode::PLAYER_MOVE;
+  current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;
 }
 
+//描画
 void TurnSystem::Draw() {
   main_camera_.RenderStart();
   player_.Draw();
@@ -174,6 +188,7 @@ void TurnSystem::Draw() {
   //}
 }
 
+//デバッグ描画
 void TurnSystem::DebugDraw() {
   auto& command_list = game::GameDevice::GetInstance()
                            ->GetDevice()
@@ -193,14 +208,22 @@ void TurnSystem::AddCurrentTurn() { current_turn_++; }
 //現在のターン数を取得
 i32 TurnSystem::GetCurrentTurn() { return current_turn_; }
 
+//プレイヤーの移動開始時処理
 void TurnSystem::PlayerMoveStartEvent() { current_mode_ = Mode::PLAYER_MOVING; }
 
+//プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
   player_.ResetMoveEnd();
-  countdown_timer_.Init(0.1f, [&]() { current_mode_ = Mode::ENEMY_MOVE; });
+  // 0.1秒後にモードを切り替える
+  countdown_timer_.Init(
+      0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });
 }
 
+//プレイヤーのスキル発動時処理
 void TurnSystem::PlayerSkillActivate() {}
+
+//プレイヤーのスキル発動終了時処理
+void TurnSystem::PlayerSkillDeactivate() {}
 
 }  // namespace system
 }  // namespace legend

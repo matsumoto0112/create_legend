@@ -84,7 +84,6 @@
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
-    <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
@@ -118,6 +117,8 @@
     <ClCompile Include="src\scenes\decorator\pausable.cpp" />
     <ClCompile Include="src\util\resource\geometry_shader.cpp" />
     <ClCompile Include="src\util\resource\compute_shader.cpp" />
+    <ClCompile Include="src\object\fragment.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -278,6 +279,8 @@
     <ClInclude Include="src\util\resource\resource_names.h" />
     <ClInclude Include="src\util\resource\geometry_shader.h" />
     <ClInclude Include="src\util\resource\compute_shader.h" />
+    <ClInclude Include="src\object\fragment.h" />
+    <ClInclude Include="src\actor\actor_type.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

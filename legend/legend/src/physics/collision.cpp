@@ -581,21 +581,10 @@ bool Collision::Collision_Capsule_Plane(Capsule& capsule, Plane& plane) {
   return false;
 }
 
-//レイの長さを調べる
-float Collision::GetRayLength(Ray& ray) const {
-  return math::Vector3::Dot(ray.GetDirection(), ray.GetDirection());
-}
-
 //レイと直方体の衝突判定
 bool Collision::Collision_Ray_OBB(Ray& ray, BoundingBox& obb) {
-  float length = GetRayLength(ray);
-  if (length == 0.0f) {
-    MY_LOG(L"レイの長さが0です");
-    return false;
-  }
-
-  obb.SetAxis();
   math::Vector3 distance = obb.GetPosition() - ray.GetStartPosition();
+  obb.SetAxis();
   if (!IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisX(), distance)) {
     MY_LOG(L"衝突しませんでした");
     return false;
@@ -609,7 +598,6 @@ bool Collision::Collision_Ray_OBB(Ray& ray, BoundingBox& obb) {
     return false;
   }
 
-  //衝突している
   return true;
 }
 
@@ -617,20 +605,20 @@ bool Collision::Collision_Ray_OBB(Ray& ray, BoundingBox& obb) {
 bool Collision::IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb,
                                       math::Vector3 v_sep,
                                       math::Vector3 distance) {
-  //分離軸上の距離
   float length = math::util::Abs(math::Vector3::Dot(v_sep, distance));
 
-  //分離軸上で最も遠いobbの頂点までの距離
-  float len_a = math::util::Abs(
-      math::Vector3::Dot(obb.GetAxisX(), v_sep) * obb.GetLength().z +
-      math::Vector3::Dot(obb.GetAxisY(), v_sep) * obb.GetLength().y +
-      math::Vector3::Dot(obb.GetAxisZ(), v_sep) * obb.GetLength().z);
+  float x = math::Vector3::Dot(obb.GetAxisX(), v_sep) * obb.GetLength().x;
+  float y = math::Vector3::Dot(obb.GetAxisY(), v_sep) * obb.GetLength().y;
+  float z = math::Vector3::Dot(obb.GetAxisZ(), v_sep) * obb.GetLength().z;
+  float len_a = math::util::Abs(x + y + z);
 
-  float len_b = math::util::Abs(math::Vector3::Dot(ray.GetDirection(), v_sep) *
-                                ray.GetDistance());
+  math::Vector3 s = ray.GetStartPosition();
+  float t = ray.GetDistance();
+  math::Vector3 d = ray.GetDirection();
+  math::Vector3 p = s + t * d;
+  float len_b = p.Magnitude();
 
   if (length > len_a + len_b) {
-    //衝突していない
     return false;
   }
 
@@ -638,11 +626,23 @@ bool Collision::IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb,
   return true;
 }
 
+float Collision::GetCollisioinPoint(Ray& ray, BoundingBox& obb) {
+  if (!Collision_Ray_OBB(ray, obb)) return 0;
+
+  float point = 0;
+
+  return point;
+}
+
 //レイと平面の衝突判定
 bool Collision::Collision_Ray_Plane(Ray& ray, Plane& plane) {
-  float length = GetRayLength(ray);
-  if (length == 0.0f) {
-    MY_LOG(L"レイの長さが0です");
+  math::Vector3 s = ray.GetStartPosition();
+  float t = ray.GetDistance();
+  math::Vector3 d = ray.GetDirection();
+  math::Vector3 p = s + t * d;
+
+  float point = math::Vector3::Dot(p, plane.GetNormal());
+  if (point < 0) {
     return false;
   }
 
@@ -651,11 +651,7 @@ bool Collision::Collision_Ray_Plane(Ray& ray, Plane& plane) {
 
 //レイと球の衝突判定
 bool Collision::Collision_Ray_Sphere(Ray& ray, Sphere& sphere) {
-  float length = GetRayLength(ray);
-  if (length == 0.0f) {
-    MY_LOG(L"レイの長さが0です");
-    return false;
-  }
+  float a = ray.GetDirection().MagnitudeSquared();
   float x = sphere.GetPosition().x - ray.GetStartPosition().x;
   float y = sphere.GetPosition().y - ray.GetStartPosition().y;
   float z = sphere.GetPosition().z - ray.GetStartPosition().z;
@@ -665,15 +661,15 @@ bool Collision::Collision_Ray_Sphere(Ray& ray, Sphere& sphere) {
   float c = math::Vector3::Dot(sphere_position, sphere_position) -
             sphere.GetSquareRadius();
 
-  float s = b * b - length * c;
+  float s = b * b - a * c;
   if (s < 0.0f) {
     MY_LOG(L"衝突しませんでした");
     return false;
   }
 
   s = sqrtf(s);
-  float a1 = (b - s) / length;
-  float a2 = (b + s) / length;
+  float a1 = (b - s) / a;
+  float a2 = (b + s) / a;
 
   if (a1 < 0.0f || a2 < 0.0f) {
     MY_LOG(L"レイの反対で衝突しました");

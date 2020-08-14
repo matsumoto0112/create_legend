@@ -25,6 +25,10 @@ bool Player::Init(const InitializeParameter& parameter) {
   //= physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
   //                       transform_.GetScale() * 0.1f);
   this->collision_.SetLength(parameter.bouding_box_length);
+  this->collision_.SetCollisionCallback(
+      [&](actor::ActorType type) { Player::OnCollisionHit(type); });
+  this->collision_.SetTriggerCallback(
+      [&](actor::ActorType type) { Player::OnTriggerHit(type); });
   min_power_ = parameter.min_power;
   max_power_ = parameter.max_power;
 
@@ -178,5 +182,13 @@ bool Player::GetMoveEnd() const { return move_end_; }
 
 //ˆÚ“®”»’è‚ÌŽæ“¾
 bool Player::GetIsMove() const { return is_move_; }
+
+void Player::OnCollisionHit(actor::ActorType type) {
+  MY_LOG(L"Collision Hit: %d", type);
+}
+
+void Player::OnTriggerHit(actor::ActorType type) {
+  MY_LOG(L"Trigger Hit: %d", type);
+}
 }  // namespace player
 }  // namespace legend

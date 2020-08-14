@@ -20,12 +20,17 @@ constexpr const wchar_t* DESK = L"desk.glb";
 //! プレイヤーモデル
 constexpr const wchar_t* PLAYER = L"eraser_01.glb";
 //! 消しカスモデル
-constexpr const wchar_t* FRAGMENT = L"eraser_fragment_01.glb";
+constexpr const wchar_t* FRAGMENT_01 = L"eraser_fragment_01.glb";
 //! 文房具1
-constexpr const wchar_t* STATIONARY = L"accessory_01.glb";
+constexpr const wchar_t* STATIONARY_01 = L"accessory_01.glb";
+//! 文房具2
+constexpr const wchar_t* STATIONARY_02 = L"accessory_02.glb";
+//! 文房具3
+constexpr const wchar_t* STATIONARY_03 = L"accessory_03.glb";
 //! 障害物
-constexpr const wchar_t* OBSTACLE = L"accessory_01.glb";
-constexpr const wchar_t* GRAFFITI = L"1000cmObject.glb";
+constexpr const wchar_t* OBSTACLE = L"field_object_01.glb";
+//! 落書き
+constexpr const wchar_t* GRAFFITI = L"graffiti_01.glb";
 }  // namespace model
 
 namespace texture {

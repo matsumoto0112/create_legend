@@ -14,8 +14,8 @@ namespace enemy {
  * @class Enemy
  * @brief エネミーのクラス
  */
-class Enemy : public actor::Actor<physics::BoundingBox> {
-  using Parent = actor::Actor<physics::BoundingBox>;
+class Enemy : public actor::Actor {
+  using Parent = actor::Actor;
 
  public:
   /**

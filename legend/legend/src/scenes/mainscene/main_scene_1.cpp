@@ -95,6 +95,20 @@ bool MainScene1::Initialize() {
     }
   }
 
+  //テストで消しカスを出現
+  {
+    object::Fragment::InitializeParameter params;
+    params.position = math::Vector3(50.0f, 2.0f, 0.0f);
+    params.rotation = math::Quaternion::kIdentity;
+    params.scale = math::Vector3::kUnitVector;
+    params.bounding_box_length = math::Vector3::kUnitVector;
+    auto& frag = fragments_.emplace_back();
+    if (!frag.Init(params)) {
+      return false;
+    }
+    physics_field_.AddFragment(frag.GetCollisionRef());
+  }
+
   //カメラの初期化
   {
     const math::Vector3 camera_position = math::Vector3(0, 50.0f, -50.0f);
@@ -201,6 +215,9 @@ void MainScene1::Draw() {
   for (auto&& obs : obstacles_) {
     obs.Draw();
   }
+  for (auto&& frag : fragments_) {
+    frag.Draw();
+  }
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
@@ -213,6 +230,9 @@ void MainScene1::Draw() {
     obs.GetCollisionRef().DebugDraw(command_list);
   }
   enemy_manager_.DebugDraw(command_list);
+  for (auto&& frag : fragments_) {
+    frag.GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 //終了

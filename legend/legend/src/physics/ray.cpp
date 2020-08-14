@@ -1,4 +1,4 @@
-#include "src/physics/ray.h"
+ï»¿#include "src/physics/ray.h"
 
 #include "src/directx/shader/shader_register_id.h"
 #include "src/directx/vertex.h"
@@ -11,85 +11,44 @@ namespace physics {
 Ray::Ray()
     : start_position_(math::Vector3::kZeroVector),
       direction_(math::Vector3::kRightVector),
-      max_distance_(1) {}
+      max_distance_(1),
+      rotation_(math::Quaternion::kIdentity) {}
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray(math::Vector3 direction, float max_distance)
     : start_position_(math::Vector3::kZeroVector),
       direction_(direction),
-      max_distance_(max_distance) {}
+      max_distance_(max_distance),
+      rotation_(math::Quaternion::kIdentity) {}
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
-         float max_distance)
+         float max_distance, math::Quaternion rotation)
     : start_position_(start_position),
       direction_(direction),
-      max_distance_(max_distance) {}
+      max_distance_(max_distance),
+      rotation_(rotation) {}
 
 //ƒfƒXƒgƒ‰ƒNƒ^
 Ray::~Ray() {}
 
 bool Ray::Initialize() {
-  const std::vector<directx::PhysicsVertex> vertices{
-      {{start_position_}},            // 0
-      {{direction_ * max_distance_}}  // 1
-  };
-
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  //’¸“_ƒoƒbƒtƒ@ì¬
-  if (!vertex_buffer_.Init(device, sizeof(directx::PhysicsVertex),
-                           static_cast<u32>(vertices.size()),
-                           L"Ray_VertexBuffer")) {
+  if (!draw_line_.Init()) {
     return false;
   }
-  if (!vertex_buffer_.WriteBufferResource(vertices.data())) {
-    return false;
-  }
-
-  const std::vector<u16> indices{0, 1};
-  //ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ì¬
-  const u32 index_num = static_cast<u32>(indices.size());
-  if (!index_buffer_.Init(device, sizeof(u16), index_num,
-                          directx::PrimitiveTopology::POINT_LIST,
-                          L"Sphere_IndexBuffer")) {
-    return false;
-  }
-  if (!index_buffer_.WriteBufferResource(indices.data())) {
-    return false;
-  }
-
-  if (!transform_constant_buffer_.Init(
-          device,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Transform ConstantBuffer")) {
-    return false;
-  }
-
-  math::Vector3 position = math::Vector3::kZeroVector;
-  math::Vector3 rotate = math::Vector3::kZeroVector;
-  math::Vector3 scale = math::Vector3::kUnitVector;
-  transform_constant_buffer_.GetStagingRef().world =
-      math::Matrix4x4::CreateScale(scale) *
-      math::Matrix4x4::CreateRotation(rotate) *
-      math::Matrix4x4::CreateTranslate(position);
-  transform_constant_buffer_.UpdateStaging();
 
   return true;
 }
 
-void Ray::Update() {}
+void Ray::Update() {
+  draw_line_.SetTransform(util::Transform(GetStartPosition(), GetRotation(),
+                                          math::Vector3::kUnitVector));
+}
 
-void Ray::Draw() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-
-  transform_constant_buffer_.RegisterHandle(
-      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
-  device.GetHeapManager().SetCommandList(command_list);
-  vertex_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.Draw(command_list);
+void Ray::Draw(directx::device::CommandList& command_list) {
+  draw_line_.SetTransform(util::Transform(GetStartPosition(), GetRotation(),
+                                          math::Vector3::kUnitVector));
+  draw_line_.Render(command_list);
 }
 
 //n“_‚Ìæ“¾
@@ -100,5 +59,15 @@ math::Vector3 Ray::GetDirection() const { return direction_; }
 
 //Å‘å”ÍˆÍ‚Ìæ“¾
 float Ray::GetDistance() const { return max_distance_; }
+
+math::Quaternion Ray::GetRotation() const { return rotation_; }
+
+void Ray::SetStartPosition(const math::Vector3& start_position) {
+  start_position_ = start_position;
+}
+
+void Ray::SetRotation(const math::Quaternion& rotation) {
+  rotation_ = rotation;
+}
 }  // namespace physics
 }  // namespace legend

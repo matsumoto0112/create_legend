@@ -11,8 +11,8 @@ namespace player {
  * @class Player
  * @brief プレイヤーのクラス
  */
-class Player : public actor::Actor<physics::BoundingBox> {
-  using Parent = actor::Actor<physics::BoundingBox>;
+class Player : public actor::Actor {
+  using Parent = actor::Actor;
 
  public:
   /**
@@ -98,6 +98,14 @@ class Player : public actor::Actor<physics::BoundingBox> {
    * @brief 移動判定の取得
    */
   bool GetIsMove() const;
+  /**
+   * @brief 何かのオブジェクトと物理衝突したときのイベント
+   */
+  void OnCollisionHit(actor::ActorType type);
+  /**
+   * @brief 何かのオブジェクトとトリガー衝突したときのイベント
+   */
+  void OnTriggerHit(actor::ActorType type);
 
  private:
   //! 速度
@@ -115,7 +123,7 @@ class Player : public actor::Actor<physics::BoundingBox> {
   const float change_time_ = 0.1f;
 
   //! 移動に加える力
-  const float power_ = 2.0f;
+  const float power_ = 20.0f;
   //! 実際に加える力の加減
   float impulse_;
   //! 最小値

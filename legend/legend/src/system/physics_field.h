@@ -49,6 +49,10 @@ class PhysicsField {
    */
   void AddObstacle(const physics::BoundingBox& obstacle_obb);
   /**
+  * @brief 消しカスのあたり判定の登録
+  */
+  void AddFragment(const physics::BoundingBox& fragment_obb);
+  /**
    * @brief エネミーあたり判定の削除
    * @param 格納番号
    */
@@ -118,6 +122,8 @@ class PhysicsField {
   std::vector<physics::BoundingBox> enemy_obbs_;
   //! 障害物の直方体
   std::vector<physics::BoundingBox> obstacle_obbs_;
+  //! 消しカスの直方体
+  std::vector<physics::BoundingBox> fragment_obbs_;
 
   //! 重力
   float gravity_;

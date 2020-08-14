@@ -2,6 +2,9 @@
 #define LEGEND_SEARCH_SEARCH_MANAGER_H_
 
 #include <vector>
+#include "src/enemy/enemy_manager.h"
+#include "src/physics/ray.h"
+#include "src/player/player.h"
 #include "src/search/search_course.h"
 
 namespace legend {
@@ -23,22 +26,34 @@ class SearchManager {
   ~SearchManager();
 
   /**
-   * @brief 次の座標
+   * @brief 初期設定
+   */
+  void Initialize(physics::BoundingBox* _player_obb,
+                  enemy::EnemyManager* _enemy_manager);
+
+  /**
+   * @brief 座標追加
    */
   void Add(math::Vector3 _position);
   /**
-   * @brief 次の座標
+   * @brief 座標追加
    */
   void Add(std::vector<math::Vector3> _positions);
+  /**
+   * @brief 分岐追加
+   */
+  void SetBranch(i32 index, std::vector<i32> branch);
 
   /**
    * @brief 次の座標
    */
-  math::Vector3 NextSearch(math::Vector3 _position);
+  math::Vector3 NextSearch(enemy::Enemy* _enemy);
   /**
    * @brief 経路探索
    */
   void SetCourse(SearchAI* sStart, SearchAI* sEnd);
+
+  void DebugDraw(directx::device::CommandList& command_list);
 
  private:
   /**
@@ -63,9 +78,15 @@ class SearchManager {
    */
   SearchAI* NearSearch(math::Vector3 _position);
 
+  bool OnCollision(math::Vector3 start, math::Vector3 direction);
+
  private:
-  std::vector<std::unique_ptr<SearchAI>> searchList;
-  std::vector<SearchAI*> courseList;
+  std::vector<std::unique_ptr<SearchAI>> search_list_;
+  std::vector<SearchAI*> course_list_;
+
+  physics::BoundingBox* player_obb_;
+  enemy::EnemyManager* enemy_manager_;
+  enemy::Enemy* ignore_enemy_;
 };
 }  // namespace search
 }  // namespace legend

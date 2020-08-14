@@ -7,6 +7,7 @@
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
+#include "src/search/search_manager.h"
 #include "src/system/physics_field.h"
 #include "src/system/turn_system.h"
 
@@ -60,6 +61,8 @@ class EnemyMoveViewer : public Scene {
   std::vector<object::Desk> desks_;
   //! エネミー
   enemy::EnemyManager enemy_manager_;
+  //! 探索管理
+  search::SearchManager search_manager_;
   //! 障害物リスト
   std::vector<object::Obstacle> obstacles_;
 };

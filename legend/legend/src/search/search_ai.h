@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "src/math/vector_3.h"
+#include "src/game/game_device.h"
+#include "src/primitive/line.h"
 
 namespace legend {
 namespace search {
@@ -35,11 +37,18 @@ class SearchAI {
    */
   std::vector<SearchAI*> SetBranch(std::vector<SearchAI*> _branch);
   /**
+   * @brief •ªŠò’Ç‰Á
+   */
+  std::vector<SearchAI*> AddBranch(SearchAI* _branch);
+  /**
    * @brief •ªŠòæ‚©‚çƒ‰ƒ“ƒ_ƒ€‚Åæ“¾
    */
   SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);
+
+  void DebugDraw(directx::device::CommandList& command_list);
  private:
   std::vector<SearchAI*> branch_;
+  std::vector<std::unique_ptr<primitive::Line>> lines;
   math::Vector3 position_;
 };
 }  // namespace search

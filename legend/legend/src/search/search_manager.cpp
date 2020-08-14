@@ -7,14 +7,20 @@
 namespace legend {
 namespace search {
 
-SearchManager::SearchManager() {
-}
+SearchManager::SearchManager()
+{}
 
 SearchManager::~SearchManager() {}
 
+void SearchManager::Initialize(physics::BoundingBox* _player_obb,
+                               enemy::EnemyManager* _enemy_manager) {
+  player_obb_ = _player_obb;
+  _enemy_manager = enemy_manager_;
+}
+
 void SearchManager::Add(math::Vector3 _position) {
   auto search = std::make_unique<SearchAI>(_position);
-  searchList.emplace_back(std::move(search));
+  search_list_.emplace_back(std::move(search));
 }
 
 void SearchManager::Add(std::vector<math::Vector3> _positions) {
@@ -23,13 +29,40 @@ void SearchManager::Add(std::vector<math::Vector3> _positions) {
   }
 }
 
-math::Vector3 SearchManager::NextSearch(math::Vector3 _position) {
-  auto start = _position;
-  return math::Vector3();
+void SearchManager::SetBranch(i32 index, std::vector<i32> branch) {
+  if (index < 0 || search_list_.size() <= index) {
+    return;
+  }
+  for (i32 i = 0; i < branch.size(); i++) {
+    if (branch[i] < 0 || search_list_.size() <= branch[i]) {
+      return;
+    }
+    auto add = search_list_[branch[i]].get();
+    search_list_[index].get()->AddBranch(add);
+  }
+}
+
+math::Vector3 SearchManager::NextSearch(enemy::Enemy* _enemy) {
+  if (player_obb_ == nullptr) {
+    return math::Vector3::kZeroVector;
+  }
+
+  ignore_enemy_ = _enemy;
+  auto start = _enemy->GetPosition();
+  auto end = player_obb_->GetPosition();
+  auto vector = (end - start);
+  course_list_.clear();
+
+  if (OnCollision(start, vector)) {
+    SetCourse(NearSearch(start), NearSearch(end));
+    ChaseCourse();
+  }
+
+  return (course_list_.size() <= 0 ? end : NextCourse(start));
 }
 
 void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
-  courseList.clear();
+  course_list_.clear();
   if ((sStart == nullptr) || (sEnd == nullptr)) return;
 
   auto start = SearchCourse(sStart);
@@ -39,13 +72,16 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
   for (i32 i = 0; i < searched.size(); i++) {
     auto child = SetChild(searched[i], searched);
 
+    //*------è’ìÀîªíË--------
     for (i32 j = 0; j < child.size(); j++) {
       auto sPos = searched[i]->GetBaseSeach()->GetPosition();
       auto ePos = child[i]->GetBaseSeach()->GetPosition();
-      //*------è’ìÀîªíË--------
-      //*
-      //*----------------------
+      auto vector = (ePos - sPos);
+      if (!OnCollision(sPos, vector)) {
+        searched.emplace_back(child[j]);
+      }
     }
+    //*----------------------
 
     std::sort(searched.begin(), searched.end(),
               [](SearchCourse* a, SearchCourse* b) {
@@ -59,36 +95,45 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
   }
 
   for (auto r : root) {
-    courseList.emplace_back(r->GetBaseSeach());
+    course_list_.emplace_back(r->GetBaseSeach());
   }
 }
 
 void SearchManager::ChaseCourse() {
-  if (courseList.size() <= 0) return;
+  if (course_list_.size() <= 0) return;
 
-  for (i32 i = 0; i < courseList.size(); i++) {
-    if ((courseList.size() - 1) <= (i + 2)) break;
+  for (i32 i = 0; i < course_list_.size(); i++) {
+    if ((course_list_.size() - 1) <= (i + 2)) break;
 
-    auto start = courseList[i]->GetPosition();
-    auto end = courseList[i + 2]->GetPosition();
+    auto start = course_list_[i]->GetPosition();
+    auto end = course_list_[i + 2]->GetPosition();
     auto vector = (end - start);
     //*------è’ìÀîªíË--------
-    //*
+    if (!OnCollision(start, vector)) {
+      course_list_.erase(course_list_.begin() + i);
+      i--;
+    }
     //*----------------------
   }
 }
 
 math::Vector3 SearchManager::NextCourse(math::Vector3 _position) {
-  if (courseList.size() <= 0) return _position;
+  if (course_list_.size() <= 0) return _position;
 
-  for (i32 i = 0; i < courseList.size(); i++) {
-    auto end = courseList[i]->GetPosition();
+  for (i32 i = 0; i < course_list_.size(); i++) {
+    auto end = course_list_[i]->GetPosition();
     auto vector = (end - _position);
     //*------è’ìÀîªíË--------
-    //*
+    if (!OnCollision(_position, vector)) {
+      if (i <= 0) {
+        return course_list_[0]->GetPosition();
+      } else {
+        return course_list_[i - 1]->GetPosition();
+      }
+    }
     //*----------------------
   }
-  return courseList[0]->GetPosition();
+  return course_list_[0]->GetPosition();
 }
 
 std::vector<SearchCourse*> SearchManager::SetChild(
@@ -99,10 +144,10 @@ std::vector<SearchCourse*> SearchManager::SetChild(
 SearchAI* SearchManager::GetRandomSearch(std::vector<SearchAI*> remove) {
   std::vector<i32> indexs;
 
-  for (i32 i = 0; i < searchList.size(); i++) {
-    if ((searchList[i]->GetBranch().size() <= 0) ||
-        (std::find(remove.begin(), remove.end(), searchList[i].get()) !=
-               remove.end())) {
+  for (i32 i = 0; i < search_list_.size(); i++) {
+    if ((search_list_[i]->GetBranch().size() <= 0) ||
+        (std::find(remove.begin(), remove.end(), search_list_[i].get()) !=
+         remove.end())) {
       continue;
     }
     indexs.emplace_back(i);
@@ -112,32 +157,54 @@ SearchAI* SearchManager::GetRandomSearch(std::vector<SearchAI*> remove) {
     case 0:
       return nullptr;
     case 1:
-      return searchList[0].get();
+      return search_list_[0].get();
   }
 
   i32 index = game::GameDevice::GetInstance()->GetRandom().Range(
       0, static_cast<i32>(indexs.size()));
-  return searchList[indexs[index]].get();
+  return search_list_[indexs[index]].get();
 }
 
 SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
-  if (searchList.size() <= 0) {
+  if (search_list_.size() <= 0) {
     return nullptr;
   }
 
   SearchAI* result = nullptr;
-  for (i32 i = 0; i < searchList.size(); i++) {
+  for (i32 i = 0; i < search_list_.size(); i++) {
     if ((result == nullptr) ||
-        ((searchList[i]->GetPosition() - _position).Magnitude() <
+        ((search_list_[i]->GetPosition() - _position).Magnitude() <
          (result->GetPosition() - _position).Magnitude())) {
-      auto vector = (searchList[i]->GetPosition() - _position);
+      auto vector = (search_list_[i]->GetPosition() - _position);
       //*------è’ìÀîªíË--------
-      //*
+      if (!OnCollision(_position, vector)) {
+        result = search_list_[i].get();
+      }
       //*----------------------
     }
   }
 
   return result;
+}
+
+bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 direction) {
+  physics::Ray ray(direction, direction.Magnitude());
+  ray.SetStartPosition(start);
+  for (i32 index = 0; index < enemy_manager_->GetEnemys().size(); index++) {
+    auto enemy = enemy_manager_->GetEnemys()[index];
+    if (enemy == ignore_enemy_) continue;
+    if (physics::Collision::GetInstance()->Collision_Ray_OBB(
+            ray, enemy->GetCollisionRef())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void SearchManager::DebugDraw(directx::device::CommandList& command_list) {
+  for (i32 i = 0; i < search_list_.size();i++) {
+    search_list_[i]->DebugDraw(command_list);
+  }
 }
 
 }  // namespace search

@@ -106,7 +106,7 @@ void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
     return;
   }
 
-  //physics_field.RemoveEnemy(index);
+  // physics_field.RemoveEnemy(index);
   enemys_.erase(enemys_.begin() + index);
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;
@@ -181,6 +181,14 @@ void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->GetCollisionRef().DebugDraw(command_list);
   }
+}
+
+std::vector<Enemy*> EnemyManager::GetEnemys() {
+  std::vector<Enemy*> result;
+  for (int i = 0; i < enemys_.size(); i++) {
+    result.emplace_back(enemys_[i].get());
+  }
+  return result;
 }
 
 }  // namespace enemy

@@ -8,7 +8,8 @@ namespace scenes {
 namespace debugscene {
 
 //コンストラクタ
-EnemyMoveViewer::EnemyMoveViewer(ISceneChange* scene_change) : Scene(scene_change) {}
+EnemyMoveViewer::EnemyMoveViewer(ISceneChange* scene_change)
+    : Scene(scene_change) {}
 
 //デストラクタ
 EnemyMoveViewer::~EnemyMoveViewer() {}
@@ -93,6 +94,20 @@ bool EnemyMoveViewer::Initialize() {
           pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
       enemy_manager_.Add(enemy_parameter, physics_field_);
     }
+
+    {
+      search_manager_.Initialize(&player_.GetCollisionRef(), &enemy_manager_);
+      search_manager_.Add({
+          math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
+          math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
+          math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
+          math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
+      });
+      search_manager_.SetBranch(0, {1, 2, 3});
+      search_manager_.SetBranch(1, {0, 2, 3});
+      search_manager_.SetBranch(2, {0, 1, 3});
+      search_manager_.SetBranch(3, {0, 1, 2});
+	}
   }
 
   //カメラの初期化
@@ -213,6 +228,7 @@ void EnemyMoveViewer::Draw() {
     obs.GetCollisionRef().DebugDraw(command_list);
   }
   enemy_manager_.DebugDraw(command_list);
+  search_manager_.DebugDraw(command_list);
 }
 
 //終了
@@ -255,6 +271,6 @@ bool EnemyMoveViewer::UpdateTurn() {
   }
   return true;
 }
-}  // namespace mainscene
+}  // namespace debugscene
 }  // namespace scenes
 }  // namespace legend

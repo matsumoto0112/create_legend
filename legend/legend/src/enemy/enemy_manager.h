@@ -83,6 +83,8 @@ class EnemyManager {
 
   void DebugDraw(directx::device::CommandList& command_list);
 
+  std::vector<Enemy*> GetEnemys();
+
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;
   i32 action_enemy_index_ = -1;

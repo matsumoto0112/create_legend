@@ -183,9 +183,9 @@ void TurnSystem::Draw() {
     desk.Draw();
   }
   enemy_manager_.Draw();
-  // for (auto&& obs : obstacles_) {
-  //  obs.Draw();
-  //}
+  for (auto&& obs : obstacles_) {
+    obs.Draw();
+  }
 }
 
 //デバッグ描画
@@ -200,6 +200,9 @@ void TurnSystem::DebugDraw() {
     desk.GetCollisionRef().DebugDraw(command_list);
   }
   enemy_manager_.DebugDraw(command_list);
+  for (auto&& obs : obstacles_) {
+    obs.GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 //ターン数の増加

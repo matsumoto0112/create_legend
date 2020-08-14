@@ -5,6 +5,7 @@
  * @file graffiti.h
  */
 
+#include "src/actor/actor.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/util/color_4.h"
@@ -17,14 +18,18 @@ namespace object {
  * @brief 落書きの初期化パラメータ
  */
 struct GraffitiInitializeParameter {
-  math::Vector3 position;
-  math::Vector3 scale;
+  // math::Vector3 position;
+  // math::Vector3 scale;
+  util::Transform transform;
+  math::Vector3 bouding_box_length;
 };
 
 /**
  * @brief 落書きオブジェクトクラス
  */
-class Graffiti {
+class Graffiti : public actor::Actor {
+  using Parent = actor::Actor;
+
  public:
   /**
    * @brief コンストラクタ
@@ -45,7 +50,7 @@ class Graffiti {
   /**
    * @brief 更新処理
    */
-  void Update();
+  bool Update();
   /**
    * @brief 描画処理
    * @param command_list コマンドリスト
@@ -75,12 +80,12 @@ class Graffiti {
   static constexpr u32 MASK_HEIGHT = 16;
 
  private:
-  //! トランスフォーム
-  util::Transform transform_;
-  //! トランスフォームコンスタントバッファ
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_cb_;
+  ////! トランスフォーム
+  // util::Transform transform_;
+  ////! トランスフォームコンスタントバッファ
+  // directx::buffer::ConstantBuffer<
+  //    directx::buffer::constant_buffer_structure::Transform>
+  //    transform_cb_;
 
   //! テクスチャリソース
   ComPtr<ID3D12Resource> mask_texture_;

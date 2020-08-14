@@ -19,7 +19,7 @@ namespace legend {
 namespace object {
 
 //コンストラクタ
-Graffiti::Graffiti() {}
+Graffiti::Graffiti() : Parent(L"Grafitti") {}
 
 //デストラクタ
 Graffiti::~Graffiti() {}
@@ -27,6 +27,10 @@ Graffiti::~Graffiti() {}
 //初期化
 bool Graffiti::Init(const GraffitiInitializeParameter& param,
                     directx::device::CommandList& command_list) {
+    if (!Parent::InitBuffer()) {
+        return false;
+    }
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //通常のテクスチャをまず作成する
@@ -87,15 +91,19 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
     return false;
   }
 
-  transform_.SetPosition(param.position);
-  transform_.SetScale(param.scale);
+  this->transform_ = param.transform;
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetScale(transform_.GetScale());
+  //transform_.SetPosition(param.position);
+  //transform_.SetScale(param.scale);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   return true;
 }
 
 //更新
-void Graffiti::Update() {
+bool Graffiti::Update() {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
@@ -108,6 +116,8 @@ void Graffiti::Update() {
   const float b = random.Range(0.0f, 1.0f);
   const float a = random.Range(0.0f, 1.0f);
   SetTextureColor(x, y, util::Color4(r, g, b, a));
+
+  return true;
 }
 
 //描画

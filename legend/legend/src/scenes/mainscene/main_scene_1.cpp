@@ -69,7 +69,7 @@ bool MainScene1::Initialize() {
     params.model_id = 0;
     params.rotation =
         math::Quaternion::FromEular(0.0f, 28.12f * math::util::DEG_2_RAD, 0.0f);
-    params.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+    params.bounding_box_length = math::Vector3(18.0f, 10.0f, 40.0f) / 4.0f;
     auto& obs = obstacles_.emplace_back();
     if (!obs.Init(params)) {
       return false;

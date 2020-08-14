@@ -103,7 +103,7 @@ class Collision : public util::Singleton<Collision> {
    * @param レイ
    * @param 直方体
    */
-  bool Collision_Ray_OBB(Ray& ray, BoundingBox& obb);
+  bool Collision_Ray_OBB(Ray& ray, BoundingBox& obb, float& length);
   /**
    * @brief レイと直方体の距離比較
    * @param レイ
@@ -111,13 +111,8 @@ class Collision : public util::Singleton<Collision> {
    * @param 分離軸
    * @param 距離
    */
-  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep, math::Vector3 distance);
-  /**
-   * @brief レイと直方体の衝突地点の取得
-   * @param レイ
-   * @param 直方体
-   */
-  float GetCollisioinPoint(Ray& ray, BoundingBox& obb);
+  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep,
+                             math::Vector3 distance);
   /**
    * @brief レイと平面の衝突判定
    * @param レイ

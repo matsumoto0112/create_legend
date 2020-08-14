@@ -18,19 +18,10 @@ class Ray {
   Ray();
   /**
    * @brief コンストラクタ
-   * @param 方向ベクトル
-   * @param 最大範囲
-   */
-  Ray(math::Vector3 direction, float max_distance);
-  /**
-   * @brief コンストラクタ
    * @param 始点
    * @param 方向ベクトル
-   * @param 最大範囲
-   * @param 回転
    */
-  Ray(math::Vector3 start_position, math::Vector3 direction,
-      float max_distance, math::Quaternion rotation);
+  Ray(math::Vector3 start_position, math::Vector3 direction);
   /**
    * @brief デストラクタ
    */
@@ -56,31 +47,19 @@ class Ray {
    */
   math::Vector3 GetDirection() const;
   /**
-   * @brief 最大範囲の取得
-   */
-  float GetDistance() const;
-  /**
-   * @brief 回転の取得
-   */
-  math::Quaternion GetRotation() const;
-  /**
    * @brief 始点の設定
    */
   void SetStartPosition(const math::Vector3& start_position);
   /**
-   * @brief 回転の設定
+   * @brief 始点の設定
    */
-  void SetRotation(const math::Quaternion& rotation);
+  void SetDirection(const math::Vector3& direction);
 
  private:
   //! 始点
   math::Vector3 start_position_;
   //! 方向ベクトル
   math::Vector3 direction_;
-  //! 衝突範囲
-  float max_distance_;
-  //! 回転
-  math::Quaternion rotation_;
 
   primitive::Line draw_line_;
 };

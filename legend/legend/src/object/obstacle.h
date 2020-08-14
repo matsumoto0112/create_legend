@@ -11,7 +11,7 @@
 namespace legend {
 namespace object {
 
-class Obstacle : public actor::Actor<physics::BoundingBox> {
+class Obstacle : public actor::Actor {
  public:
   struct InitializeParameter {
     u32 model_id;
@@ -20,7 +20,7 @@ class Obstacle : public actor::Actor<physics::BoundingBox> {
     math::Vector3 bounding_box_length;
   };
 
-  using Parent = actor::Actor<physics::BoundingBox>;
+  using Parent = actor::Actor;
 
  public:
   Obstacle();

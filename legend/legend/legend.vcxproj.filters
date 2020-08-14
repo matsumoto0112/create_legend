@@ -84,7 +84,6 @@
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
-    <ClCompile Include="src\physics\ray.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
@@ -116,6 +115,7 @@
     <ClCompile Include="src\util\resource\geometry_shader.cpp" />
     <ClCompile Include="src\util\resource\compute_shader.cpp" />
     <ClCompile Include="src\object\fragment.cpp" />
+    <ClCompile Include="src\physics\ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

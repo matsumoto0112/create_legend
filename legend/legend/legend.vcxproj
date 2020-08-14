@@ -146,8 +146,8 @@
     <ClCompile Include="src\physics\capsule.cpp" />
     <ClCompile Include="src\physics\collider.cpp" />
     <ClCompile Include="src\physics\collision.cpp" />
-    <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\physics\ray.cpp" />
+    <ClCompile Include="src\physics\plane.cpp" />
     <ClCompile Include="src\physics\sphere.cpp" />
     <ClCompile Include="src\player\player.cpp" />
     <ClCompile Include="src\primitive\box.cpp" />

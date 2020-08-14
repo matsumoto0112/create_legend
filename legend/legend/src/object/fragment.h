@@ -10,8 +10,8 @@
 
 namespace legend {
 namespace object {
-class Fragment : public actor::Actor<physics::BoundingBox> {
-  using Parent = actor::Actor<physics::BoundingBox>;
+class Fragment : public actor::Actor {
+  using Parent = actor::Actor;
 
  public:
   struct InitializeParameter {

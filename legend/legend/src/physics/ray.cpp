@@ -7,21 +7,21 @@
 namespace legend {
 namespace physics {
 
-//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray()
     : start_position_(math::Vector3::kZeroVector),
       direction_(math::Vector3::kRightVector),
       max_distance_(1),
       rotation_(math::Quaternion::kIdentity) {}
 
-//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray(math::Vector3 direction, float max_distance)
     : start_position_(math::Vector3::kZeroVector),
       direction_(direction),
       max_distance_(max_distance),
       rotation_(math::Quaternion::kIdentity) {}
 
-//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
          float max_distance, math::Quaternion rotation)
     : start_position_(start_position),
@@ -29,7 +29,7 @@ Ray::Ray(math::Vector3 start_position, math::Vector3 direction,
       max_distance_(max_distance),
       rotation_(rotation) {}
 
-//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+//ƒfƒXƒgƒ‰ƒNƒ^
 Ray::~Ray() {}
 
 bool Ray::Initialize() {
@@ -51,13 +51,13 @@ void Ray::Draw(directx::device::CommandList& command_list) {
   draw_line_.Render(command_list);
 }
 
-//å§‹ç‚¹ã®å–å¾—
+//n“_‚Ìæ“¾
 math::Vector3 Ray::GetStartPosition() const { return start_position_; }
 
-//æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã®å–å¾—
+//•ûŒüƒxƒNƒgƒ‹‚Ìæ“¾
 math::Vector3 Ray::GetDirection() const { return direction_; }
 
-//æœ€å¤§ç¯„å›²ã®å–å¾—
+//Å‘å”ÍˆÍ‚Ìæ“¾
 float Ray::GetDistance() const { return max_distance_; }
 
 math::Quaternion Ray::GetRotation() const { return rotation_; }

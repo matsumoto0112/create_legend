@@ -11,8 +11,8 @@ namespace player {
  * @class Player
  * @brief プレイヤーのクラス
  */
-class Player : public actor::Actor<physics::BoundingBox> {
-  using Parent = actor::Actor<physics::BoundingBox>;
+class Player : public actor::Actor {
+  using Parent = actor::Actor;
 
  public:
   /**

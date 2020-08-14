@@ -111,8 +111,7 @@ class Collision : public util::Singleton<Collision> {
    * @param •ª—£²
    * @param ‹——£
    */
-  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep,
-                             math::Vector3 distance);
+  bool IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb, math::Vector3 v_sep);
   /**
    * @brief ƒŒƒC‚Æ•½–Ê‚ÌÕ“Ë”»’è
    * @param ƒŒƒC

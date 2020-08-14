@@ -96,7 +96,7 @@ bool EnemyMoveViewer::Initialize() {
     }
 
     {
-      search_manager_.Initialize(&player_.GetCollisionRef(), &enemy_manager_);
+      search_manager_.Initialize(&player_.GetCollisionRef());
       search_manager_.Add({
           math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
           math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
@@ -254,7 +254,7 @@ bool EnemyMoveViewer::UpdateTurn() {
     case legend::system::Turn::ENEMY_TURN:
       MY_LOG(L"ENEMY TURN");
       enemy_manager_.SetPlayer(player_.GetCollisionRef());
-      if (!enemy_manager_.Update()) {
+      if (!enemy_manager_.Update(&search_manager_)) {
         return false;
       }
       //最後に登録されているエネミーが動き終えたら又はエネミーが全ていなければ、ターン切り替え

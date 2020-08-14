@@ -5,6 +5,7 @@
 #include "src/math/vector_3.h"
 #include "src/game/game_device.h"
 #include "src/primitive/line.h"
+#include "src/primitive/box.h"
 
 namespace legend {
 namespace search {
@@ -48,7 +49,8 @@ class SearchAI {
   void DebugDraw(directx::device::CommandList& command_list);
  private:
   std::vector<SearchAI*> branch_;
-  std::vector<std::unique_ptr<primitive::Line>> lines;
+  std::vector<std::unique_ptr<primitive::Line>> lines_;
+  std::unique_ptr<primitive::Box> box_;
   math::Vector3 position_;
 };
 }  // namespace search

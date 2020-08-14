@@ -1,5 +1,6 @@
 #include "src/search/search_manager.h"
 #include "src/game/game_device.h"
+#include "src/physics/collision.h"
 
 #include <algorithm>
 #include <iostream>
@@ -12,10 +13,8 @@ SearchManager::SearchManager()
 
 SearchManager::~SearchManager() {}
 
-void SearchManager::Initialize(physics::BoundingBox* _player_obb,
-                               enemy::EnemyManager* _enemy_manager) {
+void SearchManager::Initialize(physics::BoundingBox* _player_obb) {
   player_obb_ = _player_obb;
-  _enemy_manager = enemy_manager_;
 }
 
 void SearchManager::Add(math::Vector3 _position) {
@@ -42,18 +41,22 @@ void SearchManager::SetBranch(i32 index, std::vector<i32> branch) {
   }
 }
 
-math::Vector3 SearchManager::NextSearch(enemy::Enemy* _enemy) {
+math::Vector3 SearchManager::NextSearch(physics::BoundingBox* _enemy,
+                                        std::vector<physics::BoundingBox*> _enemys) {
   if (player_obb_ == nullptr) {
     return math::Vector3::kZeroVector;
   }
 
   ignore_enemy_ = _enemy;
+  enemys_ = _enemys;
   auto start = _enemy->GetPosition();
   auto end = player_obb_->GetPosition();
   auto vector = (end - start);
+  vector.y = 0;
   course_list_.clear();
 
-  if (OnCollision(start, vector)) {
+  if (OnCollision(start, vector))
+  {
     SetCourse(NearSearch(start), NearSearch(end));
     ChaseCourse();
   }
@@ -188,13 +191,13 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
 }
 
 bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 direction) {
-  physics::Ray ray(direction, direction.Magnitude());
-  ray.SetStartPosition(start);
-  for (i32 index = 0; index < enemy_manager_->GetEnemys().size(); index++) {
-    auto enemy = enemy_manager_->GetEnemys()[index];
+  physics::Ray ray(start, direction);
+  for (i32 index = 0; index < enemys_.size(); index++) {
+    auto enemy = enemys_[index];
     if (enemy == ignore_enemy_) continue;
-    if (physics::Collision::GetInstance()->Collision_Ray_OBB(
-            ray, enemy->GetCollisionRef())) {
+    auto length = direction.Magnitude();
+    if (!physics::Collision::GetInstance()->Collision_Ray_OBB(
+            ray, *enemy,length)) {
       return true;
     }
   }

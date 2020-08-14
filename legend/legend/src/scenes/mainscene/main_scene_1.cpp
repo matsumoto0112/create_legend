@@ -258,7 +258,7 @@ bool MainScene1::UpdateTurn() {
     case legend::system::Turn::ENEMY_TURN:
       MY_LOG(L"ENEMY TURN");
       enemy_manager_.SetPlayer(player_.GetCollisionRef());
-      if (!enemy_manager_.Update()) {
+      if (!enemy_manager_.Update(nullptr)) {
         return false;
       }
       //最後に登録されているエネミーが動き終えたら又はエネミーが全ていなければ、ターン切り替え

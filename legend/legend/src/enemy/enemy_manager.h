@@ -6,6 +6,7 @@
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
 #include "src/system/physics_field.h"
+#include "src/search/search_manager.h"
 
 namespace legend {
 namespace enemy {
@@ -30,7 +31,7 @@ class EnemyManager {
   /**
    * @brief XV
    */
-  bool Update();
+  bool Update(search::SearchManager* search_manaegr);
   /**
    * @brief •`‰æ
    */
@@ -38,7 +39,7 @@ class EnemyManager {
   /**
    * @brief “G‚Ìs“®ˆ—
    */
-  void EnemyAction();
+  void EnemyAction(search::SearchManager* search_manaegr);
   /**
    * @brief “G‚ğ’Ç‰Á
    */

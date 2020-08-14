@@ -23,7 +23,7 @@ bool Fragment::Init(const InitializeParameter& params) {
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ =
-      resource.GetModel().Get(util::resource::resource_names::model::FRAGMENT);
+      resource.GetModel().Get(util::resource::resource_names::model::FRAGMENT_01);
   return true;
 }
 

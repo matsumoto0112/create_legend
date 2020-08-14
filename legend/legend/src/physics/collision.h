@@ -103,7 +103,7 @@ class Collision : public util::Singleton<Collision> {
    * @param ƒŒƒC
    * @param ’¼•û‘Ì
    */
-  bool Collision_Ray_OBB(Ray& ray, BoundingBox& obb, float& length);
+  bool Collision_Ray_OBB(Ray& ray, BoundingBox& obb, float* length);
   /**
    * @brief ƒŒƒC‚Æ’¼•û‘Ì‚Ì‹——£”äŠr
    * @param ƒŒƒC

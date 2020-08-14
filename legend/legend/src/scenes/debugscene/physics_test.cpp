@@ -168,7 +168,7 @@ bool PhysicsTest::Update() {
   //}
 
   float length = 10.0f;
-  if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray_, obbs_[0], length)) {
+  if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray_, obbs_[0], &length)) {
     MY_LOG(L"ƒŒƒC‚Æ’¼•û‘Ì‚ªÕ“Ë‚µ‚Ü‚µ‚½");
   }
   if (length <= 2.0f) {

@@ -7,6 +7,15 @@
  */
 
 namespace legend {
+namespace player {
+class Player;
+}  // namespace player
+namespace enemy {
+class Enemy;
+}  // namespace enemy
+}  // namespace legend
+
+namespace legend {
 namespace actor {
 class IActorMediator {
  public:
@@ -27,6 +36,14 @@ class IActorMediator {
    * @brief プレイヤーのスキル発動終了時イベント
    */
   virtual void PlayerSkillDeactivate() = 0;
+  /**
+   * @brief プレイヤーを取得する
+   */
+  virtual player::Player* GetPlayer() = 0;
+  /**
+   * @brief 敵をシーンから取得する
+   */
+  virtual std::vector<enemy::Enemy*> GetEnemies() = 0;
 };
 
 }  // namespace actor

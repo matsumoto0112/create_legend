@@ -225,5 +225,11 @@ void TurnSystem::PlayerSkillActivate() {}
 //プレイヤーのスキル発動終了時処理
 void TurnSystem::PlayerSkillDeactivate() {}
 
+player::Player* TurnSystem::GetPlayer() { return &player_; }
+
+std::vector<enemy::Enemy*> TurnSystem::GetEnemies() {
+  return enemy_manager_.GetEnemyPointers();
+}
+
 }  // namespace system
 }  // namespace legend

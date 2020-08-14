@@ -67,6 +67,14 @@ class TurnSystem : public actor::IActorMediator {
    * @brief プレイヤーのスキル発動終了時イベント
    */
   virtual void PlayerSkillDeactivate() override;
+  /**
+   * @brief プレイヤーを取得する
+   */
+  virtual player::Player* GetPlayer() override;
+  /**
+   * @brief 敵をシーンから取得する
+   */
+  virtual std::vector<enemy::Enemy*> GetEnemies() override;
 
  private:
   /**

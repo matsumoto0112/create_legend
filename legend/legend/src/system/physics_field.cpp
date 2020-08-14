@@ -6,7 +6,7 @@ namespace legend {
 namespace system {
 
 //コンストラクタ
-PhysicsField::PhysicsField() : gravity_(-2.0f) {}
+PhysicsField::PhysicsField() : gravity_(-20.0f) {}
 
 //デストラクタ
 PhysicsField::~PhysicsField() {}
@@ -70,7 +70,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
   for (i32 i = 0; i < obstacle_obbs_.size(); i++) {
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(
             player_obb_, obstacle_obbs_[i], true, false)) {
-      Deceleration(player_velocity_, 15, player_deceleration_x_,
+      Deceleration(player_velocity_, 75, player_deceleration_x_,
                    player_deceleration_z_);
       player_obb_.OnCollisionHit(actor::ActorType::OBSTACLE);
       obstacle_obbs_[i].OnCollisionHit(actor::ActorType::PLAYER);
@@ -82,7 +82,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     for (i32 j = 0; j < obstacle_obbs_.size(); j++) {
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], obstacle_obbs_[j], true, false)) {
-        Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
+        Deceleration(enemy_velocities_[i], 75, enemy_deceleration_x_[i],
                      enemy_deceleration_z_[i]);
         enemy_obbs_[i].OnCollisionHit(actor::ActorType::OBSTACLE);
         obstacle_obbs_[i].OnCollisionHit(actor::ActorType::ENEMY);
@@ -95,14 +95,14 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
     if (physics::Collision::GetInstance()->Collision_OBB_OBB(
             player_obb_, enemy_obbs_[i], true, true)) {
       if (turn == Turn::PLAYER_TURN) {
-        Deceleration(player_velocity_, 5, player_deceleration_x_,
+        Deceleration(player_velocity_, 75, player_deceleration_x_,
                      player_deceleration_z_);
 
         math::Vector3 vel = player_velocity_ * update_time_;
         math::Vector3 pos = enemy_obbs_[i].GetPosition() + vel * player_power;
         enemy_obbs_[i].SetPosition(pos);
       } else {
-        Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
+        Deceleration(enemy_velocities_[i], 75, enemy_deceleration_x_[i],
                      enemy_deceleration_z_[i]);
 
         math::Vector3 vel = enemy_velocities_[i] * update_time_;
@@ -120,7 +120,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], enemy_obbs_[j], true, true)) {
         {
-          Deceleration(enemy_velocities_[i], 15, enemy_deceleration_x_[i],
+          Deceleration(enemy_velocities_[i], 75, enemy_deceleration_x_[i],
                        enemy_deceleration_z_[i]);
 
           math::Vector3 vel = enemy_velocities_[i] * update_time_;
@@ -128,7 +128,7 @@ bool PhysicsField::Update(Turn turn, math::Vector3 player_vel, bool player_move,
           enemy_obbs_[j].SetPosition(pos);
         }
         {
-          Deceleration(enemy_velocities_[j], 15, enemy_deceleration_x_[j],
+          Deceleration(enemy_velocities_[j], 75, enemy_deceleration_x_[j],
                        enemy_deceleration_z_[j]);
 
           math::Vector3 vel = enemy_velocities_[j] * update_time_;
@@ -272,13 +272,13 @@ void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
   player_obb_.SetPosition(velocity);
 
   if (player_obb_.GetOnGround())
-    Deceleration(player_velocity_, 2, player_deceleration_x_,
+    Deceleration(player_velocity_, 30, player_deceleration_x_,
                  player_deceleration_z_);
 }
 
 //各エネミーの移動処理
 void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel) {
-  float speed = 1.0f;
+  float speed = 5.0f;
   for (i32 i = 0; i < enemies_vel.size(); i++) {
     if (!is_enemy_move_[i]) {
       enemy_velocities_[i] = enemies_vel[i];
@@ -307,7 +307,7 @@ void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel) {
     enemy_obbs_[i].SetPosition(velocity);
 
     if (enemy_obbs_[i].GetOnGround())
-      Deceleration(enemy_velocities_[i], 2, enemy_deceleration_x_[i],
+      Deceleration(enemy_velocities_[i], 30, enemy_deceleration_x_[i],
                    enemy_deceleration_z_[i]);
   }
 }

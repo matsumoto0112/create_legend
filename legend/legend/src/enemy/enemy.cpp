@@ -55,7 +55,7 @@ bool Enemy::Update() {
 
   const bool is_nearly_zero_vector = velocity_.MagnitudeSquared() < 0.01f;
   if (is_move_ && is_nearly_zero_vector) move_end_ = true;
-  is_move_ = (0.01f < velocity_.Magnitude());
+  is_move_ = (0.01f <= velocity_.Magnitude());
   // Move();
 
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();

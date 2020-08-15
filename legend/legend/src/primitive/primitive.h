@@ -69,7 +69,7 @@ class PrimitiveBase {
   /**
    * @brief F‚ðÝ’è‚·‚é
    */
-  inline util::Color4 SetColor(const util::Color4& color) {
+  inline void SetColor(const util::Color4& color) {
     this->color_ = color;
   }
 

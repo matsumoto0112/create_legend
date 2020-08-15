@@ -23,6 +23,7 @@ namespace primitive {
 class PrimitiveBase {
  protected:
   using TransformStruct = directx::buffer::constant_buffer_structure::Transform;
+  using ColorStruct = directx::buffer::constant_buffer_structure::Color;
 
  public:
   /**
@@ -38,7 +39,8 @@ class PrimitiveBase {
    * @brief 初期化
    * @return 初期化に成功したらtrueを返す
    */
-  virtual bool Init() = 0;
+  virtual bool Init(
+      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) = 0;
   /**
    * @brief 描画
    * @param command_list コマンドリスト
@@ -55,6 +57,21 @@ class PrimitiveBase {
    * @brief トランスフォームを取得する
    */
   inline util::Transform GetTransform() const { return this->transform_; }
+  /**
+   * @brief トランスフォームの参照を取得する
+   */
+  inline util::Transform& GetTransformRef() { return transform_; }
+
+  /**
+   * @brief 色を取得する
+   */
+  inline util::Color4 GetColor() const { return color_; }
+  /**
+   * @brief 色を設定する
+   */
+  inline util::Color4 SetColor(const util::Color4& color) {
+    this->color_ = color;
+  }
 
  protected:
   /**
@@ -63,8 +80,10 @@ class PrimitiveBase {
    * @param indices インデックス配列
    * @return 初期化に成功したらtrueを返す
    */
-  virtual bool InitBuffer(const std::vector<directx::PhysicsVertex>& vertices,
-                          const std::vector<u16>& indices);
+  virtual bool InitBuffer(
+      const std::vector<directx::PhysicsVertex>& vertices,
+      const std::vector<u16>& indices,
+      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id);
 
  protected:
   //! プリミティブ名
@@ -77,6 +96,10 @@ class PrimitiveBase {
   util::Transform transform_;
   //! トランスフォームコンスタントバッファ
   directx::buffer::ConstantBuffer<TransformStruct> transform_cb_;
+  //! 色
+  util::Color4 color_;
+  //! 色のコンスタントバッファ
+  directx::buffer::ConstantBuffer<ColorStruct> color_cb_;
 };
 
 }  // namespace primitive

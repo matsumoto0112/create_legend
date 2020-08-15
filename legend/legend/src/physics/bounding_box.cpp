@@ -37,7 +37,7 @@ BoundingBox::~BoundingBox() {}
 //‰Šú‰»
 bool BoundingBox::Init() {
   //•`‰æ—p‚ÌBox‚ğ‰Šú‰»‚·‚é
-  if (!draw_box_.Init()) {
+  if (!draw_box_.Init(directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     return false;
   }
   return true;

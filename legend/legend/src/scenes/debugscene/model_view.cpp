@@ -62,7 +62,7 @@ bool ModelView::Initialize() {
     }
   }
 
-  if (!line_.Init()) {
+  if (!line_.Init(directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     return false;
   }
   return true;

@@ -26,7 +26,8 @@ Ray::Ray(math::Vector3 start_position, math::Vector3 direction, float distance)
 Ray::~Ray() {}
 
 bool Ray::Initialize() {
-  if (!draw_line_.Init()) {
+  if (!draw_line_.Init(
+          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     return false;
   }
 

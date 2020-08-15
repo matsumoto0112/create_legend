@@ -10,7 +10,7 @@
 * @brief トランスフォーム構造体
 */
 
-struct GlobalData{
+struct GlobalData {
     float time;
     float delta_time;
 };
@@ -44,10 +44,15 @@ struct UVRect {
 
 ConstantBuffer<UVRect> g_uv_rect : register(b3);
 
+struct Color {
+    float4 color;
+};
+ConstantBuffer<Color> g_color : register(b4);
+
 
 Texture2D<float4> g_albedo : register(t0);
 
 SamplerState g_sampler_warp : register(s0);
 SamplerState g_sampler_clamp : register(s1);
- 
+
 #endif //! LEGEND_ASSETS_SHADERS_DEFINES_GLOBAL_H_

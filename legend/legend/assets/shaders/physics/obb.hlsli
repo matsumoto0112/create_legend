@@ -23,8 +23,7 @@ VS_Output VS_Main(const VS_Input input) {
 }
 
 float4 PS_Main(const PS_Input input) {
-    float4 color = float4(0.0f, 1.0f, 0.0f, 1.0f);
-    return color;
+    return g_color.color;
 }
 
 #endif //! LEGEND_ASSETS_SHADERS_PHYSICS_OBB_HLSLI_

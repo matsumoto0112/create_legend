@@ -7,6 +7,7 @@
  */
 
 #include "src/math/matrix_4x4.h"
+#include "src/util/color_4.h"
 
 namespace legend {
 namespace directx {
@@ -47,6 +48,14 @@ struct UVRect {
   float top;
   float width;
   float height;
+};
+
+/**
+ * @struct Color
+ * @brief Fî•ñ
+ */
+struct Color {
+  util::Color4 color;
 };
 
 }  // namespace constant_buffer_structure

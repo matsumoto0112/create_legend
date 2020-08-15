@@ -18,6 +18,7 @@ enum Enum : u32 {
   TRANSFORM = 1,      //! トランスフォーム情報
   WORLD_CONTEXT = 2,  //! ビュー、プロジェクション情報
   UV_RECT = 3,        //! UV情報
+  COLOR = 4,          //! 色情報
 };
 }  // namespace ConstantBufferRegisterID
 

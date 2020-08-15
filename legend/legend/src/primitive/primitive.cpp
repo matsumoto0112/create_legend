@@ -8,7 +8,8 @@ namespace legend {
 namespace primitive {
 
 //コンストラクタ
-PrimitiveBase::PrimitiveBase(const std::wstring& name) : name_(name) {}
+PrimitiveBase::PrimitiveBase(const std::wstring& name)
+    : name_(name), color_(0.0f, 1.0f, 0.0f, 1.0f) {}
 
 //デストラクタ
 PrimitiveBase::~PrimitiveBase() {}
@@ -26,6 +27,12 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
   transform_cb_.UpdateStaging();
   transform_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+
+  color_cb_.GetStagingRef().color = color_;
+  color_cb_.UpdateStaging();
+  color_cb_.RegisterHandle(device,
+                           directx::shader::ConstantBufferRegisterID::COLOR);
+
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                             command_list);
 
@@ -37,7 +44,8 @@ void PrimitiveBase::Render(directx::device::CommandList& command_list) {
 //バッファの初期化
 bool PrimitiveBase::InitBuffer(
     const std::vector<directx::PhysicsVertex>& vertices,
-    const std::vector<u16>& indices) {
+    const std::vector<u16>& indices,
+    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   const u32 vertex_num = static_cast<u32>(vertices.size());
   const u32 vertex_size = sizeof(directx::PhysicsVertex);
@@ -60,13 +68,15 @@ bool PrimitiveBase::InitBuffer(
     return false;
   }
 
-  if (!transform_cb_.Init(
-          device,
-          device.GetHeapManager().GetLocalHeap(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          name_ + L"_TransformConstantBuffer")) {
+  if (!transform_cb_.Init(device, device.GetHeapManager().GetLocalHeap(heap_id),
+                          name_ + L"_TransformConstantBuffer")) {
     return false;
   }
+  if (!color_cb_.Init(device, device.GetHeapManager().GetLocalHeap(heap_id),
+                      name_ + L"_ColorConstantBuffer")) {
+    return false;
+  }
+
   return true;
 }
 

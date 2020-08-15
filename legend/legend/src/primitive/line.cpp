@@ -10,14 +10,14 @@ Line::Line() : PrimitiveBase(L"Line") {}
 Line::~Line() {}
 
 //‰Šú‰»
-bool Line::Init() {
+bool Line::Init(directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
   const std::vector<directx::PhysicsVertex> vertices{
       {{0.0f, 0.0f, 0.0f}},
       {{0.0f, 0.0f, 1.0f}},
   };
 
   const std::vector<u16> indices{0, 1};
-  return InitBuffer(vertices, indices);
+  return InitBuffer(vertices, indices, heap_id);
 }
 
 }  // namespace primitive

@@ -28,7 +28,8 @@ class Box : public PrimitiveBase {
    * @brief ‰Šú‰»
    * @return ‰Šú‰»‚É¬Œ÷‚µ‚½‚çtrue‚ğ•Ô‚·
    */
-  bool Init() override;
+  bool Init(
+      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) override;
 };
 
 }  // namespace primitive

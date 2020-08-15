@@ -4,7 +4,7 @@ namespace legend {
 namespace search {
 SearchAI::SearchAI(math::Vector3 _position) : position_(_position) {
   box_ = std::make_unique<primitive::Box>();
-  box_->Init();
+  box_->Init(directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
 }
 
 SearchAI::~SearchAI() {}
@@ -29,7 +29,7 @@ std::vector<SearchAI*> SearchAI::AddBranch(SearchAI* _branch) {
   branch_.emplace_back(_branch);
 
   auto line = std::make_unique<primitive::Line>();
-  line->Init();
+  line->Init(directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
   lines_.emplace_back(std::move(line));
   return branch_;
 }
@@ -53,11 +53,10 @@ SearchAI* legend::search::SearchAI::GetRandomSearch(
   return result[index];
 }
 void SearchAI::DebugDraw(directx::device::CommandList& command_list) {
-
-    auto scale = math::Vector3::kUnitVector * 1.0f;
-    box_->SetTransform(
-        util::Transform(position_, math::Quaternion(0,0,0,1), scale));
-    box_->Render(command_list);
+  auto scale = math::Vector3::kUnitVector * 1.0f;
+  box_->SetTransform(
+      util::Transform(position_, math::Quaternion(0, 0, 0, 1), scale));
+  box_->Render(command_list);
 
   //  for (i32 index = 0; index < branch_.size(); index++) {
   //  auto end = branch_[index]->GetPosition();

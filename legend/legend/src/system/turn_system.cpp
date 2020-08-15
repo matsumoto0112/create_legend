@@ -23,9 +23,8 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  if (!stage_generator_.LoadStage(stage_path, stage_name, &physics_field_,
-                                  &desks_, &obstacles_, &player_,
-                                  &enemy_manager_)) {
+  if (!stage_generator_.LoadStage(stage_path, stage_name, &desks_, &obstacles_,
+                                  &player_)) {
     return false;
   }
 

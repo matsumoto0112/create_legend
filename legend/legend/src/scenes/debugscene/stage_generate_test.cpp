@@ -48,7 +48,7 @@ bool StageGenerateTest::Initialize() {
 bool StageGenerateTest::Update() {
   //ステージ選択
   if (ImGui::Begin("StageGenerateTest")) {
-      ImGui::Text("現在封鎖中");
+      ImGui::Text("Currently closed");
     //if (ImGui::Button("Load aaaa")) {
     //  indexs_ = stage_generator_->LoadStringStageData(
     //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /

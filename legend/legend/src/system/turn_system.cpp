@@ -39,6 +39,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
     physics_field_.AddObstacle(obs.GetCollisionRef());
     obs.SetMediator(this);
   }
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_)) {
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
 
   if (!InitCameras()) {
     return false;
@@ -122,6 +126,11 @@ bool TurnSystem::EnemyMove() {
 
 //“G‚ÌˆÚ“®I—¹ˆ—
 bool TurnSystem::EnemyMoveEnd() {
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
+
   current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;
 }

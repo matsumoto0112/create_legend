@@ -30,10 +30,6 @@ class StageGenerator {
    * @brief 読み込み&生成処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  // bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-  //               system::PhysicsField* physics_field,
-  //               std::vector<actor::Actor<physics::BoundingBox>>* actors,
-  //               enemy::EnemyManager* enemy_manager);
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
                  std::vector<object::Desk>* desks,
                  std::vector<object::Obstacle>* obstacles,
@@ -47,16 +43,11 @@ class StageGenerator {
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  // bool SetMapActors(const std::string map_name,
-  //                  const std::vector<std::string>& indexs,
-  //                  system::PhysicsField* physics_field,
-  //                  std::vector<actor::Actor<physics::BoundingBox>>* actors,
-  //                  enemy::EnemyManager* enemy_manager);
   bool SetMapActors(std::vector<object::Desk>* desks,
                     std::vector<object::Obstacle>* obstacles,
                     player::Player* player);
 
-  std::vector<enemy::Enemy> GenerateEnemys(const i32 turn_count);
+  std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(const i32 turn_count);
 
  private:
   /**

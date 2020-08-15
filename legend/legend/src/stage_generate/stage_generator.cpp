@@ -146,12 +146,13 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
   return is_all_ok;
 }
 
-std::vector<enemy::Enemy> StageGenerator::GenerateEnemys(const i32 turn_count) {
-  std::vector<enemy::Enemy> enemys;
+std::vector<enemy::Enemy::InitializeParameter>
+StageGenerator::GetEnemyParameters(const i32 turn_count) {
+  std::vector<enemy::Enemy::InitializeParameter> enemy_parameters;
 
   if (indexs_.empty() || indexs_[0] == "error") {
     MY_LOG(L"ƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢‚©A“Ç‚İ‚İ‚É¸”s‚µ‚Ä‚¢‚Ü‚·B");
-    return enemys;
+    return enemy_parameters;
   }
 
   for (auto&& index : indexs_) {
@@ -163,6 +164,8 @@ std::vector<enemy::Enemy> StageGenerator::GenerateEnemys(const i32 turn_count) {
 
     //“G‚Ì¶¬
     if (infomation[0] == "enemy") {
+      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
+
       enemy::Enemy::InitializeParameter parameter;
 
       // Transform‚ğ“Ç‚İ‚İ(scale‚ÍŒ»ó–³‹)
@@ -173,13 +176,10 @@ std::vector<enemy::Enemy> StageGenerator::GenerateEnemys(const i32 turn_count) {
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
-      auto enemy = enemys.emplace_back();
-      if (!enemy.Init(parameter)) {
-        MY_LOG(L"“G‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½B");
-      }
+      enemy_parameters.push_back(parameter);
     }
   }
-  return enemys;
+  return enemy_parameters;
 }
 
 float StageGenerator::String_2_Float(const std::string& string) {

@@ -203,7 +203,7 @@ void PhysicsField::AddFragment(const physics::BoundingBox& fragment_obb) {
 //エネミーあたり判定の削除
 void PhysicsField::RemoveEnemy(i32 index_num) {
   if (index_num < 0 || enemy_obbs_.size() <= 0 ||
-      enemy_obbs_.size() < index_num)
+      enemy_obbs_.size() <= index_num)
     return;
 
   enemy_obbs_.erase(enemy_obbs_.begin() + index_num);
@@ -215,7 +215,7 @@ void PhysicsField::RemoveEnemy(i32 index_num) {
 
 //机あたり判定の削除
 void PhysicsField::RemoveDesk(i32 index_num) {
-  if (index_num < 0 || desk_obbs_.size() <= 0 || desk_obbs_.size() < index_num)
+  if (index_num < 0 || desk_obbs_.size() <= 0 || desk_obbs_.size() <= index_num)
     return;
 
   desk_obbs_.erase(desk_obbs_.begin() + index_num);

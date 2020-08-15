@@ -14,6 +14,7 @@
 #include "src/object/fragment.h"
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
+#include "src/search/search_manager.h"
 #include "src/stage_generate/stage_generator.h"
 #include "src/system/mode.h"
 #include "src/util/timer.h"
@@ -136,6 +137,8 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<object::Graffiti> graffities_;
   //! 敵管理
   enemy::EnemyManager enemy_manager_;
+  //! 分岐管理
+  search::SearchManager search_manager_;
   //! タイマー
   util::CountDownTimer countdown_timer_;
 

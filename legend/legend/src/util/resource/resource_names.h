@@ -22,15 +22,18 @@ constexpr const wchar_t* PLAYER = L"eraser_01.glb";
 //! è¡ÇµÉJÉXÉÇÉfÉã
 constexpr const wchar_t* FRAGMENT_01 = L"eraser_fragment_01.glb";
 //! ï∂ñ[ãÔ1
-constexpr const wchar_t* STATIONARY_01 = L"accessory_01.glb";
+constexpr const wchar_t* STATIONERY_01 = L"stationery_01.glb";
 //! ï∂ñ[ãÔ2
-constexpr const wchar_t* STATIONARY_02 = L"accessory_02.glb";
+constexpr const wchar_t* STATIONERY_02 = L"stationery_02.glb";
 //! ï∂ñ[ãÔ3
-constexpr const wchar_t* STATIONARY_03 = L"accessory_03.glb";
+constexpr const wchar_t* STATIONERY_03 = L"stationery_03.glb";
+constexpr const wchar_t* STATIONERY_04 = L"stationery_04.glb";
+constexpr const wchar_t* STATIONERY_05 = L"stationery_05.glb";
 //! è·äQï®
 constexpr const wchar_t* OBSTACLE = L"field_object_01.glb";
 //! óéèëÇ´
 constexpr const wchar_t* GRAFFITI = L"graffiti_01.glb";
+constexpr const wchar_t* BACK_FIELD_01 = L"back_field_01.glb";
 }  // namespace model
 
 namespace texture {

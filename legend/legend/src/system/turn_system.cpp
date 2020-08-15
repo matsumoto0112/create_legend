@@ -45,6 +45,20 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
+  {
+    search_manager_.Initialize(&player_.GetCollisionRef());
+    search_manager_.Add({
+        math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
+    });
+    search_manager_.SetBranch(0, {1, 2, 3});
+    search_manager_.SetBranch(1, {0, 2, 3});
+    search_manager_.SetBranch(2, {0, 1, 3});
+    search_manager_.SetBranch(3, {0, 1, 2});
+  }
+
   return true;
 }
 
@@ -110,7 +124,7 @@ bool TurnSystem::PlayerSkillAfterModed() {
 //“G‚ÌˆÚ“®ˆ—
 bool TurnSystem::EnemyMove() {
   MY_LOG(L"EnemyMove");
-  enemy_manager_.Update(nullptr);
+  enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
       enemy_manager_.LastEnemyMoveEnd()) {
@@ -192,6 +206,7 @@ void TurnSystem::DebugDraw() {
     desk.GetCollisionRef().DebugDraw(command_list);
   }
   enemy_manager_.DebugDraw(command_list);
+  search_manager_.DebugDraw(command_list);
   for (auto&& obs : obstacles_) {
     obs.GetCollisionRef().DebugDraw(command_list);
   }

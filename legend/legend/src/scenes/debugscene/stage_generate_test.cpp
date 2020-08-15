@@ -41,70 +41,30 @@ bool StageGenerateTest::Initialize() {
     if (!player_.Init(player_parameter)) {
       // return false;
     }
-    physics_field_.SetPlayer(player_.GetCollisionRef());
+    //physics_field_.SetPlayer(player_.GetCollisionRef());
   }
-
-  ////机の初期化
-  //{
-  //    //本来はステージデータから読み込む
-  //    object::Desk::InitializeParameter desk_parameter;
-  //    desk_parameter.transform =
-  //        util::Transform(math::Vector3::kZeroVector,
-  //        math::Quaternion::kIdentity,
-  //            math::Vector3::kUnitVector);
-  //    desk_parameter.bounding_box_length =
-  //        math::Vector3(1.2f, 0.05f, 0.8f) / 4.0f;
-  //    desk_parameter.normal = math::Vector3::kUpVector;
-  //    auto& obs = desks_.emplace_back();
-  //    if (!obs.Init(desk_parameter)) {
-  //    }
-  //    physics_field_.AddDesk(obs.GetCollisionRef());
-  //}
-  ////障害物の初期化
-  //{
-  //    object::Obstacle::InitializeParameter params;
-  //    params.position = math::Vector3(0.15f, 0.1f, 0.03f);
-  //    params.model_id = 0;
-  //    params.rotation =
-  //        math::Quaternion::FromEular(0.0f, 28.12f * math::util::DEG_2_RAD,
-  //        0.0f);
-  //    params.bounding_box_length = math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
-  //    auto& obs = obstacles_.emplace_back();
-  //    if (!obs.Init(params)) {
-  //    }
-  //    physics_field_.AddObstacle(obs.GetCollisionRef());
-  //}
   return true;
 }
 bool StageGenerateTest::Update() {
   //ステージ選択
   if (ImGui::Begin("StageGenerateTest")) {
-    if (ImGui::Button("Load aaaa")) {
-      indexs_ = stage_generator_->LoadStringStageData(
-          util::Path::GetInstance()->exe() / L"assets" / L"stage" /
-          L"aaaa.txt");
-      // stage_generator_->LoadStage(
-      //    util::Path::GetInstance()->exe() / L"assets" / L"stage" /
-      //    L"aaaa.txt", "aaaa", &physics_field_, &map_actors_,
-      //    &enemy_manager_);
-      stage_generator_->LoadStage(
-          util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"aaaa.txt",
-          "aaaa", &physics_field_, &desks_, &obstacles_, &player_,
-          &enemy_manager_);
-    }
-    if (ImGui::Button("Load bbbb")) {
-        indexs_ = stage_generator_->LoadStringStageData(
-            util::Path::GetInstance()->exe() / L"assets" / L"stage" /
-            L"bbbb.txt");
-        // stage_generator_->LoadStage(
-        //    util::Path::GetInstance()->exe() / L"assets" / L"stage" /
-        //    L"aaaa.txt", "aaaa", &physics_field_, &map_actors_,
-        //    &enemy_manager_);
-        stage_generator_->LoadStage(
-            util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"bbbb.txt",
-            "bbbb", &physics_field_, &desks_, &obstacles_, &player_,
-            &enemy_manager_);
-    }
+      ImGui::Text("Currently closed");
+    //if (ImGui::Button("Load aaaa")) {
+    //  indexs_ = stage_generator_->LoadStringStageData(
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
+    //      L"aaaa.txt");
+    //  stage_generator_->LoadStage(
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"aaaa.txt",
+    //      "aaaa", &desks_, &obstacles_, &player_);
+    //}
+    //if (ImGui::Button("Load bbbb")) {
+    //  indexs_ = stage_generator_->LoadStringStageData(
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
+    //      L"bbbb.txt");
+    //  stage_generator_->LoadStage(
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"bbbb.txt",
+    //      "bbbb", &desks_, &obstacles_, &player_);
+    //}
   }
   ImGui::End();
 
@@ -167,17 +127,17 @@ bool StageGenerateTest::Update() {
   return true;
 }
 void StageGenerateTest::Draw() {
-    auto& device = game::GameDevice::GetInstance()->GetDevice();
-    auto& resource = game::GameDevice::GetInstance()->GetResource();
-    auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-    device.GetRenderResourceManager().SetRenderTargets(
-        command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-        directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  device.GetRenderResourceManager().SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-    auto& render_resource_manager = device.GetRenderResourceManager();
-    render_resource_manager.SetRenderTargets(
-        command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-        directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  auto& render_resource_manager = device.GetRenderResourceManager();
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   camera_.RenderStart();
 
@@ -193,11 +153,11 @@ void StageGenerateTest::Draw() {
     object.Draw();
   }
 
-
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
 
   // for (auto object : map_actors_) {
   //    object.GetCollisionRef().DebugDraw(command_list);

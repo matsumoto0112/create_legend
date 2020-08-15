@@ -6,9 +6,7 @@
  * @brief パースペクティブカメラクラス定義
  */
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/constant_buffer_structure.h"
-#include "src/math/matrix_4x4.h"
+#include "src/camera/camera.h"
 #include "src/math/quaternion.h"
 #include "src/math/vector_3.h"
 
@@ -19,7 +17,7 @@ namespace camera {
  * @class PerspectiveCamera
  * @brief パースペクティブカメラクラス
  */
-class PerspectiveCamera {
+class PerspectiveCamera : public Camera {
  public:
   /**
    * @brief コンストラクタ
@@ -28,7 +26,7 @@ class PerspectiveCamera {
   /**
    * @brief デストラクタ
    */
-  ~PerspectiveCamera();
+  virtual ~PerspectiveCamera();
   /**
    * @brief 初期化
    * @param name カメラ名
@@ -45,30 +43,24 @@ class PerspectiveCamera {
             const math::Quaternion& rotation, float fov, float aspect_ratio,
             const math::Vector3& up_vector = math::Vector3::kUpVector,
             float near_z = 0.1f, float far_z = 300.0f);
+
+ protected:
   /**
-   * @brief 描画を開始する
+   * * @brief コンスタントバッファの状態を更新する
    */
-  void RenderStart();
+  virtual void UpdateConstantBufferStaging() override;
 
  private:
   /**
-   * @brief コンスタントバッファの初期化
+   * @brief ビュー行列を作成する
    */
-  bool InitConstantBuffer();
+  math::Matrix4x4 CreateView() const;
   /**
-   * @brief コンスタントバッファを更新する
+   * @brief プロジェクション行列を作成する
    */
-  void UpdateConstantBufferStaging();
+  math::Matrix4x4 CreateProjection() const;
 
  public:
-  /**
-   * @brief 名前の設定
-   */
-  inline void SetName(const std::wstring& name) { name_ = name; }
-  /**
-   * @brief 名前の取得
-   */
-  inline std::wstring GetName() const { return name_; }
   /**
    * @brief 座標を設定する
    */
@@ -134,8 +126,6 @@ class PerspectiveCamera {
   inline float GetFarZ() const { return far_z_; }
 
  protected:
-  //! カメラ名
-  std::wstring name_;
   //! カメラ座標
   math::Vector3 position_;
   //! カメラの回転角
@@ -150,10 +140,6 @@ class PerspectiveCamera {
   float near_z_;
   //! 最遠点
   float far_z_;
-  //! 描画用コンスタントバッファ
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::WorldContext>
-      world_context_constant_buffer_;
 };
 
 }  // namespace camera

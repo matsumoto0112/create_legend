@@ -81,6 +81,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\enemy\boss.cpp" />
+    <ClCompile Include="src\camera\camera.cpp" />
+    <ClCompile Include="src\camera\follow_camera.cpp" />
+    <ClCompile Include="src\search\search_manager.cpp" />
+    <ClCompile Include="src\search\search_course.cpp" />
+    <ClCompile Include="src\search\search_ai.cpp" />
     <ClCompile Include="src\camera\perspective_camera.cpp" />
     <ClCompile Include="src\directx\buffer\committed_resource.cpp" />
     <ClCompile Include="src\directx\buffer\index_buffer.cpp" />
@@ -206,6 +212,12 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\enemy\boss.h" />
+    <ClInclude Include="src\camera\camera.h" />
+    <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\search\search_manager.h" />
+    <ClInclude Include="src\search\search_course.h" />
+    <ClInclude Include="src\search\search_ai.h" />
     <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\actor\actor_type.h" />
     <ClInclude Include="src\camera\perspective_camera.h" />

@@ -8,15 +8,14 @@ namespace camera {
 
 //コンストラクタ
 PerspectiveCamera::PerspectiveCamera()
-    : name_(L""),
+    : Camera(),
       position_(math::Vector3::kZeroVector),
       rotation_(math::Quaternion::kIdentity),
       up_vector_(math::Vector3::kUpVector),
       fov_(90.0f),
       aspect_ratio_(1.0f),
       near_z_(0.1f),
-      far_z_(300.0f),
-      world_context_constant_buffer_() {}
+      far_z_(300.0f) {}
 
 //デストラクタ
 PerspectiveCamera::~PerspectiveCamera() {}
@@ -36,46 +35,28 @@ bool PerspectiveCamera::Init(const std::wstring& name,
   this->near_z_ = near_z;
   this->far_z_ = far_z;
 
-  if (!InitConstantBuffer()) {
-    return false;
-  }
-
-  UpdateConstantBufferStaging();
-  return true;
-}
-
-//描画開始
-void PerspectiveCamera::RenderStart() {
-  UpdateConstantBufferStaging();
-
-  world_context_constant_buffer_.RegisterHandle(
-      game::GameDevice::GetInstance()->GetDevice(),
-      directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT);
-}
-
-//コンスタントバッファの初期化
-bool PerspectiveCamera::InitConstantBuffer() {
-  if (!world_context_constant_buffer_.Init(
-          game::GameDevice::GetInstance()->GetDevice(),
-          game::GameDevice::GetInstance()->GetDevice().GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
-          name_ + L"_WorldContext_ConstantBuffer")) {
-    return false;
-  }
-  return true;
+  return Camera::Init(name, CreateView(), CreateProjection());
 }
 
 //コンスタントバッファの更新
 void PerspectiveCamera::UpdateConstantBufferStaging() {
+  view_ = CreateView();
+  projection_ = CreateProjection();
+  Camera::UpdateConstantBufferStaging();
+}
+
+//ビュー行列
+math::Matrix4x4 PerspectiveCamera::CreateView() const {
   const math::Vector3 forward_vector =
       rotation_ * math::Vector3::kForwardVector;
   const math::Vector3 lookat = position_ + forward_vector;
+  return math::Matrix4x4::CreateView(position_, lookat, up_vector_);
+}
 
-  world_context_constant_buffer_.GetStagingRef().view =
-      math::Matrix4x4::CreateView(position_, lookat, up_vector_);
-  world_context_constant_buffer_.GetStagingRef().projection =
-      math::Matrix4x4::CreateProjection(fov_, aspect_ratio_, near_z_, far_z_);
-  world_context_constant_buffer_.UpdateStaging();
+//プロジェクション行列
+math::Matrix4x4 PerspectiveCamera::CreateProjection() const {
+  return math::Matrix4x4::CreateProjection(fov_, aspect_ratio_, near_z_,
+                                           far_z_);
 }
 
 }  // namespace camera

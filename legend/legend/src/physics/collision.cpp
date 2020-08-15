@@ -579,56 +579,52 @@ bool Collision::Collision_Capsule_Plane(Capsule& capsule, Plane& plane) {
 }
 
 //ƒŒƒC‚Æ’¼•û‘Ì‚ÌÕ“Ë”»’è
-bool Collision::Collision_Ray_OBB(Ray& ray, BoundingBox& obb, float& length) {
+bool Collision::Collision_Ray_OBB(Ray& ray, BoundingBox& obb, float* length) {
   math::Vector3 distance = obb.GetPosition() - ray.GetStartPosition();
   obb.SetAxis();
-  if (!IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisX(), distance)) {
-    MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
-    return false;
+  if (IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisX())) {
+    *length = distance.Magnitude();
+    return true;
   }
-  if (!IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisY(), distance)) {
-    MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
-    return false;
+  if (IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisY())) {
+    *length = distance.Magnitude();
+    return true;
   }
-  if (!IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisZ(), distance)) {
-    MY_LOG(L"Õ“Ë‚µ‚Ü‚¹‚ñ‚Å‚µ‚½");
-    return false;
+  if (IsCheckLength_Ray_Obb(ray, obb, obb.GetAxisZ())) {
+    *length = distance.Magnitude();
+    return true;
   }
 
-  length = distance.Magnitude();
-  return true;
+  return false;
 }
 
 //ƒŒƒC‚Æ’¼•û‘Ì‚Ì‹——£”äŠr
 bool Collision::IsCheckLength_Ray_Obb(Ray& ray, BoundingBox& obb,
-                                      math::Vector3 v_sep,
-                                      math::Vector3 distance) {
-  float length = math::util::Abs(math::Vector3::Dot(v_sep, distance));
+                                      math::Vector3 v_sep) {
 
   float x = math::Vector3::Dot(obb.GetAxisX(), v_sep) * obb.GetLength().x;
   float y = math::Vector3::Dot(obb.GetAxisY(), v_sep) * obb.GetLength().y;
   float z = math::Vector3::Dot(obb.GetAxisZ(), v_sep) * obb.GetLength().z;
-  float len_a = math::util::Abs(x + y + z);
 
   math::Vector3 s = ray.GetStartPosition();
-  float t = 100.0f;
-  math::Vector3 d = ray.GetDirection();
+  float t = ray.GetDistance();
+  math::Vector3 d = ray.GetDirection().Normalized();
   math::Vector3 p = s + t * d;
-  float len_b = p.Magnitude();
+  p = obb.GetPosition() - p;
 
-  if (length > len_a + len_b) {
-    return false;
+  if ((-x <= p.x && p.x <= x) && (-y <= p.y && p.y <= y) &&
+      (-z <= p.z && p.z <= z)) {
+    return true;
   }
-
-  //Õ“Ë‚µ‚Ä‚¢‚é
-  return true;
+  
+  return false;
 }
 
 //ƒŒƒC‚Æ•½–Ê‚ÌÕ“Ë”»’è
 bool Collision::Collision_Ray_Plane(Ray& ray, Plane& plane) {
   math::Vector3 s = ray.GetStartPosition();
-  float t = 100.0f;
-  math::Vector3 d = ray.GetDirection();
+  float t = ray.GetDistance();
+  math::Vector3 d = ray.GetDirection().Normalized();
   math::Vector3 p = s + t * d;
 
   float point = math::Vector3::Dot(p, plane.GetNormal());

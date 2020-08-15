@@ -4,6 +4,7 @@
 #include "src/camera/perspective_camera.h"
 #include "src/object/desk.h"
 #include "src/player/player.h"
+#include "src/object/graffiti.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -44,6 +45,7 @@ class PlayerMoveViewer : public Scene {
   player::Player player_;
   //! Š÷
   object::Desk desk_;
+  object::Graffiti graffiti_;
 };
 
 }  // namespace debugscene

@@ -20,9 +20,10 @@ bool PlayerMoveViewer::Initialize() {
   {
     player::Player::InitializeParameter player_parameter;
     player_parameter.transform =
-        util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+        util::Transform(math::Vector3(0, 4.0f, 0), math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    player_parameter.bouding_box_length = math::Vector3(0.1f, 0.05f, 0.2f);
+    player_parameter.bouding_box_length =
+        math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
     if (!player_.Init(player_parameter)) {
@@ -37,16 +38,34 @@ bool PlayerMoveViewer::Initialize() {
     desk_parameter.transform =
         util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                         math::Vector3::kUnitVector);
-    desk_parameter.bounding_box_length = math::Vector3(0.3f, 0.05f, 0.2f);
+    desk_parameter.bounding_box_length =
+        math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
     desk_parameter.normal = math::Vector3::kUpVector;
     if (!desk_.Init(desk_parameter)) {
       return false;
     }
   }
 
+  {
+    directx::device::CommandList command_list;
+    if (!command_list.Init(
+            device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+      return false;
+    }
+    object::GraffitiInitializeParameter parameter;
+    parameter.transform =
+        util::Transform(math::Vector3(0, 4.0f, 0), math::Quaternion::kIdentity,
+                        math::Vector3::kUnitVector);
+    parameter.bounding_box_length = math::Vector3(4.0f, 0.1f, 4.0f);
+    parameter.remaining_grafitti = 100.0f;
+    if (!graffiti_.Init(parameter, command_list)) {
+      return false;
+    }
+  }
+
   //カメラの初期化
   {
-    const math::Vector3 camera_position = math::Vector3(0, 3.5f, -2.5f);
+    const math::Vector3 camera_position = math::Vector3(0, 50.0f, -50.0f);
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     const math::IntVector2 screen_size =
@@ -63,6 +82,9 @@ bool PlayerMoveViewer::Initialize() {
 
 //更新
 bool PlayerMoveViewer::Update() {
+  float update_time =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
   if (!player_.Update()) {
     return false;
   }
@@ -114,8 +136,15 @@ bool PlayerMoveViewer::Update() {
 
   if (physics::Collision::GetInstance()->Collision_OBB_DeskOBB(
           player_.GetCollisionRef(), desk_.GetCollisionRef())) {
-    MY_LOG(L"消しゴムと机が衝突しました");
-    player_.SetPosition(player_.GetCollisionRef().GetPosition());
+    // MY_LOG(L"消しゴムと机が衝突しました");
+    // player_.SetPosition(player_.GetCollisionRef().GetPosition());
+  }
+
+  if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+          player_.GetCollisionRef(), graffiti_.GetCollisionRef(), false,
+          false)) {
+    MY_LOG(L"落書きと衝突");
+    graffiti_.DecreaseGrafitti(1.0f * update_time);
   }
 
   return true;
@@ -134,13 +163,16 @@ void PlayerMoveViewer::Draw() {
   camera_.RenderStart();
   player_.Draw();
   desk_.Draw();
+  graffiti_.Draw(command_list);
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device, command_list);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
   player_.GetCollisionRef().DebugDraw(command_list);
   desk_.GetCollisionRef().DebugDraw(command_list);
+  graffiti_.GetCollisionRef().DebugDraw(command_list);
 }
 
 //終了

@@ -153,6 +153,7 @@ bool Graffiti::GetIsErase() const { return is_erase_; }
 
 void Graffiti::DecreaseGrafitti(const float& percentage) {
   remaining_grafitti_ -= percentage;
+  if (remaining_grafitti_ <= 0) is_erase_ = true;
 }
 
 //テクスチャの色を設定する

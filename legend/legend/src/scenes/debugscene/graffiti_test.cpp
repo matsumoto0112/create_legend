@@ -32,8 +32,10 @@ bool GraffitiTest::Initialize() {
     return false;
   }
 
-  const object::GraffitiInitializeParameter param{math::Vector3::kZeroVector,
-                                                  math::Vector3::kUnitVector};
+  const object::GraffitiInitializeParameter param{
+      util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
+                      math::Vector3::kUnitVector),
+      math::Vector3::kUnitVector, 100.0f};
   if (!graffiti_.Init(param, command_list)) {
     return false;
   }

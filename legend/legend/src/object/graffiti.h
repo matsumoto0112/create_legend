@@ -21,7 +21,8 @@ struct GraffitiInitializeParameter {
   // math::Vector3 position;
   // math::Vector3 scale;
   util::Transform transform;
-  math::Vector3 bouding_box_length;
+  math::Vector3 bounding_box_length;
+  float remaining_grafitti;
 };
 
 /**
@@ -56,6 +57,19 @@ class Graffiti : public actor::Actor {
    * @param command_list コマンドリスト
    */
   void Draw(directx::device::CommandList& command_list);
+  /**
+   * @brief 落書きを消す処理
+   * @param 消す割合
+   */
+  void DecreaseGrafitti(const float& percentage);
+  /**
+   * @brief 落書きの残量の取得
+   */
+  float GetRemainingGrafitti() const;
+  /**
+   * @brief 消えているかを取得
+   */
+  bool GetIsErase() const;
 
  private:
   /**
@@ -95,6 +109,11 @@ class Graffiti : public actor::Actor {
   directx::descriptor_heap::DescriptorHandle handle_;
   //! ピクセルデータ
   std::array<u8, MASK_WIDTH * MASK_HEIGHT * PIXEL_SIZE> pixels_;
+
+  //! 落書き残量
+  float remaining_grafitti_;
+  //! 消えたかどうか
+  bool is_erase_;
 };
 
 }  // namespace object

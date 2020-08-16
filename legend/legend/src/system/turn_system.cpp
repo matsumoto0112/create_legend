@@ -1,6 +1,6 @@
 #include "src/system/turn_system.h"
 
-namespace {}  // namespace
+#include "src/ui/quarter_gauge.h"
 
 namespace legend {
 namespace system {
@@ -91,6 +91,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
       }
       comp = ui_board_.AddComponent(std::move(gauge));
       gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
+    } else if (split[ui_format::ID] == "2") {
+      auto gauge = std::make_unique<ui::QuarterGauge>();
+      if (!gauge->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(gauge));
+      gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
     }
     MY_ASSERTION(comp, L"•s³‚ÈID‚ª“ü—Í‚³‚ê‚Ü‚µ‚½");
     comp->SetPosition(math::Vector2(x, y));
@@ -157,7 +164,7 @@ bool TurnSystem::Update() {
       ss.str("");
       ss.clear(std::stringstream::goodbit);
       ss << "Position:" << i;
-      ImGui::SliderFloat2(ss.str().c_str(), field, 0.0f, 2000.0f);
+      ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
       components_[i]->SetPosition(math::Vector2(field[0], field[1]));
 
       float z = components_[i]->GetZOrder();
@@ -188,10 +195,14 @@ bool TurnSystem::Update() {
       }
       ofs.flush();
     }
+    static float value = 0.5f;
+    ImGui::SliderFloat("Quarter", &value, 0.0f, 1.0f);
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE]->SetValue(value);
   }
   ImGui::End();
 
-  gauges_[gauge_id::PLAYER_POWER]->SetValue(player_.GetImpulse());
+  gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_.GetImpulse());
+
   return true;
 }
 

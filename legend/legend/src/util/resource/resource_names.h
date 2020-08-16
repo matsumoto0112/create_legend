@@ -61,6 +61,7 @@ constexpr name MODEL_VIEW = L"model_view_vs.cso";
 constexpr name GPU_PARTICLE = L"gpu_particle_vs.cso";
 constexpr name OBB = L"obb_vs.cso";
 constexpr name GAUGE = L"ui_gauge_vs.cso";
+constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_vs.cso";
 }  // namespace vertex_shader
 
 namespace pixel_shader {
@@ -70,6 +71,7 @@ constexpr name MODEL_VIEW = L"model_view_ps.cso";
 constexpr name GPU_PARTICLE = L"gpu_particle_ps.cso";
 constexpr name OBB = L"obb_ps.cso";
 constexpr name GAUGE = L"ui_gauge_ps.cso";
+constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_ps.cso";
 }  // namespace pixel_shader
 
 namespace geometry_shader {
@@ -86,7 +88,8 @@ constexpr name GRAFFITI = L"graffiti";
 constexpr name MODEL_VIEW = L"model_view";
 constexpr name GPU_PARTICLE = L"gpu_particle";
 constexpr name OBB = L"obb";
-constexpr name GAUGE = L"Gauge";
+constexpr name GAUGE = L"gauge";
+constexpr name QUARTER_GAUGE = L"quarter_gauge";
 }  // namespace pipeline
 
 namespace audio {}  // namespace audio

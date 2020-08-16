@@ -62,7 +62,7 @@ class Gauge : public UIComponent {
    */
   float GetValue() const;
 
- private:
+ protected:
   //! 描画するスプライト
   draw::Sprite2D sprite_;
 

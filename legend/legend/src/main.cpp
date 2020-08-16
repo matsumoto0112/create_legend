@@ -67,6 +67,23 @@ class MyApp final : public device::Application {
       resource.GetPipeline().Register(
           util::resource::resource_names::pipeline::GAUGE, gauge_pipeline);
 
+      pso_desc.SetVertexShader(
+          resource.GetVertexShader()
+              .Get(util::resource::resource_names::vertex_shader::QUARTER_GAUGE)
+              .get());
+      pso_desc.SetPixelShader(
+          resource.GetPixelShader()
+              .Get(util::resource::resource_names::pixel_shader::QUARTER_GAUGE)
+              .get());
+      auto quarter_gauge_pipeline =
+          std::make_shared<directx::shader::PipelineState>();
+      if (!quarter_gauge_pipeline->Init(device, pso_desc)) {
+        return false;
+      }
+      resource.GetPipeline().Register(
+          util::resource::resource_names::pipeline::QUARTER_GAUGE,
+          quarter_gauge_pipeline);
+
       auto pipeline_graffiti =
           std::make_shared<directx::shader::PipelineState>();
       pso_desc.SetVertexShader(

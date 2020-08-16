@@ -36,7 +36,7 @@ void SkillPencil::Init(const player::Player& player) {
 
   transform_.SetPosition(player.GetPosition());
   transform_.SetRotation(player.GetRotation());
-  transform_.SetScale(math::Vector3(1, 1, 1));
+  transform_.SetScale(math::Vector3(0.25f, 0.25f, 0.25f));
   collision_.SetPosition(transform_.GetPosition());
   collision_.SetRotation(transform_.GetRotation());
   collision_.SetScale(transform_.GetScale());
@@ -49,7 +49,7 @@ void SkillPencil::Init(const player::Player& player) {
   transform_cb_.UpdateStaging();
   //ƒ‚ƒfƒ‹‚Ì‰Šú‰»
   model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONARY_01);
+      util::resource::resource_names::model::STATIONERY_01);
 }
 
 bool SkillPencil::Update() {
@@ -59,11 +59,11 @@ bool SkillPencil::Update() {
 
   transform_.SetPosition(player_->GetPosition());
   transform_.SetRotation(player_->GetRotation());
-  transform_.SetScale(math::Vector3(1, 1, 1));
+  //transform_.SetScale(math::Vector3(1, 1, 1));
   collision_.SetPosition(transform_.GetPosition());
   collision_.SetRotation(transform_.GetRotation());
-  collision_.SetScale(transform_.GetScale());
-  collision_.SetLength(transform_.GetScale());
+  //collision_.SetScale(transform_.GetScale());
+  //collision_.SetLength(transform_.GetScale());
 
   return true;
 }

@@ -11,8 +11,8 @@ namespace texture_loader {
 LoadedTextureData Load(const std::filesystem::path& filename) {
   //テクスチャを読み込む
   int x, y, comp;
-  stbi_uc* begin =
-      stbi_load(filename.generic_string().c_str(), &x, &y, &comp, 4);
+  stbi_uc* begin = stbi_load(filename.generic_string().c_str(), &x, &y, &comp,
+                             STBI_rgb_alpha);
   if (!begin) {
     MY_LOG(L"%sの読み込みに失敗しました", filename.c_str());
     return LoadedTextureData{};

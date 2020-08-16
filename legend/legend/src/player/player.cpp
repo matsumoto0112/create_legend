@@ -22,8 +22,6 @@ bool Player::Init(const InitializeParameter& parameter) {
   this->collision_.SetPosition(transform_.GetPosition());
   this->collision_.SetRotation(transform_.GetRotation());
   this->collision_.SetScale(transform_.GetScale());
-  //= physics::BoundingBox(transform_.GetPosition(), transform_.GetRotation(),
-  //                       transform_.GetScale() * 0.1f);
   this->collision_.SetLength(parameter.bouding_box_length);
   this->collision_.SetCollisionCallback(
       [&](actor::ActorType type) { Player::OnCollisionHit(type); });
@@ -34,7 +32,7 @@ bool Player::Init(const InitializeParameter& parameter) {
 
   up_power_ = true;
   is_set_power_ = false;
-  move_end_ = false;
+  strength_ = 1.0f;
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -53,24 +51,16 @@ bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  if (is_input_ &&
-      change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
-          0.5f) {
+  if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
+      0.5f) {
     is_move_ = true;
     mediator_->PlayerMoveStartEvent();
   }
 
-  // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  // transform_cb_.UpdateStaging();
-
-  if (is_move_ && velocity_ == math::Vector3::kZeroVector) {
+  if (GetMoveEnd()) {
     ResetParameter();
-    move_end_ = true;
     mediator_->PlayerMoveEndEvent();
   }
-
-  //SetVelocity();
-  //SetImpulse();
 
   return true;
 }
@@ -92,9 +82,6 @@ void Player::SetVelocity() {
   if (is_move_) return;
 
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  //ゲームパッドが一つだけ接続されている間
-
-  if (input.GetGamepad()->GetCount() != 1) return;
   input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
   input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
 
@@ -117,50 +104,39 @@ void Player::SetVelocity(math::Vector3 velocity) {
 
 //パワーの設定
 void Player::SetImpulse() {
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-
-  //パワー調整を終えたらreturn
   if (is_set_power_ || !is_input_) return;
 
-  //左スティックの傾きが0.1以下かつ、方向入力していたらパワー調整を完了にする
-  if (input.GetGamepad()->GetStickLeft().Magnitude() <= 0.1f && is_input_) {
-    is_set_power_ = true;
-    return;
-  }
-
-  //パワー調整処理
-  if (up_power_) {
-    impulse_ += 0.1f * update_time_ * 2;
-    if (impulse_ >= max_power_) {
-      impulse_ = max_power_;
-      up_power_ = false;
+  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+  if (input.GetGamepad()->GetStickLeft().Magnitude() >= 0.2f) {
+    if (up_power_) {
+      impulse_ += 0.1f * update_time_ * 2;
+      if (impulse_ >= max_power_) {
+        impulse_ = max_power_;
+        up_power_ = false;
+      }
+    } else {
+      impulse_ -= 0.1f * update_time_ * 2;
+      if (impulse_ <= min_power_) {
+        impulse_ = min_power_;
+        up_power_ = true;
+      }
     }
   } else {
-    impulse_ -= 0.1f * update_time_ * 2;
-    if (impulse_ <= min_power_) {
-      impulse_ = min_power_;
-      up_power_ = true;
-    }
+    is_set_power_ = true;
   }
 }
 
 //移動に必要なパラメータを初期化
 void Player::ResetParameter() {
-  if (velocity_.Magnitude() != 0.0f) return;
-
   is_input_ = false;
   is_set_power_ = false;
   impulse_ = 0;
   up_power_ = true;
   change_amount_velocity_ = math::Vector3::kZeroVector;
-  deceleration_x_ = deceleration_z_ = 0;
   input_velocity_ = math::Vector3::kZeroVector;
   is_move_ = false;
   velocity_update_time_ = 0;
 }
-
-//移動終了判定のリセット
-void Player::ResetMoveEnd() { move_end_ = false; }
 
 //座標の取得
 math::Vector3 Player::GetPosition() const { return transform_.GetPosition(); }
@@ -179,18 +155,29 @@ float Player::GetImpulse() const { return impulse_; }
 //加える力の取得
 float Player::GetPower() const { return power_; }
 
-//移動終了判定の取得
-bool Player::GetMoveEnd() const { return move_end_; }
+//移動を終えているかを取得
+bool Player::GetMoveEnd() const {
+  bool is_end = (is_move_ && velocity_ == math::Vector3::kZeroVector);
+  return is_end;
+}
 
 //移動判定の取得
 bool Player::GetIsMove() const { return is_move_; }
 
 void Player::OnCollisionHit(actor::ActorType type) {
-  //MY_LOG(L"Collision Hit: %d", type);
+  // MY_LOG(L"Collision Hit: %d", type);
 }
 
 void Player::OnTriggerHit(actor::ActorType type) {
-  //MY_LOG(L"Trigger Hit: %d", type);
+  // MY_LOG(L"Trigger Hit: %d", type);
 }
+
+//強化パラメータの更新
+void Player::UpdateStrength(const float& add_strength) {
+  strength_ += add_strength;
+}
+
+//強化度合いを取得
+float Player::GetStrength() const { return strength_; }
 }  // namespace player
 }  // namespace legend

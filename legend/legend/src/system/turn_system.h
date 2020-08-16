@@ -14,8 +14,12 @@
 #include "src/object/fragment.h"
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
+#include "src/search/search_manager.h"
 #include "src/stage_generate/stage_generator.h"
 #include "src/system/mode.h"
+#include "src/ui/gauge.h"
+#include "src/ui/image.h"
+#include "src/ui/ui_board.h"
 #include "src/util/timer.h"
 
 namespace legend {
@@ -23,6 +27,18 @@ namespace system {
 namespace camera_mode {
 enum Enum { Main, Sub1, Sub2, COUNT };
 }  // namespace camera_mode
+namespace ui_format {
+/**
+ * @brief UIのファイルに格納してあるパラメータ
+ */
+enum Enum { NAME, X, Y, Z, ID, MAX };
+}  // namespace ui_format
+namespace gauge_id {
+/**
+ * @brief UIファイルに格納しているゲージの順
+ */
+enum GaugeID { PLAYER_POWER, MAX };
+}  // namespace gauge_id
 
 /**
  * @class TurnSystem
@@ -136,6 +152,8 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<object::Graffiti> graffities_;
   //! 敵管理
   enemy::EnemyManager enemy_manager_;
+  //! 分岐管理
+  search::SearchManager search_manager_;
   //! タイマー
   util::CountDownTimer countdown_timer_;
 
@@ -143,6 +161,16 @@ class TurnSystem : public actor::IActorMediator {
   std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
   //! 現在使用しているカメラ
   camera_mode::Enum current_camera_;
+
+  //! UI表示ボード
+  ui::UIBoard ui_board_;
+  //! UIゲージ配列
+  std::vector<ui::Gauge*> gauges_;
+
+ private:
+  // UIのリアルタイム修正用パラメータ
+  std::vector<legend::ui::UIComponent*> components_;
+  std::vector<std::vector<std::string>> input_lines_;
 };
 
 }  // namespace system

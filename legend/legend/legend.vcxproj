@@ -187,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="src\system\physics_field.cpp" />
     <ClCompile Include="src\system\turn_system.cpp" />
+    <ClCompile Include="src\ui\gauge.cpp" />
+    <ClCompile Include="src\ui\image.cpp" />
+    <ClCompile Include="src\ui\ui_board.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
@@ -352,6 +355,10 @@
     <ClInclude Include="src\system\mode.h" />
     <ClInclude Include="src\system\physics_field.h" />
     <ClInclude Include="src\system\turn_system.h" />
+    <ClInclude Include="src\ui\gauge.h" />
+    <ClInclude Include="src\ui\image.h" />
+    <ClInclude Include="src\ui\ui_board.h" />
+    <ClInclude Include="src\ui\ui_component.h" />
     <ClInclude Include="src\util\byte_reader.h" />
     <ClInclude Include="src\util\color_4.h" />
     <ClInclude Include="src\util\debug.h" />
@@ -385,6 +392,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
+    <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
@@ -402,6 +410,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="assets\shaders\draw2d\sprite_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\draw2d\ui_gauge_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\draw2d\ui_gauge_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
@@ -478,6 +494,7 @@
     <Media Include="assets\audios\free_6.wav" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="assets\parameters\main_ui.txt" />
     <Text Include="assets\stage\bbbb.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

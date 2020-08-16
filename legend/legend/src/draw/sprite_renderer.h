@@ -18,6 +18,17 @@ namespace draw {
  * @brief スプライト描画器
  */
 class SpriteRenderer {
+  //! 描画前に呼ぶ関数
+  using PreCallFunction = std::function<void()>;
+
+  /**
+   * @brief 描画するアイテム
+   */
+  struct DrawItem {
+    Sprite2D* sprite;
+    PreCallFunction pre_call_function;
+  };
+
  public:
   /**
    * @brief コンストラクタ
@@ -36,7 +47,8 @@ class SpriteRenderer {
   /**
    * @brief 描画リストにスプライトを追加する
    */
-  void AddDrawItems(Sprite2D* sprite);
+  void AddDrawItems(Sprite2D* sprite,
+                    PreCallFunction pre_call_function = nullptr);
   /**
    * @brief 描画リストにあるスプライトを描画する
    * @param command_list コマンドリスト
@@ -57,7 +69,7 @@ class SpriteRenderer {
   //! 描画パイプライン
   directx::shader::PipelineState pipeline_state_;
   //! スプライトリスト
-  std::vector<Sprite2D*> draw_items_;
+  std::vector<DrawItem> draw_items_;
 };
 
 }  // namespace draw

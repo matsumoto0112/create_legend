@@ -3,6 +3,7 @@
 
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
+#include "src/object/graffiti.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/system/physics_field.h"
@@ -30,15 +31,11 @@ class StageGenerator {
    * @brief 読み込み&生成処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  // bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-  //               system::PhysicsField* physics_field,
-  //               std::vector<actor::Actor<physics::BoundingBox>>* actors,
-  //               enemy::EnemyManager* enemy_manager);
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-                 system::PhysicsField* physics_field,
                  std::vector<object::Desk>* desks,
                  std::vector<object::Obstacle>* obstacles,
-                 player::Player* player, enemy::EnemyManager* enemy_manager);
+                 player::Player* player,
+                 std::vector<object::Graffiti>* graffities);
   /**
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
@@ -48,17 +45,13 @@ class StageGenerator {
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  // bool SetMapActors(const std::string map_name,
-  //                  const std::vector<std::string>& indexs,
-  //                  system::PhysicsField* physics_field,
-  //                  std::vector<actor::Actor<physics::BoundingBox>>* actors,
-  //                  enemy::EnemyManager* enemy_manager);
-  bool SetMapActors(const std::string map_name,
-                    const std::vector<std::string>& indexs,
-                    system::PhysicsField* physics_field,
-                    std::vector<object::Desk>* desks,
+  bool SetMapActors(std::vector<object::Desk>* desks,
                     std::vector<object::Obstacle>* obstacles,
-                    player::Player* player, enemy::EnemyManager* enemy_manager);
+                    player::Player* player,
+                    std::vector<object::Graffiti>* graffities);
+
+  std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
+      const i32 turn_count);
 
  private:
   /**
@@ -92,6 +85,8 @@ class StageGenerator {
   std::vector<std::string> StringSplit(const std::string& string, char border);
 
  private:
+  std::vector<std::string> indexs_;
+  std::string map_name_;
 };
 }  // namespace stage_generate
 }  // namespace legend

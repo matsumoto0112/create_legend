@@ -1,5 +1,7 @@
 #include "src/system/turn_system.h"
 
+namespace {}  // namespace
+
 namespace legend {
 namespace system {
 
@@ -23,9 +25,8 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  if (!stage_generator_.LoadStage(stage_path, stage_name, &physics_field_,
-                                  &desks_, &obstacles_, &player_,
-                                  &enemy_manager_)) {
+  if (!stage_generator_.LoadStage(stage_path, stage_name, &desks_, &obstacles_,
+                                  &player_, &graffities_)) {
     return false;
   }
 
@@ -40,10 +41,65 @@ bool TurnSystem::Init(const std::string& stage_name) {
     physics_field_.AddObstacle(obs.GetCollisionRef());
     obs.SetMediator(this);
   }
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_)) {
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
 
   if (!InitCameras()) {
     return false;
   }
+
+  {
+    search_manager_.Initialize(&player_.GetCollisionRef());
+    search_manager_.Add({
+        math::Vector3(1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 10.0f,
+    });
+    search_manager_.SetBranch(0, {1, 2, 3});
+    search_manager_.SetBranch(1, {0, 2, 3});
+    search_manager_.SetBranch(2, {0, 1, 3});
+    search_manager_.SetBranch(3, {0, 1, 2});
+  }
+
+  // UIを定義ファイルから読み込む
+  std::ifstream ifs(util::Path::GetInstance()->exe() / "assets" / "parameters" /
+                    "main_ui.txt");
+  std::string line;
+  while (std::getline(ifs, line)) {
+    auto split = util::string_util::StringSplit(line, ',');
+    MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
+    std::string name = split[ui_format::NAME];
+    std::wstring w_name = util::string_util::String_2_WString(name + ".png");
+    float x = std::stof(split[ui_format::X]);
+    float y = std::stof(split[ui_format::Y]);
+    float z = std::stof(split[ui_format::Z]);
+
+    ui::UIComponent* comp = nullptr;
+    if (split[ui_format::ID] == "0") {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(image));
+    } else if (split[ui_format::ID] == "1") {
+      auto gauge = std::make_unique<ui::Gauge>();
+      if (!gauge->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(gauge));
+      gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
+    }
+    MY_ASSERTION(comp, L"不正なIDが入力されました");
+    comp->SetPosition(math::Vector2(x, y));
+    comp->SetZOrder(z);
+    components_.emplace_back(comp);
+    input_lines_.emplace_back(split);
+  }
+  MY_ASSERTION(gauges_.size() == gauge_id::MAX,
+               L"main_ui.txtのUI定義が不正です。");
 
   return true;
 }
@@ -88,6 +144,54 @@ bool TurnSystem::Update() {
     }
   }
   ImGui::End();
+
+  if (ImGui::Begin("UI")) {
+    const u32 size = static_cast<u32>(components_.size());
+    for (u32 i = 0; i < size; i++) {
+      std::stringstream ss;
+      ss << "Image:" << i;
+      ImGui::Text(ss.str().c_str());
+
+      math::Vector2 pos = components_[i]->GetPosition();
+      float field[2] = {pos.x, pos.y};
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Position:" << i;
+      ImGui::SliderFloat2(ss.str().c_str(), field, 0.0f, 2000.0f);
+      components_[i]->SetPosition(math::Vector2(field[0], field[1]));
+
+      float z = components_[i]->GetZOrder();
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Z_Order:" << i;
+      ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
+      components_[i]->SetZOrder(z);
+    }
+
+    if (ImGui::Button("Apply")) {
+      std::ofstream ofs(
+          std::filesystem::path("assets") / "parameters" / "main_ui.txt",
+          std::ios::out);
+      ofs.clear();
+      const u32 size = static_cast<u32>(components_.size());
+      for (u32 i = 0; i < size; i++) {
+        input_lines_[i][ui_format::X] =
+            std::to_string(components_[i]->GetPosition().x);
+        input_lines_[i][ui_format::Y] =
+            std::to_string(components_[i]->GetPosition().y);
+        input_lines_[i][ui_format::Z] =
+            std::to_string(components_[i]->GetZOrder());
+        for (auto&& s : input_lines_[i]) {
+          ofs << s << ",";
+        }
+        ofs << "\n";
+      }
+      ofs.flush();
+    }
+  }
+  ImGui::End();
+
+  gauges_[gauge_id::PLAYER_POWER]->SetValue(player_.GetImpulse());
   return true;
 }
 
@@ -109,13 +213,14 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  MY_LOG(L"EnemyMove");
-  enemy_manager_.Update(nullptr);
+  // MY_LOG(L"EnemyMove");
+  enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
       enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     physics_field_.ResetEnemyMove();
+    enemy_manager_.ResetEnemyMove();
     AddCurrentTurn();
   }
   return true;
@@ -123,6 +228,11 @@ bool TurnSystem::EnemyMove() {
 
 //敵の移動終了時処理
 bool TurnSystem::EnemyMoveEnd() {
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
+    enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
+
   current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;
 }
@@ -169,6 +279,9 @@ bool TurnSystem::InitCameras() {
 
 //描画
 void TurnSystem::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+
   cameras_[current_camera_]->RenderStart();
   player_.Draw();
   for (auto&& desk : desks_) {
@@ -178,6 +291,13 @@ void TurnSystem::Draw() {
   for (auto&& obs : obstacles_) {
     obs.Draw();
   }
+  for (auto&& graffiti : graffities_) {
+    graffiti.Draw(command_list);
+  }
+  ui_board_.Draw();
+
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
 //デバッグ描画
@@ -192,8 +312,12 @@ void TurnSystem::DebugDraw() {
     desk.GetCollisionRef().DebugDraw(command_list);
   }
   enemy_manager_.DebugDraw(command_list);
+  search_manager_.DebugDraw(command_list);
   for (auto&& obs : obstacles_) {
     obs.GetCollisionRef().DebugDraw(command_list);
+  }
+  for (auto&& graffiti : graffities_) {
+    graffiti.GetCollisionRef().DebugDraw(command_list);
   }
 }
 
@@ -208,7 +332,6 @@ void TurnSystem::PlayerMoveStartEvent() { current_mode_ = Mode::PLAYER_MOVING; }
 
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
-  player_.ResetMoveEnd();
   // 0.1秒後にモードを切り替える
   countdown_timer_.Init(
       0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });

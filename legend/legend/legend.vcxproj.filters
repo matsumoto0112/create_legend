@@ -127,6 +127,9 @@
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
+    <ClCompile Include="src\ui\image.cpp" />
+    <ClCompile Include="src\ui\ui_board.cpp" />
+    <ClCompile Include="src\ui\gauge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -300,6 +303,10 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\ui\image.h" />
+    <ClInclude Include="src\ui\gauge.h" />
+    <ClInclude Include="src\ui\ui_board.h" />
+    <ClInclude Include="src\ui\ui_component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -314,6 +321,7 @@
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
     <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\util\util.hlsli" />
+    <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -334,6 +342,8 @@
     <FxCompile Include="assets\shaders\particle\gpu_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\particle\gpu_particle_gs.hlsl" />
     <FxCompile Include="assets\shaders\particle\gpu_particle_ps.hlsl" />
+    <FxCompile Include="assets\shaders\draw2d\ui_gauge_vs.hlsl" />
+    <FxCompile Include="assets\shaders\draw2d\ui_gauge_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />
@@ -344,5 +354,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />
+    <Text Include="assets\parameters\main_ui.txt" />
   </ItemGroup>
 </Project>

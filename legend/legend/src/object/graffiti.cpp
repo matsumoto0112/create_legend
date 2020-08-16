@@ -19,7 +19,7 @@ namespace legend {
 namespace object {
 
 //コンストラクタ
-Graffiti::Graffiti() {}
+Graffiti::Graffiti() : Parent(L"Graffiti") {}
 
 //デストラクタ
 Graffiti::~Graffiti() {}
@@ -27,6 +27,10 @@ Graffiti::~Graffiti() {}
 //初期化
 bool Graffiti::Init(const GraffitiInitializeParameter& param,
                     directx::device::CommandList& command_list) {
+  if (!Parent::InitBuffer()) {
+    return false;
+  }
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //通常のテクスチャをまず作成する
@@ -87,15 +91,23 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
     return false;
   }
 
-  transform_.SetPosition(param.position);
-  transform_.SetScale(param.scale);
+  this->transform_ = param.transform;
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetPosition(transform_.GetPosition());
+  this->collision_.SetScale(transform_.GetScale());
+  this->collision_.SetLength(param.bounding_box_length);
+  this->collision_.SetIsTrigger(true);
+  remaining_grafitti_ = param.remaining_grafitti;
+  is_erase_ = false;
+  // transform_.SetPosition(param.position);
+  // transform_.SetScale(param.scale);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   return true;
 }
 
 //更新
-void Graffiti::Update() {
+bool Graffiti::Update() {
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
@@ -108,10 +120,14 @@ void Graffiti::Update() {
   const float b = random.Range(0.0f, 1.0f);
   const float a = random.Range(0.0f, 1.0f);
   SetTextureColor(x, y, util::Color4(r, g, b, a));
+
+  return true;
 }
 
 //描画
 void Graffiti::Draw(directx::device::CommandList& command_list) {
+  if (is_erase_) return;
+
   UpdateTexture(command_list);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -129,6 +145,15 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
   resource.GetModel()
       .Get(util::resource::resource_names::model::GRAFFITI)
       ->Draw(command_list);
+}
+
+float Graffiti::GetRemainingGrafitti() const { return remaining_grafitti_; }
+
+bool Graffiti::GetIsErase() const { return is_erase_; }
+
+void Graffiti::DecreaseGrafitti(const float& percentage) {
+  remaining_grafitti_ -= percentage;
+  if (remaining_grafitti_ <= 0) is_erase_ = true;
 }
 
 //テクスチャの色を設定する

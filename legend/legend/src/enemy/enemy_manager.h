@@ -79,6 +79,10 @@ class EnemyManager {
    */
   void SetVelocity(system::PhysicsField& physics_field);
   /**
+   * @brief “G‚Ìs“®‚ğ‰Šú‰»
+   */
+  void ResetEnemyMove();
+  /**
    * @brief Še“G‚Ì‘¬“x‚ğæ“¾
    */
   std::vector<math::Vector3> GetVelocities();

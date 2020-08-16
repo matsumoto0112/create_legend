@@ -46,6 +46,8 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
   }
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& render_resource_manager =
+      game::GameDevice::GetInstance()->GetDevice().GetRenderResourceManager();
   directx::shader::GraphicsPipelineStateDesc pso_desc = {};
   pso_desc.SetVertexShader(
       resource.GetVertexShader()
@@ -56,17 +58,17 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
           .Get(util::resource::resource_names::pixel_shader::SPRITE)
           .get());
 
+  pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
   pso_desc.BlendState.RenderTarget[0] =
       directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
-  pso_desc.BlendState.AlphaToCoverageEnable = true;
-  pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC();
-  pso_desc.NumRenderTargets = 1;
+  pso_desc.SetDepthStencilTarget(render_resource_manager.GetDepthStencilTarget(
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY));
+  pso_desc.SetRenderTargets(render_resource_manager.GetRenderTarget(
+      directx::render_target::RenderTargetID::BACK_BUFFER));
   pso_desc.PrimitiveTopologyType =
       D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-  pso_desc.pRootSignature =
-      device.GetDefaultRootSignature()->GetRootSignature();
+  pso_desc.SetRootSignature(device.GetDefaultRootSignature());
   pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-  pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
   pso_desc.SampleDesc.Count = 1;
   pso_desc.SampleMask = UINT_MAX;
 
@@ -90,8 +92,9 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
 }
 
 //描画リストに追加する
-void SpriteRenderer::AddDrawItems(Sprite2D* sprite) {
-  draw_items_.push_back(sprite);
+void SpriteRenderer::AddDrawItems(Sprite2D* sprite,
+                                  PreCallFunction pre_call_function) {
+  draw_items_.emplace_back(DrawItem{sprite, pre_call_function});
 }
 
 //描画処理
@@ -101,7 +104,6 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   }
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  pipeline_state_.SetCommandList(command_list);
   world_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT);
 
@@ -110,8 +112,15 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
 
   //各スプライトの描画情報をセットしてから描画指令を送る
   for (auto&& sp : draw_items_) {
-    if (!sp) continue;
-    sp->SetToGraphicsCommandList(command_list);
+    if (!sp.sprite) continue;
+    pipeline_state_.SetCommandList(command_list);
+
+    //描画前に呼ぶ関数があれば呼ぶ
+    if (sp.pre_call_function) {
+      sp.pre_call_function();
+    }
+
+    sp.sprite->SetToGraphicsCommandList(command_list);
     device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                               command_list);
     index_buffer_.Draw(command_list);

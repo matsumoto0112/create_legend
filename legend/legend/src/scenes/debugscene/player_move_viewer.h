@@ -3,8 +3,12 @@
 
 #include "src/camera/perspective_camera.h"
 #include "src/object/desk.h"
+#include "src/object/fragment.h"
+#include "src/object/graffiti.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
+#include "src/system/mode.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace scenes {
@@ -44,6 +48,8 @@ class PlayerMoveViewer : public Scene {
   player::Player player_;
   //! Š÷
   object::Desk desk_;
+  object::Graffiti graffiti_;
+  std::vector<object::Fragment> fragments_;
 };
 
 }  // namespace debugscene

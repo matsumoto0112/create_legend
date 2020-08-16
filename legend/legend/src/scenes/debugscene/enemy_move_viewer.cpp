@@ -248,7 +248,6 @@ bool EnemyMoveViewer::UpdateTurn() {
       //プレイヤーが動き終えたらターン切り替え
       if (player_.GetMoveEnd()) {
         turn_ = system::Mode::ENEMY_MOVING;
-        player_.ResetMoveEnd();
       }
       break;
     case legend::system::Mode::ENEMY_MOVING:

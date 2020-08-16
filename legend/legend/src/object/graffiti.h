@@ -5,10 +5,10 @@
  * @file graffiti.h
  */
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/actor/actor.h"
 #include "src/util/color_4.h"
 #include "src/util/transform.h"
+#include "src/object/fragment.h"
 
 namespace legend {
 namespace object {
@@ -17,14 +17,19 @@ namespace object {
  * @brief 落書きの初期化パラメータ
  */
 struct GraffitiInitializeParameter {
-  math::Vector3 position;
-  math::Vector3 scale;
+  // math::Vector3 position;
+  // math::Vector3 scale;
+  util::Transform transform;
+  math::Vector3 bounding_box_length;
+  float remaining_grafitti;
 };
 
 /**
  * @brief 落書きオブジェクトクラス
  */
-class Graffiti {
+class Graffiti : public actor::Actor {
+  using Parent = actor::Actor;
+
  public:
   /**
    * @brief コンストラクタ
@@ -45,12 +50,25 @@ class Graffiti {
   /**
    * @brief 更新処理
    */
-  void Update();
+  bool Update();
   /**
    * @brief 描画処理
    * @param command_list コマンドリスト
    */
   void Draw(directx::device::CommandList& command_list);
+  /**
+   * @brief 落書きを消す処理
+   * @param 消す割合
+   */
+  void DecreaseGrafitti(const float& percentage);
+  /**
+   * @brief 落書きの残量の取得
+   */
+  float GetRemainingGrafitti() const;
+  /**
+   * @brief 消えているかを取得
+   */
+  bool GetIsErase() const;
 
  private:
   /**
@@ -75,13 +93,6 @@ class Graffiti {
   static constexpr u32 MASK_HEIGHT = 16;
 
  private:
-  //! トランスフォーム
-  util::Transform transform_;
-  //! トランスフォームコンスタントバッファ
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_cb_;
-
   //! テクスチャリソース
   ComPtr<ID3D12Resource> mask_texture_;
   //! テクスチャの書き換えに必要なコピーリソース
@@ -90,6 +101,11 @@ class Graffiti {
   directx::descriptor_heap::DescriptorHandle handle_;
   //! ピクセルデータ
   std::array<u8, MASK_WIDTH * MASK_HEIGHT * PIXEL_SIZE> pixels_;
+
+  //! 落書き残量
+  float remaining_grafitti_;
+  //! 消えたかどうか
+  bool is_erase_;
 };
 
 }  // namespace object

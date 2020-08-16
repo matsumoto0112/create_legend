@@ -17,33 +17,15 @@ class MyApp final : public device::Application {
     }
 
     auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-    {
-      const math::IntVector2 screen_size =
-          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-      const directx::render_target::DepthStencil::DepthStencilDesc desc = {
-          L"DepthOnly",
-          DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT,
-          static_cast<u32>(screen_size.x),
-          static_cast<u32>(screen_size.y),
-          1.0f,
-          0};
-      if (!device.GetRenderResourceManager().AddDepthStencil(
-              directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
-              desc)) {
-        return false;
-      }
-    }
-
     auto& resource = game::GameDevice::GetInstance()->GetResource();
+    auto& render_resource_manager = device.GetRenderResourceManager();
 
     //パイプラインの登録
     //パイプラインは外部ファイルに書き出してそれを読み取る形式にしたい
     {
       directx::shader::GraphicsPipelineStateDesc pso_desc = {};
-      pso_desc.SetRenderTargets(
-          device.GetRenderResourceManager().GetRenderTarget(
-              directx::render_target::RenderTargetID::BACK_BUFFER));
+      pso_desc.SetRenderTargets(render_resource_manager.GetRenderTarget(
+          directx::render_target::RenderTargetID::BACK_BUFFER));
       pso_desc.SetVertexShader(
           resource.GetVertexShader()
               .Get(util::resource::resource_names::vertex_shader::MODEL_VIEW)
@@ -53,7 +35,7 @@ class MyApp final : public device::Application {
               .Get(util::resource::resource_names::pixel_shader::MODEL_VIEW)
               .get());
       pso_desc.SetDepthStencilTarget(
-          device.GetRenderResourceManager().GetDepthStencilTarget(
+          render_resource_manager.GetDepthStencilTarget(
               directx::render_target::DepthStencilTargetID::DEPTH_ONLY));
       pso_desc.SetRootSignature(device.GetDefaultRootSignature());
 
@@ -69,6 +51,21 @@ class MyApp final : public device::Application {
       }
       resource.GetPipeline().Register(
           util::resource::resource_names::pipeline::MODEL_VIEW, pipeline);
+
+      pso_desc.SetVertexShader(
+          resource.GetVertexShader()
+              .Get(util::resource::resource_names::vertex_shader::GAUGE)
+              .get());
+      pso_desc.SetPixelShader(
+          resource.GetPixelShader()
+              .Get(util::resource::resource_names::pixel_shader::GAUGE)
+              .get());
+      auto gauge_pipeline = std::make_shared<directx::shader::PipelineState>();
+      if (!gauge_pipeline->Init(device, pso_desc)) {
+        return false;
+      }
+      resource.GetPipeline().Register(
+          util::resource::resource_names::pipeline::GAUGE, gauge_pipeline);
 
       auto pipeline_graffiti =
           std::make_shared<directx::shader::PipelineState>();
@@ -92,28 +89,29 @@ class MyApp final : public device::Application {
     }
     {
       auto pipeline = std::make_shared<directx::shader::PipelineState>();
-      directx::shader::PipelineState::GraphicsPipelineStateDesc pso_desc = {};
-      auto vs = resource.GetVertexShader().Get(
-          util::resource::resource_names::vertex_shader::OBB);
-      auto ps = resource.GetPixelShader().Get(
-          util::resource::resource_names::pixel_shader::OBB);
+      directx::shader::GraphicsPipelineStateDesc pso_desc = {};
       pso_desc.BlendState.RenderTarget[0] =
           directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+      pso_desc.SetVertexShader(
+          resource.GetVertexShader()
+              .Get(util::resource::resource_names::vertex_shader::OBB)
+              .get());
+      pso_desc.SetPixelShader(
+          resource.GetPixelShader()
+              .Get(util::resource::resource_names::pixel_shader::OBB)
+              .get());
+      pso_desc.SetRenderTargets(render_resource_manager.GetRenderTarget(
+          directx::render_target::RenderTargetID::BACK_BUFFER));
       pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
       pso_desc.DepthStencilState.DepthEnable = false;
-      pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
-      pso_desc.InputLayout = vs->GetInputLayout();
-      pso_desc.NumRenderTargets = 1;
-      pso_desc.RTVFormats[0] = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+      pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
       pso_desc.PrimitiveTopologyType =
           D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
       pso_desc.pRootSignature =
           device.GetDefaultRootSignature()->GetRootSignature();
-      pso_desc.PS = ps->GetShaderBytecode();
       pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
       pso_desc.SampleDesc.Count = 1;
       pso_desc.SampleMask = UINT_MAX;
-      pso_desc.VS = vs->GetShaderBytecode();
       if (!pipeline->Init(device, pso_desc)) {
         return false;
       }

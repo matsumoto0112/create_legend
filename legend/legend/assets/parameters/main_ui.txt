@@ -1,3 +1,4 @@
-UI_playerForm_frame,133.333,177.778,0
-UI_playerPower_frame,111.111,266.667,0
-UI_powerGauge_frame,466.667,555.556,0
+UI_playerForm_frame,133.332993,100.000000,0.965000,0,
+UI_playerPower_frame,100.000000,177.778000,0.000000,0,
+UI_powerGauge_frame,466.000000,550.000000,0.990000,0,
+UI_powerGauge,470.000000,554.000000,0.020000,1,

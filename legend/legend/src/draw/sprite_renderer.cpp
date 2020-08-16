@@ -92,8 +92,9 @@ bool SpriteRenderer::Init(const math::Vector2& window_size) {
 }
 
 //描画リストに追加する
-void SpriteRenderer::AddDrawItems(Sprite2D* sprite) {
-  draw_items_.push_back(sprite);
+void SpriteRenderer::AddDrawItems(Sprite2D* sprite,
+                                  PreCallFunction pre_call_function) {
+  draw_items_.emplace_back(DrawItem{sprite, pre_call_function});
 }
 
 //描画処理
@@ -103,7 +104,6 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
   }
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  pipeline_state_.SetCommandList(command_list);
   world_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::WORLD_CONTEXT);
 
@@ -112,8 +112,15 @@ void SpriteRenderer::DrawItems(directx::device::CommandList& command_list) {
 
   //各スプライトの描画情報をセットしてから描画指令を送る
   for (auto&& sp : draw_items_) {
-    if (!sp) continue;
-    sp->SetToGraphicsCommandList(command_list);
+    if (!sp.sprite) continue;
+    pipeline_state_.SetCommandList(command_list);
+
+    //描画前に呼ぶ関数があれば呼ぶ
+    if (sp.pre_call_function) {
+      sp.pre_call_function();
+    }
+
+    sp.sprite->SetToGraphicsCommandList(command_list);
     device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                               command_list);
     index_buffer_.Draw(command_list);

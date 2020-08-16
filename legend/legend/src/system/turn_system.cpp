@@ -1,9 +1,6 @@
 #include "src/system/turn_system.h"
 
-namespace {
-std::vector<legend::ui::UIComponent*> components_;
-std::vector<std::string> ui_image_names_;
-}  // namespace
+namespace {}  // namespace
 
 namespace legend {
 namespace system {
@@ -67,26 +64,42 @@ bool TurnSystem::Init(const std::string& stage_name) {
     search_manager_.SetBranch(3, {0, 1, 2});
   }
 
+  // UIを定義ファイルから読み込む
   std::ifstream ifs(util::Path::GetInstance()->exe() / "assets" / "parameters" /
                     "main_ui.txt");
   std::string line;
   while (std::getline(ifs, line)) {
     auto split = util::string_util::StringSplit(line, ',');
-    MY_ASSERTION(split.size() == 4, L"フォーマットが不正です。");
-    std::string name = split[0];
+    MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
+    std::string name = split[ui_format::NAME];
     std::wstring w_name = util::string_util::String_2_WString(name + ".png");
-    float x = std::stof(split[1]);
-    float y = std::stof(split[2]);
-    float z = std::stof(split[3]);
+    float x = std::stof(split[ui_format::X]);
+    float y = std::stof(split[ui_format::Y]);
+    float z = std::stof(split[ui_format::Z]);
 
-    auto image = std::make_unique<ui::Image>();
-    if (!image->Init(w_name)) {
-      return false;
+    ui::UIComponent* comp = nullptr;
+    if (split[ui_format::ID] == "0") {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(image));
+    } else if (split[ui_format::ID] == "1") {
+      auto gauge = std::make_unique<ui::Gauge>();
+      if (!gauge->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(gauge));
+      gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
     }
-    image->SetPosition(math::Vector2(x, y));
-    components_.emplace_back(ui_board_.AddComponent(std::move(image)));
-    ui_image_names_.emplace_back(name);
+    MY_ASSERTION(comp, L"不正なIDが入力されました");
+    comp->SetPosition(math::Vector2(x, y));
+    comp->SetZOrder(z);
+    components_.emplace_back(comp);
+    input_lines_.emplace_back(split);
   }
+  MY_ASSERTION(gauges_.size() == gauge_id::MAX,
+               L"main_ui.txtのUI定義が不正です。");
 
   return true;
 }
@@ -156,23 +169,29 @@ bool TurnSystem::Update() {
     }
 
     if (ImGui::Button("Apply")) {
-      // std::ofstream ofs(std::filesystem::path("../../../../../") / "legend" /
-      //                      "assets" / "parameters" / "main_ui.txt",
-      //                  std::ios::out);
       std::ofstream ofs(
           std::filesystem::path("assets") / "parameters" / "main_ui.txt",
           std::ios::out);
+      ofs.clear();
       const u32 size = static_cast<u32>(components_.size());
       for (u32 i = 0; i < size; i++) {
-        ofs << ui_image_names_[i] << "," << components_[i]->GetPosition().x
-            << "," << components_[i]->GetPosition().y << ","
-            << components_[i]->GetZOrder() << "\n";
+        input_lines_[i][ui_format::X] =
+            std::to_string(components_[i]->GetPosition().x);
+        input_lines_[i][ui_format::Y] =
+            std::to_string(components_[i]->GetPosition().y);
+        input_lines_[i][ui_format::Z] =
+            std::to_string(components_[i]->GetZOrder());
+        for (auto&& s : input_lines_[i]) {
+          ofs << s << ",";
+        }
+        ofs << "\n";
       }
       ofs.flush();
     }
   }
   ImGui::End();
 
+  gauges_[gauge_id::PLAYER_POWER]->SetValue(player_.GetImpulse());
   return true;
 }
 

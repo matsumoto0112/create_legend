@@ -295,6 +295,9 @@ void TurnSystem::Draw() {
     graffiti.Draw(command_list);
   }
   ui_board_.Draw();
+
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
 //デバッグ描画

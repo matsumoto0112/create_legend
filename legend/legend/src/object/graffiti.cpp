@@ -97,7 +97,7 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
   this->collision_.SetScale(transform_.GetScale());
   this->collision_.SetLength(param.bounding_box_length);
   this->collision_.SetIsTrigger(true);
-  remaining_grafitti_ = param.remaining_grafitti;
+  remaining_graffiti_ = param.remaining_graffiti;
   is_erase_ = false;
   // transform_.SetPosition(param.position);
   // transform_.SetScale(param.scale);
@@ -147,13 +147,28 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
       ->Draw(command_list);
 }
 
-float Graffiti::GetRemainingGrafitti() const { return remaining_grafitti_; }
+float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
-void Graffiti::DecreaseGrafitti(const float& percentage) {
-  remaining_grafitti_ -= percentage;
-  if (remaining_grafitti_ <= 0) is_erase_ = true;
+Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
+  Fragment::InitializeParameter parameter;
+  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
+  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
+  parameter.position = math::Vector3(x, 2.0f, z);
+  parameter.rotation = math::Quaternion::kIdentity;
+  parameter.scale = math::Vector3::kUnitVector;
+  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
+
+  Fragment fragment;
+  fragment.Init(parameter);
+  physics_field.AddFragment(fragment.GetCollisionRef());
+  return fragment;
+}
+
+void Graffiti::DecreaseGraffiti(const float& percentage) {
+  remaining_graffiti_ -= percentage;
+  if (remaining_graffiti_ <= 0) is_erase_ = true;
 }
 
 //テクスチャの色を設定する

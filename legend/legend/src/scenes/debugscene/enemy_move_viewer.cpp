@@ -133,10 +133,9 @@ bool EnemyMoveViewer::Update() {
     return false;
   }
 
-  if (!physics_field_.Update(turn_, player_.GetVelocity(), player_.GetIsMove(),
+  if (!physics_field_.Update(turn_, player_.GetVelocity(),
                              player_.GetImpulse(), player_.GetPower(),
-                             enemy_manager_.GetVelocities(),
-                             !enemy_manager_.LastEnemyMoveEnd())) {
+                             enemy_manager_.GetVelocities())) {
     return false;
   }
 

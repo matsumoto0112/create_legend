@@ -12,30 +12,26 @@ PhysicsField::PhysicsField() : gravity_(-20.0f) {}
 PhysicsField::~PhysicsField() {}
 
 bool PhysicsField::Init() {
-  desk_obbs_.clear();
-  enemy_obbs_.clear();
-  is_enemy_move_.clear();
-  enemy_deceleration_x_.clear();
-  enemy_deceleration_z_.clear();
+  // desk_obbs_.clear();
+  // enemy_obbs_.clear();
+  // is_enemy_move_.clear();
+  // enemy_deceleration_x_.clear();
+  // enemy_deceleration_z_.clear();
 
   return true;
 }
 
 //更新
-bool PhysicsField::Update(Mode turn, math::Vector3 player_vel, bool player_move,
+bool PhysicsField::Update(Mode turn, math::Vector3 player_vel,
                           float player_impulse, float player_power,
-                          std::vector<math::Vector3> enemies_vel,
-                          bool enemy_move) {
+                          std::vector<math::Vector3> enemies_vel) {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
   if (turn == Mode::PLAYER_MOVING) {
-    if (player_move)
-      PlayerMove(player_vel, player_impulse, player_power);
-    else
-      is_player_move_ = false;
+    PlayerMove(player_vel, player_impulse, player_power);
   } else {
-    if (enemy_move) EnemyMove(enemies_vel);
+    EnemyMove(enemies_vel);
   }
 
   //プレイヤーと各机との衝突判定を調べる
@@ -113,10 +109,8 @@ bool PhysicsField::Update(Mode turn, math::Vector3 player_vel, bool player_move,
   }
 
   //各エネミー同士の衝突判定を調べる
-  for (i32 i = 0; i < enemy_obbs_.size(); i++) {
-    for (i32 j = 0; j < enemy_obbs_.size(); j++) {
-      if (i == j) continue;
-
+  for (i32 i = 0; i < enemy_obbs_.size() - 1; i++) {
+    for (i32 j = i + 1; j < enemy_obbs_.size(); j++) {
       if (physics::Collision::GetInstance()->Collision_OBB_OBB(
               enemy_obbs_[i], enemy_obbs_[j], true, true)) {
         {
@@ -145,6 +139,22 @@ bool PhysicsField::Update(Mode turn, math::Vector3 player_vel, bool player_move,
             player_obb_, fragment_obbs_[i], false, false)) {
       player_obb_.OnTriggerHit(actor::ActorType::FRAGMENT);
       fragment_obbs_[i].OnTriggerHit(actor::ActorType::PLAYER);
+      is_hit_fragments_[i] = true;
+    }
+  }
+
+  //プレイヤーと落書きの衝突判定
+  for (i32 i = 0; i < graffiti_obbs_.size(); i++) {
+    if (player_velocity_ == math::Vector3::kZeroVector) break;
+
+    if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+            player_obb_, graffiti_obbs_[i], false, false)) {
+      //消しカスを生成する処理と落書きを消すための処理
+      is_hit_graffities_[i] = true;
+      graffiti_erase_percent_[i] = 10.0f;
+    } else {
+      is_hit_graffities_[i] = false;
+      graffiti_erase_percent_[i] = 0;
     }
   }
 
@@ -198,6 +208,13 @@ void PhysicsField::AddObstacle(const physics::BoundingBox& obstacle_obb) {
 
 void PhysicsField::AddFragment(const physics::BoundingBox& fragment_obb) {
   fragment_obbs_.emplace_back(fragment_obb);
+  is_hit_fragments_.emplace_back(false);
+}
+
+void PhysicsField::AddGraffiti(const physics::BoundingBox& graffiti_obb) {
+  graffiti_obbs_.emplace_back(graffiti_obb);
+  graffiti_erase_percent_.emplace_back(0.0f);
+  is_hit_graffities_.emplace_back(false);
 }
 
 //エネミーあたり判定の削除
@@ -219,6 +236,25 @@ void PhysicsField::RemoveDesk(i32 index_num) {
     return;
 
   desk_obbs_.erase(desk_obbs_.begin() + index_num);
+}
+
+void PhysicsField::RemoveGraffiti(i32 index_num) {
+  if (index_num < 0 || graffiti_obbs_.size() <= 0 ||
+      graffiti_obbs_.size() <= index_num)
+    return;
+
+  graffiti_obbs_.erase(graffiti_obbs_.begin() + index_num);
+  graffiti_erase_percent_.erase(graffiti_erase_percent_.begin() + index_num);
+  is_hit_graffities_.erase(is_hit_graffities_.begin() + index_num);
+}
+
+void PhysicsField::RemoveFragment(i32 index_num) {
+  if (index_num < 0 || fragment_obbs_.size() <= 0 ||
+      fragment_obbs_.size() <= index_num)
+    return;
+
+  fragment_obbs_.erase(fragment_obbs_.begin() + index_num);
+  is_hit_fragments_.erase(is_hit_fragments_.begin() + index_num);
 }
 
 //重力落下
@@ -259,12 +295,10 @@ void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
     player_velocity_.x *= rate;
     player_velocity_.z *= rate;
 
-    if (!is_player_move_) {
-      //減速計算
-      player_deceleration_x_ = player_velocity_.x / (speed * speed);
-      player_deceleration_z_ = player_velocity_.z / (speed * speed);
-      is_player_move_ = true;
-    }
+    //減速計算
+    player_deceleration_x_ = player_velocity_.x / (speed * speed);
+    player_deceleration_z_ = player_velocity_.z / (speed * speed);
+    is_player_move_ = true;
   }
 
   math::Vector3 velocity =
@@ -274,6 +308,8 @@ void PhysicsField::PlayerMove(math::Vector3 vel, float player_impulse,
   if (player_obb_.GetOnGround())
     Deceleration(player_velocity_, 30, player_deceleration_x_,
                  player_deceleration_z_);
+
+  if (player_velocity_ == math::Vector3::kZeroVector) is_player_move_ = false;
 }
 
 //各エネミーの移動処理
@@ -294,12 +330,10 @@ void PhysicsField::EnemyMove(std::vector<math::Vector3> enemies_vel) {
       enemy_velocities_[i].x *= rate;
       enemy_velocities_[i].z *= rate;
 
-      if (!is_enemy_move_[i]) {
-        //減速計算
-        enemy_deceleration_x_[i] = enemy_velocities_[i].x / (speed * speed);
-        enemy_deceleration_z_[i] = enemy_velocities_[i].z / (speed * speed);
-        is_enemy_move_[i] = true;
-      }
+      //減速計算
+      enemy_deceleration_x_[i] = enemy_velocities_[i].x / (speed * speed);
+      enemy_deceleration_z_[i] = enemy_velocities_[i].z / (speed * speed);
+      is_enemy_move_[i] = true;
     }
 
     math::Vector3 velocity = enemy_obbs_[i].GetPosition() +
@@ -364,6 +398,21 @@ void PhysicsField::ResetEnemyMove() {
   for (i32 i = 0; i < is_enemy_move_.size(); i++) {
     is_enemy_move_[i] = false;
   }
+}
+
+//消す割合
+float PhysicsField::GetErasePercent(i32 index_num) const {
+  return graffiti_erase_percent_[index_num];
+}
+
+//各落書きに当たったか
+bool PhysicsField::GetIsHitGraffiti(i32 index_num) const {
+  return is_hit_graffities_[index_num];
+}
+
+//各消しカスに当たったか
+bool PhysicsField::GetIsHitFragment(i32 index_num) const {
+  return is_hit_fragments_[index_num];
 }
 }  // namespace system
 }  // namespace legend

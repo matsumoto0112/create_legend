@@ -25,9 +25,8 @@ class PhysicsField {
   /**
    * @brief 更新
    */
-  bool Update(Mode turn, math::Vector3 player_vel, bool player_move,
-              float player_impulse, float player_power,
-              std::vector<math::Vector3> enemies_vel, bool enemy_move);
+  bool Update(Mode turn, math::Vector3 player_vel, float player_impulse,
+              float player_power, std::vector<math::Vector3> enemies_vel);
   /**
    * @brief プレイヤーあたり判定の登録
    * @param プレイヤーの直方体
@@ -53,6 +52,10 @@ class PhysicsField {
    */
   void AddFragment(const physics::BoundingBox& fragment_obb);
   /**
+   * @brief 落書きのあたり判定の登録
+   */
+  void AddGraffiti(const physics::BoundingBox& graffiti_obb);
+  /**
    * @brief エネミーあたり判定の削除
    * @param 格納番号
    */
@@ -62,6 +65,16 @@ class PhysicsField {
    * @param 格納番号
    */
   void RemoveDesk(i32 index_num);
+  /**
+   * @brief 落書きのあたり判定の削除
+   * @param 格納番号
+   */
+  void RemoveGraffiti(i32 index_num);
+  /**
+   * @brief消しカスのあたり判定の削除
+   * @param 格納番号
+   */
+  void RemoveFragment(i32 index_num);
   /**
    * @brief プレイヤーの移動処理
    * @param 速度
@@ -103,7 +116,6 @@ class PhysicsField {
    * @brief 更新したプレイヤーの回転の取得
    */
   math::Quaternion GetPlayerRotation() const;
-
   /**
    * @brief 更新した各エネミーの速度の取得
    */
@@ -112,6 +124,18 @@ class PhysicsField {
    * @brief エネミーの移動判定のリセット
    */
   void ResetEnemyMove();
+  /**
+   * @brief 落書きの消える割合を取得
+   */
+  float GetErasePercent(i32 index_num) const;
+  /**
+   * @brief 落書きにヒットしたかを取得
+   */
+  bool GetIsHitGraffiti(i32 index_num) const;
+  /**
+   * @brief 消しカスにヒットしたかを取得
+   */
+  bool GetIsHitFragment(i32 index_num) const;
 
  private:
   //! プレイヤーの直方体
@@ -124,6 +148,8 @@ class PhysicsField {
   std::vector<physics::BoundingBox> obstacle_obbs_;
   //! 消しカスの直方体
   std::vector<physics::BoundingBox> fragment_obbs_;
+  //! 落書きの直方体
+  std::vector<physics::BoundingBox> graffiti_obbs_;
 
   //! 重力
   float gravity_;
@@ -144,6 +170,13 @@ class PhysicsField {
   std::vector<math::Vector3> enemy_velocities_;
   //! 各エネミーの移動開始判定
   std::vector<bool> is_enemy_move_;
+
+  //! 各落書きを消す割合
+  std::vector<float> graffiti_erase_percent_;
+  //! 各落書きに当たっているか
+  std::vector<bool> is_hit_graffities_;
+  //! 消しカスに当たっているか
+  std::vector<bool> is_hit_fragments_;
 };
 
 }  // namespace system

@@ -55,6 +55,11 @@ bool TurnSystem::Init(const std::string& stage_name) {
     enemy_manager_.Add(enemy_parameter, physics_field_);
   }
 
+  for (auto&& graffiti : graffities_) {
+    physics_field_.AddGraffiti(graffiti.GetCollisionRef());
+    graffiti.SetMediator(this);
+  }
+
   if (!InitCameras()) {
     return false;
   }
@@ -149,9 +154,8 @@ bool TurnSystem::Update() {
 
   //物理処理の適用
   if (!physics_field_.Update(current_mode_, player_.GetVelocity(),
-                             player_.GetIsMove(), player_.GetImpulse(),
-                             player_.GetPower(), enemy_manager_.GetVelocities(),
-                             !enemy_manager_.LastEnemyMoveEnd())) {
+                             player_.GetImpulse(), player_.GetPower(),
+                             enemy_manager_.GetVelocities())) {
     return false;
   }
 
@@ -161,6 +165,10 @@ bool TurnSystem::Update() {
   player_.SetRotation(physics_field_.GetPlayerOBB().GetRotation());
   enemy_manager_.SetPosition(physics_field_);
   enemy_manager_.SetVelocity(physics_field_);
+
+  UpdateGraffiti();
+  RemoveGraffiti();
+  RemoveFragment();
 
   if (ImGui::Begin("Camera")) {
     if (ImGui::Button("Main")) {
@@ -323,6 +331,40 @@ bool TurnSystem::InitCameras() {
   return true;
 }
 
+//落書きの削除
+void TurnSystem::RemoveGraffiti() {
+  i32 remove_count = 0;
+  for (i32 i = 0 - remove_count; i < graffities_.size(); i++) {
+    if (graffities_[i].GetIsErase()) {
+      physics_field_.RemoveGraffiti(i);
+      graffities_.erase(graffities_.begin() + i);
+      remove_count++;
+    }
+  }
+}
+
+//落書き更新処理
+void TurnSystem::UpdateGraffiti() {
+  for (i32 i = 0; i < graffities_.size(); i++) {
+    if (physics_field_.GetIsHitGraffiti(i)) {
+      graffities_[i].DecreaseGraffiti(physics_field_.GetErasePercent(i));
+      fragments_.emplace_back(graffities_[i].InstanceFragment(physics_field_));
+    }
+  }
+}
+
+void TurnSystem::RemoveFragment() {
+  i32 remove_count = 0;
+  for (i32 i = 0 - remove_count; i < fragments_.size(); i++) {
+    if (physics_field_.GetIsHitFragment(i)) {
+      physics_field_.RemoveFragment(i);
+      fragments_.erase(fragments_.begin() + i);
+      player_.UpdateStrength(0.1f);
+      remove_count++;
+    }
+  }
+}
+
 //描画
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -340,6 +382,10 @@ void TurnSystem::Draw() {
   for (auto&& graffiti : graffities_) {
     graffiti.Draw(command_list);
   }
+  for (auto&& fragment : fragments_) {
+    fragment.Draw();
+  }
+
   ui_board_.Draw();
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
@@ -365,6 +411,9 @@ void TurnSystem::DebugDraw() {
   }
   for (auto&& graffiti : graffities_) {
     graffiti.GetCollisionRef().DebugDraw(command_list);
+  }
+  for (auto&& fragment : fragments_) {
+    fragment.GetCollisionRef().DebugDraw(command_list);
   }
 }
 

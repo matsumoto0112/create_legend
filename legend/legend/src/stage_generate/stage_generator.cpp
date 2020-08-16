@@ -155,7 +155,8 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
 
       object::GraffitiInitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(4.0f, 0.1f, 4.0f);
+      parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
+      parameter.remaining_graffiti = 100.0f;
 
       auto& graffiti = graffities->emplace_back();
 

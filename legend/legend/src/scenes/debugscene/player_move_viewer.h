@@ -1,14 +1,8 @@
 #ifndef LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
 #define LEGEND_SCENES_DEBUGSCENE_PLAYER_MOVE_VIEWER_H_
 
-#include "src/camera/perspective_camera.h"
-#include "src/object/desk.h"
-#include "src/object/fragment.h"
-#include "src/object/graffiti.h"
-#include "src/player/player.h"
 #include "src/scenes/scene.h"
-#include "src/system/mode.h"
-#include "src/system/physics_field.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
@@ -42,14 +36,7 @@ class PlayerMoveViewer : public Scene {
   void Finalize() override;
 
  private:
-  //! メインカメラ
-  camera::PerspectiveCamera camera_;
-  //! プレイヤー
-  player::Player player_;
-  //! 机
-  object::Desk desk_;
-  object::Graffiti graffiti_;
-  std::vector<object::Fragment> fragments_;
+  system::TurnSystem turn_system_;
 };
 
 }  // namespace debugscene

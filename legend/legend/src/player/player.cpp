@@ -77,6 +77,12 @@ void Player::SetRotation(math::Quaternion rotation) {
   collision_.SetRotation(rotation);
 }
 
+//スケールの設定
+void Player::SetScale(math::Vector3 scale) {
+  transform_.SetScale(scale);
+  collision_.SetScale(scale);
+}
+
 //速度の設定
 void Player::SetVelocity() {
   if (is_move_) return;
@@ -140,6 +146,9 @@ void Player::ResetParameter() {
 
 //座標の取得
 math::Vector3 Player::GetPosition() const { return transform_.GetPosition(); }
+
+//スケールの取得
+math::Vector3 Player::GetScale() const { return transform_.GetScale(); }
 
 //移動量の取得
 math::Vector3 Player::GetVelocity() const { return velocity_; }

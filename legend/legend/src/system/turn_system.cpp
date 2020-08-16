@@ -56,10 +56,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
   {
     search_manager_.Initialize(&player_.GetCollisionRef());
     search_manager_.Add({
-        math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
-        math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
-        math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
-        math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
+        math::Vector3(1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 10.0f,
     });
     search_manager_.SetBranch(0, {1, 2, 3});
     search_manager_.SetBranch(1, {0, 2, 3});
@@ -194,13 +194,14 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //ìGÇÃà⁄ìÆèàóù
 bool TurnSystem::EnemyMove() {
-  MY_LOG(L"EnemyMove");
+  //MY_LOG(L"EnemyMove");
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
       enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     physics_field_.ResetEnemyMove();
+    enemy_manager_.ResetEnemyMove();
     AddCurrentTurn();
   }
   return true;

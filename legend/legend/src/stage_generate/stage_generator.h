@@ -3,6 +3,7 @@
 
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
+#include "src/object/graffiti.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/system/physics_field.h"
@@ -33,7 +34,8 @@ class StageGenerator {
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
                  std::vector<object::Desk>* desks,
                  std::vector<object::Obstacle>* obstacles,
-                 player::Player* player);
+                 player::Player* player,
+                 std::vector<object::Graffiti>* graffities);
   /**
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
@@ -45,9 +47,11 @@ class StageGenerator {
    */
   bool SetMapActors(std::vector<object::Desk>* desks,
                     std::vector<object::Obstacle>* obstacles,
-                    player::Player* player);
+                    player::Player* player,
+                    std::vector<object::Graffiti>* graffities);
 
-  std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(const i32 turn_count);
+  std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
+      const i32 turn_count);
 
  private:
   /**

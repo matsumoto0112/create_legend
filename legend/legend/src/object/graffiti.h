@@ -6,10 +6,9 @@
  */
 
 #include "src/actor/actor.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/util/color_4.h"
 #include "src/util/transform.h"
+#include "src/object/fragment.h"
 
 namespace legend {
 namespace object {
@@ -94,13 +93,6 @@ class Graffiti : public actor::Actor {
   static constexpr u32 MASK_HEIGHT = 16;
 
  private:
-  ////! トランスフォーム
-  // util::Transform transform_;
-  ////! トランスフォームコンスタントバッファ
-  // directx::buffer::ConstantBuffer<
-  //    directx::buffer::constant_buffer_structure::Transform>
-  //    transform_cb_;
-
   //! テクスチャリソース
   ComPtr<ID3D12Resource> mask_texture_;
   //! テクスチャの書き換えに必要なコピーリソース

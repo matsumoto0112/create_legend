@@ -19,7 +19,7 @@ namespace legend {
 namespace object {
 
 //コンストラクタ
-Graffiti::Graffiti() : Parent(L"Grafitti") {}
+Graffiti::Graffiti() : Parent(L"Graffiti") {}
 
 //デストラクタ
 Graffiti::~Graffiti() {}

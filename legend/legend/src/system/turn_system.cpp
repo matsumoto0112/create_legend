@@ -24,7 +24,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
   }
 
   if (!stage_generator_.LoadStage(stage_path, stage_name, &desks_, &obstacles_,
-                                  &player_)) {
+                                  &player_, &graffities_)) {
     return false;
   }
 
@@ -191,6 +191,9 @@ bool TurnSystem::InitCameras() {
 
 //描画
 void TurnSystem::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+
   cameras_[current_camera_]->RenderStart();
   player_.Draw();
   for (auto&& desk : desks_) {
@@ -199,6 +202,9 @@ void TurnSystem::Draw() {
   enemy_manager_.Draw();
   for (auto&& obs : obstacles_) {
     obs.Draw();
+  }
+  for (auto&& graffiti : graffities_) {
+    graffiti.Draw(command_list);
   }
 }
 
@@ -218,6 +224,9 @@ void TurnSystem::DebugDraw() {
   for (auto&& obs : obstacles_) {
     obs.GetCollisionRef().DebugDraw(command_list);
   }
+  for (auto&& graffiti : graffities_) {
+    graffiti.GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 //ターン数の増加
@@ -231,7 +240,6 @@ void TurnSystem::PlayerMoveStartEvent() { current_mode_ = Mode::PLAYER_MOVING; }
 
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
-  player_.ResetMoveEnd();
   // 0.1秒後にモードを切り替える
   countdown_timer_.Init(
       0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });

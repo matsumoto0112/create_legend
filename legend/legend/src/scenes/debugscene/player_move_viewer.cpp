@@ -143,9 +143,20 @@ bool PlayerMoveViewer::Update() {
   if (physics::Collision::GetInstance()->Collision_OBB_OBB(
           player_.GetCollisionRef(), graffiti_.GetCollisionRef(), false,
           false)) {
-    MY_LOG(L"—‘‚«‚ÆÕ“Ë");
-    graffiti_.DecreaseGrafitti(1.0f * update_time);
+    if (!graffiti_.GetIsErase()) {
+      MY_LOG(L"—‘‚«‚ÆÕ“Ë");
+      graffiti_.DecreaseGrafitti(20.0f * update_time);
+    }
   }
+
+  //for (i32 i = 0; i < fragments_.size(); i++) {
+  //  if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+  //          player_.GetCollisionRef(), fragments_[i]->GetCollisionRef(), false,
+  //          false)) {
+  //    fragments_.erase(fragments_.begin() + i);
+  //    player_.UpdateStrength(0.01f);
+  //  }
+  //}
 
   return true;
 }
@@ -164,6 +175,9 @@ void PlayerMoveViewer::Draw() {
   player_.Draw();
   desk_.Draw();
   graffiti_.Draw(command_list);
+  //for (auto&& fragment : fragments_) {
+  //  fragment.Draw();
+  //}
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
@@ -173,6 +187,9 @@ void PlayerMoveViewer::Draw() {
   player_.GetCollisionRef().DebugDraw(command_list);
   desk_.GetCollisionRef().DebugDraw(command_list);
   graffiti_.GetCollisionRef().DebugDraw(command_list);
+  //for (auto&& fragment : fragments_) {
+  //  fragment.GetCollisionRef().DebugDraw(command_list);
+  //}
 }
 
 //I—¹

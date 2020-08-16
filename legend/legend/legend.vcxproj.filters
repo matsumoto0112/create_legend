@@ -303,10 +303,10 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
-    <ClInclude Include="src\ui\ui_board.h" />
     <ClInclude Include="src\ui\image.h" />
-    <ClInclude Include="src\ui\ui_component.h" />
     <ClInclude Include="src\ui\gauge.h" />
+    <ClInclude Include="src\ui\ui_board.h" />
+    <ClInclude Include="src\ui\ui_component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

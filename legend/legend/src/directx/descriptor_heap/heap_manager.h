@@ -101,7 +101,6 @@ class HeapManager {
    */
   DescriptorHandle GetLocalHeap(heap_parameter::LocalHeapID heap_id);
 
- public:
   /**
    * @brief レンダーターゲットヒープを取得する
    */
@@ -111,6 +110,7 @@ class HeapManager {
    */
   CountingDescriptorHeap* GetDsvHeap() { return &dsv_heap_; }
 
+ private:
   // private:
   //! レンダーターゲットヒープ
   CountingDescriptorHeap rtv_heap_;

@@ -207,20 +207,18 @@ bool TurnSystem::Update() {
       }
       ofs.flush();
     }
-    static float value = 0.5f;
-    ImGui::SliderFloat("Quarter", &value, 0.0f, 3.0f);
-    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
-        math::util::Clamp(value, 0.0f, 1.0f));
-    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
-        math::util::Clamp(value - 1.0f, 0.0f, 1.0f));
-    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
-        math::util::Clamp(value - 2.0f, 0.0f, 1.0f));
 
-    static int num = 0;
-    ImGui::SliderInt("Num", &num, 0, 300);
-    numbers_[number_id::DIGIT_3]->SetNumber(num / 100);
-    numbers_[number_id::DIGIT_2]->SetNumber(num / 10 % 10);
-    numbers_[number_id::DIGIT_1]->SetNumber(num % 10);
+    static int power = 100;
+    ImGui::SliderInt("PlayerPower", &power, 0, 300);
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
+        math::util::Clamp(power * 0.01f, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
+        math::util::Clamp((power * 0.01f) - 1.0f, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
+        math::util::Clamp((power * 0.01f) - 2.0f, 0.0f, 1.0f));
+    numbers_[number_id::DIGIT_3]->SetNumber(power / 100);
+    numbers_[number_id::DIGIT_2]->SetNumber(power / 10 % 10);
+    numbers_[number_id::DIGIT_1]->SetNumber(power % 10);
   }
   ImGui::End();
 
@@ -336,6 +334,7 @@ void TurnSystem::Draw() {
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
+  cameras_[current_camera_]->RenderStart();
   auto& command_list = game::GameDevice::GetInstance()
                            ->GetDevice()
                            .GetCurrentFrameResource()

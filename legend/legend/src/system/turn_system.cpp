@@ -1,5 +1,9 @@
 #include "src/system/turn_system.h"
 
+namespace {
+std::vector<legend::ui::UIComponent*> components_;
+}  // namespace
+
 namespace legend {
 namespace system {
 
@@ -62,6 +66,26 @@ bool TurnSystem::Init(const std::string& stage_name) {
     search_manager_.SetBranch(3, {0, 1, 2});
   }
 
+  std::ifstream ifs(util::Path::GetInstance()->exe() / "assets" / "parameters" /
+                    "main_ui.txt");
+  std::string line;
+  while (std::getline(ifs, line)) {
+    auto split = util::string_util::StringSplit(line, ',');
+    MY_ASSERTION(split.size() == 4, L"フォーマットが不正です。");
+    std::string name = split[0] + ".png";
+    std::wstring w_name = util::string_util::String_2_WString(name);
+    float x = std::stof(split[1]);
+    float y = std::stof(split[2]);
+    float z = std::stof(split[3]);
+
+    auto image = std::make_unique<ui::Image>();
+    if (!image->Init(w_name)) {
+      return false;
+    }
+    image->SetPosition(math::Vector2(x, y));
+    components_.emplace_back(ui_board_.AddComponent(std::move(image)));
+  }
+
   return true;
 }
 
@@ -105,6 +129,32 @@ bool TurnSystem::Update() {
     }
   }
   ImGui::End();
+
+  if (ImGui::Begin("UI")) {
+    const u32 size = static_cast<u32>(components_.size());
+    for (u32 i = 0; i < size; i++) {
+      std::stringstream ss;
+      ss << "Image:" << i;
+      ImGui::Text(ss.str().c_str());
+
+      math::Vector2 pos = components_[i]->GetPosition();
+      float field[2] = {pos.x, pos.y};
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Position:" << i;
+      ImGui::SliderFloat2(ss.str().c_str(), field, 0.0f, 2000.0f);
+      components_[i]->SetPosition(math::Vector2(field[0], field[1]));
+
+      float z = components_[i]->GetZOrder();
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Z_Order:" << i;
+      ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
+      components_[i]->SetZOrder(z);
+    }
+  }
+  ImGui::End();
+
   return true;
 }
 
@@ -200,24 +250,25 @@ void TurnSystem::Draw() {
   for (auto&& obs : obstacles_) {
     obs.Draw();
   }
+  ui_board_.Draw();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  auto& command_list = game::GameDevice::GetInstance()
-                           ->GetDevice()
-                           .GetCurrentFrameResource()
-                           ->GetCommandList();
+  // auto& command_list = game::GameDevice::GetInstance()
+  //                         ->GetDevice()
+  //                         .GetCurrentFrameResource()
+  //                         ->GetCommandList();
 
-  player_.GetCollisionRef().DebugDraw(command_list);
-  for (auto&& desk : desks_) {
-    desk.GetCollisionRef().DebugDraw(command_list);
-  }
-  enemy_manager_.DebugDraw(command_list);
-  search_manager_.DebugDraw(command_list);
-  for (auto&& obs : obstacles_) {
-    obs.GetCollisionRef().DebugDraw(command_list);
-  }
+  // player_.GetCollisionRef().DebugDraw(command_list);
+  // for (auto&& desk : desks_) {
+  //  desk.GetCollisionRef().DebugDraw(command_list);
+  //}
+  // enemy_manager_.DebugDraw(command_list);
+  // search_manager_.DebugDraw(command_list);
+  // for (auto&& obs : obstacles_) {
+  //  obs.GetCollisionRef().DebugDraw(command_list);
+  //}
 }
 
 //ターン数の増加

@@ -127,6 +127,8 @@
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
+    <ClCompile Include="src\ui\image.cpp" />
+    <ClCompile Include="src\ui\ui_board.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -300,6 +302,9 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\ui\ui_board.h" />
+    <ClInclude Include="src\ui\image.h" />
+    <ClInclude Include="src\ui\ui_component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -344,5 +349,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />
+    <Text Include="assets\parameters\main_ui.txt" />
   </ItemGroup>
 </Project>

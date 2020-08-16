@@ -17,24 +17,6 @@ class MyApp final : public device::Application {
     }
 
     auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-    {
-      const math::IntVector2 screen_size =
-          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-      const directx::render_target::DepthStencil::DepthStencilDesc desc = {
-          L"DepthOnly",
-          DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT,
-          static_cast<u32>(screen_size.x),
-          static_cast<u32>(screen_size.y),
-          1.0f,
-          0};
-      if (!device.GetRenderResourceManager().AddDepthStencil(
-              directx::render_target::DepthStencilTargetID::DEPTH_ONLY, device,
-              desc)) {
-        return false;
-      }
-    }
-
     auto& resource = game::GameDevice::GetInstance()->GetResource();
 
     //パイプラインの登録

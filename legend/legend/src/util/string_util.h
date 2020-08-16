@@ -82,6 +82,21 @@ static inline std::string WString_2_String(const std::wstring& s) {
   return Wide_2_CP(s, CP_ACP);
 }
 
+static inline std::vector<std::string> StringSplit(const std::string& string,
+                                                   char border) {
+  std::vector<std::string> elements;
+  std::stringstream ss(string);
+  std::string item;
+
+  while (std::getline(ss, item, border)) {
+    if (item.empty()) continue;
+
+    elements.push_back(item);
+  }
+
+  return elements;
+}
+
 }  // namespace string_util
 }  // namespace util
 }  // namespace legend

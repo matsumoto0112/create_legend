@@ -66,6 +66,15 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   //今後、毎描画後に更新していく
   frame_index_ = render_resource_manager_.GetCurrentBackBufferIndex();
 
+  //デプス・ステンシルを追加する
+  const directx::render_target::DepthStencil::DepthStencilDesc desc = {
+      L"DepthOnly", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, width, height, 1.0f, 0};
+  if (!render_resource_manager_.AddDepthStencil(
+          directx::render_target::DepthStencilTargetID::DEPTH_ONLY, *this,
+          desc)) {
+    return false;
+  }
+
   for (u32 i = 0; i < defines::FRAME_COUNT; i++) {
     FrameResource& resource = resources_[i];
     if (!resource.Init(

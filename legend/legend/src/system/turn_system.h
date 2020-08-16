@@ -17,6 +17,8 @@
 #include "src/search/search_manager.h"
 #include "src/stage_generate/stage_generator.h"
 #include "src/system/mode.h"
+#include "src/ui/image.h"
+#include "src/ui/ui_board.h"
 #include "src/util/timer.h"
 
 namespace legend {
@@ -146,6 +148,9 @@ class TurnSystem : public actor::IActorMediator {
   std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
   //! 現在使用しているカメラ
   camera_mode::Enum current_camera_;
+
+  //! UI表示ボード
+  ui::UIBoard ui_board_;
 };
 
 }  // namespace system

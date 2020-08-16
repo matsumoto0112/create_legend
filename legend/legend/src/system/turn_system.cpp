@@ -196,8 +196,13 @@ bool TurnSystem::Update() {
       ofs.flush();
     }
     static float value = 0.5f;
-    ImGui::SliderFloat("Quarter", &value, 0.0f, 1.0f);
-    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE]->SetValue(value);
+    ImGui::SliderFloat("Quarter", &value, 0.0f, 3.0f);
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
+        math::util::Clamp(value, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
+        math::util::Clamp(value - 1.0f, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
+        math::util::Clamp(value - 2.0f, 0.0f, 1.0f));
   }
   ImGui::End();
 

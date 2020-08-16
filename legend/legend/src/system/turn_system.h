@@ -37,7 +37,13 @@ namespace gauge_id {
 /**
  * @brief UIファイルに格納しているゲージの順
  */
-enum GaugeID { PLAYER_CHARGE_POWER, PLAYER_STRENGTHENED_STATE, MAX };
+enum GaugeID {
+  PLAYER_CHARGE_POWER,
+  PLAYER_STRENGTHENED_STATE_0,
+  PLAYER_STRENGTHENED_STATE_1,
+  PLAYER_STRENGTHENED_STATE_2,
+  MAX
+};
 }  // namespace gauge_id
 
 /**

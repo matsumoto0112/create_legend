@@ -72,15 +72,20 @@ void SkillPencil::Draw() { actor::Actor::Draw(); }
 
 void SkillPencil::Use() {
   is_use_ = true;
-  remaining_usable_count_--;
   Action();
 }
 
-void SkillPencil::Action() { is_production_ = true; }
+void SkillPencil::Action() {
+  remaining_usable_count_--;
+  is_production_ = true;
+}
 
-void SkillPencil::ProductionUpdate() {}
+void SkillPencil::ProductionUpdate() {
+  //Ç∆ÇËÇ†Ç¶Ç∏âΩÇ‡ÇπÇ∏èIÇ¶ÇÈ
+  EndAction();
+}
 
-void SkillPencil::EndAction() {}
+void SkillPencil::EndAction() { is_production_ = false; }
 
 }  // namespace skill
 }  // namespace legend

@@ -3,7 +3,7 @@
 
 /**
  * @file quarter_gauge.h
- * @brief
+ * @brief 1/4ゲージ画像を使用したゲージクラス定義
  */
 
 #include "src/ui/gauge.h"

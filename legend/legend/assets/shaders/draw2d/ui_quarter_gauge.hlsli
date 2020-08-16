@@ -3,7 +3,7 @@
 
 /**
  * @file ui_quarter_gauge.hlsli
- * @brief
+ * @brief 1.4ƒQ[ƒW•`‰æ
  */
 
 #include "../defines/global.hlsli"

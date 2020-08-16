@@ -51,6 +51,10 @@ class Player : public actor::Actor {
    */
   void SetRotation(math::Quaternion rotation);
   /**
+   * @brief スケールの設定
+   */
+  void SetScale(math::Vector3 scale);
+  /**
    * @brief 移動量の設定
    */
   void SetVelocity();
@@ -70,6 +74,10 @@ class Player : public actor::Actor {
    * @brief 座標の取得
    */
   math::Vector3 GetPosition() const;
+  /**
+   * @brief スケールの取得
+   */
+  math::Vector3 GetScale() const;
   /**
    * @brief 移動量の取得
    */

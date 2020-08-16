@@ -29,7 +29,7 @@ class SkillManager {
   /**
    * @brief スキルの獲得処理
    */
-  void AddSkill(Skill skill);
+  void AddSkill(std::shared_ptr<Skill> skill);
   /**
    * @brief スキルの獲得処理(デバック用)
    */
@@ -59,11 +59,11 @@ class SkillManager {
   //! 所持できる最大スキル数
   i32 skill_max_count_;
   //! 所持しているスキル用リスト
-  std::vector<Skill> skills_;
+  std::vector<std::shared_ptr<Skill>> skills_;
   //! スキル選択のUI用クラス
   SkillSelectUI select_ui_;
   //! このターン手に入れたスキル
-  std::vector<Skill> this_turn_get_skills_;
+  std::vector<std::shared_ptr<Skill>> this_turn_get_skills_;
 };
 }  // namespace skill
 }  // namespace legend

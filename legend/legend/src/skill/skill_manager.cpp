@@ -14,11 +14,10 @@ void SkillManager::Init() { select_ui_.Init(); }
 // void SkillManager::Update() {}
 
 void SkillManager::GetSkill(i32 skill_id) {
-  SkillPencil skill;
-  this_turn_get_skills_.push_back(skill);
+  this_turn_get_skills_.push_back(std::make_shared<SkillPencil>());
 }
 
-void SkillManager::AddSkill(Skill skill) {
+void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
   skills_.push_back(skill);
   select_ui_.AddSkill();
 }
@@ -27,7 +26,7 @@ void SkillManager::AddSkill(Skill skill) {
 
 void SkillManager::Update() {
   for (auto&& skill : skills_) {
-    skill.Update();
+    skill->Update();
   }
 }
 
@@ -47,10 +46,10 @@ void SkillManager::PlayerTurnEnd() {
 
   //プレイヤー行動後に発動するスキルの発動
   for (auto&& skill : skills_) {
-    if (!skill.GetUseFlag()) continue;
-    if (skill.GetActivetionTiming() != SkillActivationTiming::PLAYER_TURN_END)
+    if (!skill->GetUseFlag()) continue;
+    if (skill->GetActivetionTiming() != SkillActivationTiming::PLAYER_TURN_END)
       continue;
-    skill.Action();
+    skill->Action();
   }
 
   //今はない
@@ -61,28 +60,28 @@ void SkillManager::EnemyTurnEnd() {
 
   //エネミー行動後に発動するスキルの発動
   for (auto&& skill : skills_) {
-    if (!skill.GetUseFlag()) continue;
-    if (skill.GetActivetionTiming() != SkillActivationTiming::ENEMY_TURN_END)
+    if (!skill->GetUseFlag()) continue;
+    if (skill->GetActivetionTiming() != SkillActivationTiming::ENEMY_TURN_END)
       continue;
-    skill.Action();
+    skill->Action();
   }
 
   //スキルの再使用ターンの更新
   for (auto&& skill : skills_) {
-    skill.RemaingRecastTurnUpdate();
+    skill->RemaingRecastTurnUpdate();
   }
 }
 
 void SkillManager::Draw() {
   for (auto&& skill : skills_) {
-    skill.Draw();
+    skill->Draw();
   }
   select_ui_.Draw();
 }
 
 bool SkillManager::IsProductionNow() {
   for (auto&& skill : skills_) {
-    if (skill.ProductionFlag()) return true;
+    if (skill->ProductionFlag()) return true;
   }
   return false;
 }

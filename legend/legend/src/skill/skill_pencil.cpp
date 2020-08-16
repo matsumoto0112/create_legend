@@ -14,9 +14,9 @@ SkillPencil::SkillPencil() {
 SkillPencil::~SkillPencil() {}
 
 void SkillPencil::Init(const player::Player& player) {
-    if (!Parent::InitBuffer()) {
-        return;
-    }
+  if (!Parent::InitBuffer()) {
+    return;
+  }
   //! 規定使用可能回数
   usable_count_ = 1;
   //! 残り使用可能回数
@@ -52,22 +52,23 @@ void SkillPencil::Init(const player::Player& player) {
       util::resource::resource_names::model::STATIONARY_01);
 }
 
-bool SkillPencil::Update()
-{
-    transform_.SetPosition(player_->GetPosition());
-    transform_.SetRotation(player_->GetRotation());
-    transform_.SetScale(math::Vector3(1, 1, 1));
-    collision_.SetPosition(transform_.GetPosition());
-    collision_.SetRotation(transform_.GetRotation());
-    collision_.SetScale(transform_.GetScale());
-    collision_.SetLength(transform_.GetScale());
+bool SkillPencil::Update() {
+  if (player_ == nullptr) {
+    return false;
+  }
 
-    return true;
+  transform_.SetPosition(player_->GetPosition());
+  transform_.SetRotation(player_->GetRotation());
+  transform_.SetScale(math::Vector3(1, 1, 1));
+  collision_.SetPosition(transform_.GetPosition());
+  collision_.SetRotation(transform_.GetRotation());
+  collision_.SetScale(transform_.GetScale());
+  collision_.SetLength(transform_.GetScale());
+
+  return true;
 }
 
- void SkillPencil::Draw() {
-    actor::Actor::Draw();
-}
+void SkillPencil::Draw() { actor::Actor::Draw(); }
 
 void SkillPencil::Use() {
   is_use_ = true;

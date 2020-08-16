@@ -25,7 +25,7 @@ class Skill : public actor::Actor {
   /**
    * @brief XVˆ—
    */
-  bool Update() override;
+  virtual bool Update();
   ///**
   // * @brief •`‰æˆ—
   // */

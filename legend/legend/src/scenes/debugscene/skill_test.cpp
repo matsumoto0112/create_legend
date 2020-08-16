@@ -17,15 +17,15 @@ bool SkillTest::Initialize() {
   return true;
 }
 bool SkillTest::Update() {
-    skill_manager_.Update();
+  skill_manager_.Update();
 
   if (!turn_system_.Update()) {
     return false;
   }
   if (ImGui::Begin("Skill Test")) {
     if (ImGui::Button("Add Skill")) {
-      skill::SkillPencil skill;
-      skill.Init(*turn_system_.GetPlayer());
+        std::shared_ptr<skill::SkillPencil> skill = std::make_shared<skill::SkillPencil>();
+      skill->Init(*turn_system_.GetPlayer());
       skill_manager_.AddSkill(skill);
     }
   }

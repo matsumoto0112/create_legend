@@ -1,34 +1,85 @@
 #include "skill_pencil.h"
 
+#include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 #include "src\\stdafx.h"
 
 namespace legend {
 namespace skill {
 
 SkillPencil::SkillPencil() {
-    //モデルのidは仮で-1
-    model_id_ = -1;
-    //! 規定使用可能回数
-    usable_count_ = 1;
-    //! 残り使用可能回数
-    remaining_usable_count_ = usable_count_;
-    //! 再使用まで規定のターン数
-    recast_turn_ = 1;
-    //! 残り再使用までのターン数
-    remaining_recast_turn_ = 0;
-    //! スキルの発動タイミング
-    activetion_timing_ = SkillActivationTiming::NOW;
-    //! スキルの効果終了タイミング
-    end_timing_ = SkillEffectEndTiming::NOW;
-    //! スキルアイコンのID
-    skill_icon_id_ = -1;
-    //! スキル説明の画像のID
-    skill_explanation_id_ = -1;
-    //! 使用されるかのフラグ
-    is_use_ = false;
+  //各ステータスの初期値を設定
 }
 
 SkillPencil::~SkillPencil() {}
+
+void SkillPencil::Init(const player::Player& player) {
+    if (!Parent::InitBuffer()) {
+        return;
+    }
+  //! 規定使用可能回数
+  usable_count_ = 1;
+  //! 残り使用可能回数
+  remaining_usable_count_ = usable_count_;
+  //! 再使用まで規定のターン数
+  recast_turn_ = 1;
+  //! 残り再使用までのターン数
+  remaining_recast_turn_ = 0;
+  //! スキルの発動タイミング
+  activetion_timing_ = SkillActivationTiming::NOW;
+  //! スキルの効果終了タイミング
+  end_timing_ = SkillEffectEndTiming::NOW;
+  //! 使用されているかのフラグ
+  is_use_ = false;
+
+  player_ = &player;
+
+  transform_.SetPosition(player.GetPosition());
+  transform_.SetRotation(player.GetRotation());
+  transform_.SetScale(math::Vector3(1, 1, 1));
+  collision_.SetPosition(transform_.GetPosition());
+  collision_.SetRotation(transform_.GetRotation());
+  collision_.SetScale(transform_.GetScale());
+  collision_.SetLength(transform_.GetScale());
+
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+  //モデルの初期化
+  model_ = resource.GetModel().Get(
+      util::resource::resource_names::model::STATIONARY_01);
+}
+
+bool SkillPencil::Update()
+{
+    transform_.SetPosition(player_->GetPosition());
+    transform_.SetRotation(player_->GetRotation());
+    transform_.SetScale(math::Vector3(1, 1, 1));
+    collision_.SetPosition(transform_.GetPosition());
+    collision_.SetRotation(transform_.GetRotation());
+    collision_.SetScale(transform_.GetScale());
+    collision_.SetLength(transform_.GetScale());
+
+    return true;
+}
+
+ void SkillPencil::Draw() {
+    actor::Actor::Draw();
+}
+
+void SkillPencil::Use() {
+  is_use_ = true;
+  remaining_usable_count_--;
+  Action();
+}
+
+void SkillPencil::Action() { is_production_ = true; }
+
+void SkillPencil::ProductionUpdate() {}
+
+void SkillPencil::EndAction() {}
 
 }  // namespace skill
 }  // namespace legend

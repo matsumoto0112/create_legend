@@ -93,7 +93,31 @@ constexpr name GAUGE = L"gauge";
 constexpr name QUARTER_GAUGE = L"quarter_gauge";
 }  // namespace pipeline
 
-namespace audio {}  // namespace audio
+namespace audio {
+constexpr name PLAYER_POWER_CHARGE = L"free_2.wav";
+constexpr name PLAYER_SNAP = L"free_2.wav";
+constexpr name PLAYER_MOVING = L"free_2.wav";
+constexpr name PLAYER_ENEMY_HIT_SMALL = L"free_2.wav";
+constexpr name PLAYER_ENEMY_HIT_BIG = L"free_2.wav";
+constexpr name PLAYER_OBSTACLE_HIT = L"free_2.wav";
+constexpr name PLAYER_FALL_OUT = L"free_2.wav";
+constexpr name PLAYER_GET_STATIONERY = L"free_2.wav";
+constexpr name PLAYER_MOVE_SELECT_SKILL_MODE = L"free_2.wav";
+constexpr name SKILL_SELECT = L"free_2.wav";
+constexpr name SKILL_DECISION = L"free_2.wav";
+constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE = L"free_2.wav";
+constexpr name SKILL_PENCIL_SHOT = L"free_2.wav";
+constexpr name SKILL_PENCIL_HIT = L"free_2.wav";
+constexpr name ERASE_GRAFFITI = L"free_2.wav";
+constexpr name PLAYER_GET_FRAGMENT = L"free_2.wav";
+constexpr name PLAYER_TRUN_END = L"free_2.wav";
+constexpr name ENEMY_TRUN_END = L"free_4.wav";
+constexpr name TITLE_DECISION = L"free_2.wav";
+constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
+constexpr name RESULT_GAMEOVER = L"free_2.wav";
+constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
+constexpr name RESULT_MOVE_OTHER_SCENE = L"free_2.wav";
+}  // namespace audio
 
 }  // namespace resource_names
 }  // namespace resource

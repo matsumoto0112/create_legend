@@ -5,6 +5,7 @@
 
 namespace legend {
 namespace system {
+namespace audio_name = util::resource::resource_names::audio;
 
 //コンストラクタ
 TurnSystem::TurnSystem()
@@ -18,6 +19,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //ステージデータの拡張子は.txt
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  if (!audio.LoadWav(audio_name::PLAYER_TRUN_END, AudioType::SE)) {
+    return false;
+  }
+  if (!audio.LoadWav(audio_name::ENEMY_TRUN_END, AudioType::SE)) {
+    return false;
+  }
 
   if (!physics_field_.Init()) {
     return false;
@@ -239,6 +247,9 @@ bool TurnSystem::PlayerMoveReady() {
 bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::PlayerSkillAfterModed() {
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Start(util::resource::resource_names::audio::PLAYER_TRUN_END, 1.0f);
+
   current_mode_ = Mode::ENEMY_MOVING;
   return true;
 }
@@ -264,6 +275,9 @@ bool TurnSystem::EnemyMoveEnd() {
        stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
     enemy_manager_.Add(enemy_parameter, physics_field_);
   }
+
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Start(audio_name::ENEMY_TRUN_END, 1.0f);
 
   current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;
@@ -361,7 +375,10 @@ void TurnSystem::AddCurrentTurn() { current_turn_++; }
 i32 TurnSystem::GetCurrentTurn() { return current_turn_; }
 
 //プレイヤーの移動開始時処理
-void TurnSystem::PlayerMoveStartEvent() { current_mode_ = Mode::PLAYER_MOVING; }
+void TurnSystem::PlayerMoveStartEvent() {
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  current_mode_ = Mode::PLAYER_MOVING;
+}
 
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {

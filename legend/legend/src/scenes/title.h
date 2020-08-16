@@ -28,6 +28,11 @@ class Title : public Scene {
    * @brief •`‰æ
    */
   void Draw() override;
+
+  void Finalize() override;
+
+ private:
+  i32 bgm_key_;
 };
 
 }  // namespace scenes

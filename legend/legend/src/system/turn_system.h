@@ -115,6 +115,19 @@ class TurnSystem : public actor::IActorMediator {
    * @brief カメラの初期化
    */
   bool InitCameras();
+  /**
+   * @brief 落書きの削除
+   */
+  void RemoveGraffiti();
+  /**
+   * @brief 落書き更新処理
+   */
+  void UpdateGraffiti();
+  /**
+   * @brief 消しカスの削除
+   */
+  void RemoveFragment();
+
 
  private:
   //! 現在ターン数
@@ -135,6 +148,8 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<object::Obstacle> obstacles_;
   //! 落書き
   std::vector<object::Graffiti> graffities_;
+  //! 消しカス
+  std::vector<object::Fragment> fragments_;
   //! 敵管理
   enemy::EnemyManager enemy_manager_;
   //! 分岐管理

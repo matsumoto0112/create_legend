@@ -9,6 +9,7 @@
 #include "src/util/color_4.h"
 #include "src/util/transform.h"
 #include "src/object/fragment.h"
+#include "src/system/physics_field.h"
 
 namespace legend {
 namespace object {
@@ -21,7 +22,7 @@ struct GraffitiInitializeParameter {
   // math::Vector3 scale;
   util::Transform transform;
   math::Vector3 bounding_box_length;
-  float remaining_grafitti;
+  float remaining_graffiti;
 };
 
 /**
@@ -60,15 +61,19 @@ class Graffiti : public actor::Actor {
    * @brief 落書きを消す処理
    * @param 消す割合
    */
-  void DecreaseGrafitti(const float& percentage);
+  void DecreaseGraffiti(const float& percentage);
   /**
    * @brief 落書きの残量の取得
    */
-  float GetRemainingGrafitti() const;
+  float GetRemainingGraffiti() const;
   /**
    * @brief 消えているかを取得
    */
   bool GetIsErase() const;
+  /**
+   * @brief 消しカス生成処理
+   */
+  Fragment InstanceFragment(system::PhysicsField& physics_field);
 
  private:
   /**
@@ -103,7 +108,7 @@ class Graffiti : public actor::Actor {
   std::array<u8, MASK_WIDTH * MASK_HEIGHT * PIXEL_SIZE> pixels_;
 
   //! 落書き残量
-  float remaining_grafitti_;
+  float remaining_graffiti_;
   //! 消えたかどうか
   bool is_erase_;
 };

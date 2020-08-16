@@ -29,7 +29,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
   }
 
   if (!stage_generator_.LoadStage(stage_path, stage_name, &desks_, &obstacles_,
-                                  &player_)) {
+                                  &player_, &graffities_)) {
     return false;
   }
 
@@ -194,7 +194,7 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  //MY_LOG(L"EnemyMove");
+  // MY_LOG(L"EnemyMove");
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_.GetCollisionRef());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
@@ -260,6 +260,9 @@ bool TurnSystem::InitCameras() {
 
 //描画
 void TurnSystem::Draw() {
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+
   cameras_[current_camera_]->RenderStart();
   player_.Draw();
   for (auto&& desk : desks_) {
@@ -269,25 +272,31 @@ void TurnSystem::Draw() {
   for (auto&& obs : obstacles_) {
     obs.Draw();
   }
+  for (auto&& graffiti : graffities_) {
+    graffiti.Draw(command_list);
+  }
   ui_board_.Draw();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  // auto& command_list = game::GameDevice::GetInstance()
-  //                         ->GetDevice()
-  //                         .GetCurrentFrameResource()
-  //                         ->GetCommandList();
+  auto& command_list = game::GameDevice::GetInstance()
+                           ->GetDevice()
+                           .GetCurrentFrameResource()
+                           ->GetCommandList();
 
-  // player_.GetCollisionRef().DebugDraw(command_list);
-  // for (auto&& desk : desks_) {
-  //  desk.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // enemy_manager_.DebugDraw(command_list);
-  // search_manager_.DebugDraw(command_list);
-  // for (auto&& obs : obstacles_) {
-  //  obs.GetCollisionRef().DebugDraw(command_list);
-  //}
+  player_.GetCollisionRef().DebugDraw(command_list);
+  for (auto&& desk : desks_) {
+    desk.GetCollisionRef().DebugDraw(command_list);
+  }
+  enemy_manager_.DebugDraw(command_list);
+  search_manager_.DebugDraw(command_list);
+  for (auto&& obs : obstacles_) {
+    obs.GetCollisionRef().DebugDraw(command_list);
+  }
+  for (auto&& graffiti : graffities_) {
+    graffiti.GetCollisionRef().DebugDraw(command_list);
+  }
 }
 
 //ターン数の増加
@@ -301,7 +310,6 @@ void TurnSystem::PlayerMoveStartEvent() { current_mode_ = Mode::PLAYER_MOVING; }
 
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
-  player_.ResetMoveEnd();
   // 0.1秒後にモードを切り替える
   countdown_timer_.Init(
       0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });

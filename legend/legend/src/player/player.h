@@ -67,10 +67,6 @@ class Player : public actor::Actor {
    */
   void ResetParameter();
   /**
-   * @brief 移動終了判定の初期化
-   */
-  void ResetMoveEnd();
-  /**
    * @brief 座標の取得
    */
   math::Vector3 GetPosition() const;
@@ -91,7 +87,7 @@ class Player : public actor::Actor {
    */
   float GetPower() const;
   /**
-   * @brief 移動終了判定の取得
+   * @brief 行動終了の取得
    */
   bool GetMoveEnd() const;
   /**
@@ -106,15 +102,20 @@ class Player : public actor::Actor {
    * @brief 何かのオブジェクトとトリガー衝突したときのイベント
    */
   void OnTriggerHit(actor::ActorType type);
+  /**
+   * @brief 強化パラメータの更新
+   */
+  void UpdateStrength(const float& add_strength);
+  /**
+   * @brief 現在の強化度合いを取得
+   */
+  float GetStrength() const;
 
  private:
   //! 速度
   math::Vector3 velocity_;
   math::Vector3 input_velocity_;
   math::Vector3 change_amount_velocity_;
-  //! 減速率
-  float deceleration_x_;
-  float deceleration_z_;
   //! 移動中か
   bool is_move_;
 
@@ -123,7 +124,7 @@ class Player : public actor::Actor {
   const float change_time_ = 0.1f;
 
   //! 移動に加える力
-  const float power_ = 20.0f;
+  const float power_ = 10.0f;
   //! 実際に加える力の加減
   float impulse_;
   //! 最小値
@@ -137,11 +138,12 @@ class Player : public actor::Actor {
   bool up_power_;
   //! パワー設定終了か
   bool is_set_power_;
-  //! 移動終了判定
-  bool move_end_;
 
   //! 更新時間
   float update_time_;
+
+  //強化パラメータ
+  float strength_;
 };
 
 }  // namespace player

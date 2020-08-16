@@ -24,7 +24,8 @@ bool StageGenerator::LoadStage(std::filesystem::path filepath,
                                const std::string map_name,
                                std::vector<object::Desk>* desks,
                                std::vector<object::Obstacle>* obstacles,
-                               player::Player* player) {
+                               player::Player* player,
+                               std::vector<object::Graffiti>* graffities) {
   //テキストデータを読み込み
   indexs_ = LoadStringStageData(filepath);
   map_name_ = map_name;
@@ -32,7 +33,7 @@ bool StageGenerator::LoadStage(std::filesystem::path filepath,
   //各アクターを生成
   // return SetMapActors(map_name, indexs, physics_field, actors,
   // enemy_manager);
-  return SetMapActors(desks, obstacles, player);
+  return SetMapActors(desks, obstacles, player, graffities);
 }
 
 //ファイルの読み込み処理
@@ -71,7 +72,8 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    enemy::EnemyManager* enemy_manager)
 bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
                                   std::vector<object::Obstacle>* obstacles,
-                                  player::Player* player) {
+                                  player::Player* player,
+                                  std::vector<object::Graffiti>* graffities) {
   bool is_all_ok = true;
 
   if (indexs_.empty() || indexs_[0] == "error") {
@@ -137,6 +139,28 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
 
       if (!obstacle.Init(parameter)) {
         MY_LOG(L"障害物の生成に失敗しました。");
+        is_all_ok = false;
+      }
+      continue;
+    }
+
+    if (infomation[0] == "graffiti") {
+      directx::device::CommandList command_list;
+      if (!command_list.Init(
+              game::GameDevice::GetInstance()->GetDevice(),
+              D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+        is_all_ok = false;
+        continue;
+      }
+
+      object::GraffitiInitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.bounding_box_length = math::Vector3(4.0f, 0.1f, 4.0f);
+
+      auto& graffiti = graffities->emplace_back();
+
+      if (!graffiti.Init(parameter, command_list)) {
+        MY_LOG(L"落書きの生成に失敗しました。");
         is_all_ok = false;
       }
       continue;

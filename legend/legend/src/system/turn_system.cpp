@@ -2,6 +2,7 @@
 
 namespace {
 std::vector<legend::ui::UIComponent*> components_;
+std::vector<std::string> ui_image_names_;
 }  // namespace
 
 namespace legend {
@@ -72,8 +73,8 @@ bool TurnSystem::Init(const std::string& stage_name) {
   while (std::getline(ifs, line)) {
     auto split = util::string_util::StringSplit(line, ',');
     MY_ASSERTION(split.size() == 4, L"フォーマットが不正です。");
-    std::string name = split[0] + ".png";
-    std::wstring w_name = util::string_util::String_2_WString(name);
+    std::string name = split[0];
+    std::wstring w_name = util::string_util::String_2_WString(name + ".png");
     float x = std::stof(split[1]);
     float y = std::stof(split[2]);
     float z = std::stof(split[3]);
@@ -84,6 +85,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
     }
     image->SetPosition(math::Vector2(x, y));
     components_.emplace_back(ui_board_.AddComponent(std::move(image)));
+    ui_image_names_.emplace_back(name);
   }
 
   return true;
@@ -151,6 +153,22 @@ bool TurnSystem::Update() {
       ss << "Z_Order:" << i;
       ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
       components_[i]->SetZOrder(z);
+    }
+
+    if (ImGui::Button("Apply")) {
+      // std::ofstream ofs(std::filesystem::path("../../../../../") / "legend" /
+      //                      "assets" / "parameters" / "main_ui.txt",
+      //                  std::ios::out);
+      std::ofstream ofs(
+          std::filesystem::path("assets") / "parameters" / "main_ui.txt",
+          std::ios::out);
+      const u32 size = static_cast<u32>(components_.size());
+      for (u32 i = 0; i < size; i++) {
+        ofs << ui_image_names_[i] << "," << components_[i]->GetPosition().x
+            << "," << components_[i]->GetPosition().y << ","
+            << components_[i]->GetZOrder() << "\n";
+      }
+      ofs.flush();
     }
   }
   ImGui::End();

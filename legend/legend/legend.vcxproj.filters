@@ -131,6 +131,7 @@
     <ClCompile Include="src\ui\ui_board.cpp" />
     <ClCompile Include="src\ui\gauge.cpp" />
     <ClCompile Include="src\ui\quarter_gauge.cpp" />
+    <ClCompile Include="src\ui\number.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -309,6 +310,7 @@
     <ClInclude Include="src\ui\ui_board.h" />
     <ClInclude Include="src\ui\ui_component.h" />
     <ClInclude Include="src\ui\quarter_gauge.h" />
+    <ClInclude Include="src\ui\number.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

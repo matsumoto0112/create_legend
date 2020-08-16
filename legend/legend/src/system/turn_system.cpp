@@ -1,5 +1,6 @@
 #include "src/system/turn_system.h"
 
+#include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
 
 namespace legend {
@@ -98,6 +99,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
       }
       comp = ui_board_.AddComponent(std::move(gauge));
       gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
+    } else if (split[ui_format::ID] == "3") {
+      auto num = std::make_unique<ui::Number>();
+      if (!num->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(num));
+      numbers_.emplace_back(static_cast<ui::Number*>(comp));
     }
     MY_ASSERTION(comp, L"不正なIDが入力されました");
     comp->SetPosition(math::Vector2(x, y));
@@ -105,8 +113,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
     components_.emplace_back(comp);
     input_lines_.emplace_back(split);
   }
-  MY_ASSERTION(gauges_.size() == gauge_id::MAX,
-               L"main_ui.txtのUI定義が不正です。");
+  MY_ASSERTION(
+      gauges_.size() == gauge_id::MAX,
+      L"main_ui.txtのUI定義が不正です。ゲージUIの個数が定義と違います。");
+  MY_ASSERTION(
+      numbers_.size() == number_id::MAX,
+      L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
 
   return true;
 }
@@ -203,6 +215,12 @@ bool TurnSystem::Update() {
         math::util::Clamp(value - 1.0f, 0.0f, 1.0f));
     gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
         math::util::Clamp(value - 2.0f, 0.0f, 1.0f));
+
+    static int num = 0;
+    ImGui::SliderInt("Num", &num, 0, 300);
+    numbers_[number_id::DIGIT_3]->SetNumber(num / 100);
+    numbers_[number_id::DIGIT_2]->SetNumber(num / 10 % 10);
+    numbers_[number_id::DIGIT_1]->SetNumber(num % 10);
   }
   ImGui::End();
 

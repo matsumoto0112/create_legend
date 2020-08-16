@@ -52,6 +52,7 @@ constexpr name UI_PLAYERPOWER_GAUGE_BLURRYPOINT =
     L"UI_powerGauge_blurryPoint.png";
 constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
 constexpr name UI_POWERGAUGE = L"UI_powerGauge.png";
+constexpr name NUMBER = L"UI_number_1.png";
 }  // namespace texture
 
 namespace vertex_shader {

@@ -19,6 +19,7 @@
 #include "src/system/mode.h"
 #include "src/ui/gauge.h"
 #include "src/ui/image.h"
+#include "src/ui/number.h"
 #include "src/ui/ui_board.h"
 #include "src/util/timer.h"
 
@@ -33,11 +34,11 @@ namespace ui_format {
  */
 enum Enum { NAME, X, Y, Z, ID, MAX };
 }  // namespace ui_format
-namespace gauge_id {
 /**
  * @brief UIファイルに格納しているゲージの順
  */
-enum GaugeID {
+namespace gauge_id {
+enum Enum {
   PLAYER_CHARGE_POWER,
   PLAYER_STRENGTHENED_STATE_0,
   PLAYER_STRENGTHENED_STATE_1,
@@ -45,6 +46,12 @@ enum GaugeID {
   MAX
 };
 }  // namespace gauge_id
+/**
+ * @brief UIファイルに格納している数値UIの順
+ */
+namespace number_id {
+enum Enum { DIGIT_3, DIGIT_2, DIGIT_1, MAX };
+}  // namespace number_id
 
 /**
  * @class TurnSystem
@@ -172,6 +179,8 @@ class TurnSystem : public actor::IActorMediator {
   ui::UIBoard ui_board_;
   //! UIゲージ配列
   std::vector<ui::Gauge*> gauges_;
+  //! 数値画像配列
+  std::vector<ui::Number*> numbers_;
 
  private:
   // UIのリアルタイム修正用パラメータ

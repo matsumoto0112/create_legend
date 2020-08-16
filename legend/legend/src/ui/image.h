@@ -30,7 +30,7 @@ class Image : public UIComponent {
    * @param name 画像名
    * @param heap_id 使用するヒープID
    */
-  bool Init(
+  virtual bool Init(
       const std::wstring& name,
       directx::descriptor_heap::heap_parameter::LocalHeapID heap_id =
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
@@ -55,7 +55,7 @@ class Image : public UIComponent {
    */
   virtual float GetZOrder() const override;
 
- private:
+ protected:
   //! 描画するスプライト
   draw::Sprite2D sprite_;
 };

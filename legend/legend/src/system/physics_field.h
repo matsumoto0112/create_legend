@@ -136,6 +136,10 @@ class PhysicsField {
    * @brief 消しカスにヒットしたかを取得
    */
   bool GetIsHitFragment(i32 index_num) const;
+  /**
+   * @brief プレイヤーの弱体化判定を取得
+   */
+  bool GetPlayerPowerDown() const;
 
  private:
   //! プレイヤーの直方体
@@ -177,6 +181,8 @@ class PhysicsField {
   std::vector<bool> is_hit_graffities_;
   //! 消しカスに当たっているか
   std::vector<bool> is_hit_fragments_;
+  //! プレイヤーの弱体化を行うか
+  bool player_power_down_;
 };
 
 }  // namespace system

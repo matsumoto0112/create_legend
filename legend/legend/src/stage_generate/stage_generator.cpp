@@ -119,6 +119,8 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
       parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
       parameter.min_power = 0;
       parameter.max_power = 1;
+      parameter.max_strength = 3;
+      parameter.min_strength = 0.5f;
 
       if (!player->Init(parameter)) {
         MY_LOG(L"ƒvƒŒƒCƒ„[‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½");

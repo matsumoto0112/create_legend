@@ -145,16 +145,32 @@ bool PhysicsField::Update(Mode turn, math::Vector3 player_vel,
 
   //プレイヤーと落書きの衝突判定
   for (i32 i = 0; i < graffiti_obbs_.size(); i++) {
-    if (player_velocity_ == math::Vector3::kZeroVector) break;
-
-    if (physics::Collision::GetInstance()->Collision_OBB_OBB(
-            player_obb_, graffiti_obbs_[i], false, false)) {
-      //消しカスを生成する処理と落書きを消すための処理
-      is_hit_graffities_[i] = true;
-      graffiti_erase_percent_[i] = 10.0f;
-    } else {
-      is_hit_graffities_[i] = false;
-      graffiti_erase_percent_[i] = 0;
+    if (turn == Mode::PLAYER_MOVING) {
+      if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+              player_obb_, graffiti_obbs_[i], false, false)) {
+        if (player_velocity_ == math::Vector3::kZeroVector) {
+          is_hit_graffities_[i] = false;
+          graffiti_erase_percent_[i] = 0;
+          player_power_down_ = false;
+        } else {
+          is_hit_graffities_[i] = true;
+          graffiti_erase_percent_[i] = 10.0f;
+          player_power_down_ = true;
+        }
+      }
+    } else if (turn == Mode::ENEMY_MOVING) {
+      for (i32 j = 0; j < enemy_obbs_.size(); j++) {
+        if (physics::Collision::GetInstance()->Collision_OBB_OBB(
+                enemy_obbs_[j], graffiti_obbs_[i], false, false)) {
+          if (enemy_velocities_[i] == math::Vector3::kZeroVector) {
+            is_hit_graffities_[i] = false;
+            graffiti_erase_percent_[i] = 0;
+          } else {
+            is_hit_graffities_[i] = true;
+            graffiti_erase_percent_[i] = 10.0f;
+          }
+        }
+      }
     }
   }
 
@@ -414,5 +430,6 @@ bool PhysicsField::GetIsHitGraffiti(i32 index_num) const {
 bool PhysicsField::GetIsHitFragment(i32 index_num) const {
   return is_hit_fragments_[index_num];
 }
+bool PhysicsField::GetPlayerPowerDown() const { return player_power_down_; }
 }  // namespace system
 }  // namespace legend

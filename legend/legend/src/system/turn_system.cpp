@@ -333,12 +333,11 @@ bool TurnSystem::InitCameras() {
 
 //—‘‚«‚Ìíœ
 void TurnSystem::RemoveGraffiti() {
-  i32 remove_count = 0;
-  for (i32 i = 0 - remove_count; i < graffities_.size(); i++) {
+  for (i32 i = 0; i < graffities_.size(); i++) {
     if (graffities_[i].GetIsErase()) {
       physics_field_.RemoveGraffiti(i);
       graffities_.erase(graffities_.begin() + i);
-      remove_count++;
+      i--;
     }
   }
 }
@@ -347,20 +346,22 @@ void TurnSystem::RemoveGraffiti() {
 void TurnSystem::UpdateGraffiti() {
   for (i32 i = 0; i < graffities_.size(); i++) {
     if (physics_field_.GetIsHitGraffiti(i)) {
+      if (physics_field_.GetPlayerPowerDown()) player_.UpdateStrength(-0.01f);
+
       graffities_[i].DecreaseGraffiti(physics_field_.GetErasePercent(i));
       fragments_.emplace_back(graffities_[i].InstanceFragment(physics_field_));
     }
   }
 }
 
+//Á‚µƒJƒXíœ
 void TurnSystem::RemoveFragment() {
-  i32 remove_count = 0;
-  for (i32 i = 0 - remove_count; i < fragments_.size(); i++) {
+  for (i32 i = 0; i < fragments_.size(); i++) {
     if (physics_field_.GetIsHitFragment(i)) {
+      player_.UpdateStrength(0.1f);
       physics_field_.RemoveFragment(i);
       fragments_.erase(fragments_.begin() + i);
-      player_.UpdateStrength(0.1f);
-      remove_count++;
+      i--;
     }
   }
 }

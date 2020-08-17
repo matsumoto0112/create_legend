@@ -206,12 +206,11 @@ Enemy* EnemyManager::GetLastEnemy() const {
 
 // obbの座標を基に座標更新
 void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
-  i32 remove_count = 0;
-  for (i32 i = 0 - remove_count; i < enemys_.size(); i++) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
     if (enemys_[i]->GetPosition().y <= -5.0f) {
       Destroy(i, physics_field);
-      remove_count++;
+      i--;
     }
   }
 }

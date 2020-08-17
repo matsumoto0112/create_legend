@@ -79,7 +79,7 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
       auto sPos = searched[i]->GetBaseSeach()->GetPosition();
       auto ePos = child[i]->GetBaseSeach()->GetPosition();
       auto vector = (ePos - sPos);
-      if (!OnCollision(sPos, vector)) {
+      if (OnCollision(sPos, vector)) {
         searched.emplace_back(child[j]);
       }
     }
@@ -111,7 +111,7 @@ void SearchManager::ChaseCourse() {
     auto end = course_list_[i + 2]->GetPosition();
     auto vector = (end - start);
     //*------è’ìÀîªíË--------
-    if (!OnCollision(start, vector)) {
+    if (OnCollision(start, vector)) {
       course_list_.erase(course_list_.begin() + i);
       i--;
     }
@@ -126,7 +126,7 @@ math::Vector3 SearchManager::NextCourse(math::Vector3 _position) {
     auto end = course_list_[i]->GetPosition();
     auto vector = (end - _position);
     //*------è’ìÀîªíË--------
-    if (!OnCollision(_position, vector)) {
+    if (OnCollision(_position, vector)) {
       if (i <= 0) {
         return course_list_[0]->GetPosition();
       } else {
@@ -179,7 +179,7 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
          (result->GetPosition() - _position).Magnitude())) {
       auto vector = (search_list_[i]->GetPosition() - _position);
       //*------è’ìÀîªíË--------
-      if (!OnCollision(_position, vector)) {
+      if (OnCollision(_position, vector)) {
         result = search_list_[i].get();
       }
       //*----------------------
@@ -195,7 +195,7 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 direction) {
     auto enemy = enemys_[index];
     if (enemy == ignore_enemy_) continue;
     auto length = direction.Magnitude();
-    if (!physics::Collision::GetInstance()->Collision_Ray_OBB(ray, *enemy,
+    if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray, *enemy,
                                                               &length)) {
       return true;
     }

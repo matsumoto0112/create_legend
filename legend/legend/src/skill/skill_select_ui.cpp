@@ -40,10 +40,10 @@ void SkillSelectUI::Draw() {
   for (auto&& sprite : skill_icons_) {
     sprite_renderer.AddDrawItems(&sprite);
   }
-  sprite_renderer.DrawItems(game::GameDevice::GetInstance()
-                                ->GetDevice()
-                                .GetCurrentFrameResource()
-                                ->GetCommandList());
+  //sprite_renderer.DrawItems(game::GameDevice::GetInstance()
+  //                              ->GetDevice()
+  //                              .GetCurrentFrameResource()
+  //                              ->GetCommandList());
 }
 
 void SkillSelectUI::AddSkill(/*const Skill* skill*/) {

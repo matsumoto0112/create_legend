@@ -3,6 +3,7 @@
 
 #include "src/scenes/scene.h"
 #include "src/skill/skill_manager.h"
+#include "src/system/turn_system.h"
 
 namespace legend {
 namespace scenes {
@@ -36,7 +37,8 @@ public:
      */
     void Finalize() override;
 private:
-    skill::SkillSelectUI skill_manager_;
+    //skill::SkillManager skill_manager_;
+    system::TurnSystem turn_system_;
 };
 
 }  // namespace debugscene

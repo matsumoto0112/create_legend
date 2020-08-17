@@ -283,6 +283,10 @@ bool TurnSystem::EnemyMoveEnd() {
        stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
     enemy_manager_.Add(enemy_parameter, physics_field_);
   }
+  //for (auto&& boss_parameter :
+  //     stage_generator_.GetBossParameters(current_turn_ + 1)) {
+  //  enemy_manager_.Add(boss_parameter, physics_field_);
+  //}
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TRUN_END, 1.0f);

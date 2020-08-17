@@ -25,15 +25,11 @@ class SkillManager {
   /**
    * @brief スキルを拾った際のメソッド
    */
-  void GetSkill(i32 skill_id);
+  void GetSkill(i32 skill_id, player::Player *player);
   /**
    * @brief スキルの獲得処理
    */
   void AddSkill(std::shared_ptr<Skill> skill);
-  /**
-   * @brief スキルの獲得処理(デバック用)
-   */
-  //void AddSkill();
   /**
    * @brief 更新処理
    */

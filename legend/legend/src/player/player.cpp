@@ -43,6 +43,9 @@ bool Player::Init(const InitializeParameter& parameter) {
   model_ =
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
+  //スキルマネージャーの初期化
+  skill_manager_.Init();
+
   return true;
 }
 
@@ -50,6 +53,23 @@ bool Player::Init(const InitializeParameter& parameter) {
 bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  //スキルのデバック用のGUI
+  if (ImGui::Begin("Skill")) {
+    if (ImGui::Button("Add Skill")) {
+      std::shared_ptr<skill::SkillPencil> skill =
+          std::make_shared<skill::SkillPencil>();
+      skill->Init(this);
+      skill_manager_.AddSkill(skill);
+    }
+  }
+  ImGui::End();
+  //スキルマネージャーの更新
+  skill_manager_.Update();
+
+  if (skill_manager_.IsProductionNow()) {
+    return true;
+  }
 
   if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
       0.5f) {
@@ -63,6 +83,14 @@ bool Player::Update() {
   }
 
   return true;
+}
+
+void Player::Draw() {
+  //プレイヤーの描画
+  actor::Actor::Draw();
+
+  //スキルマネージャーの描画
+  skill_manager_.Draw();
 }
 
 //座標の設定

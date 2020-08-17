@@ -1,11 +1,11 @@
 #include "skill.h"
+#include "src/player/player.h"
 
-#include "src\\stdafx.h"
 
 namespace legend {
 namespace skill {
 Skill::Skill() : Parent(L"Skill") {}
-void Skill::Init(const player::Player& player) {}
+void Skill::Init(player::Player* player) {}
 bool Skill::Update() { return true; }
 //void Skill::Draw() {}
 void Skill::Use() { is_use_ = true; }

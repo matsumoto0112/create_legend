@@ -2,12 +2,14 @@
 #define LEGEND_SKILL_SKILL_PENCIL_H_
 
 #include "src/skill/skill.h"
+#include "src/util/timer.h"
 
 namespace legend {
 namespace skill {
 
 class SkillPencil : public Skill {
-    using Parent = actor::Actor;
+  using Parent = actor::Actor;
+
  public:
   /**
    * @brief コンストラクタ
@@ -21,7 +23,7 @@ class SkillPencil : public Skill {
   /**
    * @brief 初期化
    */
-  void Init(const player::Player &player) override;
+  void Init(player::Player* player) override;
   /**
    * @brief 更新処理
    */
@@ -46,10 +48,14 @@ class SkillPencil : public Skill {
    * @brief 終了
    */
   void EndAction() override;
+  /**
+   * @brief 爆発
+   */
+  void Explosion(actor::ActorType type);
 
  private:
-  //モデルの位置
-  math::Vector3 model_position_;
+  //! タイマー
+  util::CountDownTimer explosion_timer_;
 };
 
 }  // namespace skill

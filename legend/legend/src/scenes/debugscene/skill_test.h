@@ -37,7 +37,7 @@ public:
      */
     void Finalize() override;
 private:
-    skill::SkillManager skill_manager_;
+    //skill::SkillManager skill_manager_;
     system::TurnSystem turn_system_;
 };
 

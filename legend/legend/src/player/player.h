@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/physics/bounding_box.h"
+#include "src/skill/skill_manager.h"
 
 namespace legend {
 namespace player {
@@ -42,6 +43,10 @@ class Player : public actor::Actor {
    * @brief 更新
    */
   bool Update();
+  /**
+   * @brief 描画
+   */
+  void Draw() override;
   /**
    * @brief 座標の設定
    */
@@ -152,6 +157,9 @@ class Player : public actor::Actor {
 
   //強化パラメータ
   float strength_;
+
+  //! スキルマネージャー
+  skill::SkillManager skill_manager_;
 };
 
 }  // namespace player

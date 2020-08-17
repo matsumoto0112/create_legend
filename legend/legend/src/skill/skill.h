@@ -1,27 +1,31 @@
 #ifndef LEGEND_SKILL_SKILL_H_
 #define LEGEND_SKILL_SKILL_H_
 
+#include "src/actor/actor.h"
 #include "src/draw/model.h"
 #include "src/physics/bounding_box.h"
-#include "src/player/player.h"
 #include "src/skill/skill_type.h"
-#include "src/actor/actor.h"
 
 /**
  * @file skill.h
  * @brief シーンの基底クラス
  */
 namespace legend {
+namespace player {
+class Player;
+}
+
 namespace skill {
 
 class Skill : public actor::Actor {
-    using Parent = actor::Actor;
+  using Parent = actor::Actor;
+
  public:
-     Skill();
+  Skill();
   /**
    * @brief 初期化
    */
-  virtual void Init(const player::Player& player);
+  virtual void Init(player::Player* player);
   /**
    * @brief 更新処理
    */
@@ -29,7 +33,7 @@ class Skill : public actor::Actor {
   ///**
   // * @brief 描画処理
   // */
-  //void Draw() override;
+  // void Draw() override;
 
   /**
    * @brief スキルを選択された際のメソッド

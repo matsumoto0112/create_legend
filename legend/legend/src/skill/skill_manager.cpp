@@ -1,6 +1,6 @@
 #include "skill_manager.h"
 
-#include "src\\stdafx.h"
+#include "src/player/player.h"
 
 namespace legend {
 namespace skill {
@@ -11,10 +11,10 @@ SkillManager::~SkillManager() {}
 
 void SkillManager::Init() { select_ui_.Init(); }
 
-// void SkillManager::Update() {}
-
-void SkillManager::GetSkill(i32 skill_id) {
-  this_turn_get_skills_.push_back(std::make_shared<SkillPencil>());
+void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
+  std::shared_ptr<SkillPencil> skill;
+  skill->Init(player);
+  this_turn_get_skills_.push_back(skill);
 }
 
 void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
@@ -41,6 +41,8 @@ void SkillManager::PlayerTurnEnd() {
   else {
     //現状無視?
   }
+
+  this_turn_get_skills_.clear();
 
   //プレイヤーの行動後に終わるスキルの更新処理
 

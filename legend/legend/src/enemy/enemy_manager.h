@@ -102,6 +102,7 @@ class EnemyManager {
   std::unique_ptr<Boss> boss_;
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
+  bool game_clear_flag_ = false;
   float move_timer_ = 0.0f;
   const float move_time_ = 0.5f;
 

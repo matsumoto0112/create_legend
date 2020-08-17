@@ -1,3 +1,5 @@
+#include <btBulletDynamicsCommon.h>
+
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/game/application.h"

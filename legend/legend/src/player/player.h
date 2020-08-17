@@ -24,6 +24,8 @@ class Player : public actor::Actor {
     math::Vector3 bouding_box_length;
     float min_power;
     float max_power;
+    float min_strength;
+    float max_strength;
   };
 
  public:
@@ -155,8 +157,12 @@ class Player : public actor::Actor {
   //! 更新時間
   float update_time_;
 
-  //強化パラメータ
+  //! 強化パラメータ
   float strength_;
+  //! 強化上限
+  float max_strength_;
+  //! 強化下限
+  float min_strength_;
 
   //! スキルマネージャー
   skill::SkillManager skill_manager_;

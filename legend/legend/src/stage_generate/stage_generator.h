@@ -53,6 +53,9 @@ class StageGenerator {
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);
 
+  std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
+      const i32 turn_count);
+
  private:
   /**
    * @brief String‚ðfloat‚É•ÏŠ·‚·‚é

@@ -78,11 +78,23 @@ bool TurnSystem::Init(const std::string& stage_name) {
     search_manager_.SetBranch(3, {0, 1, 2});
   }
 
-  // UIを定義ファイルから読み込む
-  std::ifstream ifs(util::Path::GetInstance()->exe() / "assets" / "parameters" /
-                    "main_ui.txt");
+  // UI情報を取得
+  std::vector<u8> data =
+      game::GameDevice::GetInstance()->GetResource().GetArchiveLoader().Load(
+          std::filesystem::path("parameters") / "main_ui.txt");
+
+  //文字列として解釈し、各行に分割するためstreamを使用する
+  std::string str(data.begin(), data.end());
+  std::stringstream ss(str);
   std::string line;
-  while (std::getline(ifs, line)) {
+
+  while (std::getline(ss, line, '\n')) {
+    //.txtをバイナリモードで開いているため、改行文字が\r\nで表現されている
+    //\nで分割するとき、最後の文字が\rになっていると余分なデータが含まれるためそれを回避する
+    if (line.back() == '\r') {
+      line = line.substr(0, line.size() - 1);
+    }
+
     auto split = util::string_util::StringSplit(line, ',');
     MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
     std::string name = split[ui_format::NAME];
@@ -283,7 +295,7 @@ bool TurnSystem::EnemyMoveEnd() {
        stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
     enemy_manager_.Add(enemy_parameter, physics_field_);
   }
-  //for (auto&& boss_parameter :
+  // for (auto&& boss_parameter :
   //     stage_generator_.GetBossParameters(current_turn_ + 1)) {
   //  enemy_manager_.Add(boss_parameter, physics_field_);
   //}

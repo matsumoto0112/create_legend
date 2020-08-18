@@ -38,6 +38,8 @@ class Resource {
    * @return 初期化に成功したらtrueを返す
    */
   bool Init();
+  loader::ArchiveLoader& GetArchiveLoader() { return archive_loader_; }
+
   /**
    * @brief ピクセルシェーダーを取得する
    */

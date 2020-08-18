@@ -11,15 +11,17 @@ namespace {
 constexpr legend::u32 WINDOW_WIDTH = 1280;
 constexpr legend::u32 WINDOW_HEIGHT = 720;
 
-std::shared_ptr<btCollisionConfiguration> config_;
-std::shared_ptr<btCollisionDispatcher> dispatcher_;
-std::shared_ptr<btDbvtBroadphase> broadphase_;
-std::shared_ptr<btSequentialImpulseConstraintSolver> solver_;
-std::shared_ptr<btDynamicsWorld> world_;
-std::shared_ptr<legend::directx::BulletDebugDraw> debug_drawer_;
-std::shared_ptr<btCollisionShape> ground_shape_;
-std::shared_ptr<btDefaultMotionState> motion_;
-std::shared_ptr<btRigidBody> body_;
+#pragma region bullet描画テスト用変数定義
+//std::shared_ptr<btCollisionConfiguration> config_;
+//std::shared_ptr<btCollisionDispatcher> dispatcher_;
+//std::shared_ptr<btDbvtBroadphase> broadphase_;
+//std::shared_ptr<btSequentialImpulseConstraintSolver> solver_;
+//std::shared_ptr<btDynamicsWorld> world_;
+//std::shared_ptr<legend::directx::BulletDebugDraw> debug_drawer_;
+//std::shared_ptr<btCollisionShape> ground_shape_;
+//std::shared_ptr<btDefaultMotionState> motion_;
+//std::shared_ptr<btRigidBody> body_;
+#pragma endregion
 }  // namespace
 
 namespace legend {
@@ -89,33 +91,33 @@ bool GameDevice::Init(window::IWindowProcedureEventCallback* callback) {
   global_cb_.GetStagingRef().time = 0.0f;
   global_cb_.GetStagingRef().delta_time = 0.0f;
 
-  config_ = std::make_shared<btDefaultCollisionConfiguration>();
-  dispatcher_ = std::make_shared<btCollisionDispatcher>(config_.get());
-  broadphase_ = std::make_shared<btDbvtBroadphase>();
-  solver_ = std::make_shared<btSequentialImpulseConstraintSolver>();
-  world_ = std::make_shared<btDiscreteDynamicsWorld>(
-      dispatcher_.get(), broadphase_.get(), solver_.get(), config_.get());
-  world_->setDebugDrawer(nullptr);
-  world_->setGravity(btVector3(0.0f, -10.0f, 0.0f));
+#pragma region bullet描画テスト用データ作成
+  // config_ = std::make_shared<btDefaultCollisionConfiguration>();
+  // dispatcher_ = std::make_shared<btCollisionDispatcher>(config_.get());
+  // broadphase_ = std::make_shared<btDbvtBroadphase>();
+  // solver_ = std::make_shared<btSequentialImpulseConstraintSolver>();
+  // world_ = std::make_shared<btDiscreteDynamicsWorld>(
+  //    dispatcher_.get(), broadphase_.get(), solver_.get(), config_.get());
+  // world_->setDebugDrawer(nullptr);
+  // world_->setGravity(btVector3(0.0f, -10.0f, 0.0f));
 
-  debug_drawer_ = std::make_shared<directx::BulletDebugDraw>();
-  if (!debug_drawer_->Init(device_->GetDevice())) {
-    return false;
-  }
-  debug_drawer_->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-  world_->setDebugDrawer(debug_drawer_.get());
+  // debug_drawer_ = std::make_shared<directx::BulletDebugDraw>();
+  // if (!debug_drawer_->Init(device_->GetDevice())) {
+  //  return false;
+  //}
+  // debug_drawer_->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+  // world_->setDebugDrawer(debug_drawer_.get());
 
-  ground_shape_ = std::make_shared<btBoxShape>(btVector3(50.0f, 1.0f, 50.0f));
-  btTransform ground_pos;
-  ground_pos.setIdentity();
-  ground_pos.setOrigin(btVector3(0.0f, 0.0f, 0.0f));
-  btScalar mass(0.0f);
-  btVector3 inertia(0.0f, 0.0f, 0.0f);
-  motion_ = std::make_shared<btDefaultMotionState>(ground_pos);
-  btRigidBody::btRigidBodyConstructionInfo info(mass, motion_.get(),
-                                                ground_shape_.get(), inertia);
-  body_ = std::make_shared<btRigidBody>(info);
-  world_->addRigidBody(body_.get());
+  // ground_shape_ =
+  // std::make_shared<btBoxShape>(btVector3(50.0f, 1.0f, 50.0f)); btTransform
+  // ground_pos; ground_pos.setIdentity(); ground_pos.setOrigin(btVector3(0.0f,
+  // 0.0f, 0.0f)); btScalar mass(0.0f); btVector3 inertia(0.0f, 0.0f, 0.0f);
+  // motion_ = std::make_shared<btDefaultMotionState>(ground_pos);
+  // btRigidBody::btRigidBodyConstructionInfo info(mass, motion_.get(),
+  //                                              ground_shape_.get(), inertia);
+  // body_ = std::make_shared<btRigidBody>(info);
+  // world_->addRigidBody(body_.get());
+#pragma endregion
 
   return true;
 }
@@ -148,19 +150,22 @@ bool GameDevice::MidFrame() {
 
 bool GameDevice::EndFrame() {
   auto& command_list = device_->GetCurrentFrameResource()->GetCommandList();
-  world_->debugDrawWorld();
-  math::Vector3 eye(0.0f, 100.0f, -100.0f);
-  math::Vector3 at(0.0f, 0.0f, 0.0f);
-  math::Vector3 up(0.0f, 1.0f, 0.0f);
-  float aspect =
-      static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-  float fov = 50.0f * math::util::DEG_2_RAD;
-  float near_z = 0.1f;
-  float far_z = 1000.0f;
-  debug_drawer_->Render(
-      math::Matrix4x4::CreateView(eye, at, up),
-      math::Matrix4x4::CreateProjection(fov, aspect, near_z, far_z),
-      command_list);
+
+#pragma region bullet描画テスト
+  // world_->debugDrawWorld();
+  // math::Vector3 eye(0.0f, 100.0f, -100.0f);
+  // math::Vector3 at(0.0f, 0.0f, 0.0f);
+  // math::Vector3 up(0.0f, 1.0f, 0.0f);
+  // float aspect =
+  //    static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+  // float fov = 50.0f * math::util::DEG_2_RAD;
+  // float near_z = 0.1f;
+  // float far_z = 1000.0f;
+  // debug_drawer_->Render(
+  //    math::Matrix4x4::CreateView(eye, at, up),
+  //    math::Matrix4x4::CreateProjection(fov, aspect, near_z, far_z),
+  //    command_list);
+#pragma endregion
 
   imgui_manager_.EndFrame(command_list.GetCommandList());
   if (!device_->Present()) {
@@ -171,7 +176,10 @@ bool GameDevice::EndFrame() {
 }
 
 void GameDevice::Finalize() {
-  world_->removeCollisionObject(body_.get());
+#pragma region bullet描画テスト用後処理
+  //world_->removeCollisionObject(body_.get());
+#pragma endregion
+  
   device_->Destroy();
 }
 

@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\bullet\src;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <SDLCheck>true</SDLCheck>
@@ -20,10 +20,12 @@
       <PrecompiledHeaderFile>src\\stdafx.h</PrecompiledHeaderFile>
       <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <PreprocessorDefinitions>BT_THREADSAFE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)bullet\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CopyFileToFolders />
     <PostBuildEvent>

@@ -8,7 +8,7 @@
   <ItemDefinitionGroup>
     <Link />
     <Link>
-      <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;BulletCollision_vs2010_x64_debug.lib;BulletDynamics_vs2010_x64_debug.lib;LinearMath_vs2010_x64_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

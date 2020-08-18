@@ -1,3 +1,5 @@
+#include <btBulletDynamicsCommon.h>
+
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/graphics_pipeline_state_desc.h"
 #include "src/game/application.h"
@@ -134,6 +136,32 @@ class MyApp final : public device::Application {
       }
       resource.GetPipeline().Register(
           util::resource::resource_names::pipeline::OBB, pipeline);
+    }
+    {
+      auto pipeline = std::make_shared<directx::shader::PipelineState>();
+      directx::shader::GraphicsPipelineStateDesc pso_desc = {};
+      pso_desc.BlendState.RenderTarget[0] =
+          directx::shader::alpha_blend_desc::BLEND_DESC_ALIGNMENT;
+      pso_desc.SetVertexShader(
+          resource.GetVertexShader().Get(L"bullet_debug_draw_vs.cso").get());
+      pso_desc.SetPixelShader(
+          resource.GetPixelShader().Get(L"bullet_debug_draw_ps.cso").get());
+      pso_desc.SetRenderTargets(render_resource_manager.GetRenderTarget(
+          directx::render_target::RenderTargetID::BACK_BUFFER));
+      pso_desc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+      pso_desc.DepthStencilState.DepthEnable = false;
+      pso_desc.DSVFormat = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
+      pso_desc.PrimitiveTopologyType =
+          D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+      pso_desc.pRootSignature =
+          device.GetDefaultRootSignature()->GetRootSignature();
+      pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+      pso_desc.SampleDesc.Count = 1;
+      pso_desc.SampleMask = UINT_MAX;
+      if (!pipeline->Init(device, pso_desc)) {
+        return false;
+      }
+      resource.GetPipeline().Register(L"bullet_debug_draw", pipeline);
     }
 
     if (!scene_manager_.Initialize()) {

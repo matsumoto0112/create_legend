@@ -119,6 +119,8 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
       parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
       parameter.min_power = 0;
       parameter.max_power = 1;
+      parameter.max_strength = 3;
+      parameter.min_strength = 0.5f;
 
       if (!player->Init(parameter)) {
         MY_LOG(L"プレイヤーの生成に失敗しました");
@@ -205,6 +207,44 @@ StageGenerator::GetEnemyParameters(const i32 turn_count) {
     }
   }
   return enemy_parameters;
+}
+
+std::vector<enemy::Boss::InitializeParameter>
+StageGenerator::GetBossParameters(const i32 turn_count) {
+  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
+
+  if (indexs_.empty() || indexs_[0] == "error") {
+    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
+    return boss_parameters;
+  }
+
+  for (auto&& index : indexs_) {
+    //文字列を分割
+    std::vector<std::string> infomation = StringSplit(index, ',');
+
+    //本来は背景IDなどを読み込むが現在は無視
+    if (infomation[0] == map_name_) continue;
+
+    //敵の生成
+    if (infomation[0] == "boss") {
+      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
+
+      enemy::Boss::InitializeParameter parameter;
+      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
+
+      // Transformを読み込み(scaleは現状無視)
+      parameter.transform =
+          String_2_Transform(infomation[1], infomation[2], infomation[3],
+                             infomation[4], infomation[5], infomation[6],
+                             infomation[7], infomation[8], infomation[9]);
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.transform.SetScale(scale);
+      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
+      boss_parameters.push_back(parameter);
+    }
+  }
+  return boss_parameters;
 }
 
 float StageGenerator::String_2_Float(const std::string& string) {

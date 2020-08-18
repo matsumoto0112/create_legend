@@ -33,6 +33,8 @@ bool Player::Init(const InitializeParameter& parameter) {
   up_power_ = true;
   is_set_power_ = false;
   strength_ = 1.0f;
+  max_strength_ = parameter.max_strength;
+  min_strength_ = parameter.min_strength;
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -43,6 +45,9 @@ bool Player::Init(const InitializeParameter& parameter) {
   model_ =
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
+  //スキルマネージャーの初期化
+  skill_manager_.Init();
+
   return true;
 }
 
@@ -50,6 +55,23 @@ bool Player::Init(const InitializeParameter& parameter) {
 bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  //スキルのデバック用のGUI
+  if (ImGui::Begin("Skill")) {
+    if (ImGui::Button("Add Skill")) {
+      std::shared_ptr<skill::SkillPencil> skill =
+          std::make_shared<skill::SkillPencil>();
+      skill->Init(this);
+      skill_manager_.AddSkill(skill);
+    }
+  }
+  ImGui::End();
+  //スキルマネージャーの更新
+  skill_manager_.Update();
+
+  if (skill_manager_.IsProductionNow()) {
+    return true;
+  }
 
   if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
       0.5f) {
@@ -63,6 +85,14 @@ bool Player::Update() {
   }
 
   return true;
+}
+
+void Player::Draw() {
+  //プレイヤーの描画
+  actor::Actor::Draw();
+
+  //スキルマネージャーの描画
+  skill_manager_.Draw();
 }
 
 //座標の設定
@@ -115,13 +145,13 @@ void Player::SetImpulse() {
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetStickLeft().Magnitude() >= 0.2f) {
     if (up_power_) {
-      impulse_ += 0.1f * update_time_ * 2;
+      impulse_ += 0.1f * update_time_ * 5;
       if (impulse_ >= max_power_) {
         impulse_ = max_power_;
         up_power_ = false;
       }
     } else {
-      impulse_ -= 0.1f * update_time_ * 2;
+      impulse_ -= 0.1f * update_time_ * 5;
       if (impulse_ <= min_power_) {
         impulse_ = min_power_;
         up_power_ = true;
@@ -184,6 +214,10 @@ void Player::OnTriggerHit(actor::ActorType type) {
 //強化パラメータの更新
 void Player::UpdateStrength(const float& add_strength) {
   strength_ += add_strength;
+  if (strength_ > max_strength_)
+    strength_ = max_strength_;
+  else if (strength_ < min_strength_)
+    strength_ = min_strength_;
 }
 
 //強化度合いを取得

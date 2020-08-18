@@ -10,6 +10,8 @@
 #include <crtdbg.h>
 #include <cstdlib>
 
+#define BT_NO_SIMD_OPERATOR_OVERLOADS
+
 #include <wrl/client.h>
 
 #include <array>

@@ -133,6 +133,7 @@
     <ClCompile Include="src\ui\quarter_gauge.cpp" />
     <ClCompile Include="src\ui\number.cpp" />
     <ClCompile Include="src\util\resource\loader.cpp" />
+    <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -314,6 +315,7 @@
     <ClInclude Include="src\ui\number.h" />
     <ClInclude Include="src\util\resource\file.h" />
     <ClInclude Include="src\util\resource\loader.h" />
+    <ClInclude Include="src\directx\bullet_debug_draw.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -330,6 +332,7 @@
     <None Include="assets\shaders\util\util.hlsli" />
     <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\draw2d\ui_quarter_gauge.hlsli" />
+    <None Include="assets\shaders\bullet\bullet_debug_draw.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -354,6 +357,8 @@
     <FxCompile Include="assets\shaders\draw2d\ui_gauge_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\ui_quarter_gauge_vs.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\ui_quarter_gauge_ps.hlsl" />
+    <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_vs.hlsl" />
+    <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\audios\free_3.wav" />

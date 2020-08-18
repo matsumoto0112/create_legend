@@ -12,49 +12,19 @@ EnemyManager::~EnemyManager() {}
 bool EnemyManager::Initilaize() { return true; }
 
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
-  // “G’Ç‰Á
-  // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
-  //        input::key_code::A)) {
-  //  // Add(physics_field);
-  //}
-  //// “Gíœ
-  // else if (game::GameDevice::GetInstance()
-  //             ->GetInput()
-  //             .GetKeyboard()
-  //             ->GetKeyDown(input::key_code::D)) {
-  //  if (0 < enemys_.size()) {
-  //    // Destroy(game::GameDevice::GetInstance()->GetRandom().Range(
-  //    //    0, static_cast<i32>(enemys_.size())));
-  //  }
-  //}
-
-  // “Gs“®
-  // if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-  //        input::input_code::Pause)) {
-  //  if ((action_enemy_index_ < 0) || (0 < enemys_.size())) {
-  //    action_enemy_index_ = -1;
-  //    move_timer_ = 0.0f;
-  //    for (i32 index = 0; index < enemys_.size(); index++) {
-  //      auto enemy = enemys_[index].get();
-  //      SetPosition(enemy);
-  //      enemy->SetVelocity(math::Vector3::kZeroVector);
-  //    }
-  //  }
-  //}
-  //// “GÄn“®
-  // else if (game::GameDevice::GetInstance()->GetInput().GetCommand(
-  //             input::input_code::Decide)) {
-  if ((action_enemy_index_ < 0) && (0 < enemys_.size())) {
+  if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
     bool isMove = false;
     for (auto& e : enemys_) {
       isMove = (isMove || (0.01f <= e->GetVelocity().Magnitude()));
+    }
+    if (boss_ != nullptr) {
+      isMove = (isMove || (0.01f <= boss_->GetVelocity().Magnitude()));
     }
     if (!isMove) {
       action_enemy_index_ = 0;
       move_timer_ = 0.0f;
     }
   }
-  //}
   // “Gs“®
   EnemyAction(search_manaegr);
 
@@ -110,25 +80,6 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
           search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions) -
           _actor->GetCollisionRef().GetPosition();
       next.y = 0;
-
-      {  //-------- “G‚ÌˆÚ“®—Êİ’è ---------------------
-        std::string str;
-        str += (action_enemy_index_<=0?"\n-------------------------------------------\n":"\n|\n");
-        str += (action_enemy_index_ < enemys_.size()
-                    ? "Enemy_" + std::to_string(action_enemy_index_)
-                    : "Boss");
-        str += ": (";
-        str += std::to_string(next.x) + ", ";
-        str += std::to_string(next.y) + ", ";
-        str += std::to_string(next.z) + ")\n";
-
-        if (boss_ == nullptr ? enemys_.size() - 1 <= action_enemy_index_
-                             : enemys_.size() <= action_enemy_index_) {
-          str += "\n-------------------------------------------\n";
-        }
-        std::wstring wstr = std::wstring(str.begin(), str.end());
-        MY_LOG(wstr.c_str());
-      }  //-------- “G‚ÌˆÚ“®—Êİ’è ---------------------
 
       if (_actor == boss_.get()) {
         boss_->SetVelocity(next);
@@ -206,12 +157,11 @@ Enemy* EnemyManager::GetLastEnemy() const {
 
 // obb‚ÌÀ•W‚ğŠî‚ÉÀ•WXV
 void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
-  i32 remove_count = 0;
-  for (i32 i = 0 - remove_count; i < enemys_.size(); i++) {
+  for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
     if (enemys_[i]->GetPosition().y <= -5.0f) {
       Destroy(i, physics_field);
-      remove_count++;
+      i--;
     }
   }
 }

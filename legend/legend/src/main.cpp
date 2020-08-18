@@ -24,6 +24,44 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    //使用する音源を事前に読み込む
+    // audioデータは大容量のため、すべてを読み込むのは本来NGだが、今回のappで使用する音源の量がそれほど大きくないため、一括で読み込んでおく。
+    auto AudioPreLoad = [&]() {
+      enum AudioLisFormat {
+        NAME,
+        TYPE,
+        SPLIT_FLAG,
+      };
+
+      const std::filesystem::path root_path =
+          util::Path::GetInstance()->exe() / "assets" / "audios";
+      auto& audio_manager = game::GameDevice::GetInstance()->GetAudioManager();
+      const std::vector<u8> data =
+          game::GameDevice::GetInstance()
+              ->GetResource()
+              .GetArchiveLoader()
+              .Load(std::filesystem::path("parameters") / "audio_list.txt");
+      std::stringstream ss(std::string(data.begin(), data.end()));
+      std::string line;
+      while (std::getline(ss, line)) {
+        if (line.back() == '\r') line = line.substr(0, line.size() - 1);
+        const auto splited = util::string_util::StringSplit(line, ',');
+        const std::wstring audio_name =
+            util::string_util::String_2_WString(splited[NAME]);
+        const AudioType type = static_cast<AudioType>(std::stoi(splited[TYPE]));
+        const AudioSplitType split_flag =
+            static_cast<AudioSplitType>(std::stoi(splited[SPLIT_FLAG]));
+        if (!audio_manager.LoadWav(audio_name, type, split_flag)) {
+          MY_LOG(L"読み込みに失敗: %s", audio_name.c_str());
+          return false;
+        }
+      }
+      return true;
+    };
+    if (!AudioPreLoad()) {
+      return false;
+    }
+
     if (!scene_manager_.Initialize()) {
       return false;
     }

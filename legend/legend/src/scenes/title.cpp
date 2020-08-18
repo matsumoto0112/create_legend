@@ -15,10 +15,7 @@ bool Title::Initialize() {
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
-  //if (!audio.LoadWav(L"free_2.wav", AudioType::BGM, AudioSplitType::SPLIT)) {
-  //  return false;
-  //}
-  //bgm_key_ = audio.Start(L"free_2.wav", 1.0f, true);
+  bgm_key_ = audio.Start(L"free_2.wav", 1.0f, true);
 
   return true;
 }
@@ -41,6 +38,8 @@ bool Title::Update() {
 void Title::Draw() { Scene::Draw(); }
 
 void Title::Finalize() {
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Stop(bgm_key_);
 }
 
 }  // namespace scenes

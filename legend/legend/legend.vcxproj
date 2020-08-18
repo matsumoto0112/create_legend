@@ -515,13 +515,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="assets\audios\free_2.wav" />
-    <Media Include="assets\audios\free_3.wav" />
-    <Media Include="assets\audios\free_4.wav" />
-    <Media Include="assets\audios\free_5.wav" />
-    <Media Include="assets\audios\free_6.wav" />
-  </ItemGroup>
-  <ItemGroup>
+    <Text Include="assets\parameters\audio_list.txt" />
     <Text Include="assets\parameters\main_ui.txt" />
     <Text Include="assets\parameters\pipeline.txt" />
     <Text Include="assets\stage\bbbb.txt" />

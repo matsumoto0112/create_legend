@@ -19,13 +19,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //ステージデータの拡張子は.txt
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
-  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  if (!audio.LoadWav(audio_name::PLAYER_TRUN_END, AudioType::SE)) {
-    return false;
-  }
-  if (!audio.LoadWav(audio_name::ENEMY_TRUN_END, AudioType::SE)) {
-    return false;
-  }
 
   if (!physics_field_.Init()) {
     return false;

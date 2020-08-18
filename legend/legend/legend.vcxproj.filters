@@ -134,6 +134,7 @@
     <ClCompile Include="src\ui\number.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
     <ClCompile Include="src\util\loader\archive_loader.cpp" />
+    <ClCompile Include="src\util\pipeline_initializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="src\ui\number.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\util\loader\archive_loader.h" />
+    <ClInclude Include="src\util\pipeline_initializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -369,5 +371,6 @@
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />
     <Text Include="assets\parameters\main_ui.txt" />
+    <Text Include="assets\parameters\pipeline.txt" />
   </ItemGroup>
 </Project>

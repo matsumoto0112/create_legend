@@ -202,6 +202,7 @@
     <ClCompile Include="src\util\path.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\fps_counter.cpp" />
+    <ClCompile Include="src\util\pipeline_initializer.cpp" />
     <ClCompile Include="src\util\random.cpp" />
     <ClCompile Include="src\util\resource\compute_shader.cpp" />
     <ClCompile Include="src\util\resource\geometry_shader.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
+    <ClInclude Include="src\util\pipeline_initializer.h" />
     <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\resource\compute_shader.h" />
     <ClInclude Include="src\util\resource\geometry_shader.h" />
@@ -521,6 +523,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\parameters\main_ui.txt" />
+    <Text Include="assets\parameters\pipeline.txt" />
     <Text Include="assets\stage\bbbb.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

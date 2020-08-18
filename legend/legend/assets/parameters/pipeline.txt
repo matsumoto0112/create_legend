@@ -1,0 +1,6 @@
+model_view,model_view_vs,model_view_ps,0,1,0,3
+gauge,ui_gauge_vs,ui_gauge_ps,0,1,0,3
+quarter_gauge,ui_quarter_gauge_vs,ui_quarter_gauge_ps,0,1,0,3
+graffiti,graffiti_vs,graffiti_ps,0,1,1,3
+obb,obb_vs,obb_ps,0,0,1,2
+bullet_debug_draw,bullet_debug_draw_vs,bullet_debug_draw_ps,0,0,1,2

@@ -3,10 +3,17 @@
 #include "src/util/stl_extend.h"
 #include "src/util/string_util.h"
 
-namespace {}  // namespace
 namespace legend {
 namespace util {
 namespace loader {
+
+//コンストラクタ
+ArchiveLoader::ArchiveLoader() {}
+
+//デストラクタ
+ArchiveLoader::~ArchiveLoader() { Finalize(); }
+
+//初期化
 bool ArchiveLoader::Init(const std::filesystem::path& filepath) {
   //ファイルから4バイト読み込みi32として解釈し、取得する
   auto GetInt = [](std::ifstream* wfs) {
@@ -44,6 +51,7 @@ bool ArchiveLoader::Init(const std::filesystem::path& filepath) {
   return true;
 }
 
+//読み込み
 std::vector<u8> ArchiveLoader::Load(
     const std::filesystem::path& filename_path) {
   const std::wstring filename = filename_path.generic_wstring();
@@ -58,9 +66,11 @@ std::vector<u8> ArchiveLoader::Load(
   return res;
 }
 
+//終了処理
 void ArchiveLoader::Finalize() {
   if (ifs_) ifs_.close();
 }
+
 }  // namespace loader
 }  // namespace util
 }  // namespace legend

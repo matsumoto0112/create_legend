@@ -49,6 +49,8 @@ LoadedTextureData Load(const std::filesystem::path& filename) {
   ifs.seekg(table_begin, std::ifstream::beg);
   int file_num = GetInt(&ifs);
 
+  std::string find_filename =
+      (std::filesystem::path("textures") / filename.filename()).generic_string();
   LoadedTextureData res = {};
   for (int i = 0; i < file_num; i++) {
     int pos = GetInt(&ifs);
@@ -56,7 +58,7 @@ LoadedTextureData Load(const std::filesystem::path& filename) {
     int name_length = GetInt(&ifs);
     std::string name(name_length, '\0');
     ifs.read(name.data(), name_length);
-    if (name == filename.filename().generic_string()) {
+    if (name == find_filename) {
       ifs.seekg(pos, std::ifstream::beg);
       std::vector<char> buf(size);
       ifs.read(buf.data(), size);

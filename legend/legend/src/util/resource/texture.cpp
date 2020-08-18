@@ -22,12 +22,14 @@ bool Texture::Load(const std::wstring& name) {
     return false;
   }
 
-  auto texture_path = Path::GetInstance()->texture();
+  const std::vector<u8> data =
+      loader_->Load(std::filesystem::path("textures") / name);
   auto texture = std::make_shared<directx::buffer::Texture2D>();
   if (!texture->InitAndWrite(
-          device, command_list, texture_path / name,
-          device.GetLocalHandle(directx::descriptor_heap::heap_parameter::
-                                    LocalHeapID::GLOBAL_ID))) {
+          device, command_list, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, data,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          name)) {
     MY_LOG(L"テクスチャの初期化に失敗しました。");
     return false;
   }

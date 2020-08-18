@@ -196,6 +196,7 @@
     <ClCompile Include="src\util\byte_reader.cpp" />
     <ClCompile Include="src\util\color_4.cpp" />
     <ClCompile Include="src\util\imgui_manager.cpp" />
+    <ClCompile Include="src\util\loader\archive_loader.cpp" />
     <ClCompile Include="src\util\loader\font_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\util\path.cpp" />
@@ -204,7 +205,6 @@
     <ClCompile Include="src\util\random.cpp" />
     <ClCompile Include="src\util\resource\compute_shader.cpp" />
     <ClCompile Include="src\util\resource\geometry_shader.cpp" />
-    <ClCompile Include="src\util\resource\loader.cpp" />
     <ClCompile Include="src\util\resource\model.cpp" />
     <ClCompile Include="src\util\resource\pipeline.cpp" />
     <ClCompile Include="src\util\resource\pixel_shader.cpp" />
@@ -372,14 +372,13 @@
     <ClInclude Include="src\util\debug.h" />
     <ClInclude Include="src\util\enum_util.h" />
     <ClInclude Include="src\util\imgui_manager.h" />
+    <ClInclude Include="src\util\loader\archive_loader.h" />
     <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\random.h" />
     <ClInclude Include="src\util\resource\compute_shader.h" />
-    <ClInclude Include="src\util\resource\file.h" />
     <ClInclude Include="src\util\resource\geometry_shader.h" />
-    <ClInclude Include="src\util\resource\loader.h" />
     <ClInclude Include="src\util\resource\model.h" />
     <ClInclude Include="src\util\resource\pipeline.h" />
     <ClInclude Include="src\util\resource\pixel_shader.h" />

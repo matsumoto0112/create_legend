@@ -132,8 +132,8 @@
     <ClCompile Include="src\ui\gauge.cpp" />
     <ClCompile Include="src\ui\quarter_gauge.cpp" />
     <ClCompile Include="src\ui\number.cpp" />
-    <ClCompile Include="src\util\resource\loader.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
+    <ClCompile Include="src\util\loader\archive_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -313,9 +313,8 @@
     <ClInclude Include="src\ui\ui_component.h" />
     <ClInclude Include="src\ui\quarter_gauge.h" />
     <ClInclude Include="src\ui\number.h" />
-    <ClInclude Include="src\util\resource\file.h" />
-    <ClInclude Include="src\util\resource\loader.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
+    <ClInclude Include="src\util\loader\archive_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

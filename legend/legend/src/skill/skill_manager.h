@@ -2,9 +2,9 @@
 #define LEGEND_SKILL_SKILL_MANAGER_H_
 
 #include "src/skill/skill.h"
+#include "src/skill/skill_pencil.h"
 #include "src/skill/skill_select_ui.h"
 #include "src/skill/skill_type.h"
-#include "src/skill/skill_pencil.h"
 
 namespace legend {
 namespace skill {
@@ -50,6 +50,14 @@ class SkillManager {
    * @brief 演出中かどうか
    */
   bool IsProductionNow();
+  /**
+   * @brief スキルリストの取得
+   */
+  std::vector<std::shared_ptr<Skill>> GetSkillList();
+  /**
+   * @brief スキルの削除
+   */
+  void RemoveSkill();
 
  private:
   //! 所持できる最大スキル数

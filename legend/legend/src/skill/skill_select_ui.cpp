@@ -40,7 +40,7 @@ void SkillSelectUI::Draw() {
   for (auto&& sprite : skill_icons_) {
     sprite_renderer.AddDrawItems(&sprite);
   }
-  //sprite_renderer.DrawItems(game::GameDevice::GetInstance()
+  // sprite_renderer.DrawItems(game::GameDevice::GetInstance()
   //                              ->GetDevice()
   //                              .GetCurrentFrameResource()
   //                              ->GetCommandList());
@@ -64,6 +64,17 @@ void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
   sprite.SetScale(icon_scale_);
   sprite.SetRect(math::Rect(0.0f, 0.0f, 1.0f, 1.0f));
   skill_icons_.push_back(sprite);
+}
+
+//íœˆ—
+void SkillSelectUI::RemoveSkillUI(i32 index_num) {
+  skill_icons_.erase(skill_icons_.begin() + index_num);
+  //•\¦ˆÊ’u‚Ìİ’è
+  const float icon_distance_ = 64.0f;
+  for (i32 i = 0; i < skill_icons_.size(); i++) {
+    skill_icons_[i].SetPosition(math::Vector2(
+        icon_base_position_.x + icon_distance_ * i, icon_base_position_.y));
+  }
 }
 
 }  // namespace skill

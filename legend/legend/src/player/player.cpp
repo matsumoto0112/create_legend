@@ -64,6 +64,14 @@ bool Player::Update() {
       skill->Init(this);
       skill_manager_.AddSkill(skill);
     }
+    for (auto&& skill : skill_manager_.GetSkillList()) {
+      if (ImGui::Button("Use Skill")) {
+        skill->Use();
+      }
+      if (ImGui::Button("Decrease Count")) {
+        skill->EndAction();
+      }
+    }
   }
   ImGui::End();
   //スキルマネージャーの更新
@@ -125,6 +133,8 @@ void Player::SetVelocity() {
   if (velocity_update_time_ < change_time_) return;
 
   velocity_ = input_velocity_;
+  // float thita = math::util::Atan2(velocity_.z, velocity_.x);
+  // SetRotation(math::Quaternion(0, thita, 0, 1));
   if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
 
   change_amount_velocity_ = velocity_;

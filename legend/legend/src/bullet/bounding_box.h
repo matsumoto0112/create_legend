@@ -8,13 +8,13 @@
  */
 namespace legend {
 namespace bullet {
+
 class BoundingBox : public Collider {
  public:
   /**
    * @brief ‰Šú‰»ƒpƒ‰ƒ[ƒ^
    */
   struct InitializeParameter {
-    btDynamicsWorld *world;
     btVector3 position;
     btQuaternion rotation;
     btVector3 scale;
@@ -24,6 +24,7 @@ class BoundingBox : public Collider {
 
  public:
   BoundingBox(const InitializeParameter& parameter);
+  ~BoundingBox();
   bool Update() override;
 };
 }  // namespace bullet

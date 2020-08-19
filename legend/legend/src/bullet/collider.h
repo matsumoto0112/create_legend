@@ -25,9 +25,12 @@ class Collider {
    * @brief XVˆ—
    */
   virtual bool Update();
+  btRigidBody* GetRigidBody();
 
  protected:
   std::shared_ptr<btCollisionShape> shape_;
+  std::shared_ptr<btDefaultMotionState> motion_state_;
+  btVector3 inertia_;
   std::shared_ptr<btRigidBody> rigid_body_;
 };
 }  // namespace bullet

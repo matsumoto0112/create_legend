@@ -35,11 +35,21 @@ class PhysicsField {
    * @brief デバック用の描画
    */
   void DebugDraw();
+  /**
+   * @brief 物理演算を行うオブジェクトの追加
+   */
+  void AddRigidBody(btRigidBody *rigid_body);
+  void AddCollision(std::shared_ptr<Collider> collider);
 
  private:
   std::shared_ptr<legend::directx::BulletDebugDraw> debug_drawer_;
-  std::shared_ptr<btDynamicsWorld> world_;
   std::vector<std::shared_ptr<Collider>> colliders_;
+
+  std::shared_ptr<btCollisionConfiguration> config_;
+  std::shared_ptr<btCollisionDispatcher> dispatcher_;
+  std::shared_ptr<btDbvtBroadphase> broadphase_;
+  std::shared_ptr<btSequentialImpulseConstraintSolver> solver_;
+  std::shared_ptr<btDynamicsWorld> world_;
 };
 
 }  // namespace bullet

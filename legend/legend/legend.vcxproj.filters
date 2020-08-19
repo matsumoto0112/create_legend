@@ -138,6 +138,7 @@
     <ClCompile Include="src\bullet\physics_field.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />
     <ClCompile Include="src\bullet\bounding_box.cpp" />
+    <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -323,6 +324,7 @@
     <ClInclude Include="src\bullet\collider.h" />
     <ClInclude Include="src\bullet\physics_field.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
+    <ClInclude Include="src\scenes\debugscene\bullet_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

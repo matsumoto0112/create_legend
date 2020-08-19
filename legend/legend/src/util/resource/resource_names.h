@@ -37,22 +37,37 @@ constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 }  // namespace model
 
 namespace texture {
-//テストテクスチャ
+constexpr name RESULT_GAMEOVER = L"Result_gameOver.png";
+constexpr name RESULT_PLAYERPOWER_TEXT_1 = L"Result_playerPower_text_1.png";
+constexpr name RESULT_PLAYERPOWER_TEXT_2 = L"Result_playerPower_text_2.png";
+constexpr name RESULT_STAGECLEAR = L"Result_stageClear.png";
+constexpr name RESULT_TOTALTURN_TEXT_1 = L"Result_totalTurn_text_1.png";
+constexpr name RESULT_TOTALTURN_TEXT_2 = L"Result_totalTurn_text_2.png";
 constexpr name TEX = L"tex.png";
+constexpr name TITLE_LOGO = L"TItle_logo.png";
+constexpr name TITLE_PUSHBUTTON_GUIDE = L"Title_pushButton_guide.png";
+constexpr name UI_NUMBER_1 = L"UI_number_1.png";
 constexpr name UI_PLAYERFORM_FRAME = L"UI_playerForm_frame.png";
 constexpr name UI_PLAYERPOWER_FRAME = L"UI_playerPower_frame.png";
-constexpr name UI_PLAYERPOWER_GAUGE_FRAME = L"UI_playerPower_gauge_frame.png";
-constexpr name UI_PLAYERPOWER_GAUGE_0_TO_100 =
-    L"UI_playerPower_gauge_0to100.png";
-constexpr name UI_PLAYERPOWER_GAUGE_101_TO_200 =
+constexpr name UI_PLAYERPOWER_GAUGE_0TO100 = L"UI_playerPower_gauge_0to100.png";
+constexpr name UI_PLAYERPOWER_GAUGE_101TO200 =
     L"UI_playerPower_gauge_101to200.png";
-constexpr name UI_PLAYERPOWER_GAUGE_201_TO_300 =
+constexpr name UI_PLAYERPOWER_GAUGE_201TO300 =
     L"UI_playerPower_gauge_201to300.png";
-constexpr name UI_PLAYERPOWER_GAUGE_BLURRYPOINT =
-    L"UI_powerGauge_blurryPoint.png";
-constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
+constexpr name UI_PLAYERPOWER_GAUGE_FRAME = L"UI_playerPower_gauge_frame.png";
+constexpr name UI_PLAYER_ESTIMATE = L"UI_player_estimate.png";
 constexpr name UI_POWERGAUGE = L"UI_powerGauge.png";
-constexpr name NUMBER = L"UI_number_1.png";
+constexpr name UI_POWERGAUGE_BLURRYPOINT = L"UI_powerGauge_blurryPoint.png";
+constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
+constexpr name UI_SKILL_EXPLANATION = L"UI_skill_explanation.png";
+constexpr name UI_SKILL_FRAME = L"UI_skill_frame.png";
+constexpr name UI_SKILL_FRAME_WHOLE = L"UI_skill_frame_whole.png";
+constexpr name UI_SKILL_ICON_1 = L"UI_skill_icon_1.png";
+constexpr name UI_SKILL_ICON_2 = L"UI_skill_icon_2.png";
+constexpr name UI_SKILL_ICON_3 = L"UI_skill_icon_3.png";
+constexpr name UI_SKILL_ICON_4 = L"UI_skill_icon_4.png";
+constexpr name UI_SKILL_ICON_5 = L"UI_skill_icon_5.png";
+constexpr name UI_SKILL_SELECT_FRAME = L"UI_skill_select_frame.png";
 }  // namespace texture
 
 namespace vertex_shader {
@@ -94,7 +109,7 @@ constexpr name QUARTER_GAUGE = L"quarter_gauge";
 }  // namespace pipeline
 
 namespace audio {
-constexpr name ENEMY_TRUN_END = L"enemy_turn_end.wav";
+constexpr name ENEMY_TURN_END = L"enemy_turn_end.wav";
 constexpr name ERASE_GRAFFITI = L"erase_graffiti.wav";
 constexpr name FREE_2 = L"free_2.wav";
 constexpr name FREE_3 = L"free_3.wav";
@@ -106,7 +121,6 @@ constexpr name PLAYER_ENEMY_HIT_SMALL = L"player_enemy_hit_small.wav";
 constexpr name PLAYER_FALL_OUT = L"player_fall_out.wav";
 constexpr name PLAYER_GET_FRAGMENT = L"player_get_fragment.wav";
 constexpr name PLAYER_GET_STATIONERY = L"player_get_stationery.wav";
-
 constexpr name PLAYER_MOVE_SELECT_SKILL_MODE =
     L"player_move_select_skill_mode.wav";
 constexpr name PLAYER_MOVING = L"player_moving.wav";
@@ -114,9 +128,10 @@ constexpr name PLAYER_OBSTACLE_HIT = L"player_obstacle_hit.wav";
 constexpr name PLAYER_POWER_CHARGE = L"player_power_charge.wav";
 constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE =
     L"player_return_from_select_skill_mode.wav";
-
 constexpr name PLAYER_SNAP = L"player_snap.wav";
-constexpr name PLAYER_TRUN_END = L"player_turn_end.wav";
+constexpr name PLAYER_TURN_END = L"player_turn_end.wav";
+constexpr name PROTO_FLICK = L"Proto_flick.wav";
+constexpr name PROTO_HIT = L"Proto_hit.wav";
 constexpr name SKILL_DECISION = L"skill_decision.wav";
 constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";

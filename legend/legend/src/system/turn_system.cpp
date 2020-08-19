@@ -264,7 +264,7 @@ bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::PlayerSkillAfterModed() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  audio.Start(util::resource::resource_names::audio::PLAYER_TRUN_END, 1.0f);
+  audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
   current_mode_ = Mode::ENEMY_MOVING;
   return true;
@@ -297,7 +297,7 @@ bool TurnSystem::EnemyMoveEnd() {
   //}
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  audio.Start(audio_name::ENEMY_TRUN_END, 1.0f);
+  audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
 
   current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;

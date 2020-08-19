@@ -109,7 +109,7 @@ constexpr name QUARTER_GAUGE = L"quarter_gauge";
 }  // namespace pipeline
 
 namespace audio {
-constexpr name ENEMY_TRUN_END = L"enemy_turn_end.wav";
+constexpr name ENEMY_TURN_END = L"enemy_turn_end.wav";
 constexpr name ERASE_GRAFFITI = L"erase_graffiti.wav";
 constexpr name FREE_2 = L"free_2.wav";
 constexpr name FREE_3 = L"free_3.wav";
@@ -121,7 +121,6 @@ constexpr name PLAYER_ENEMY_HIT_SMALL = L"player_enemy_hit_small.wav";
 constexpr name PLAYER_FALL_OUT = L"player_fall_out.wav";
 constexpr name PLAYER_GET_FRAGMENT = L"player_get_fragment.wav";
 constexpr name PLAYER_GET_STATIONERY = L"player_get_stationery.wav";
-
 constexpr name PLAYER_MOVE_SELECT_SKILL_MODE =
     L"player_move_select_skill_mode.wav";
 constexpr name PLAYER_MOVING = L"player_moving.wav";
@@ -129,9 +128,10 @@ constexpr name PLAYER_OBSTACLE_HIT = L"player_obstacle_hit.wav";
 constexpr name PLAYER_POWER_CHARGE = L"player_power_charge.wav";
 constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE =
     L"player_return_from_select_skill_mode.wav";
-
 constexpr name PLAYER_SNAP = L"player_snap.wav";
-constexpr name PLAYER_TRUN_END = L"player_turn_end.wav";
+constexpr name PLAYER_TURN_END = L"player_turn_end.wav";
+constexpr name PROTO_FLICK = L"Proto_flick.wav";
+constexpr name PROTO_HIT = L"Proto_hit.wav";
 constexpr name SKILL_DECISION = L"skill_decision.wav";
 constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";

@@ -18,6 +18,9 @@ BoundingSphere::BoundingSphere(const InitializeParameter& parameter) {
     //剛体オブジェクト生成
     rigid_body_ = std::make_shared<btRigidBody>(
         parameter.mass, motion_state_.get(), shape_.get(), inertia_);
+
+    //摩擦係数を設定
+    rigid_body_->setFriction(parameter.friction);
 }
 BoundingSphere::~BoundingSphere() {}
 bool BoundingSphere::Update() { return false; }

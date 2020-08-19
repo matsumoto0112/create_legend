@@ -17,5 +17,25 @@ void Collider::ApplyCentralImpulse(btVector3 impulse)
     rigid_body_->applyCentralImpulse(impulse);
 }
 
+btVector3 Collider::GetVelocity()
+{
+    return rigid_body_->getLinearVelocity();
+}
+
+void Collider::SetVelocity(btVector3 velocity)
+{
+    rigid_body_->setLinearVelocity(velocity);
+}
+
+btVector3 Collider::GetAngularVelocity()
+{
+    return rigid_body_->getAngularVelocity();
+}
+
+void Collider::SetAngularVelocity(btVector3 velocity)
+{
+    rigid_body_->setAngularVelocity(velocity);
+}
+
 }  // namespace bullet
 }  // namespace legend

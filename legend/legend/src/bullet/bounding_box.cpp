@@ -20,6 +20,8 @@ BoundingBox::BoundingBox(const InitializeParameter& parameter) {
   //剛体オブジェクト生成
   rigid_body_ = std::make_shared<btRigidBody>(
       parameter.mass, motion_state_.get(), shape_.get(), inertia_);
+
+  rigid_body_->setFriction(parameter.friction);
 }
 
 BoundingBox::~BoundingBox() {}

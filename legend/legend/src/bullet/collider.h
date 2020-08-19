@@ -25,8 +25,32 @@ class Collider {
    * @brief 更新処理
    */
   virtual bool Update();
+
+  /**
+   * @brief 剛体オブジェクトを取得
+   */
   btRigidBody* GetRigidBody();
+  /**
+   * @brief オブジェクトの中心から指定の力を加える
+   */
   void ApplyCentralImpulse(btVector3 impulse);
+  /**
+   * @brief 移動量の取得
+   */
+  btVector3 GetVelocity();
+  /**
+   * @brief 移動量の指定
+   */
+  void SetVelocity(btVector3 velocity);
+  /**
+   * @brief 回転移動量の取得
+   */
+  btVector3 GetAngularVelocity();
+  /**
+   * @brief 回転移動量の指定
+
+   */
+  void SetAngularVelocity(btVector3 velocity);
 
 
  protected:

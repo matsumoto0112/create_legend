@@ -19,7 +19,7 @@ bool BulletTest::Initialize() {
   bullet::BoundingBox::InitializeParameter parameter;
   parameter.mass = 0.0f;
   parameter.position = btVector3(0, -2.0f, 0);
-  parameter.scale = btVector3(10, 1, 10);
+  parameter.scale = btVector3(50, 1, 50);
 
   std::shared_ptr<bullet::BoundingBox> box =
       std::make_shared<bullet::BoundingBox>(parameter);
@@ -37,23 +37,25 @@ bool BulletTest::Update() {
       if (ImGui::Button("Add Box")) {
           bullet::BoundingBox::InitializeParameter parameter;
           parameter.mass = 10.0f;
-          parameter.position = btVector3(0, 10.0f, 0);
+          parameter.position = btVector3(0, 0.0f, 0);
           //parameter.rotation = btQuaternion(0.0f, 0.0f, 0.0f);
           //parameter.scale = btVector3(1, 1, 1);
           //parameter.restitution = 0.8f;
-          //parameter.friction = 1.0f;
+          //parameter.friction = 0.8f;
 
           std::shared_ptr<bullet::BoundingBox> box =
               std::make_shared<bullet::BoundingBox>(parameter);
+          //box->ApplyCentralImpulse(btVector3(100, 0, 0));
           physics_field_.AddCollision(box);
       }
       if (ImGui::Button("Add Sphere")) {
           bullet::BoundingSphere::InitializeParameter parameter;
           parameter.mass = 10.0f;
           parameter.position = btVector3(0, 0.0f, 0);
-          parameter.rotation = btQuaternion(0.0f, 0.0f, 0.0f);
-          parameter.radius = 1.0f;
+          //parameter.rotation = btQuaternion(0.0f, 0.0f, 0.0f);
+          parameter.radius = 10.0f;
           parameter.restitution = 0.8f;
+          //parameter.friction = 0.8f;
 
           std::shared_ptr<bullet::BoundingSphere> sphere =
               std::make_shared<bullet::BoundingSphere>(parameter);

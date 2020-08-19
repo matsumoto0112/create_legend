@@ -125,6 +125,10 @@ class Player : public actor::Actor {
    * @brief 現在の強化度合いを取得
    */
   float GetStrength() const;
+  /**
+   * @brief スキル選択中かを取得
+   */
+  bool GetSkillSelect();
 
  private:
   //! 速度

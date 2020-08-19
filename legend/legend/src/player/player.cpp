@@ -68,6 +68,7 @@ bool Player::Update() {
       if (ImGui::Button("Use Skill")) {
         skill->Use();
       }
+      ImGui::SameLine();
       if (ImGui::Button("Decrease Count")) {
         skill->EndAction();
       }
@@ -232,5 +233,11 @@ void Player::UpdateStrength(const float& add_strength) {
 
 //‹­‰»“x‡‚¢‚ğæ“¾
 float Player::GetStrength() const { return strength_; }
+
+bool Player::GetSkillSelect() {
+  if (is_input_) return false;
+
+  return skill_manager_.SelectSkill();
+}
 }  // namespace player
 }  // namespace legend

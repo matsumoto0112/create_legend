@@ -42,6 +42,22 @@ class SkillSelectUI {
    * @brief 削除処理
    */
   void RemoveSkillUI(i32 index_num);
+  /**
+   * @brief 選択中かを取得
+   */
+  bool GetIsSelectMode() const;
+  /**
+   * @brief 選択モード切替
+   */
+  void ChangeIsSelectMode();
+  /**
+   * @brief 選択中のスキル番号の取得
+   */
+  i32 GetSkillNumber();
+  /**
+   * @brief 選択中のスキルの更新
+   */
+  void SelectSkillNumber(i32 select_number);
 
  private:
   math::Vector2 icon_base_position_;
@@ -49,6 +65,7 @@ class SkillSelectUI {
 
   std::vector<draw::Sprite2D> skill_icons_;
   draw::Sprite2D skill_explanatory_;
+  draw::Sprite2D select_skill_frame_;
 
   bool is_select_mode_;
   i32 select_number_;

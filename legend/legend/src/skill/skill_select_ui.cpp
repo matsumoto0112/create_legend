@@ -12,6 +12,13 @@ SkillSelectUI::SkillSelectUI() {
 
   is_select_mode_ = false;
   select_number_ = 0;
+
+  if (!select_skill_frame_.Init(
+          game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
+              util::resource::resource_names::texture::TEX),
+          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+    MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
+  }
 }
 
 SkillSelectUI::~SkillSelectUI() {}
@@ -44,6 +51,8 @@ void SkillSelectUI::Draw() {
   //                              ->GetDevice()
   //                              .GetCurrentFrameResource()
   //                              ->GetCommandList());
+
+  if (is_select_mode_) sprite_renderer.AddDrawItems(&select_skill_frame_);
 }
 
 void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
@@ -63,6 +72,7 @@ void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
   //表示サイズの設定
   sprite.SetScale(icon_scale_);
   sprite.SetRect(math::Rect(0.0f, 0.0f, 1.0f, 1.0f));
+  sprite.SetZOrder(0.5f);
   skill_icons_.push_back(sprite);
 }
 
@@ -75,6 +85,45 @@ void SkillSelectUI::RemoveSkillUI(i32 index_num) {
     skill_icons_[i].SetPosition(math::Vector2(
         icon_base_position_.x + icon_distance_ * i, icon_base_position_.y));
   }
+}
+
+//選択中かを取得
+bool SkillSelectUI::GetIsSelectMode() const { return is_select_mode_; }
+
+//選択モードの切替
+void SkillSelectUI::ChangeIsSelectMode() {
+  if (skill_icons_.size() == 0) return;
+
+  if (is_select_mode_) {
+    is_select_mode_ = false;
+    select_skill_frame_.SetScale(math::Vector2(0, 0));
+  } else {
+    is_select_mode_ = true;
+    SelectSkillNumber(select_number_);
+    select_skill_frame_.SetScale(icon_scale_);
+  }
+}
+
+//選択中のスキル番号を取得
+i32 SkillSelectUI::GetSkillNumber() { return select_number_; }
+
+//選択中のスキル更新
+void SkillSelectUI::SelectSkillNumber(i32 select_number) {
+  if (skill_icons_.size() == 0) {
+    select_skill_frame_.SetScale(math::Vector2(0, 0));
+    is_select_mode_ = false;
+    return;
+  }
+
+  if (select_number < 0)
+    select_number = static_cast<i32>(skill_icons_.size() - 1);
+  if (select_number >= skill_icons_.size()) select_number = 0;
+
+  select_number_ = select_number;
+
+  select_skill_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
+  select_skill_frame_.SetScale(icon_scale_ / 2);
+  select_skill_frame_.SetRect(math::Rect(0, 0, 1, 1));
 }
 
 }  // namespace skill

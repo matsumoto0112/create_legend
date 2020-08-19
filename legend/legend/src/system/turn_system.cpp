@@ -250,6 +250,9 @@ bool TurnSystem::Update() {
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
+  if (player_.GetSkillSelect()) {
+    return true;
+  }
   //プレイヤーの速度更新は入力を受け取って処理する
   player_.SetVelocity();
   player_.SetImpulse();

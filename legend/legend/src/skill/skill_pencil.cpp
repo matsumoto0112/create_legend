@@ -94,7 +94,7 @@ void SkillPencil::ProductionUpdate() {
   math::Vector3 forward =
       transform_.GetRotation() * math::Vector3::kForwardVector;
   math::Vector3 velocity =
-      forward.Normalized() + math::Vector3(0, -20.0f, 0) * update_time;
+      forward + (math::Vector3(0, -20.0f, 0) * update_time);
   math::Vector3 position = collision_.GetPosition() + velocity;
 
   transform_.SetPosition(position);
@@ -112,6 +112,7 @@ void SkillPencil::Explosion(actor::ActorType type) {
     return;
 
   //周囲の敵を吹き飛ばす処理
+
 
   //パーティクルの再生?
 

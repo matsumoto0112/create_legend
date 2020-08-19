@@ -119,6 +119,26 @@ void SkillManager::RemoveSkill() {
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
     i--;
+    select_ui_.SelectSkillNumber(i);
+  }
+}
+
+bool SkillManager::SelectSkill() {
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
+    select_ui_.ChangeIsSelectMode();
+  }
+
+  if (select_ui_.GetIsSelectMode()) {
+    i32 number = select_ui_.GetSkillNumber();
+    if (input.GetGamepad()->GetStickLeft().x >= 0.8f)
+      number++;
+    else if (input.GetGamepad()->GetStickLeft().x <= -0.8f)
+      number--;
+    select_ui_.SelectSkillNumber(number);
+    return true;
+  } else {
+    return false;
   }
 }
 

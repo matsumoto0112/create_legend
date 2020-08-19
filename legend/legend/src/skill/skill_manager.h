@@ -58,6 +58,10 @@ class SkillManager {
    * @brief スキルの削除
    */
   void RemoveSkill();
+  /**
+   * @brief スキルの選択
+   */
+  bool SelectSkill();
 
  private:
   //! 所持できる最大スキル数

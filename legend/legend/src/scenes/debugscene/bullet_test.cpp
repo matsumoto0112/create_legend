@@ -51,7 +51,7 @@ bool BulletTest::Update() {
       if (ImGui::Button("Add Sphere")) {
           bullet::BoundingSphere::InitializeParameter parameter;
           parameter.mass = 10.0f;
-          parameter.position = btVector3(0, 10.0f, 0);
+          parameter.position = btVector3(0, 0.0f, 0);
           parameter.rotation = btQuaternion(0.0f, 0.0f, 0.0f);
           parameter.radius = 1.0f;
           parameter.restitution = 0.8f;

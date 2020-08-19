@@ -26,6 +26,8 @@ class Collider {
    */
   virtual bool Update();
   btRigidBody* GetRigidBody();
+  void ApplyCentralImpulse(btVector3 impulse);
+
 
  protected:
   std::shared_ptr<btCollisionShape> shape_;

@@ -12,5 +12,10 @@ btRigidBody* Collider::GetRigidBody()
     return rigid_body_.get(); 
 }
 
+void Collider::ApplyCentralImpulse(btVector3 impulse)
+{
+    rigid_body_->applyCentralImpulse(impulse);
+}
+
 }  // namespace bullet
 }  // namespace legend

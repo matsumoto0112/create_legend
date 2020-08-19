@@ -37,22 +37,37 @@ constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 }  // namespace model
 
 namespace texture {
-//テストテクスチャ
+constexpr name RESULT_GAMEOVER = L"Result_gameOver.png";
+constexpr name RESULT_PLAYERPOWER_TEXT_1 = L"Result_playerPower_text_1.png";
+constexpr name RESULT_PLAYERPOWER_TEXT_2 = L"Result_playerPower_text_2.png";
+constexpr name RESULT_STAGECLEAR = L"Result_stageClear.png";
+constexpr name RESULT_TOTALTURN_TEXT_1 = L"Result_totalTurn_text_1.png";
+constexpr name RESULT_TOTALTURN_TEXT_2 = L"Result_totalTurn_text_2.png";
 constexpr name TEX = L"tex.png";
+constexpr name TITLE_LOGO = L"TItle_logo.png";
+constexpr name TITLE_PUSHBUTTON_GUIDE = L"Title_pushButton_guide.png";
+constexpr name UI_NUMBER_1 = L"UI_number_1.png";
 constexpr name UI_PLAYERFORM_FRAME = L"UI_playerForm_frame.png";
 constexpr name UI_PLAYERPOWER_FRAME = L"UI_playerPower_frame.png";
-constexpr name UI_PLAYERPOWER_GAUGE_FRAME = L"UI_playerPower_gauge_frame.png";
-constexpr name UI_PLAYERPOWER_GAUGE_0_TO_100 =
-    L"UI_playerPower_gauge_0to100.png";
-constexpr name UI_PLAYERPOWER_GAUGE_101_TO_200 =
+constexpr name UI_PLAYERPOWER_GAUGE_0TO100 = L"UI_playerPower_gauge_0to100.png";
+constexpr name UI_PLAYERPOWER_GAUGE_101TO200 =
     L"UI_playerPower_gauge_101to200.png";
-constexpr name UI_PLAYERPOWER_GAUGE_201_TO_300 =
+constexpr name UI_PLAYERPOWER_GAUGE_201TO300 =
     L"UI_playerPower_gauge_201to300.png";
-constexpr name UI_PLAYERPOWER_GAUGE_BLURRYPOINT =
-    L"UI_powerGauge_blurryPoint.png";
-constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
+constexpr name UI_PLAYERPOWER_GAUGE_FRAME = L"UI_playerPower_gauge_frame.png";
+constexpr name UI_PLAYER_ESTIMATE = L"UI_player_estimate.png";
 constexpr name UI_POWERGAUGE = L"UI_powerGauge.png";
-constexpr name NUMBER = L"UI_number_1.png";
+constexpr name UI_POWERGAUGE_BLURRYPOINT = L"UI_powerGauge_blurryPoint.png";
+constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
+constexpr name UI_SKILL_EXPLANATION = L"UI_skill_explanation.png";
+constexpr name UI_SKILL_FRAME = L"UI_skill_frame.png";
+constexpr name UI_SKILL_FRAME_WHOLE = L"UI_skill_frame_whole.png";
+constexpr name UI_SKILL_ICON_1 = L"UI_skill_icon_1.png";
+constexpr name UI_SKILL_ICON_2 = L"UI_skill_icon_2.png";
+constexpr name UI_SKILL_ICON_3 = L"UI_skill_icon_3.png";
+constexpr name UI_SKILL_ICON_4 = L"UI_skill_icon_4.png";
+constexpr name UI_SKILL_ICON_5 = L"UI_skill_icon_5.png";
+constexpr name UI_SKILL_SELECT_FRAME = L"UI_skill_select_frame.png";
 }  // namespace texture
 
 namespace vertex_shader {

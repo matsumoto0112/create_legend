@@ -48,6 +48,18 @@ bool BulletTest::Update() {
               std::make_shared<bullet::BoundingBox>(parameter);
           physics_field_.AddCollision(box);
       }
+      if (ImGui::Button("Add Sphere")) {
+          bullet::BoundingSphere::InitializeParameter parameter;
+          parameter.mass = 10.0f;
+          parameter.position = btVector3(0, 10.0f, 0);
+          parameter.rotation = btQuaternion(0.0f, 0.0f, 0.0f);
+          parameter.radius = 1.0f;
+          parameter.restitution = 0.8f;
+
+          std::shared_ptr<bullet::BoundingSphere> sphere =
+              std::make_shared<bullet::BoundingSphere>(parameter);
+          physics_field_.AddCollision(sphere);
+      }
   }
   ImGui::End();
 

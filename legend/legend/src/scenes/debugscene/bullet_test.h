@@ -7,6 +7,7 @@
  */
 
 #include "src/bullet/bounding_box.h"
+#include "src/bullet/bounding_sphere.h"
 #include "src/bullet/physics_field.h"
 #include "src/scenes/scene.h"
 

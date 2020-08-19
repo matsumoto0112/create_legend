@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\bullet\bounding_box.cpp" />
+    <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />
     <ClCompile Include="src\bullet\physics_field.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
+    <ClInclude Include="src\bullet\bounding_sphere.h" />
     <ClInclude Include="src\bullet\collider.h" />
     <ClInclude Include="src\bullet\physics_field.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />

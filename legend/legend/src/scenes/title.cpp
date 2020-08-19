@@ -1,6 +1,8 @@
 #include "src/scenes/title.h"
 
 #include "src/game/game_device.h"
+#include "src/ui/image.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace scenes {
@@ -17,6 +19,38 @@ bool Title::Initialize() {
 
   bgm_key_ = audio.Start(L"free_2.wav", 1.0f, true);
 
+  {
+    auto image = std::make_unique<ui::Image>();
+    if (!image->Init(
+            util::resource::resource_names::texture::TITLE_LOGO,
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
+      return false;
+    }
+
+    const auto screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    const float x =
+        screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
+    const float y = image->GetSprite().GetContentSize().y * 0.5f;
+    image->SetPosition(math::Vector2(x, y));
+    board_.AddComponent(std::move(image));
+  }
+  {
+    auto image = std::make_unique<ui::Image>();
+    if (!image->Init(
+            util::resource::resource_names::texture::TITLE_PUSHBUTTON_GUIDE,
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
+      return false;
+    }
+
+    const auto screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    const float x =
+        screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
+    const float y = image->GetSprite().GetContentSize().y * 0.5f + 400.0f;
+    image->SetPosition(math::Vector2(x, y));
+    board_.AddComponent(std::move(image));
+  }
   return true;
 }
 
@@ -24,10 +58,6 @@ bool Title::Initialize() {
 bool Title::Update() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
 
-  if (ImGui::Begin("Text")) {
-    ImGui::Text("Push A to play");
-  }
-  ImGui::End();
   if (input.GetCommand(input::input_code::Decide)) {
     scene_change_->ChangeScene(SceneType::MAIN_SCENE_1);
   }
@@ -35,7 +65,18 @@ bool Title::Update() {
 }
 
 //•`‰æ
-void Title::Draw() { Scene::Draw(); }
+void Title::Draw() {
+  Scene::Draw();
+
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+
+  device.GetRenderResourceManager().SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  board_.Draw();
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+}
 
 void Title::Finalize() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();

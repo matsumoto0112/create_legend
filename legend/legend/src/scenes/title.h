@@ -2,6 +2,7 @@
 #define LEGEND_SCENES_TITLE_H_
 
 #include "src/scenes/scene.h"
+#include "src/ui/ui_board.h"
 
 namespace legend {
 namespace scenes {
@@ -33,6 +34,7 @@ class Title : public Scene {
 
  private:
   i32 bgm_key_;
+  ui::UIBoard board_;
 };
 
 }  // namespace scenes

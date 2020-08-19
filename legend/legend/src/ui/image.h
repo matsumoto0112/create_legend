@@ -54,6 +54,10 @@ class Image : public UIComponent {
    * @brief Z-Orderを取得する
    */
   virtual float GetZOrder() const override;
+  /**
+   * @brief スプライトを取得する
+   */
+  virtual draw::Sprite2D& GetSprite() { return sprite_; }
 
  protected:
   //! 描画するスプライト

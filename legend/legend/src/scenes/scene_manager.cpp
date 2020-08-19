@@ -11,6 +11,7 @@
 #include "src/scenes/debugscene/stage_generate_test.h"
 #include "src/scenes/decorator/pausable.h"
 #include "src/scenes/debugscene/skill_test.h"
+#include "src/scenes/debugscene/bullet_test.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/mainscene/main_scene_1.h"
 #include "src/scenes/title.h"
@@ -88,6 +89,8 @@ bool SceneManager::Update() {
           return std::make_unique<debugscene::GPUParticleTest>(this);
         case SceneType::SKILL_TEST:
             return std::make_unique<debugscene::SkillTest>(this);
+        case SceneType::BULLET_TEST:
+            return std::make_unique<debugscene::BulletTest>(this);
         default:
           MY_ASSERTION(false, L"存在しないシーンが選択されました。");
           return nullptr;

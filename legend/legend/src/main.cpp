@@ -95,6 +95,7 @@ class MyApp final : public device::Application {
           scenes::SceneType::GRAFFITI_TEST,
           scenes::SceneType::GPU_PARTICLE_TEST,
           scenes::SceneType::SKILL_TEST,
+          scenes::SceneType::BULLET_TEST,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

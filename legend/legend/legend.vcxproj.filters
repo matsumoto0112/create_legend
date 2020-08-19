@@ -135,6 +135,11 @@
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
     <ClCompile Include="src\util\loader\archive_loader.cpp" />
     <ClCompile Include="src\util\pipeline_initializer.cpp" />
+    <ClCompile Include="src\bullet\physics_field.cpp" />
+    <ClCompile Include="src\bullet\collider.cpp" />
+    <ClCompile Include="src\bullet\bounding_box.cpp" />
+    <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
+    <ClCompile Include="src\bullet\bounding_sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -317,6 +322,11 @@
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\util\loader\archive_loader.h" />
     <ClInclude Include="src\util\pipeline_initializer.h" />
+    <ClInclude Include="src\bullet\collider.h" />
+    <ClInclude Include="src\bullet\physics_field.h" />
+    <ClInclude Include="src\bullet\bounding_box.h" />
+    <ClInclude Include="src\scenes\debugscene\bullet_test.h" />
+    <ClInclude Include="src\bullet\bounding_sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

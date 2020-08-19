@@ -81,10 +81,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\bullet\bounding_box.cpp" />
+    <ClCompile Include="src\bullet\bounding_sphere.cpp" />
+    <ClCompile Include="src\bullet\collider.cpp" />
+    <ClCompile Include="src\bullet\physics_field.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
+    <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
     <ClCompile Include="src\search\search_manager.cpp" />
     <ClCompile Include="src\search\search_course.cpp" />
     <ClCompile Include="src\search\search_ai.cpp" />
@@ -220,10 +225,15 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\bullet\bounding_box.h" />
+    <ClInclude Include="src\bullet\bounding_sphere.h" />
+    <ClInclude Include="src\bullet\collider.h" />
+    <ClInclude Include="src\bullet\physics_field.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\scenes\debugscene\bullet_test.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />
     <ClInclude Include="src\search\search_ai.h" />

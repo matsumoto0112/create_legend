@@ -1,6 +1,8 @@
 #include "src/util/loader/texture_loader.h"
 
+#include "src/game/game_device.h"
 #include "src/libs/stb_image.h"
+#include "src/util/path.h"
 
 namespace legend {
 namespace util {
@@ -26,7 +28,6 @@ LoadedTextureData Load(const std::filesystem::path& filename) {
   res.name = filename.filename().replace_extension();
 
   stbi_image_free(begin);
-
   return res;
 }
 

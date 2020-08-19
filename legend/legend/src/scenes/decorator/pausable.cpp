@@ -44,10 +44,14 @@ bool Pausable::Update() {
 void Pausable::Draw() {
   inner_->Draw();
   if (is_pause_) {
+    auto& device = game::GameDevice::GetInstance()->GetDevice();
     auto& command_list = game::GameDevice::GetInstance()
                              ->GetDevice()
                              .GetCurrentFrameResource()
                              ->GetCommandList();
+    device.GetRenderResourceManager().SetRenderTargets(
+        command_list, directx::render_target::RenderTargetID::BACK_BUFFER,
+        false, directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
     auto& sprite = game::GameDevice::GetInstance()->GetSpriteRenderer();
     sprite.AddDrawItems(&pause_image_);
     sprite.DrawItems(command_list);

@@ -6,6 +6,7 @@
  * @brief リソース管理クラス定義
  */
 
+#include "src/util/loader/archive_loader.h"
 #include "src/util/resource/compute_shader.h"
 #include "src/util/resource/geometry_shader.h"
 #include "src/util/resource/model.h"
@@ -37,6 +38,8 @@ class Resource {
    * @return 初期化に成功したらtrueを返す
    */
   bool Init();
+  loader::ArchiveLoader& GetArchiveLoader() { return archive_loader_; }
+
   /**
    * @brief ピクセルシェーダーを取得する
    */
@@ -67,6 +70,7 @@ class Resource {
   resource::Texture& GetTexture() { return texture_; }
 
  private:
+  loader::ArchiveLoader archive_loader_;
   //! ピクセルシェーダー管理
   resource::PixelShader pixel_shader_;
   //! 頂点シェーダー管理

@@ -32,7 +32,7 @@ bool RenderResourceManager::Init(device::IDirectXAccessor& accessor,
     std::wstringstream wss;
     wss << L"BackBuffer " << i;
     if (!rtt.Get(i).InitFromBuffer(accessor, swap_chain_.GetBuffer(i),
-                                   util::Color4(0.0f, 0.0f, 0.0f, 1.0f),
+                                   util::Color4(0.2f, 0.2f, 0.2f, 1.0f),
                                    wss.str())) {
       return false;
     }

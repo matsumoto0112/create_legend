@@ -6,6 +6,7 @@
  * @brief リソース管理システム基底クラス定義
  */
 
+#include "src/util/loader/archive_loader.h"
 #include "src/util/stl_extend.h"
 
 namespace legend {
@@ -31,7 +32,7 @@ class ResourceManager {
    * @brief 初期化
    * @return 初期化に成功したらtrueを返す
    */
-  virtual bool Init();
+  virtual bool Init(loader::ArchiveLoader* loader);
   /**
    * @brief リソースをロードする
    * @param name リソース名
@@ -59,10 +60,13 @@ class ResourceManager {
  protected:
   //! 読み込んだリソースマップ
   ResourceMap resources_;
+  //! アーカイブのローダー
+  loader::ArchiveLoader* loader_;
 };
 
 template <typename TResource>
-inline bool ResourceManager<TResource>::Init() {
+inline bool ResourceManager<TResource>::Init(loader::ArchiveLoader* loader) {
+  this->loader_ = loader;
   return true;
 }
 

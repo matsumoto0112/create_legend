@@ -6,7 +6,7 @@
  */
 
 #include "src/actor/actor.h"
-#include "src/physics/bounding_box.h"
+//#include "src/physics/bounding_box.h"
 
 namespace legend {
 namespace object {

@@ -1,17 +1,15 @@
 #include "src/scenes/scene_manager.h"
 
-#include "src/scenes/debugscene/enemy_move_viewer.h"
+#include "src/scenes/debugscene/bullet_test.h"
 #include "src/scenes/debugscene/gpu_particle_test.h"
 #include "src/scenes/debugscene/graffiti_test.h"
 #include "src/scenes/debugscene/model_view.h"
-#include "src/scenes/debugscene/physics_test.h"
 #include "src/scenes/debugscene/player_move_viewer.h"
+#include "src/scenes/debugscene/skill_test.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/debugscene/stage_generate_test.h"
 #include "src/scenes/decorator/pausable.h"
-#include "src/scenes/debugscene/skill_test.h"
-#include "src/scenes/debugscene/bullet_test.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/mainscene/main_scene_1.h"
 #include "src/scenes/title.h"
@@ -70,14 +68,10 @@ bool SceneManager::Update() {
           return std::make_unique<debugscene::ModelView>(this);
         case SceneType::SOUND_TEST:
           return std::make_unique<debugscene::SoundTest>(this);
-        case SceneType::PHYSICS_TEST:
-          return std::make_unique<debugscene::PhysicsTest>(this);
         case SceneType::SPRITE_TEST:
           return std::make_unique<debugscene::SpriteRenderTest>(this);
         case SceneType::PLAYER_MOVE_VIEWER:
           return std::make_unique<debugscene::PlayerMoveViewer>(this);
-        case SceneType::ENEMY_MOVE_VIEWER:
-          return std::make_unique<debugscene::EnemyMoveViewer>(this);
         case SceneType::MAIN_SCENE_1:
           return std::make_unique<decorator::Pausable>(
               this, std::make_unique<mainscene::MainScene1>(this));
@@ -88,9 +82,9 @@ bool SceneManager::Update() {
         case SceneType::GPU_PARTICLE_TEST:
           return std::make_unique<debugscene::GPUParticleTest>(this);
         case SceneType::SKILL_TEST:
-            return std::make_unique<debugscene::SkillTest>(this);
+          return std::make_unique<debugscene::SkillTest>(this);
         case SceneType::BULLET_TEST:
-            return std::make_unique<debugscene::BulletTest>(this);
+          return std::make_unique<debugscene::BulletTest>(this);
         default:
           MY_ASSERTION(false, L"存在しないシーンが選択されました。");
           return nullptr;

@@ -1,7 +1,5 @@
 #include "src/scenes/debugscene/player_move_viewer.h"
 
-#include "src/physics/collision.h"
-
 namespace legend {
 namespace scenes {
 namespace debugscene {

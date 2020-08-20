@@ -79,10 +79,25 @@ void PhysicsField::AddRigidBody(btRigidBody* rigid_body) {
 }
 
 void PhysicsField::AddCollision(std::shared_ptr<Collider> collider) {
-  colliders_.push_back(collider);
+  colliders_.emplace_back(collider);
   AddRigidBody(collider->GetRigidBody());
   world_->addAction(collider.get());
 }
+
+//void PhysicsField::AddTrigger(std::shared_ptr<Trigger> trigger) {
+//  triggers_.push_back(trigger);
+//  world_->addCollisionObject(trigger->GetGhostObject());
+//  world_->addAction(trigger.get());
+//}
+//
+//void PhysicsField::RemoveCollision(std::shared_ptr<Collider> collider) {
+//  colliders_.erase(std::remove(colliders_.begin(), colliders_.end(), collider),
+//                   colliders_.end());
+//}
+//void PhysicsField::RemoveTrigger(std::shared_ptr<Trigger> trigger) {
+//  triggers_.erase(std::remove(triggers_.begin(), triggers_.end(), trigger),
+//                  triggers_.end());
+//}
 
 }  // namespace bullet
 }  // namespace legend

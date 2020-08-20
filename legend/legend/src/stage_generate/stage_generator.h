@@ -6,7 +6,7 @@
 #include "src/object/graffiti.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
-#include "src/system/physics_field.h"
+
 
 namespace legend {
 namespace stage_generate {
@@ -55,8 +55,8 @@ class StageGenerator {
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);
 
-  std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
-      const i32 turn_count);
+  //std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
+  //    const i32 turn_count);
 
  private:
   /**

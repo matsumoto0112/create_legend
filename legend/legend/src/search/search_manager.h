@@ -1,8 +1,6 @@
 #ifndef LEGEND_SEARCH_SEARCH_MANAGER_H_
 #define LEGEND_SEARCH_SEARCH_MANAGER_H_
 
-#include <vector>
-#include "src/physics/ray.h"
 #include "src/player/player.h"
 #include "src/search/search_course.h"
 
@@ -27,7 +25,7 @@ class SearchManager {
   /**
    * @brief èâä˙ê›íË
    */
-  void Initialize(physics::BoundingBox* _player_obb);
+  void Initialize(bullet::BoundingBox* _player_obb);
 
   /**
    * @brief ç¿ïWí«â¡
@@ -45,8 +43,8 @@ class SearchManager {
   /**
    * @brief éüÇÃç¿ïW
    */
-  math::Vector3 NextSearch(physics::BoundingBox* _enemy,
-                           std::vector<physics::BoundingBox*> _enemys);
+  math::Vector3 NextSearch(bullet::BoundingBox* _enemy,
+                           std::vector<bullet::BoundingBox*> _enemys);
   /**
    * @brief åoòHíTçı
    */
@@ -83,9 +81,9 @@ class SearchManager {
   std::vector<std::unique_ptr<SearchAI>> search_list_;
   std::vector<SearchAI*> course_list_;
 
-  physics::BoundingBox* player_obb_;
-  std::vector<physics::BoundingBox*> enemys_;
-  physics::BoundingBox* ignore_enemy_;
+  bullet::BoundingBox* player_obb_;
+  std::vector<bullet::BoundingBox*> enemys_;
+  bullet::BoundingBox* ignore_enemy_;
 };
 }  // namespace search
 }  // namespace legend

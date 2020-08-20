@@ -2,6 +2,8 @@
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/game/game_device.h"
+#include "src/player/player.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/resource_names.h"
@@ -32,6 +34,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
+
   bullet::BoundingBox::InitializeParameter params;
   params.position = this->transform_.GetPosition();
   params.rotation = this->transform_.GetRotation();
@@ -40,6 +43,12 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.friction = 0.6f;
   params.restitution = 0.6f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) {
+    // player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
+    // if (p) {
+    //  MY_LOG(L"Hit Player");
+    //}
+  });
   mediator_->AddCollider(box_);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();

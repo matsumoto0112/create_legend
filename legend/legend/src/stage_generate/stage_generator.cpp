@@ -77,6 +77,12 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
                                   player::Player* player,
                                   std::vector<object::Graffiti>* graffities) {
   bool is_all_ok = true;
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          game::GameDevice::GetInstance()->GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
 
   if (indexs_.empty() || indexs_[0] == "error") {
     MY_LOG(L"ƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢‚©A“Ç‚İ‚İ‚É¸”s‚µ‚Ä‚¢‚Ü‚·B");
@@ -131,46 +137,45 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
       continue;
     }
 
-    //áŠQ•¨‚Ì¶¬
-    if (infomation[0] == "obstacle") {
-      object::Obstacle::InitializeParameter parameter;
-      parameter.position = transform.GetPosition();
-      parameter.rotation = transform.GetRotation();
-      parameter.model_id = 0;
-      parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+    ////áŠQ•¨‚Ì¶¬
+    // if (infomation[0] == "obstacle") {
+    //  object::Obstacle::InitializeParameter parameter;
+    //  parameter.position = transform.GetPosition();
+    //  parameter.rotation = transform.GetRotation();
+    //  parameter.model_id = 0;
+    //  parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
 
-      auto& obstacle = obstacles->emplace_back();
+    //  auto& obstacle = obstacles->emplace_back();
 
-      if (!obstacle.Init(parameter)) {
-        MY_LOG(L"áŠQ•¨‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½B");
-        is_all_ok = false;
-      }
-      continue;
-    }
+    //  if (!obstacle.Init(parameter)) {
+    //    MY_LOG(L"áŠQ•¨‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½B");
+    //    is_all_ok = false;
+    //  }
+    //  continue;
+    //}
 
     if (infomation[0] == "graffiti") {
-      directx::device::CommandList command_list;
-      if (!command_list.Init(
-              game::GameDevice::GetInstance()->GetDevice(),
-              D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-        is_all_ok = false;
-        continue;
-      }
-
       object::GraffitiInitializeParameter parameter;
       parameter.transform = transform;
+      parameter.transform.SetPosition(transform.GetPosition() +
+                                      math::Vector3::kUpVector * 10.0f);
       parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
       parameter.remaining_graffiti = 100.0f;
 
       auto& graffiti = graffities->emplace_back();
 
-      if (!graffiti.Init(parameter, command_list)) {
+      if (!graffiti.Init(mediator, parameter, command_list)) {
         MY_LOG(L"—‘‚«‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½B");
         is_all_ok = false;
       }
       continue;
     }
   }
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   return is_all_ok;
 }
@@ -211,44 +216,44 @@ StageGenerator::GetEnemyParameters(const i32 turn_count) {
   return enemy_parameters;
 }
 
-std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
-    const i32 turn_count) {
-  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
-
-  if (indexs_.empty() || indexs_[0] == "error") {
-    MY_LOG(L"ƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢‚©A“Ç‚İ‚İ‚É¸”s‚µ‚Ä‚¢‚Ü‚·B");
-    return boss_parameters;
-  }
-
-  for (auto&& index : indexs_) {
-    //•¶š—ñ‚ğ•ªŠ„
-    std::vector<std::string> infomation = StringSplit(index, ',');
-
-    //–{—ˆ‚Í”wŒiID‚È‚Ç‚ğ“Ç‚İ‚Ş‚ªŒ»İ‚Í–³‹
-    if (infomation[0] == map_name_) continue;
-
-    //“G‚Ì¶¬
-    if (infomation[0] == "boss") {
-      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
-
-      enemy::Boss::InitializeParameter parameter;
-      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
-
-      // Transform‚ğ“Ç‚İ‚İ(scale‚ÍŒ»ó–³‹)
-      parameter.transform =
-          String_2_Transform(infomation[1], infomation[2], infomation[3],
-                             infomation[4], infomation[5], infomation[6],
-                             infomation[7], infomation[8], infomation[9]);
-      parameter.transform.SetPosition(parameter.transform.GetPosition() +
-                                      math::Vector3(0.0f, 10.0f, 0.0f));
-      parameter.transform.SetScale(scale);
-      parameter.bouding_box_length =
-          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
-      boss_parameters.push_back(parameter);
-    }
-  }
-  return boss_parameters;
-}
+//std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
+//    const i32 turn_count) {
+//  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
+//
+//  if (indexs_.empty() || indexs_[0] == "error") {
+//    MY_LOG(L"ƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢‚©A“Ç‚İ‚İ‚É¸”s‚µ‚Ä‚¢‚Ü‚·B");
+//    return boss_parameters;
+//  }
+//
+//  for (auto&& index : indexs_) {
+//    //•¶š—ñ‚ğ•ªŠ„
+//    std::vector<std::string> infomation = StringSplit(index, ',');
+//
+//    //–{—ˆ‚Í”wŒiID‚È‚Ç‚ğ“Ç‚İ‚Ş‚ªŒ»İ‚Í–³‹
+//    if (infomation[0] == map_name_) continue;
+//
+//    //“G‚Ì¶¬
+//    if (infomation[0] == "boss") {
+//      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
+//
+//      enemy::Boss::InitializeParameter parameter;
+//      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
+//
+//      // Transform‚ğ“Ç‚İ‚İ(scale‚ÍŒ»ó–³‹)
+//      parameter.transform =
+//          String_2_Transform(infomation[1], infomation[2], infomation[3],
+//                             infomation[4], infomation[5], infomation[6],
+//                             infomation[7], infomation[8], infomation[9]);
+//      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+//                                      math::Vector3(0.0f, 10.0f, 0.0f));
+//      parameter.transform.SetScale(scale);
+//      parameter.bouding_box_length =
+//          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
+//      boss_parameters.push_back(parameter);
+//    }
+//  }
+//  return boss_parameters;
+//}
 
 float StageGenerator::String_2_Float(const std::string& string) {
   return std::stof(string.c_str());

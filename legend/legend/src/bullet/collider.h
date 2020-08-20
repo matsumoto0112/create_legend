@@ -90,6 +90,9 @@ class Collider : public btActionInterface {
    */
   actor::Actor* GetOwner() const { return owner_; }
 
+  int GetFlags() const;
+  void SetFlags(int flags);
+
  protected:
   actor::Actor* owner_;
   std::shared_ptr<btCollisionShape> shape_;

@@ -204,7 +204,6 @@ class TurnSystem : public actor::IActorMediator {
   // UIのリアルタイム修正用パラメータ
   std::vector<legend::ui::UIComponent*> components_;
   std::vector<std::vector<std::string>> input_lines_;
-
 };
 
 }  // namespace system

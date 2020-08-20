@@ -3,7 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
-#include "src/skill/skill_manager.h"
+//#include "src/skill/skill_manager.h"
 
 namespace legend {
 namespace player {
@@ -166,8 +166,9 @@ class Player : public actor::Actor {
   float min_strength_;
 
   //! スキルマネージャー
-  skill::SkillManager skill_manager_;
+  // skill::SkillManager skill_manager_;
 
+  //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
 };
 

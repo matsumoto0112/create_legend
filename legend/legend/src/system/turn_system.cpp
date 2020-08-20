@@ -2,6 +2,7 @@
 
 #include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace system {
@@ -33,26 +34,11 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  // physics_field_.SetPlayer(player_.GetCollisionRef());
-
-  // player_.SetMediator(this);
-  // for (auto&& desk : desks_) {
-  //  physics_field_.AddDesk(desk.GetCollisionRef());
-  //  desk.SetMediator(this);
-  //}
-  // for (auto&& obs : obstacles_) {
-  //  physics_field_.AddObstacle(obs.GetCollisionRef());
-  //  obs.SetMediator(this);
-  //}
   for (auto&& enemy_parameter :
        stage_generator_.GetEnemyParameters(current_turn_)) {
     enemy_manager_.Add(enemy_parameter);
   }
 
-  // for (auto&& graffiti : graffities_) {
-  //  physics_field_.AddGraffiti(graffiti.GetCollisionRef());
-  //  graffiti.SetMediator(this);
-  //}
   if (!InitCameras()) {
     return false;
   }
@@ -397,9 +383,9 @@ void TurnSystem::Draw() {
   // for (auto&& obs : obstacles_) {
   //  obs.Draw();
   //}
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti.Draw(command_list);
-  //}
+  for (auto&& graffiti : graffities_) {
+    graffiti.Draw(command_list);
+  }
   // for (auto&& fragment : fragments_) {
   //  fragment.Draw();
   //}
@@ -413,26 +399,7 @@ void TurnSystem::Draw() {
 //デバッグ描画
 void TurnSystem::DebugDraw() {
   cameras_[current_camera_]->RenderStart();
-  // auto& command_list = game::GameDevice::GetInstance()
-  //                         ->GetDevice()
-  //                         .GetCurrentFrameResource()
-  //                         ->GetCommandList();
-
-  // player_.GetCollisionRef().DebugDraw(command_list);
-  // for (auto&& desk : desks_) {
-  //  desk.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // enemy_manager_.DebugDraw(command_list);
   // search_manager_.DebugDraw(command_list);
-  // for (auto&& obs : obstacles_) {
-  //  obs.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // for (auto&& fragment : fragments_) {
-  //  fragment.GetCollisionRef().DebugDraw(command_list);
-  //}
   physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 

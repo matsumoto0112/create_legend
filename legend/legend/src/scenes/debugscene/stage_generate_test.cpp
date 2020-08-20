@@ -14,7 +14,7 @@ bool StageGenerateTest::Initialize() {
   indexs_.clear();
   indexs_.push_back("no data");
 
-  physics_field_.Init();
+  //physics_field_.Init();
 
   //ƒJƒƒ‰‚Ì‰Šú‰»
   const math::Vector3 camera_position = math::Vector3(0, 40, -40);

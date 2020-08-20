@@ -129,7 +129,8 @@ void SkillManager::RemoveSkill() {
   //スキルの実装がまだなのでボタンで削除できるようにした
   auto& input = game::GameDevice::GetInstance()->GetInput();
   i32 skill_num = select_ui_.GetSkillNumber();
-  if (input.GetGamepad()->GetButtonDown(input::joy_code::B)) {
+  if (input.GetGamepad()->GetButtonDown(input::joy_code::B) &&
+      skills_.size() > 0) {
     skills_[skill_num]->EndAction();
   }
 }
@@ -164,9 +165,11 @@ void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   i32 skill_num = select_ui_.GetSkillNumber();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::A)) {
     skills_[skill_num]->Use();
+    audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
   }
 }
 

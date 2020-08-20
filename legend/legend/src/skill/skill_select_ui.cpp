@@ -94,13 +94,20 @@ bool SkillSelectUI::GetIsSelectMode() const { return is_select_mode_; }
 void SkillSelectUI::ChangeIsSelectMode() {
   if (skill_icons_.size() == 0) return;
 
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   if (is_select_mode_) {
     is_select_mode_ = false;
     skill_select_frame_.SetScale(math::Vector2::kZeroVector);
+    audio.Start(util::resource::resource_names::audio::
+                    PLAYER_RETURN_FROM_SELECT_SKILL_MODE,
+                1.0f);
   } else {
     is_select_mode_ = true;
     SelectSkillNumber(select_number_);
     skill_select_frame_.SetScale(icon_scale_);
+    audio.Start(
+        util::resource::resource_names::audio::PLAYER_MOVE_SELECT_SKILL_MODE,
+        1.0f);
   }
 }
 
@@ -119,11 +126,14 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
     select_number = static_cast<i32>(skill_icons_.size() - 1);
   if (select_number >= skill_icons_.size()) select_number = 0;
 
+  if (select_number_ == select_number) return;
   select_number_ = select_number;
 
   skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
   skill_select_frame_.SetScale(icon_scale_);
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Start(util::resource::resource_names::audio::SKILL_SELECT, 1.0f);
 }
 
 }  // namespace skill

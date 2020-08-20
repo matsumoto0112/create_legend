@@ -44,6 +44,8 @@ class Actor {
    */
   virtual void Draw();
 
+  virtual void Destroy();
+
  protected:
   /**
    * @brief バッファの初期化

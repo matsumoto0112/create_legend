@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />

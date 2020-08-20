@@ -93,6 +93,8 @@ class Enemy : public actor::Actor {
    */
   void ResetMoveEnd();
 
+  bullet::BoundingBox* GetCollider() const { return box_.get(); }
+
  private:
   //! ‘¬“x
   math::Vector3 velocity_;

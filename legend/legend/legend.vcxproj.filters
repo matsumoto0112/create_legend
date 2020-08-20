@@ -140,6 +140,7 @@
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
+    <ClCompile Include="src\actor\actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />

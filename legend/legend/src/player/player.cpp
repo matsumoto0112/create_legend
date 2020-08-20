@@ -25,26 +25,21 @@ bool Player::Init(actor::IActorMediator* mediator,
   }
 
   this->transform_ = parameter.transform;
+
+  //コライダーの設定
   bullet::BoundingBox::InitializeParameter params;
   params.position = transform_.GetPosition();
   params.rotation = transform_.GetRotation();
   params.scale = parameter.bouding_box_length;
+
+  // TODO: ここら辺も初期化パラメータにいれる
   params.mass = 1.0f;
   params.friction = 0.8f;
   params.restitution = 1.0f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) {
-    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
-    if (e) {
-      MY_LOG(L"HitEnemy");
-    }
-  });
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
 
-  // this->collision_.SetCollisionCallback(
-  //    [&](actor::ActorType type) { Player::OnCollisionHit(type); });
-  // this->collision_.SetTriggerCallback(
-  //    [&](actor::ActorType type) { Player::OnTriggerHit(type); });
   min_power_ = parameter.min_power;
   max_power_ = parameter.max_power;
 
@@ -54,14 +49,10 @@ bool Player::Init(actor::IActorMediator* mediator,
   max_strength_ = parameter.max_strength;
   min_strength_ = parameter.min_strength;
 
-  // box_ = std::make_shared<bullet::BoundingBox>();
-
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ =
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
@@ -69,7 +60,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   skill_manager_.Init();
 
   return true;
-}
+}  // namespace player
 
 //更新
 bool Player::Update() {
@@ -91,7 +82,7 @@ bool Player::Update() {
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
-    box_->ApplyCentralImpulse(math::Vector3(20.0f, 0.0f, -10.0f));
+    box_->ApplyCentralImpulse(math::Vector3(3.5f, 0.0f, -12.0f));
   }
 
   if (skill_manager_.IsProductionNow()) {
@@ -108,14 +99,12 @@ bool Player::Update() {
     ResetParameter();
     mediator_->PlayerMoveEndEvent();
   }
-
   return true;
 }
 
 void Player::Draw() {
   //プレイヤーの描画
   actor::Actor::Draw();
-
   //スキルマネージャーの描画
   skill_manager_.Draw();
 }
@@ -223,14 +212,6 @@ bool Player::GetMoveEnd() const {
 //移動判定の取得
 bool Player::GetIsMove() const { return is_move_; }
 
-void Player::OnCollisionHit(actor::ActorType type) {
-  // MY_LOG(L"Collision Hit: %d", type);
-}
-
-void Player::OnTriggerHit(actor::ActorType type) {
-  // MY_LOG(L"Trigger Hit: %d", type);
-}
-
 //強化パラメータの更新
 void Player::UpdateStrength(const float& add_strength) {
   strength_ += add_strength;
@@ -242,5 +223,19 @@ void Player::UpdateStrength(const float& add_strength) {
 
 //強化度合いを取得
 float Player::GetStrength() const { return strength_; }
+void Player::OnHit(bullet::Collider* other) {
+  {
+    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
+    if (e) {
+      const math::Vector3 player_position = transform_.GetPosition();
+      const math::Vector3 enemy_position = e->GetTransform().GetPosition();
+      const math::Vector3 direction =
+          (enemy_position - player_position).Normalized();
+
+      e->GetCollider()->ApplyCentralImpulse(direction * power_);
+    }
+  }
+}
+
 }  // namespace player
 }  // namespace legend

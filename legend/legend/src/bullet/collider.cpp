@@ -105,23 +105,16 @@ void Collider::SetAngularVelocity(const math::Vector3& velocity) {
 
 void Collider::updateAction(btCollisionWorld* collisionWorld,
                             btScalar deltaTimeStep) {
-  //// btCollisionWorld::contactTestÇ≈ÉèÅ[ÉãÉhÇ∑Ç◊ÇƒÇ∆îªíË
-  // int CollectContactWorld(btGhostObject * ghost, btGhostObject *
-  // cancel_ghost,
-  //                        std::vector<ContactPoint> & ct_points) {
-  // if (!ghost) return 0;
   std::vector<ContactPoint> ct_points;
   MyCollisionCallback cb(ct_points, rigid_body_.get());
   cb.Penetrate = 0.0f;
-  // cb.pCancel = shape_.get();
   collisionWorld->contactTest(rigid_body_.get(), cb);
   for (auto&& b : ct_points) {
     Collider* other = static_cast<Collider*>(b.pHitObj->getUserPointer());
     if (other) {
-      OnTriggerHit(other);
+      OnHit(other);
     }
   }
-  //}
 }
 
 void Collider::debugDraw(btIDebugDraw* debugDrawer) {}
@@ -133,13 +126,11 @@ void Collider::UpdateOwnerTransform() const {
   owner_->GetTransformRef().SetRotation(helper::ToQuaternion(tr.getRotation()));
 }
 
-void Collider::OnTriggerHit(Collider* other) {
+void Collider::OnHit(Collider* other) {
   if (callback_) {
     callback_(other);
   }
 }
-
-void Collider::OnCollisionHit() {}
 
 }  // namespace bullet
 }  // namespace legend

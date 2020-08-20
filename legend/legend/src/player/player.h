@@ -111,14 +111,6 @@ class Player : public actor::Actor {
    */
   bool GetIsMove() const;
   /**
-   * @brief 何かのオブジェクトと物理衝突したときのイベント
-   */
-  void OnCollisionHit(actor::ActorType type);
-  /**
-   * @brief 何かのオブジェクトとトリガー衝突したときのイベント
-   */
-  void OnTriggerHit(actor::ActorType type);
-  /**
    * @brief 強化パラメータの更新
    */
   void UpdateStrength(const float& add_strength);
@@ -126,6 +118,10 @@ class Player : public actor::Actor {
    * @brief 現在の強化度合いを取得
    */
   float GetStrength() const;
+  /**
+  * @brief 別のコライダーと衝突したときのコールバック
+  */
+  void OnHit(bullet::Collider* other);
 
  private:
   //! 速度

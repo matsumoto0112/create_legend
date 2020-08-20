@@ -58,17 +58,36 @@ class Collider : public btActionInterface {
    * @brief 回転移動量の指定
    */
   void SetAngularVelocity(const math::Vector3& velocity);
+  /**
+   * @brief 現在のワールド変換行列の状態を取得する
+   */
   btMotionState* GetMotionState() const { return motion_state_.get(); }
+  /**
+   * @brief 物理系更新時に呼ばれる
+   */
   virtual void updateAction(btCollisionWorld* collisionWorld,
                             btScalar deltaTimeStep) override;
+  /**
+   * @brief デバッグ描画時に呼ばれる（未使用）
+   */
   virtual void debugDraw(btIDebugDraw* debugDrawer) override;
+  /**
+   * @brief 自分を所有しているアクターのトランスフォームを更新する
+   */
   virtual void UpdateOwnerTransform() const;
-
-  virtual void OnTriggerHit(Collider* other);
-  virtual void OnCollisionHit();
+  /**
+   * @breif 衝突時コールバック
+   */
+  virtual void OnHit(Collider* other);
+  /**
+   * @brief 衝突時コールバック関数登録
+   */
   void SetCollisionCallBack(CollisionCallback callback) {
     this->callback_ = callback;
   }
+  /**
+   * @brief 自分を所有しているアクターを取得する
+   */
   actor::Actor* GetOwner() const { return owner_; }
 
  protected:

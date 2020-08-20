@@ -56,7 +56,7 @@ bool Player::Init(actor::IActorMediator* mediator,
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
   //スキルマネージャーの初期化
-  // skill_manager_.Init();
+  skill_manager_.Init(mediator_);
 
   return true;
 }
@@ -66,27 +66,27 @@ bool Player::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  ////スキルのデバック用のGUI
-  // if (ImGui::Begin("Skill")) {
-  //  if (ImGui::Button("Add Skill")) {
-  //    std::shared_ptr<skill::SkillPencil> skill =
-  //        std::make_shared<skill::SkillPencil>();
-  //    skill->Init(this);
-  //    skill_manager_.AddSkill(skill);
-  //  }
-  //}
-  // ImGui::End();
-  ////スキルマネージャーの更新
-  // skill_manager_.Update();
+  //スキルのデバック用のGUI
+  if (ImGui::Begin("Skill")) {
+    if (ImGui::Button("Add Skill")) {
+      std::shared_ptr<skill::SkillPencil> skill =
+          std::make_shared<skill::SkillPencil>();
+      skill->Init(mediator_, this);
+      skill_manager_.AddSkill(skill);
+    }
+  }
+  ImGui::End();
+  //スキルマネージャーの更新
+  skill_manager_.Update();
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
     box_->ApplyCentralImpulse(math::Vector3(3.5f, 0.0f, -12.0f));
   }
 
-  // if (skill_manager_.IsProductionNow()) {
-  //  return true;
-  //}
+  if (skill_manager_.IsProductionNow()) {
+    return true;
+  }
 
   if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
       0.5f) {
@@ -105,7 +105,7 @@ void Player::Draw() {
   //プレイヤーの描画
   actor::Actor::Draw();
   //スキルマネージャーの描画
-  // skill_manager_.Draw();
+  skill_manager_.Draw();
 }
 
 //座標の設定
@@ -228,8 +228,7 @@ float Player::GetStrength() const { return strength_; }
 bool Player::GetSkillSelect() {
   if (is_input_) return false;
 
-  // return skill_manager_.SelectSkill();
-  return true;
+  return skill_manager_.SelectSkill();
 }
 
 void Player::OnHit(bullet::Collider* other) {

@@ -76,11 +76,11 @@ void Collider::ApplyCentralImpulse(const math::Vector3& impulse) {
   rigid_body_->applyCentralImpulse(helper::TobtVector3(impulse));
 }
 
-btVector3 Collider::GetVelocity() {
-  if (rigid_body_ == nullptr) {
-    return btVector3(0, 0, 0);
+math::Vector3 Collider::GetVelocity() {
+  if (rigid_body_) {
+    return helper::ToVector3(rigid_body_->getLinearVelocity());
   }
-  return rigid_body_->getLinearVelocity();
+  return math::Vector3::kZeroVector;
 }
 
 void Collider::SetVelocity(const math::Vector3& velocity) {
@@ -91,17 +91,18 @@ void Collider::SetVelocity(const math::Vector3& velocity) {
   rigid_body_->setLinearVelocity(helper::TobtVector3(velocity));
 }
 
-btVector3 Collider::GetAngularVelocity() {
-  if (rigid_body_ == nullptr) {
-    return btVector3(0, 0, 0);
+math::Vector3 Collider::GetAngularVelocity() {
+  if (rigid_body_) {
+    return helper::ToVector3(rigid_body_->getAngularVelocity());
   }
-  return rigid_body_->getAngularVelocity();
+  return math::Vector3::kZeroVector;
 }
 
 void Collider::SetAngularVelocity(const math::Vector3& velocity) {
   if (rigid_body_ == nullptr) {
     return;
   }
+  rigid_body_->activate();
   rigid_body_->setAngularVelocity(helper::TobtVector3(velocity));
 }
 

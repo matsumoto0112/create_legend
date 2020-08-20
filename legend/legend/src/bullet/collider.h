@@ -44,7 +44,7 @@ class Collider : public btActionInterface {
   /**
    * @brief ˆÚ“®—Ê‚ÌŽæ“¾
    */
-  btVector3 GetVelocity();
+  math::Vector3 GetVelocity();
   /**
    * @brief ˆÚ“®—Ê‚ÌŽw’è
    */
@@ -52,7 +52,7 @@ class Collider : public btActionInterface {
   /**
    * @brief ‰ñ“]ˆÚ“®—Ê‚ÌŽæ“¾
    */
-  btVector3 GetAngularVelocity();
+  math::Vector3 GetAngularVelocity();
   /**
    * @brief ‰ñ“]ˆÚ“®—Ê‚ÌŽw’è
    */

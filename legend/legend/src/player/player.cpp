@@ -1,5 +1,6 @@
 #include "src/player/player.h"
 
+#include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/enemy/enemy.h"
 #include "src/object/desk.h"
@@ -81,19 +82,19 @@ bool Player::Update() {
   skill_manager_.Update();
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
-          input::key_code::A)) {
-    box_->ApplyCentralImpulse(math::Vector3(3.5f, 0.0f, -12.0f));
+          input::key_code::A) && 0.05f < input_velocity_.Magnitude()) {
+    box_->ApplyCentralImpulse(input_velocity_*power_);
   }
 
   if (skill_manager_.IsProductionNow()) {
     return true;
   }
 
-  if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
-      0.5f) {
-    is_move_ = true;
-    mediator_->PlayerMoveStartEvent();
-  }
+  //if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
+  //    0.5f) {
+  //  is_move_ = true;
+  //  mediator_->PlayerMoveStartEvent();
+  //}
 
   if (GetMoveEnd()) {
     ResetParameter();
@@ -122,6 +123,35 @@ void Player::SetRotation(math::Quaternion rotation) {
 //スケールの設定
 void Player::SetScale(math::Vector3 scale) { transform_.SetScale(scale); }
 
+void Player::CheckImpulse() {
+  if (!is_move_) {
+    input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
+    input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
+    input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
+
+    velocity_update_time_ += update_time_;
+    if (!(velocity_update_time_ < change_time_)) {
+      velocity_ = input_velocity_;
+
+      // float thita = math::util::Atan2(velocity_.z, velocity_.x);
+      // SetRotation(math::Quaternion(0, thita, 0, 1));
+      if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
+
+      change_amount_velocity_ = velocity_;
+      velocity_update_time_ = 0;
+    }
+  }
+
+  if ((change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
+       0.5f) &&
+      (input_velocity_.Magnitude() < change_amount_velocity_.Magnitude())) {
+    is_move_ = true;
+    box_->ApplyCentralImpulse(input_velocity_.Normalized() * power_);
+    mediator_->PlayerMoveStartEvent();
+  }
+  SetImpulse();
+}
+
 //速度の設定
 void Player::SetVelocity() {
   if (is_move_) return;
@@ -146,7 +176,8 @@ void Player::SetVelocity() {
 void Player::SetVelocity(math::Vector3 velocity) {
   if (!is_move_) return;
 
-  velocity_ = velocity;
+  box_->ApplyCentralImpulse(velocity);
+  // velocity_ = velocity;
 }
 
 //パワーの設定
@@ -192,7 +223,9 @@ math::Vector3 Player::GetPosition() const { return transform_.GetPosition(); }
 math::Vector3 Player::GetScale() const { return transform_.GetScale(); }
 
 //移動量の取得
-math::Vector3 Player::GetVelocity() const { return velocity_; }
+math::Vector3 Player::GetVelocity() const {
+  return bullet::helper::ToVector3(box_->GetVelocity());
+}
 
 //回転の取得
 math::Quaternion Player::GetRotation() const {
@@ -207,7 +240,7 @@ float Player::GetPower() const { return power_; }
 
 //移動を終えているかを取得
 bool Player::GetMoveEnd() const {
-  bool is_end = (is_move_ && velocity_ == math::Vector3::kZeroVector);
+  bool is_end = (is_move_ && GetVelocity() == math::Vector3::kZeroVector);
   return is_end;
 }
 

@@ -1,6 +1,8 @@
 #ifndef LEGEND_STDAFX_H_
 #define LEGEND_STDAFX_H_
 
+#define _ENABLE_EXTENDED_ALIGNED_STORAGE
+
 // clang-format off
 #define NOMINMAX
 #define STB_IMAGE_STATIC

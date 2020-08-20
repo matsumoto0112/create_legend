@@ -125,6 +125,14 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
 
 void Collider::debugDraw(btIDebugDraw* debugDrawer) {}
 
+void Collider::SetTransform(const util::Transform& transform) {
+  btTransform tr;
+  tr.setOrigin(helper::TobtVector3(transform.GetPosition()));
+  tr.setRotation(helper::TobtQuaternion(transform.GetRotation()));
+  motion_state_->setWorldTransform(tr);
+  rigid_body_->setMotionState(motion_state_.get());
+}
+
 void Collider::UpdateOwnerTransform() const {
   btTransform tr;
   motion_state_->getWorldTransform(tr);

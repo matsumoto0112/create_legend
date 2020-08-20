@@ -25,7 +25,7 @@ class SearchManager {
   /**
    * @brief ‰Šúİ’è
    */
-  void Initialize(bullet::BoundingBox* _player_obb);
+  void Initialize(bullet::Collider* _player_obb);
 
   /**
    * @brief À•W’Ç‰Á
@@ -81,7 +81,7 @@ class SearchManager {
   std::vector<std::unique_ptr<SearchAI>> search_list_;
   std::vector<SearchAI*> course_list_;
 
-  bullet::BoundingBox* player_obb_;
+  bullet::Collider* player_collider_;
   std::vector<bullet::BoundingBox*> enemys_;
   bullet::BoundingBox* ignore_enemy_;
 };

@@ -15,7 +15,8 @@ bool EnemyManager::Initilaize(actor::IActorMediator* mediator) {
 }
 
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
-  //if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
+  // if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr))
+  // {
   //  bool isMove = false;
   //  for (auto& e : enemys_) {
   //    isMove = (isMove || (0.01f <= e->GetVelocity().Magnitude()));
@@ -29,12 +30,12 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   //  }
   //}
   //// “Gs“®
-  //EnemyAction(search_manaegr);
+  // EnemyAction(search_manaegr);
 
-  //for (auto&& enemy : enemys_) {
+  // for (auto&& enemy : enemys_) {
   //  enemy->Update();
   //}
-  //if (boss_ != nullptr) {
+  // if (boss_ != nullptr) {
   //  boss_->Update();
   //}
   return true;
@@ -123,16 +124,15 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
   // SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
-// void EnemyManager::Add(const Boss::InitializeParameter& paramater,
-//                       system::PhysicsField& physics_field) {
-//  if (boss_ != nullptr) {
-//    return;
-//  }
-//
-//  //boss_ = std::make_unique<Boss>();
-//  //boss_->Init(paramater);
-//  // physics_field.AddEnemy(boss_->GetCollisionRef());
-//}
+void EnemyManager::Add(const Boss::InitializeParameter& paramater) {
+  if (boss_ != nullptr) {
+    return;
+  }
+
+  boss_ = std::make_unique<Boss>();
+  boss_->Init(actor_mediator_, paramater);
+  // physics_field.AddEnemy(boss_->GetCollisionRef());
+}
 
 // void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
 //  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
@@ -145,7 +145,7 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
 //    action_enemy_index_--;
 //  }
 //}
-
+//
 void EnemyManager::SetPosition(Enemy* enemy) {
   auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
@@ -221,8 +221,8 @@ bool EnemyManager::LastEnemyMoveEnd() const {
   return end;
 }
 
-void EnemyManager::SetPlayer(const bullet::BoundingBox& player_obb) {
-  //player_obb_ = player_obb;
+void EnemyManager::SetPlayer(bullet::Collider* player_obb) {
+  player_collider_ = player_obb;
 }
 
 void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {

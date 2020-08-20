@@ -45,15 +45,14 @@ class EnemyManager {
    * @brief 敵を追加
    */
   void Add(const Enemy::InitializeParameter& paramater);
-  ///**
-  // * @brief ボスを追加
-  // */
-  //void Add(const Boss::InitializeParameter& paramater,
-  //         system::PhysicsField& physics_field);
+  /**
+   * @brief ボスを追加
+   */
+  void Add(const Boss::InitializeParameter& paramater);
   ///**
   // * @brief 敵を削除
   // */
-  //void Destroy(i32 index, system::PhysicsField& physics_field);
+  // void Destroy(i32 index, system::PhysicsField& physics_field);
   /**
    * @brief 敵を削除
    */
@@ -68,7 +67,7 @@ class EnemyManager {
   ///**
   // * @brief obbの座標を基に座標更新
   // */
-  //void SetPosition(system::PhysicsField& physics_field);
+  // void SetPosition(system::PhysicsField& physics_field);
   /**
    * @brief 敵の数を取得
    */
@@ -76,7 +75,7 @@ class EnemyManager {
   ///**
   // * @brief obbの速度を基に速度更新
   // */
-  //void SetVelocity(system::PhysicsField& physics_field);
+  // void SetVelocity(system::PhysicsField& physics_field);
   /**
    * @brief 敵の行動を初期化
    */
@@ -90,7 +89,7 @@ class EnemyManager {
    */
   bool LastEnemyMoveEnd() const;
 
-  void SetPlayer(const bullet::BoundingBox& player_obb);
+  void SetPlayer(bullet::Collider* player_obb);
 
   void DebugDraw(directx::device::CommandList& command_list);
 
@@ -98,7 +97,7 @@ class EnemyManager {
 
  private:
   std::vector<std::unique_ptr<Enemy>> enemys_;
-  // std::unique_ptr<Boss> boss_;
+  std::unique_ptr<Boss> boss_;
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
   bool game_clear_flag_ = false;
@@ -107,7 +106,7 @@ class EnemyManager {
 
   //! 各敵の速度格納リスト
   std::vector<math::Vector3> velocities_;
-  //bullet::BoundingBox player_obb_;
+  bullet::Collider* player_collider_;
 
   actor::IActorMediator* actor_mediator_;
 };

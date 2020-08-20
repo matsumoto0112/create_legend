@@ -49,6 +49,7 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
 
   box_ = std::make_unique<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
+  box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator->AddCollider(box_);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -75,6 +76,7 @@ bool SkillPencil::Update() {
 
   transform_.SetPosition(player_->GetPosition());
   transform_.SetRotation(player_->GetRotation());
+  box_->SetTransform(this->transform_);
   // transform_.SetScale(math::Vector3(1, 1, 1));
   // collision_.SetPosition(transform_.GetPosition());
   // collision_.SetRotation(transform_.GetRotation());

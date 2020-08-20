@@ -81,15 +81,16 @@ bool Player::Update() {
   skill_manager_.Update();
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
-          input::key_code::A) && 0.05f < input_velocity_.Magnitude()) {
-    box_->ApplyCentralImpulse(input_velocity_*power_);
+          input::key_code::A) &&
+      0.05f < input_velocity_.Magnitude()) {
+    box_->ApplyCentralImpulse(input_velocity_ * power_);
   }
 
   if (skill_manager_.IsProductionNow()) {
     return true;
   }
 
-  //if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
+  // if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
   //    0.5f) {
   //  is_move_ = true;
   //  mediator_->PlayerMoveStartEvent();

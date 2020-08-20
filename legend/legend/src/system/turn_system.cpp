@@ -90,86 +90,86 @@ bool TurnSystem::Init(const std::string& stage_name) {
       {command_list});
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
-  //{
-  //  search_manager_.Initialize(&player_.GetCollisionRef());
-  //  search_manager_.Add({
-  //      math::Vector3(1.0f, 0.0f, 1.0f) * 10.0f,
-  //      math::Vector3(-1.0f, 0.0f, 1.0f) * 10.0f,
-  //      math::Vector3(1.0f, 0.0f, -1.0f) * 10.0f,
-  //      math::Vector3(-1.0f, 0.0f, -1.0f) * 10.0f,
-  //  });
-  //  search_manager_.SetBranch(0, {1, 2, 3});
-  //  search_manager_.SetBranch(1, {0, 2, 3});
-  //  search_manager_.SetBranch(2, {0, 1, 3});
-  //  search_manager_.SetBranch(3, {0, 1, 2});
-  //}
+  {
+    search_manager_.Initialize(player_->GetCollider());
+    search_manager_.Add({
+        math::Vector3(1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 10.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 10.0f,
+    });
+    search_manager_.SetBranch(0, {1, 2, 3});
+    search_manager_.SetBranch(1, {0, 2, 3});
+    search_manager_.SetBranch(2, {0, 1, 3});
+    search_manager_.SetBranch(3, {0, 1, 2});
+  }
 
-  //// UI情報を取得
-  // std::vector<u8> data =
-  //    game::GameDevice::GetInstance()->GetResource().GetArchiveLoader().Load(
-  //        std::filesystem::path("parameters") / "main_ui.txt");
+  // UI情報を取得
+  std::vector<u8> data =
+      game::GameDevice::GetInstance()->GetResource().GetArchiveLoader().Load(
+          std::filesystem::path("parameters") / "main_ui.txt");
 
-  ////文字列として解釈し、各行に分割するためstreamを使用する
-  // std::string str(data.begin(), data.end());
-  // std::stringstream ss(str);
-  // std::string line;
+  //文字列として解釈し、各行に分割するためstreamを使用する
+  std::string str(data.begin(), data.end());
+  std::stringstream ss(str);
+  std::string line;
 
-  // while (std::getline(ss, line, '\n')) {
-  //  //.txtをバイナリモードで開いているため、改行文字が\r\nで表現されている
-  //  //\nで分割するとき、最後の文字が\rになっていると余分なデータが含まれるためそれを回避する
-  //  if (line.back() == '\r') {
-  //    line = line.substr(0, line.size() - 1);
-  //  }
+  while (std::getline(ss, line, '\n')) {
+    //.txtをバイナリモードで開いているため、改行文字が\r\nで表現されている
+    //\nで分割するとき、最後の文字が\rになっていると余分なデータが含まれるためそれを回避する
+    if (line.back() == '\r') {
+      line = line.substr(0, line.size() - 1);
+    }
 
-  //  auto split = util::string_util::StringSplit(line, ',');
-  //  MY_ASSERTION(split.size() == ui_format::MAX,
-  //  L"フォーマットが不正です。"); std::string name = split[ui_format::NAME];
-  //  std::wstring w_name = util::string_util::String_2_WString(name +
-  //  ".png"); float x = std::stof(split[ui_format::X]); float y =
-  //  std::stof(split[ui_format::Y]); float z =
-  //  std::stof(split[ui_format::Z]);
+    auto split = util::string_util::StringSplit(line, ',');
+    MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
+    std::string name = split[ui_format::NAME];
+    std::wstring w_name = util::string_util::String_2_WString(name + ".png");
+    float x = std::stof(split[ui_format::X]);
+    float y = std::stof(split[ui_format::Y]);
+    float z = std::stof(split[ui_format::Z]);
 
-  //  ui::UIComponent* comp = nullptr;
-  //  if (split[ui_format::ID] == "0") {
-  //    auto image = std::make_unique<ui::Image>();
-  //    if (!image->Init(w_name)) {
-  //      return false;
-  //    }
-  //    comp = ui_board_.AddComponent(std::move(image));
-  //  } else if (split[ui_format::ID] == "1") {
-  //    auto gauge = std::make_unique<ui::Gauge>();
-  //    if (!gauge->Init(w_name)) {
-  //      return false;
-  //    }
-  //    comp = ui_board_.AddComponent(std::move(gauge));
-  //    gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
-  //  } else if (split[ui_format::ID] == "2") {
-  //    auto gauge = std::make_unique<ui::QuarterGauge>();
-  //    if (!gauge->Init(w_name)) {
-  //      return false;
-  //    }
-  //    comp = ui_board_.AddComponent(std::move(gauge));
-  //    gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
-  //  } else if (split[ui_format::ID] == "3") {
-  //    auto num = std::make_unique<ui::Number>();
-  //    if (!num->Init(w_name)) {
-  //      return false;
-  //    }
-  //    comp = ui_board_.AddComponent(std::move(num));
-  //    numbers_.emplace_back(static_cast<ui::Number*>(comp));
-  //  }
-  //  MY_ASSERTION(comp, L"不正なIDが入力されました");
-  //  comp->SetPosition(math::Vector2(x, y));
-  //  comp->SetZOrder(z);
-  //  components_.emplace_back(comp);
-  //  input_lines_.emplace_back(split);
-  //}
-  // MY_ASSERTION(
-  //    gauges_.size() == gauge_id::MAX,
-  //    L"main_ui.txtのUI定義が不正です。ゲージUIの個数が定義と違います。");
-  // MY_ASSERTION(
-  //    numbers_.size() == number_id::MAX,
-  //    L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
+    ui::UIComponent* comp = nullptr;
+    if (split[ui_format::ID] == "0") {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(image));
+    } else if (split[ui_format::ID] == "1") {
+      auto gauge = std::make_unique<ui::Gauge>();
+      if (!gauge->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(gauge));
+      gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
+    } else if (split[ui_format::ID] == "2") {
+      auto gauge = std::make_unique<ui::QuarterGauge>();
+      if (!gauge->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(gauge));
+      gauges_.emplace_back(static_cast<ui::Gauge*>(comp));
+    } else if (split[ui_format::ID] == "3") {
+      auto num = std::make_unique<ui::Number>();
+      if (!num->Init(w_name)) {
+        return false;
+      }
+      comp = ui_board_.AddComponent(std::move(num));
+      numbers_.emplace_back(static_cast<ui::Number*>(comp));
+    }
+    MY_ASSERTION(comp, L"不正なIDが入力されました");
+    comp->SetPosition(math::Vector2(x, y));
+    comp->SetZOrder(z);
+    components_.emplace_back(comp);
+    input_lines_.emplace_back(split);
+  }
+  MY_ASSERTION(
+      gauges_.size() == gauge_id::MAX,
+      L"main_ui.txtのUI定義が不正です。ゲージUIの個数が定義と違います。");
+  MY_ASSERTION(
+      numbers_.size() == number_id::MAX,
+      L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
 
   return true;
 }
@@ -276,7 +276,7 @@ bool TurnSystem::Update() {
   //}
   // ImGui::End();
 
-  // gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_.GetImpulse());
+  gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_->GetImpulse());
 
   physics_field_.Update();
   return true;
@@ -305,29 +305,28 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  // MY_LOG(L"EnemyMove");
-  // enemy_manager_.Update(&search_manager_);
-  // enemy_manager_.SetPlayer(player_.GetCollisionRef());
-  // if (enemy_manager_.GetEnemiesSize() == 0 ||
-  //    enemy_manager_.LastEnemyMoveEnd()) {
-  //  current_mode_ = Mode::ENEMY_MOVE_END;
-  //  physics_field_.ResetEnemyMove();
-  //  enemy_manager_.ResetEnemyMove();
-  //  AddCurrentTurn();
-  //}
+  MY_LOG(L"EnemyMove");
+  enemy_manager_.Update(&search_manager_);
+  enemy_manager_.SetPlayer(player_->GetCollider());
+  if (enemy_manager_.GetEnemiesSize() == 0 ||
+      enemy_manager_.LastEnemyMoveEnd()) {
+    current_mode_ = Mode::ENEMY_MOVE_END;
+    enemy_manager_.ResetEnemyMove();
+    AddCurrentTurn();
+  }
   return true;
 }
 
 //敵の移動終了時処理
 bool TurnSystem::EnemyMoveEnd() {
-  // for (auto&& enemy_parameter :
-  //     stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
-  //  enemy_manager_.Add(enemy_parameter, physics_field_);
-  //}
-  // for (auto&& boss_parameter :
-  //     stage_generator_.GetBossParameters(current_turn_ + 1)) {
-  //  enemy_manager_.Add(boss_parameter, physics_field_);
-  //}
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
+    enemy_manager_.Add(enemy_parameter);
+  }
+  for (auto&& boss_parameter :
+       stage_generator_.GetBossParameters(current_turn_ + 1)) {
+    enemy_manager_.Add(boss_parameter);
+  }
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
@@ -430,14 +429,14 @@ void TurnSystem::Draw() {
   for (auto&& graffiti : graffities_) {
     graffiti->Draw(command_list);
   }
-  // for (auto&& fragment : fragments_) {
-  //  fragment.Draw();
-  //}
+  for (auto&& fragment : fragments_) {
+    fragment.Draw();
+  }
 
-  // ui_board_.Draw();
+  ui_board_.Draw();
 
-  ////スプライトは最後に描画リストにあるものをまとめて描画する
-  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
 //デバッグ描画

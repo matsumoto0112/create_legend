@@ -12,8 +12,8 @@ SearchManager::SearchManager() {}
 
 SearchManager::~SearchManager() {}
 
-void SearchManager::Initialize(bullet::BoundingBox* _player_obb) {
-  player_obb_ = _player_obb;
+void SearchManager::Initialize(bullet::Collider* _player_obb) {
+    player_collider_ = _player_obb;
 }
 
 void SearchManager::Add(math::Vector3 _position) {
@@ -42,14 +42,14 @@ void SearchManager::SetBranch(i32 index, std::vector<i32> branch) {
 
 math::Vector3 SearchManager::NextSearch(
     bullet::BoundingBox* _enemy, std::vector<bullet::BoundingBox*> _enemys) {
-  if (player_obb_ == nullptr) {
+  if (player_collider_ == nullptr) {
     return math::Vector3::kZeroVector;
   }
 
   ignore_enemy_ = _enemy;
   enemys_ = _enemys;
   auto start = _enemy->GetOwner()->GetTransform().GetPosition();
-  auto end = player_obb_->GetOwner()->GetTransform().GetPosition();
+  auto end = player_collider_->GetOwner()->GetTransform().GetPosition();
   auto vector = (end - start);
   vector.y = 0;
   course_list_.clear();

@@ -71,6 +71,7 @@ class Collider : public btActionInterface {
    * @brief デバッグ描画時に呼ばれる（未使用）
    */
   virtual void debugDraw(btIDebugDraw* debugDrawer) override;
+  void SetTransform(const util::Transform& transform);
   /**
    * @brief 自分を所有しているアクターのトランスフォームを更新する
    */

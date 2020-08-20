@@ -444,10 +444,6 @@ void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
   }
 }
 
-void legend::system::TurnSystem::RemoveActor(object::Graffiti* actor) {
-  MY_LOG(L"KillGraf");
-}
-
 void legend::system::TurnSystem::RemoveCollider(
     std::shared_ptr<bullet::Collider> collider) {
   physics_field_.RemoveCollision(collider);

@@ -288,8 +288,7 @@ bool TurnSystem::PlayerMoveReady() {
     return true;
   }
   //プレイヤーの速度更新は入力を受け取って処理する
-  player_->SetVelocity();
-  player_->SetImpulse();
+  player_->CheckImpulse();
   return true;
 }
 

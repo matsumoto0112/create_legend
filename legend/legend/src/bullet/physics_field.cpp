@@ -11,7 +11,20 @@ namespace bullet {
 PhysicsField::PhysicsField() {}
 
 //デストラクタ
-PhysicsField::~PhysicsField() {}
+PhysicsField::~PhysicsField() {
+  const i32 size = static_cast<i32>(colliders_.size());
+  for (i32 i = size - 1; i >= 0; i--) {
+    if (auto col = colliders_[i]; col) {
+      world_->removeAction(col.get());
+    }
+    if (colliders_[i] && colliders_[i]->GetRigidBody()) {
+      world_->removeRigidBody(colliders_[i]->GetRigidBody());
+    }
+  }
+  colliders_.clear();
+
+  world_->setDebugDrawer(nullptr);
+}
 
 //初期化
 bool PhysicsField::Init() {
@@ -31,7 +44,6 @@ bool PhysicsField::Init() {
 
   //重力の設定
   world_->setGravity(btVector3(0.0f, -9.8f, 0.0f));
-  world_->setDebugDrawer(nullptr);
 
   debug_drawer_ = std::make_shared<directx::BulletDebugDraw>();
 
@@ -90,6 +102,13 @@ void PhysicsField::AddCollision(std::shared_ptr<Collider> collider) {
   colliders_.emplace_back(collider);
   AddRigidBody(collider->GetRigidBody());
   world_->addAction(collider.get());
+}
+
+void PhysicsField::RemoveCollision(std::shared_ptr<Collider> collider) {
+  world_->removeRigidBody(collider->GetRigidBody());
+  world_->removeAction(collider.get());
+  colliders_.erase(std::remove(colliders_.begin(), colliders_.end(), collider),
+                   colliders_.end());
 }
 
 btCollisionWorld::AllHitsRayResultCallback PhysicsField::RayCast(

@@ -110,8 +110,12 @@ class TurnSystem : public actor::IActorMediator {
    */
   virtual std::vector<enemy::Enemy*> GetEnemies() override;
   virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) override;
+  virtual void RemoveCollider(
+      std::shared_ptr<bullet::Collider> collider) override;
   virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
       const math::Vector3& start, const math::Vector3& end) const override;
+  virtual void RemoveActor(actor::Actor* actor) override;
+  virtual void RemoveActor(object::Graffiti* actor);
 
  private:
   /**
@@ -161,12 +165,11 @@ class TurnSystem : public actor::IActorMediator {
   void RemoveFragment();
 
  private:
+  bullet::PhysicsField physics_field_;
   //! 現在ターン数
   i32 current_turn_;
   //! 現在のプレイ状態
   Mode current_mode_;
-  ////! 物理フィールド
-  // PhysicsField physics_field_;
   //! ステージ生成
   stage_generate::StageGenerator stage_generator_;
   ////! メインカメラ
@@ -197,8 +200,6 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Gauge*> gauges_;
   //! 数値画像配列
   std::vector<ui::Number*> numbers_;
-
-  bullet::PhysicsField physics_field_;
 
  private:
   // UIのリアルタイム修正用パラメータ

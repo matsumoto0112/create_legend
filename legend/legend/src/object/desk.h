@@ -28,7 +28,7 @@ class Desk : public actor::Actor {
   /**
    * @brief デストラクタ
    */
-  ~Desk();
+  virtual ~Desk();
 
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
@@ -36,6 +36,7 @@ class Desk : public actor::Actor {
    * @brief 更新
    */
   bool Update() override;
+  virtual void Destroy() override;
   /**
    * @brief 座標の設定
    */

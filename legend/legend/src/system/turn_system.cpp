@@ -13,7 +13,7 @@ TurnSystem::TurnSystem()
     : current_turn_(0), current_camera_(camera_mode::Sub1) {}
 
 //デストラクタ
-TurnSystem::~TurnSystem() {}
+TurnSystem::~TurnSystem() { static_objects_.clear(); }
 
 //初期化
 bool TurnSystem::Init(const std::string& stage_name) {
@@ -178,6 +178,9 @@ bool TurnSystem::Update() {
   countdown_timer_.Update();
   player_->Update();
 
+  for (auto&& graf : graffities_) {
+    graf->Update();
+  }
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
       {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
@@ -431,6 +434,23 @@ void TurnSystem::RemoveFragment() {
   //    i--;
   //  }
   //}
+}
+
+void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
+  if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
+    graffities_.erase(std::remove_if(graffities_.begin(), graffities_.end(),
+                                     [g](auto& it) { return it.get() == g; }),
+                      graffities_.end());
+  }
+}
+
+void legend::system::TurnSystem::RemoveActor(object::Graffiti* actor) {
+  MY_LOG(L"KillGraf");
+}
+
+void legend::system::TurnSystem::RemoveCollider(
+    std::shared_ptr<bullet::Collider> collider) {
+  physics_field_.RemoveCollision(collider);
 }
 
 void TurnSystem::AddCollider(std::shared_ptr<bullet::Collider> collider) {

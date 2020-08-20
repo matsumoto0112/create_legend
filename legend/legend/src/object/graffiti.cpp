@@ -118,18 +118,13 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
 
 //更新
 bool Graffiti::Update() {
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
-
-  //適当な場所の色を変えるテスト
-  auto& random = game::GameDevice::GetInstance()->GetRandom();
-  const u32 x = random.Range(0u, MASK_WIDTH);
-  const u32 y = random.Range(0u, MASK_HEIGHT);
-  const float r = random.Range(0.0f, 1.0f);
-  const float g = random.Range(0.0f, 1.0f);
-  const float b = random.Range(0.0f, 1.0f);
-  const float a = random.Range(0.0f, 1.0f);
-  SetTextureColor(x, y, util::Color4(r, g, b, a));
+  if (is_erase_) {
+    if (box_) {
+      mediator_->RemoveCollider(box_);
+    }
+    mediator_->RemoveActor(this);
+    return true;
+  }
 
   return true;
 }

@@ -25,7 +25,7 @@ class BoundingBox : public Collider {
 
  public:
   BoundingBox(actor::Actor* owner, const InitializeParameter& parameter);
-  ~BoundingBox();
+  virtual ~BoundingBox();
   bool Update() override;
 };
 }  // namespace bullet

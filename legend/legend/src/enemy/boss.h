@@ -2,9 +2,7 @@
 #define LEGEND_ENEMY_BOSS_H_
 
 #include "src/actor/actor.h"
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/pipeline_state.h"
-#include "src/draw/model.h"
+#include "src/bullet/bounding_box.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -40,6 +38,10 @@ class Boss : public actor::Actor {
    */
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
+  /**
+   * @brief 削除
+   */
+  virtual void Remove();
   /**
    * @brief 更新
    */
@@ -95,9 +97,13 @@ class Boss : public actor::Actor {
    */
   void ResetMoveEnd();
 
+  bullet::BoundingBox* GetCollider() const { return box_.get(); }
+
+  void OnHit(bullet::Collider* other);
+
  private:
-  //! 速度
-  math::Vector3 velocity_;
+  ////! 速度
+  //math::Vector3 velocity_;
   ////! 減速率
   // float deceleration_x_;
   // float deceleration_z_;
@@ -114,6 +120,8 @@ class Boss : public actor::Actor {
 
   //! 移動終了判定
   bool move_end_;
+
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace enemy

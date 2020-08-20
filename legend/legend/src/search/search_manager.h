@@ -43,8 +43,8 @@ class SearchManager {
   /**
    * @brief éüÇÃç¿ïW
    */
-  math::Vector3 NextSearch(bullet::BoundingBox* _enemy,
-                           std::vector<bullet::BoundingBox*> _enemys);
+  math::Vector3 NextSearch(bullet::Collider* _enemy,
+                           std::vector<bullet::Collider*> _enemys);
   /**
    * @brief åoòHíTçı
    */
@@ -82,8 +82,8 @@ class SearchManager {
   std::vector<SearchAI*> course_list_;
 
   bullet::Collider* player_collider_;
-  std::vector<bullet::BoundingBox*> enemys_;
-  bullet::BoundingBox* ignore_enemy_;
+  std::vector<bullet::Collider*> enemys_;
+  bullet::Collider* ignore_enemy_;
 };
 }  // namespace search
 }  // namespace legend

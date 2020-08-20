@@ -2,6 +2,7 @@
 
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
 #include "src/object/desk.h"
@@ -283,6 +284,18 @@ void Player::OnHit(bullet::Collider* other) {
           (enemy_position - player_position).Normalized();
 
       e->GetCollider()->ApplyCentralImpulse(direction * power_);
+    }
+  }
+  //É{ÉXÇ…êGÇÍÇΩ
+  {
+    enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
+    if (b) {
+      const math::Vector3 player_position = transform_.GetPosition();
+      const math::Vector3 boss_position = b->GetTransform().GetPosition();
+      const math::Vector3 direction =
+          (boss_position - player_position).Normalized();
+
+      b->GetCollider()->ApplyCentralImpulse(direction * power_);
     }
   }
 }

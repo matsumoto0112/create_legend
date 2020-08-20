@@ -24,8 +24,7 @@ class BoundingBox : public Collider {
   };
 
  public:
-  BoundingBox(util::Transform* owner_transform,
-              const InitializeParameter& parameter);
+  BoundingBox(actor::Actor* owner, const InitializeParameter& parameter);
   ~BoundingBox();
   bool Update() override;
 };

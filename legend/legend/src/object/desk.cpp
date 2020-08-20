@@ -30,7 +30,7 @@ bool Desk::Init(actor::IActorMediator* mediator,
   params.restitution = 1.0f;
   params.friction = 0.8f;
   params.scale = parameter.bounding_box_length;
-  box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
   mediator_->AddCollider(box_);
   // this->collision_.SetPosition(transform_.GetPosition());
   // this->collision_.SetRotation(transform_.GetRotation());

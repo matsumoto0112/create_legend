@@ -39,7 +39,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.mass = 1.0f;
   params.friction = 0.6f;
   params.restitution = 0.6f;
-  box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
   mediator_->AddCollider(box_);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();

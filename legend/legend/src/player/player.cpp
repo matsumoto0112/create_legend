@@ -1,6 +1,8 @@
 #include "src/player/player.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/enemy/enemy.h"
+#include "src/object/desk.h"
 #include "src/util/resource/resource_names.h"
 
 namespace legend {
@@ -30,7 +32,13 @@ bool Player::Init(actor::IActorMediator* mediator,
   params.mass = 1.0f;
   params.friction = 0.8f;
   params.restitution = 1.0f;
-  box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) {
+    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
+    if (e) {
+      MY_LOG(L"HitEnemy");
+    }
+  });
   mediator_->AddCollider(box_);
 
   // this->collision_.SetCollisionCallback(
@@ -83,7 +91,7 @@ bool Player::Update() {
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
-    box_->ApplyCentralImpulse(math::Vector3(20.0f, 0.0f, 0.0f));
+    box_->ApplyCentralImpulse(math::Vector3(20.0f, 0.0f, -10.0f));
   }
 
   if (skill_manager_.IsProductionNow()) {

@@ -4,9 +4,9 @@
 
 namespace legend {
 namespace bullet {
-BoundingSphere::BoundingSphere(util::Transform* owner_transform,
+BoundingSphere::BoundingSphere(actor::Actor* owner,
                                const InitializeParameter& parameter)
-    : Collider(owner_transform) {
+    : Collider(owner) {
   //—§•û‘Ì‚Éİ’è
   shape_ = std::make_shared<btSphereShape>(parameter.radius);
 

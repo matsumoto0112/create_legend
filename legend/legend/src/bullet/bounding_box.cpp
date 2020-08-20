@@ -7,9 +7,9 @@ namespace legend {
 
 namespace bullet {
 
-BoundingBox::BoundingBox(util::Transform* owner_transform,
+BoundingBox::BoundingBox(actor::Actor* owner,
                          const InitializeParameter& parameter)
-    : Collider(owner_transform) {
+    : Collider(owner) {
   //立方体に設定
   shape_ = std::make_shared<btBoxShape>(helper::TobtVector3(parameter.scale));
 
@@ -24,7 +24,7 @@ BoundingBox::BoundingBox(util::Transform* owner_transform,
   //剛体オブジェクト生成
   rigid_body_ = std::make_shared<btRigidBody>(
       btScalar(parameter.mass), motion_state_.get(), shape_.get(), inertia_);
-
+  rigid_body_->setUserPointer(this);
   rigid_body_->setFriction(btScalar(parameter.friction));
 }
 

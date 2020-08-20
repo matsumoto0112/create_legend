@@ -148,17 +148,17 @@ bool TurnSystem::Update() {
   countdown_timer_.Update();
   player_.Update();
 
-  // const std::unordered_map<Mode, std::function<bool()>> switcher = {
-  //    {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
-  //    {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
-  //    {Mode::PLAYER_SKILL_AFTER_MOVED,
-  //     [&]() { return PlayerSkillAfterModed(); }},
-  //    {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
-  //    {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
-  //};
-  // if (!switcher.at(current_mode_)()) {
-  //  return false;
-  //}
+  const std::unordered_map<Mode, std::function<bool()>> switcher = {
+      {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
+      {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
+      {Mode::PLAYER_SKILL_AFTER_MOVED,
+       [&]() { return PlayerSkillAfterModed(); }},
+      {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
+      {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
+  };
+  if (!switcher.at(current_mode_)()) {
+    return false;
+  }
 
   ////ï®óùèàóùÇÃìKóp
   // if (!physics_field_.Update(current_mode_, player_.GetVelocity(),

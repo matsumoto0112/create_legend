@@ -83,7 +83,7 @@ bool Player::Update() {
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
-    box_->SetVelocity(btVector3(10.0f, 0.0f, 0.0f));
+    box_->ApplyCentralImpulse(math::Vector3(20.0f, 0.0f, 0.0f));
   }
 
   if (skill_manager_.IsProductionNow()) {
@@ -115,20 +115,15 @@ void Player::Draw() {
 //座標の設定
 void Player::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  // collision_.SetPosition(position);
 }
 
 //回転の設定
 void Player::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  // collision_.SetRotation(rotation);
 }
 
 //スケールの設定
-void Player::SetScale(math::Vector3 scale) {
-  transform_.SetScale(scale);
-  // collision_.SetScale(scale);
-}
+void Player::SetScale(math::Vector3 scale) { transform_.SetScale(scale); }
 
 //速度の設定
 void Player::SetVelocity() {

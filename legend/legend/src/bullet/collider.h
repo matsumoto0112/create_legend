@@ -33,7 +33,7 @@ class Collider : public btActionInterface {
   /**
    * @brief オブジェクトの中心から指定の力を加える
    */
-  void ApplyCentralImpulse(btVector3 impulse);
+  void ApplyCentralImpulse(const math::Vector3& impulse);
   /**
    * @brief 移動量の取得
    */
@@ -41,7 +41,7 @@ class Collider : public btActionInterface {
   /**
    * @brief 移動量の指定
    */
-  void SetVelocity(btVector3 velocity);
+  void SetVelocity(const math::Vector3& velocity);
   /**
    * @brief 回転移動量の取得
    */
@@ -50,7 +50,7 @@ class Collider : public btActionInterface {
    * @brief 回転移動量の指定
 
    */
-  void SetAngularVelocity(btVector3 velocity);
+  void SetAngularVelocity(const math::Vector3& velocity);
   btMotionState* GetMotionState() const { return motion_state_.get(); }
   virtual void updateAction(btCollisionWorld* collisionWorld,
                             btScalar deltaTimeStep) override;
@@ -62,7 +62,6 @@ class Collider : public btActionInterface {
   std::shared_ptr<btDefaultMotionState> motion_state_;
   btVector3 inertia_;
   std::shared_ptr<btRigidBody> rigid_body_;
-
 };
 }  // namespace bullet
 }  // namespace legend

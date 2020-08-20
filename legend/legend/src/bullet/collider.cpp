@@ -12,12 +12,12 @@ bool Collider::Update() { return true; }
 
 btRigidBody* Collider::GetRigidBody() { return rigid_body_.get(); }
 
-void Collider::ApplyCentralImpulse(btVector3 impulse) {
+void Collider::ApplyCentralImpulse(const math::Vector3& impulse) {
   if (rigid_body_ == nullptr) {
     return;
   }
 
-  rigid_body_->applyCentralImpulse(impulse);
+  rigid_body_->applyCentralImpulse(helper::TobtVector3(impulse));
 }
 
 btVector3 Collider::GetVelocity() {
@@ -27,11 +27,12 @@ btVector3 Collider::GetVelocity() {
   return rigid_body_->getLinearVelocity();
 }
 
-void Collider::SetVelocity(btVector3 velocity) {
+void Collider::SetVelocity(const math::Vector3& velocity) {
   if (rigid_body_ == nullptr) {
     return;
   }
-  rigid_body_->setLinearVelocity(velocity);
+  rigid_body_->activate();
+  rigid_body_->setLinearVelocity(helper::TobtVector3(velocity));
 }
 
 btVector3 Collider::GetAngularVelocity() {
@@ -41,11 +42,11 @@ btVector3 Collider::GetAngularVelocity() {
   return rigid_body_->getAngularVelocity();
 }
 
-void Collider::SetAngularVelocity(btVector3 velocity) {
+void Collider::SetAngularVelocity(const math::Vector3& velocity) {
   if (rigid_body_ == nullptr) {
     return;
   }
-  rigid_body_->setAngularVelocity(velocity);
+  rigid_body_->setAngularVelocity(helper::TobtVector3(velocity));
 }
 
 void Collider::updateAction(btCollisionWorld* collisionWorld,
@@ -54,9 +55,17 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
   motion_state_->getWorldTransform(tr);
   owner_transform_->SetPosition(helper::ToVector3(tr.getOrigin()));
   owner_transform_->SetRotation(helper::ToQuaternion(tr.getRotation()));
+
+  // MY_LOG(L"Update:(%f, %f, %f)", tr.getOrigin().x(), tr.getOrigin().y(),
+  //       tr.getOrigin().z());
 }
 
-void Collider::debugDraw(btIDebugDraw* debugDrawer) {}
+void Collider::debugDraw(btIDebugDraw* debugDrawer) {
+  btTransform tr;
+  motion_state_->getWorldTransform(tr);
+  // MY_LOG(L"Draw:(%f, %f, %f)", tr.getOrigin().x(), tr.getOrigin().y(),
+  //       tr.getOrigin().z());
+}
 
 }  // namespace bullet
 }  // namespace legend

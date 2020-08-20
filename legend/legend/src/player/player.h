@@ -65,6 +65,10 @@ class Player : public actor::Actor {
   /**
    * @brief ˆÚ“®—Ê‚Ìİ’è
    */
+  void CheckImpulse();
+  /**
+   * @brief ˆÚ“®—Ê‚Ìİ’è
+   */
   void SetVelocity();
   /**
    * @brief ˆÚ“®—Ê‚Ìİ’è

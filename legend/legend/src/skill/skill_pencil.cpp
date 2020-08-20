@@ -63,6 +63,11 @@ bool SkillPencil::Update() {
     return false;
   }
 
+  if (is_production_) {
+    ProductionUpdate();
+    return true;
+  }
+
   transform_.SetPosition(player_->GetPosition());
   transform_.SetRotation(player_->GetRotation());
   // transform_.SetScale(math::Vector3(1, 1, 1));
@@ -83,7 +88,18 @@ void SkillPencil::Use() {
 
 void SkillPencil::Action() { is_production_ = true; }
 
-void SkillPencil::ProductionUpdate() {}
+void SkillPencil::ProductionUpdate() {
+  float update_time =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+  math::Vector3 forward =
+      transform_.GetRotation() * math::Vector3::kForwardVector;
+  math::Vector3 velocity =
+      forward + (math::Vector3(0, -20.0f, 0) * update_time);
+  math::Vector3 position = collision_.GetPosition() + velocity;
+
+  transform_.SetPosition(position);
+  collision_.SetPosition(position);
+}
 
 void SkillPencil::EndAction() {
   remaining_usable_count_--;
@@ -92,10 +108,11 @@ void SkillPencil::EndAction() {
 
 void SkillPencil::Explosion(actor::ActorType type) {
   if (type != actor::ActorType::ENEMY && type != actor::ActorType::BOSS &&
-      type != actor::ActorType::DESK)
+      type != actor::ActorType::DESK && type != actor::ActorType::OBSTACLE)
     return;
 
   //周囲の敵を吹き飛ばす処理
+
 
   //パーティクルの再生?
 

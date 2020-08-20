@@ -125,6 +125,8 @@ void Player::SetVelocity() {
   if (velocity_update_time_ < change_time_) return;
 
   velocity_ = input_velocity_;
+  // float thita = math::util::Atan2(velocity_.z, velocity_.x);
+  // SetRotation(math::Quaternion(0, thita, 0, 1));
   if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
 
   change_amount_velocity_ = velocity_;
@@ -222,5 +224,11 @@ void Player::UpdateStrength(const float& add_strength) {
 
 //‹­‰»“x‡‚¢‚ğæ“¾
 float Player::GetStrength() const { return strength_; }
+
+bool Player::GetSkillSelect() {
+  if (is_input_) return false;
+
+  return skill_manager_.SelectSkill();
+}
 }  // namespace player
 }  // namespace legend

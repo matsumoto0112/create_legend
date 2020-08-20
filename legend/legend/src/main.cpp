@@ -87,13 +87,9 @@ class MyApp final : public device::Application {
           scenes::SceneType::MODEL_VIEW,
           scenes::SceneType::SOUND_TEST,
           scenes::SceneType::SPRITE_TEST,
-          scenes::SceneType::PLAYER_MOVE_VIEWER,
           scenes::SceneType::MAIN_SCENE_1,
-          scenes::SceneType::STAGE_GENERATE_TEST,
-          scenes::SceneType::GRAFFITI_TEST,
           scenes::SceneType::GPU_PARTICLE_TEST,
           scenes::SceneType::SKILL_TEST,
-          scenes::SceneType::BULLET_TEST,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

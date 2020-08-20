@@ -90,7 +90,6 @@
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
-    <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
     <ClCompile Include="src\search\search_manager.cpp" />
     <ClCompile Include="src\search\search_course.cpp" />
     <ClCompile Include="src\search\search_ai.cpp" />
@@ -160,13 +159,10 @@
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\primitive\primitive.cpp" />
     <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
-    <ClCompile Include="src\scenes\debugscene\graffiti_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
-    <ClCompile Include="src\scenes\debugscene\player_move_viewer.cpp" />
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
-    <ClCompile Include="src\scenes\debugscene\stage_generate_test.cpp" />
     <ClCompile Include="src\scenes\decorator\pausable.cpp" />
     <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
@@ -225,7 +221,6 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
-    <ClInclude Include="src\scenes\debugscene\bullet_test.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />
     <ClInclude Include="src\search\search_ai.h" />
@@ -327,13 +322,10 @@
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\primitive\primitive.h" />
     <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
-    <ClInclude Include="src\scenes\debugscene\graffiti_test.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
-    <ClInclude Include="src\scenes\debugscene\player_move_viewer.h" />
     <ClInclude Include="src\scenes\debugscene\skill_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
-    <ClInclude Include="src\scenes\debugscene\stage_generate_test.h" />
     <ClInclude Include="src\scenes\decorator\pausable.h" />
     <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />

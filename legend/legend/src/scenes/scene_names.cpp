@@ -19,13 +19,9 @@ std::string Get(SceneType type) {
       CREATE_PAIR(SceneType::MODEL_VIEW),
       CREATE_PAIR(SceneType::SOUND_TEST),
       CREATE_PAIR(SceneType::SPRITE_TEST),
-      CREATE_PAIR(SceneType::PLAYER_MOVE_VIEWER),
       CREATE_PAIR(SceneType::MAIN_SCENE_1),
-      CREATE_PAIR(SceneType::STAGE_GENERATE_TEST),
-      CREATE_PAIR(SceneType::GRAFFITI_TEST),
       CREATE_PAIR(SceneType::GPU_PARTICLE_TEST),
       CREATE_PAIR(SceneType::SKILL_TEST),
-      CREATE_PAIR(SceneType::BULLET_TEST),
   };
 
   MY_ASSERTION(NAMES.find(type) != NAMES.end(),

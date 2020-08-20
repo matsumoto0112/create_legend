@@ -110,6 +110,8 @@ class TurnSystem : public actor::IActorMediator {
    */
   virtual std::vector<enemy::Enemy*> GetEnemies() override;
   virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) override;
+  virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
+      const math::Vector3& start, const math::Vector3& end) const override;
 
  private:
   /**

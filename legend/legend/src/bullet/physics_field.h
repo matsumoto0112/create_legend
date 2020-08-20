@@ -44,6 +44,8 @@ class PhysicsField {
    * @brief コライダーを追加する
    */
   void AddCollision(std::shared_ptr<Collider> collider);
+  btCollisionWorld::AllHitsRayResultCallback RayCast(const math::Vector3& start,
+                                                     const math::Vector3& end) const;
 
  private:
   std::shared_ptr<legend::directx::BulletDebugDraw> debug_drawer_;

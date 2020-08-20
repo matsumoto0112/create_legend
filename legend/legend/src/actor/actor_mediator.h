@@ -50,6 +50,11 @@ class IActorMediator {
    * @brief コライダーを追加する
    */
   virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) = 0;
+  /**
+   * @brief レイキャスト
+   */
+  virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
+      const math::Vector3& start, const math::Vector3& end) const = 0;
 };
 
 }  // namespace actor

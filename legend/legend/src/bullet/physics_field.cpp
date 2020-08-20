@@ -1,6 +1,7 @@
 #include "src/bullet/physics_field.h"
 
 #include "src/actor/actor.h"
+#include "src/bullet/bullet_helper.h"
 #include "src/game/game_device.h"
 
 namespace legend {
@@ -89,6 +90,17 @@ void PhysicsField::AddCollision(std::shared_ptr<Collider> collider) {
   colliders_.emplace_back(collider);
   AddRigidBody(collider->GetRigidBody());
   world_->addAction(collider.get());
+}
+
+btCollisionWorld::AllHitsRayResultCallback PhysicsField::RayCast(
+    const math::Vector3& start, const math::Vector3& end) const {
+  const btVector3 bt_start = helper::TobtVector3(start);
+  const btVector3 bt_end = helper::TobtVector3(end);
+  btCollisionWorld::AllHitsRayResultCallback RayCallback(bt_start, bt_end);
+
+  world_->rayTest(bt_start, bt_end, RayCallback);
+
+  return RayCallback;
 }
 
 }  // namespace bullet

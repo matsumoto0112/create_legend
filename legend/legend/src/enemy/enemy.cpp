@@ -1,8 +1,11 @@
 #include "src/enemy/enemy.h"
 
+#include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/enemy/boss.h"
 #include "src/game/game_device.h"
+#include "src/object/graffiti.h"
 #include "src/player/player.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
@@ -12,7 +15,7 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-Enemy::Enemy() : Parent(L"Enemy"), velocity_(math::Vector3::kZeroVector) {
+Enemy::Enemy() : Parent(L"Enemy")/*, velocity_(math::Vector3::kZeroVector)*/ {
   is_move_ = false;
   // deceleration_x_ = deceleration_z_ = 0;
 }
@@ -54,6 +57,8 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   return true;
 }
 
+void Enemy::Remove() { mediator_->RemoveCollider(box_); }
+
 //更新
 bool Enemy::Update() {
   // obb_.Update();
@@ -61,9 +66,11 @@ bool Enemy::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  const bool is_nearly_zero_vector = velocity_.MagnitudeSquared() < 0.01f;
+  auto velocity = GetVelocity();
+  velocity.y = 0;
+  const bool is_nearly_zero_vector = velocity.MagnitudeSquared() < 0.01f;
   if (is_move_ && is_nearly_zero_vector) move_end_ = true;
-  is_move_ = (0.01f <= velocity_.Magnitude());
+  is_move_ = (0.01f <= velocity.Magnitude());
   // Move();
 
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -74,26 +81,27 @@ bool Enemy::Update() {
 
 //移動
 void Enemy::Move() {
-  if (!is_move_) return;
+  //if (!is_move_) return;
+  //auto velocity = GetVelocity();
+  //velocity.y = 0;
+  ////移動距離を求める
+  //float length =
+  //    math::util::Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 
-  //移動距離を求める
-  float length =
-      math::util::Sqrt(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
+  ////実際に動く距離
+  //float x = -velocity.x / length;
+  //float z = -velocity.z / length;
 
-  //実際に動く距離
-  float x = -velocity_.x / length;
-  float z = -velocity_.z / length;
+  //////減速計算
+  //// deceleration_x_ = x / (length * length);
+  //// deceleration_z_ = z / (length * length);
 
-  ////減速計算
-  // deceleration_x_ = x / (length * length);
-  // deceleration_z_ = z / (length * length);
+  ////移動処理
+  //math::Vector3 v = math::Vector3(x, 0, z);
+  //math::Vector3 position = GetPosition() + v * power_ * update_time_;
+  //SetPosition(position);
 
-  //移動処理
-  math::Vector3 v = math::Vector3(x, 0, z);
-  math::Vector3 position = GetPosition() + v * power_ * update_time_;
-  SetPosition(position);
-
-  // Deceleration(2);
+  //// Deceleration(2);
 }
 
 void Enemy::SetPosition(math::Vector3 position) {
@@ -102,17 +110,19 @@ void Enemy::SetPosition(math::Vector3 position) {
 }
 
 //速度の設定
-void Enemy::SetVelocity(math::Vector3 velocity) { velocity_ = velocity; }
+void Enemy::SetVelocity(math::Vector3 velocity) {
+  box_->ApplyCentralImpulse(velocity);
+}
 
 void Enemy::SetRotation() {
   math::Quaternion rotation = transform_.GetRotation();
-  rotation.y += velocity_.x;
+  rotation.y += GetVelocity().x;
   transform_.SetRotation(rotation);
 }
 
 //移動に必要なパラメータを初期化
 void Enemy::ResetParameter() {
-  if (velocity_.Magnitude() != 0.0f) return;
+  if (GetVelocity().Magnitude() != 0.0f) return;
 
   // deceleration_x_ = deceleration_z_ = 0;
   is_move_ = false;
@@ -141,7 +151,7 @@ void Enemy::ResetParameter() {
 math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }
 
 //移動量の取得
-math::Vector3 Enemy::GetVelocity() const { return velocity_; }
+math::Vector3 Enemy::GetVelocity() const { return bullet::helper::ToVector3(box_->GetVelocity()); }
 
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 
@@ -152,7 +162,37 @@ bool Enemy::GetMoveEnd() const { return move_end_; }
 void Enemy::ResetMoveEnd() { move_end_ = false; }
 
 void Enemy::OnHit(bullet::Collider* other) {
-  //プレイヤーを参考に
+  //落書きに触れた
+  {
+    object::Graffiti* e = dynamic_cast<object::Graffiti*>(other->GetOwner());
+    if (e) {
+      MY_LOG(L"Hit Graffiti");
+    }
+  }
+  //プレイヤーに触れた
+  {
+    player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
+    if (p) {
+      const math::Vector3 enemy_position = transform_.GetPosition();
+      const math::Vector3 player_position = p->GetTransform().GetPosition();
+      const math::Vector3 direction =
+          (player_position - enemy_position).Normalized();
+
+      p->GetCollider()->ApplyCentralImpulse(direction * power_);
+    }
+  }
+  //ボスに触れた
+  {
+    enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
+    if (b) {
+      const math::Vector3 enemy_position = transform_.GetPosition();
+      const math::Vector3 boss_position = b->GetTransform().GetPosition();
+      const math::Vector3 direction =
+          (boss_position - enemy_position).Normalized();
+
+      b->GetCollider()->ApplyCentralImpulse(direction * power_);
+    }
+  }
 }
 
 }  // namespace enemy

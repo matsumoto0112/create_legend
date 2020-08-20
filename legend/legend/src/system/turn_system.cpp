@@ -337,7 +337,7 @@ bool TurnSystem::EnemyMove() {
       enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     enemy_manager_.ResetEnemyMove();
-    AddCurrentTurn();
+    //AddCurrentTurn();
   }
   return true;
 }

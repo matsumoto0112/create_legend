@@ -39,6 +39,10 @@ class Enemy : public actor::Actor {
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
   /**
+   * @brief 削除
+   */
+  virtual void Remove();
+  /**
    * @brief 更新
    */
   bool Update();
@@ -98,8 +102,8 @@ class Enemy : public actor::Actor {
   void OnHit(bullet::Collider* other);
 
  private:
-  //! 速度
-  math::Vector3 velocity_;
+  ////! 速度
+  //math::Vector3 velocity_;
   ////! 減速率
   // float deceleration_x_;
   // float deceleration_z_;

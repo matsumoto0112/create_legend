@@ -49,10 +49,10 @@ class EnemyManager {
    * @brief ƒ{ƒX‚ğ’Ç‰Á
    */
   void Add(const Boss::InitializeParameter& paramater);
-  ///**
-  // * @brief “G‚ğíœ
-  // */
-  // void Destroy(i32 index, system::PhysicsField& physics_field);
+  /**
+   * @brief “G‚ğíœ
+   */
+   void Destroy(i32 index);
   /**
    * @brief “G‚ğíœ
    */

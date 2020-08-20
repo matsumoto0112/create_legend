@@ -41,7 +41,7 @@ void SearchManager::SetBranch(i32 index, std::vector<i32> branch) {
 }
 
 math::Vector3 SearchManager::NextSearch(
-    bullet::BoundingBox* _enemy, std::vector<bullet::BoundingBox*> _enemys) {
+    bullet::Collider* _enemy, std::vector<bullet::Collider*> _enemys) {
   if (player_collider_ == nullptr) {
     return math::Vector3::kZeroVector;
   }

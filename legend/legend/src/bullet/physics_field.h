@@ -41,15 +41,15 @@ class PhysicsField {
    * @brief 物理演算を行うオブジェクトの追加
    */
   void AddRigidBody(btRigidBody* rigid_body);
+  /**
+   * @brief コライダーを追加する
+   */
   void AddCollision(std::shared_ptr<Collider> collider);
-  //void AddTrigger(std::shared_ptr<Trigger> trigger);
-  //void RemoveCollision(std::shared_ptr<Collider> collider);
-  //void RemoveTrigger(std::shared_ptr<Trigger> trigger);
 
  private:
   std::shared_ptr<legend::directx::BulletDebugDraw> debug_drawer_;
   std::vector<std::shared_ptr<Collider>> colliders_;
-  //std::vector<std::shared_ptr<Trigger>> triggers_;
+  // std::vector<std::shared_ptr<Trigger>> triggers_;
 
   std::shared_ptr<btCollisionConfiguration> config_;
   std::shared_ptr<btCollisionDispatcher> dispatcher_;

@@ -118,9 +118,7 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
     hit_object_list.emplace(other);
   }
 
-  MY_LOG(L"%s : hit list", owner_->GetName().c_str());
   for (auto&& a : hit_object_list) {
-    MY_LOG(L"%s", a->owner_->GetName().c_str());
     OnHit(a);
   }
 }

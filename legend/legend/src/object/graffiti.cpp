@@ -31,9 +31,6 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) {
-    return false;
-  }
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
@@ -102,14 +99,13 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
   params.position = this->transform_.GetPosition();
   params.rotation = this->transform_.GetRotation();
   params.scale = parameter.bounding_box_length;
-  params.mass = 1.0f;
+  params.mass = 0.0f;
   params.friction = 0.8f;
   params.restitution = 1.0f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) {});
   mediator_->AddCollider(box_);
-  // box_->SetFlags(box_->GetFlags() |
-  // btCollisionObject::CF_NO_CONTACT_RESPONSE);
+  box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
   remaining_graffiti_ = parameter.remaining_graffiti;
   is_erase_ = false;
@@ -163,7 +159,7 @@ float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
-//Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
+// Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
 //  Fragment::InitializeParameter parameter;
 //  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
 //  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);

@@ -176,7 +176,7 @@ class TurnSystem : public actor::IActorMediator {
   //! áŠQ•¨
   std::vector<object::Obstacle> obstacles_;
   //! —‘‚«
-  std::vector<object::Graffiti> graffities_;
+  std::vector<std::unique_ptr<object::Graffiti>> graffities_;
   //! Á‚µƒJƒX
   std::vector<object::Fragment> fragments_;
   //! “GŠÇ—

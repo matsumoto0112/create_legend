@@ -11,10 +11,9 @@ Obstacle::Obstacle() : Parent(L"Obstacle") {}
 Obstacle::~Obstacle() {}
 
 bool Obstacle::Init(const InitializeParameter& params) {
-  if (!InitBuffer()) {
+  if (!Parent::Init(nullptr)) {
     return false;
   }
-
   this->transform_.SetPosition(params.position);
   this->transform_.SetRotation(params.rotation);
   // this->collision_.SetPosition(transform_.GetPosition());

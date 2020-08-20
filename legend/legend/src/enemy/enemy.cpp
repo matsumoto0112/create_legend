@@ -26,10 +26,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) return false;
-  // if (!obb_.Initialize(device)) {
-  //  return false;
-  //}
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 

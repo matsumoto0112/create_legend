@@ -14,6 +14,17 @@ Actor::~Actor() {}
 bool Actor::Init(IActorMediator* mediator) {
   this->mediator_ = mediator;
 
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+
+  //トランスフォームバッファを作成する
+  if (!transform_cb_.Init(
+          device,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
+          name_ + L"_TransformConstantBuffer")) {
+    return false;
+  }
+
   return true;
 }
 
@@ -33,21 +44,6 @@ void Actor::Draw() {
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   model_->Draw(command_list);
-}
-
-bool Actor::InitBuffer() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-  //トランスフォームバッファを作成する
-  if (!transform_cb_.Init(
-          device,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
-          name_ + L"_TransformConstantBuffer")) {
-    return false;
-  }
-
-  return true;
 }
 
 }  // namespace actor

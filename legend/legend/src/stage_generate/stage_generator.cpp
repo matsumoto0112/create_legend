@@ -20,13 +20,11 @@ StageGenerator::~StageGenerator() {}
     system::PhysicsField* physics_field,
     std::vector<actor::Actor<physics::BoundingBox>>* actors,
     enemy::EnemyManager* enemy_manager)*/
-bool StageGenerator::LoadStage(std::filesystem::path filepath,
-                               const std::string map_name,
-                               actor::IActorMediator* mediator,
-                               std::vector<object::Desk>* desks,
-                               std::vector<object::Obstacle>* obstacles,
-                               player::Player* player,
-                               std::vector<object::Graffiti>* graffities) {
+bool StageGenerator::LoadStage(
+    std::filesystem::path filepath, const std::string map_name,
+    actor::IActorMediator* mediator, std::vector<object::Desk>* desks,
+    std::vector<object::Obstacle>* obstacles, player::Player* player,
+    std::vector<object::GraffitiInitializeParameter>& graffities) {
   //テキストデータを読み込み
   indexs_ = LoadStringStageData(filepath);
   map_name_ = map_name;
@@ -71,11 +69,10 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    system::PhysicsField* physics_field,
 //    std::vector<actor::Actor<physics::BoundingBox>>* actors,
 //    enemy::EnemyManager* enemy_manager)
-bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
-                                  std::vector<object::Desk>* desks,
-                                  std::vector<object::Obstacle>* obstacles,
-                                  player::Player* player,
-                                  std::vector<object::Graffiti>* graffities) {
+bool StageGenerator::SetMapActors(
+    actor::IActorMediator* mediator, std::vector<object::Desk>* desks,
+    std::vector<object::Obstacle>* obstacles, player::Player* player,
+    std::vector<object::GraffitiInitializeParameter>& graffities) {
   bool is_all_ok = true;
   directx::device::CommandList command_list;
   if (!command_list.Init(
@@ -157,17 +154,15 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
     if (infomation[0] == "graffiti") {
       object::GraffitiInitializeParameter parameter;
       parameter.transform = transform;
-      parameter.transform.SetPosition(transform.GetPosition() +
-                                      math::Vector3::kUpVector * 10.0f);
       parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
       parameter.remaining_graffiti = 100.0f;
+      graffities.emplace_back(parameter);
+      // auto& graffiti = graffities->emplace_back();
 
-      auto& graffiti = graffities->emplace_back();
-
-      if (!graffiti.Init(mediator, parameter, command_list)) {
-        MY_LOG(L"落書きの生成に失敗しました。");
-        is_all_ok = false;
-      }
+      // if (!graffiti.Init(mediator, parameter, command_list)) {
+      //  MY_LOG(L"落書きの生成に失敗しました。");
+      //  is_all_ok = false;
+      //}
       continue;
     }
   }
@@ -216,7 +211,8 @@ StageGenerator::GetEnemyParameters(const i32 turn_count) {
   return enemy_parameters;
 }
 
-//std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
+// std::vector<enemy::Boss::InitializeParameter>
+// StageGenerator::GetBossParameters(
 //    const i32 turn_count) {
 //  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
 //

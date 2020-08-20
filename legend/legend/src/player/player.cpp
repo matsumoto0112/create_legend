@@ -22,9 +22,6 @@ bool Player::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) {
-    return false;
-  }
 
   this->transform_ = parameter.transform;
 
@@ -59,7 +56,7 @@ bool Player::Init(actor::IActorMediator* mediator,
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
   //スキルマネージャーの初期化
-  //skill_manager_.Init();
+  // skill_manager_.Init();
 
   return true;
 }
@@ -70,7 +67,7 @@ bool Player::Update() {
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
   ////スキルのデバック用のGUI
-  //if (ImGui::Begin("Skill")) {
+  // if (ImGui::Begin("Skill")) {
   //  if (ImGui::Button("Add Skill")) {
   //    std::shared_ptr<skill::SkillPencil> skill =
   //        std::make_shared<skill::SkillPencil>();
@@ -78,16 +75,16 @@ bool Player::Update() {
   //    skill_manager_.AddSkill(skill);
   //  }
   //}
-  //ImGui::End();
+  // ImGui::End();
   ////スキルマネージャーの更新
-  //skill_manager_.Update();
+  // skill_manager_.Update();
 
   if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
           input::key_code::A)) {
-    box_->ApplyCentralImpulse(math::Vector3(30.5f, 0.0f, -12.0f));
+    box_->ApplyCentralImpulse(math::Vector3(3.5f, 0.0f, -12.0f));
   }
 
-  //if (skill_manager_.IsProductionNow()) {
+  // if (skill_manager_.IsProductionNow()) {
   //  return true;
   //}
 
@@ -108,7 +105,7 @@ void Player::Draw() {
   //プレイヤーの描画
   actor::Actor::Draw();
   //スキルマネージャーの描画
-  //skill_manager_.Draw();
+  // skill_manager_.Draw();
 }
 
 //座標の設定
@@ -231,20 +228,28 @@ float Player::GetStrength() const { return strength_; }
 bool Player::GetSkillSelect() {
   if (is_input_) return false;
 
-  //return skill_manager_.SelectSkill();
+  // return skill_manager_.SelectSkill();
   return true;
 }
 
 void Player::OnHit(bullet::Collider* other) {
+  //落書きに触れた
   {
     object::Graffiti* e = dynamic_cast<object::Graffiti*>(other->GetOwner());
+    if (e) {
+      MY_LOG(L"Hit Graffiti");
+    }
+  }
+  //敵に触れた
+  {
+    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (e) {
       const math::Vector3 player_position = transform_.GetPosition();
       const math::Vector3 enemy_position = e->GetTransform().GetPosition();
       const math::Vector3 direction =
           (enemy_position - player_position).Normalized();
 
-      // e->GetCollider()->ApplyCentralImpulse(direction * power_);
+      e->GetCollider()->ApplyCentralImpulse(direction * power_);
     }
   }
 }

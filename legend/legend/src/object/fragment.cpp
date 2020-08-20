@@ -14,19 +14,16 @@ bool Fragment::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) {
-    return false;
-  }
 
   this->transform_ =
       util::Transform(parameter.position, parameter.rotation, parameter.scale);
 
-  //bullet::TriggerBox::InitializeParameter params;
-  //params.position = this->transform_.GetPosition();
-  //params.rotation = this->transform_.GetRotation();
-  //params.scale = parameter.scale;
-  //box_ = std::make_shared<bullet::TriggerBox>(this, params);
-  //mediator_->AddTrigger(box_);
+  // bullet::TriggerBox::InitializeParameter params;
+  // params.position = this->transform_.GetPosition();
+  // params.rotation = this->transform_.GetRotation();
+  // params.scale = parameter.scale;
+  // box_ = std::make_shared<bullet::TriggerBox>(this, params);
+  // mediator_->AddTrigger(box_);
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ = resource.GetModel().Get(

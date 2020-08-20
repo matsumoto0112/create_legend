@@ -18,9 +18,6 @@ bool Desk::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) {
-    return false;
-  }
 
   this->transform_ = parameter.transform;
 

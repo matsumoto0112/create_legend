@@ -46,13 +46,6 @@ class Actor {
    */
   virtual void Draw();
 
- protected:
-  /**
-   * @brief バッファの初期化
-   * @return 初期化に成功したらtrueを返す
-   */
-  bool InitBuffer();
-
  public:
   std::wstring GetName() const { return name_; }
   util::Transform& GetTransformRef() { return transform_; }

@@ -25,10 +25,31 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
+  std::vector<object::GraffitiInitializeParameter> graffities;
   if (!stage_generator_.LoadStage(stage_path, stage_name, this, &desks_,
-                                  &obstacles_, &player_, &graffities_)) {
+                                  &obstacles_, &player_, graffities)) {
     return false;
   }
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          game::GameDevice::GetInstance()->GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
+
+  for (auto&& param : graffities) {
+    auto graf = std::make_unique<object::Graffiti>();
+    if (!graf->Init(this, param, command_list)) {
+      return false;
+    }
+    graffities_.emplace_back(std::move(graf));
+  }
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   if (!enemy_manager_.Initilaize(this)) {
     return false;
@@ -75,12 +96,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //  }
 
   //  auto split = util::string_util::StringSplit(line, ',');
-  //  MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
-  //  std::string name = split[ui_format::NAME];
-  //  std::wstring w_name = util::string_util::String_2_WString(name + ".png");
-  //  float x = std::stof(split[ui_format::X]);
-  //  float y = std::stof(split[ui_format::Y]);
-  //  float z = std::stof(split[ui_format::Z]);
+  //  MY_ASSERTION(split.size() == ui_format::MAX,
+  //  L"フォーマットが不正です。"); std::string name = split[ui_format::NAME];
+  //  std::wstring w_name = util::string_util::String_2_WString(name +
+  //  ".png"); float x = std::stof(split[ui_format::X]); float y =
+  //  std::stof(split[ui_format::Y]); float z =
+  //  std::stof(split[ui_format::Z]);
 
   //  ui::UIComponent* comp = nullptr;
   //  if (split[ui_format::ID] == "0") {
@@ -345,7 +366,8 @@ void TurnSystem::RemoveGraffiti() {
 void TurnSystem::UpdateGraffiti() {
   // for (i32 i = 0; i < graffities_.size(); i++) {
   //  if (physics_field_.GetIsHitGraffiti(i)) {
-  //    if (physics_field_.GetPlayerPowerDown()) player_.UpdateStrength(-0.01f);
+  //    if (physics_field_.GetPlayerPowerDown())
+  //    player_.UpdateStrength(-0.01f);
 
   //    graffities_[i].DecreaseGraffiti(physics_field_.GetErasePercent(i));
   //    fragments_.emplace_back(graffities_[i].InstanceFragment(physics_field_));
@@ -384,7 +406,7 @@ void TurnSystem::Draw() {
   //  obs.Draw();
   //}
   for (auto&& graffiti : graffities_) {
-    graffiti.Draw(command_list);
+    graffiti->Draw(command_list);
   }
   // for (auto&& fragment : fragments_) {
   //  fragment.Draw();

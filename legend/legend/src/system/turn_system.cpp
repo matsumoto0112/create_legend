@@ -25,12 +25,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  std::vector<object::GraffitiInitializeParameter> graffities;
-  if (!stage_generator_.LoadStage(stage_path, stage_name, this, &desks_,
-                                  &obstacles_, &player_, graffities)) {
-    return false;
-  }
-
   directx::device::CommandList command_list;
   if (!command_list.Init(
           game::GameDevice::GetInstance()->GetDevice(),
@@ -38,18 +32,45 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  for (auto&& param : graffities) {
-    auto graf = std::make_unique<object::Graffiti>();
-    if (!graf->Init(this, param, command_list)) {
+  //ステージデータの読み込み
+  {
+    player::Player::InitializeParameter player;
+    std::vector<object::Desk::InitializeParameter> desks;
+    std::vector<object::Obstacle::InitializeParameter> obstacles;
+    std::vector<object::GraffitiInitializeParameter> graffities;
+    if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
+                                    obstacles, graffities)) {
       return false;
     }
-    graffities_.emplace_back(std::move(graf));
-  }
 
-  command_list.Close();
-  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-      {command_list});
-  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
+    player_ = std::make_unique<player::Player>();
+    if (!player_->Init(this, player)) {
+      return false;
+    }
+    for (auto&& param : desks) {
+      auto obj = std::make_unique<object::Desk>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : obstacles) {
+      auto obj = std::make_unique<object::Obstacle>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : graffities) {
+      auto graf = std::make_unique<object::Graffiti>();
+      if (!graf->Init(this, param, command_list)) {
+        return false;
+      }
+      graffities_.emplace_back(std::move(graf));
+    }
+  }
 
   if (!enemy_manager_.Initilaize(this)) {
     return false;
@@ -63,6 +84,11 @@ bool TurnSystem::Init(const std::string& stage_name) {
   if (!InitCameras()) {
     return false;
   }
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   //{
   //  search_manager_.Initialize(&player_.GetCollisionRef());
@@ -150,7 +176,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
 
 bool TurnSystem::Update() {
   countdown_timer_.Update();
-  player_.Update();
+  player_->Update();
 
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
@@ -258,12 +284,12 @@ bool TurnSystem::Update() {
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
-  if (player_.GetSkillSelect()) {
+  if (player_->GetSkillSelect()) {
     return true;
   }
   //プレイヤーの速度更新は入力を受け取って処理する
-  player_.SetVelocity();
-  player_.SetImpulse();
+  player_->SetVelocity();
+  player_->SetImpulse();
   return true;
 }
 
@@ -321,7 +347,7 @@ bool TurnSystem::InitCameras() {
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     auto main_camera = std::make_unique<camera::FollowCamera>();
-    if (!main_camera->Init(L"MainCamera", &player_,
+    if (!main_camera->Init(L"MainCamera", player_.get(),
                            math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
                            math::util::DEG_2_RAD * 50.0f, aspect_ratio,
                            math::Vector3::kUpVector, 0.1f, 300.0f)) {
@@ -397,14 +423,11 @@ void TurnSystem::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
   cameras_[current_camera_]->RenderStart();
-  player_.Draw();
-  for (auto&& desk : desks_) {
-    desk.Draw();
+  player_->Draw();
+  for (auto&& obj : static_objects_) {
+    obj->Draw();
   }
   enemy_manager_.Draw();
-  // for (auto&& obs : obstacles_) {
-  //  obs.Draw();
-  //}
   for (auto&& graffiti : graffities_) {
     graffiti->Draw(command_list);
   }
@@ -450,7 +473,7 @@ void TurnSystem::PlayerSkillActivate() {}
 //プレイヤーのスキル発動終了時処理
 void TurnSystem::PlayerSkillDeactivate() {}
 
-player::Player* TurnSystem::GetPlayer() { return &player_; }
+player::Player* TurnSystem::GetPlayer() { return player_.get(); }
 
 std::vector<enemy::Enemy*> TurnSystem::GetEnemies() {
   return enemy_manager_.GetEnemyPointers();

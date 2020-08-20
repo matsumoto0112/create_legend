@@ -1,7 +1,9 @@
 #include "src/object/graffiti.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
+#include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
 
 namespace {
@@ -103,7 +105,7 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
   params.friction = 0.8f;
   params.restitution = 1.0f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) {});
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
@@ -158,6 +160,18 @@ void Graffiti::Draw(directx::device::CommandList& command_list) {
 float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
 bool Graffiti::GetIsErase() const { return is_erase_; }
+
+void Graffiti::OnHit(bullet::Collider* other) {
+  if (dynamic_cast<player::Player*>(other->GetOwner())) {
+    const float percentage = 0.01f;
+    remaining_graffiti_ -= percentage;
+  }
+  if (dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+    const float percentage = 10.0f;
+    remaining_graffiti_ -= percentage;
+    is_erase_ = remaining_graffiti_ <= 0.0f;
+  }
+}
 
 // Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
 //  Fragment::InitializeParameter parameter;

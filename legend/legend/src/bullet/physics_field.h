@@ -8,7 +8,6 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "src/bullet/collider.h"
-#include "src/bullet/trigger.h"
 #include "src/camera/camera.h"
 #include "src/directx/bullet_debug_draw.h"
 

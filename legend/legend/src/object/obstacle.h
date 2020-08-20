@@ -6,7 +6,7 @@
  */
 
 #include "src/actor/actor.h"
-//#include "src/physics/bounding_box.h"
+#include "src/bullet/bounding_box.h"
 
 namespace legend {
 namespace object {
@@ -25,8 +25,11 @@ class Obstacle : public actor::Actor {
  public:
   Obstacle();
   virtual ~Obstacle();
-  bool Init(const InitializeParameter& params);
+  bool Init(actor::IActorMediator* mediator, const InitializeParameter& params);
   virtual bool Update() override;
+
+ private:
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace object

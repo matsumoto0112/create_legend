@@ -22,8 +22,9 @@ StageGenerator::~StageGenerator() {}
     enemy::EnemyManager* enemy_manager)*/
 bool StageGenerator::LoadStage(
     std::filesystem::path filepath, const std::string map_name,
-    actor::IActorMediator* mediator, std::vector<object::Desk>* desks,
-    std::vector<object::Obstacle>* obstacles, player::Player* player,
+    player::Player::InitializeParameter& player,
+    std::vector<object::Desk::InitializeParameter>& desks,
+    std::vector<object::Obstacle::InitializeParameter>& obstacles,
     std::vector<object::GraffitiInitializeParameter>& graffities) {
   //テキストデータを読み込み
   indexs_ = LoadStringStageData(filepath);
@@ -32,7 +33,7 @@ bool StageGenerator::LoadStage(
   //各アクターを生成
   // return SetMapActors(map_name, indexs, physics_field, actors,
   // enemy_manager);
-  return SetMapActors(mediator, desks, obstacles, player, graffities);
+  return SetMapActors(player, desks, obstacles, graffities);
 }
 
 //ファイルの読み込み処理
@@ -70,16 +71,11 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    std::vector<actor::Actor<physics::BoundingBox>>* actors,
 //    enemy::EnemyManager* enemy_manager)
 bool StageGenerator::SetMapActors(
-    actor::IActorMediator* mediator, std::vector<object::Desk>* desks,
-    std::vector<object::Obstacle>* obstacles, player::Player* player,
+    player::Player::InitializeParameter& player,
+    std::vector<object::Desk::InitializeParameter>& desks,
+    std::vector<object::Obstacle::InitializeParameter>& obstacles,
     std::vector<object::GraffitiInitializeParameter>& graffities) {
   bool is_all_ok = true;
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          game::GameDevice::GetInstance()->GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
 
   if (indexs_.empty() || indexs_[0] == "error") {
     MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
@@ -105,13 +101,7 @@ bool StageGenerator::SetMapActors(
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
       parameter.normal = math::Vector3::kUpVector;
-
-      auto& desk = desks->emplace_back();
-
-      if (!desk.Init(mediator, parameter)) {
-        MY_LOG(L"机の生成に失敗しました。");
-        is_all_ok = false;
-      }
+      desks.emplace_back(parameter);
       continue;
     }
 
@@ -126,30 +116,21 @@ bool StageGenerator::SetMapActors(
       parameter.max_power = 1;
       parameter.max_strength = 3;
       parameter.min_strength = 0.5f;
-
-      if (!player->Init(mediator, parameter)) {
-        MY_LOG(L"プレイヤーの生成に失敗しました");
-        is_all_ok = false;
-      }
+      player = parameter;
       continue;
     }
 
-    ////障害物の生成
-    // if (infomation[0] == "obstacle") {
-    //  object::Obstacle::InitializeParameter parameter;
-    //  parameter.position = transform.GetPosition();
-    //  parameter.rotation = transform.GetRotation();
-    //  parameter.model_id = 0;
-    //  parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+    //障害物の生成
+    if (infomation[0] == "obstacle") {
+      object::Obstacle::InitializeParameter parameter;
+      parameter.position = transform.GetPosition();
+      parameter.rotation = transform.GetRotation();
+      parameter.model_id = 0;
+      parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      obstacles.emplace_back(parameter);
 
-    //  auto& obstacle = obstacles->emplace_back();
-
-    //  if (!obstacle.Init(parameter)) {
-    //    MY_LOG(L"障害物の生成に失敗しました。");
-    //    is_all_ok = false;
-    //  }
-    //  continue;
-    //}
+      continue;
+    }
 
     if (infomation[0] == "graffiti") {
       object::GraffitiInitializeParameter parameter;
@@ -157,20 +138,10 @@ bool StageGenerator::SetMapActors(
       parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
       parameter.remaining_graffiti = 100.0f;
       graffities.emplace_back(parameter);
-      // auto& graffiti = graffities->emplace_back();
 
-      // if (!graffiti.Init(mediator, parameter, command_list)) {
-      //  MY_LOG(L"落書きの生成に失敗しました。");
-      //  is_all_ok = false;
-      //}
       continue;
     }
   }
-
-  command_list.Close();
-  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-      {command_list});
-  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   return is_all_ok;
 }

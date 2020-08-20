@@ -170,11 +170,9 @@ class TurnSystem : public actor::IActorMediator {
   ////! メインカメラ
   // camera::FollowCamera main_camera_;
   //! プレイヤー
-  player::Player player_;
-  //! 机
-  std::vector<object::Desk> desks_;
-  //! 障害物
-  std::vector<object::Obstacle> obstacles_;
+  std::unique_ptr<player::Player> player_;
+
+  std::vector<std::unique_ptr<actor::Actor>> static_objects_;
   //! 落書き
   std::vector<std::unique_ptr<object::Graffiti>> graffities_;
   //! 消しカス

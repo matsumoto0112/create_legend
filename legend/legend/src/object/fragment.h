@@ -7,7 +7,7 @@
  */
 
 #include "src/actor/actor.h"
-//#include "src/bullet/trigger_box.h"
+#include "src/bullet/bounding_box.h"
 
 namespace legend {
 namespace object {
@@ -30,7 +30,7 @@ class Fragment : public actor::Actor {
   virtual bool Update() override;
 
  private:
-  // std::shared_ptr<bullet::TriggerBox> box_;
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace object

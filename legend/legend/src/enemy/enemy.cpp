@@ -40,12 +40,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.friction = 0.6f;
   params.restitution = 0.6f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) {
-    // player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
-    // if (p) {
-    //  MY_LOG(L"Hit Player");
-    //}
-  });
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -155,6 +150,10 @@ float Enemy::GetPower() const { return power_; }
 bool Enemy::GetMoveEnd() const { return move_end_; }
 
 void Enemy::ResetMoveEnd() { move_end_ = false; }
+
+void Enemy::OnHit(bullet::Collider* other) {
+  //プレイヤーを参考に
+}
 
 }  // namespace enemy
 }  // namespace legend

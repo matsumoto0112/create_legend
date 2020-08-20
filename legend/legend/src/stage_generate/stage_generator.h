@@ -31,10 +31,9 @@ class StageGenerator {
    * @return 処理が正しく終了したらtrueを返す
    */
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-                 actor::IActorMediator* mediator,
-                 std::vector<object::Desk>* desks,
-                 std::vector<object::Obstacle>* obstacles,
-                 player::Player* player,
+                 player::Player::InitializeParameter& player,
+                 std::vector<object::Desk::InitializeParameter>& desks,
+                 std::vector<object::Obstacle::InitializeParameter>& obstacles,
                  std::vector<object::GraffitiInitializeParameter>& graffities);
   /**
    * @brief テキストの読み込み処理
@@ -46,8 +45,9 @@ class StageGenerator {
    * @return 処理が正しく終了したらtrueを返す
    */
   bool SetMapActors(
-      actor::IActorMediator* mediator, std::vector<object::Desk>* desks,
-      std::vector<object::Obstacle>* obstacles, player::Player* player,
+      player::Player::InitializeParameter& player,
+      std::vector<object::Desk::InitializeParameter>& desks,
+      std::vector<object::Obstacle::InitializeParameter>& obstacles,
       std::vector<object::GraffitiInitializeParameter>& graffities);
 
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(

@@ -8,7 +8,6 @@
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
 #include "src/object/fragment.h"
-
 #include "src/util/color_4.h"
 #include "src/util/transform.h"
 
@@ -75,7 +74,9 @@ class Graffiti : public actor::Actor {
   /**
    * @brief è¡ÇµÉJÉXê∂ê¨èàóù
    */
-  //Fragment InstanceFragment(system::PhysicsField& physics_field);
+  // Fragment InstanceFragment(system::PhysicsField& physics_field);
+
+  void OnHit(bullet::Collider* other);
 
  private:
   /**

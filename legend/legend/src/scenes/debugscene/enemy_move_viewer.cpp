@@ -56,7 +56,7 @@ bool EnemyMoveViewer::Initialize() {
       desk_parameter.transform = util::Transform(
           pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
       auto& desk = desks_.emplace_back();
-      //if (!desk.Init(desk_parameter)) {
+      // if (!desk.Init(desk_parameter)) {
       //  return false;
       //}
       // physics_field_.AddDesk(desk.GetCollisionRef());
@@ -79,35 +79,34 @@ bool EnemyMoveViewer::Initialize() {
   }
 
   {
-    enemy::Enemy::InitializeParameter enemy_parameter;
-    enemy_parameter.bouding_box_length =
-        math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
-    for (i32 i = 0; i < 2; i++) {
-      float x =
-          game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
-          100.0f;
-      float z =
-          game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f) *
-          100.0f;
-      math::Vector3 pos = math::Vector3(x, 10.0f, z);
-      enemy_parameter.transform = util::Transform(
-          pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
-      enemy_manager_.Add(enemy_parameter, physics_field_);
-    }
+      // enemy::Enemy::InitializeParameter enemy_parameter;
+      // enemy_parameter.bouding_box_length =
+      //    math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      // for (i32 i = 0; i < 2; i++) {
+      //  float x =
+      //      game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
+      //      100.0f;
+      //  float z =
+      //      game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f)
+      //      * 100.0f;
+      //  math::Vector3 pos = math::Vector3(x, 10.0f, z);
+      //  enemy_parameter.transform = util::Transform(
+      //      pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+      //  enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
 
-    {
-      // search_manager_.Initialize(&player_.GetCollisionRef());
-      search_manager_.Add({
-          math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
-          math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
-          math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
-          math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
-      });
-      search_manager_.SetBranch(0, {1, 2, 3});
-      search_manager_.SetBranch(1, {0, 2, 3});
-      search_manager_.SetBranch(2, {0, 1, 3});
-      search_manager_.SetBranch(3, {0, 1, 2});
-    }
+  {
+    // search_manager_.Initialize(&player_.GetCollisionRef());
+    search_manager_.Add({
+        math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
+    });
+    search_manager_.SetBranch(0, {1, 2, 3});
+    search_manager_.SetBranch(1, {0, 2, 3});
+    search_manager_.SetBranch(2, {0, 1, 3});
+    search_manager_.SetBranch(3, {0, 1, 2});
   }
 
   //ÉJÉÅÉâÇÃèâä˙âª
@@ -125,7 +124,7 @@ bool EnemyMoveViewer::Initialize() {
   }
 
   return true;
-}
+}  // namespace debugscene
 
 //çXêV
 bool EnemyMoveViewer::Update() {
@@ -208,13 +207,13 @@ void EnemyMoveViewer::Draw() {
 
   camera_.RenderStart();
   player_.Draw();
-  for (auto&& desk : desks_) {
-    desk.Draw();
-  }
-  enemy_manager_.Draw();
-  for (auto&& obs : obstacles_) {
-    obs.Draw();
-  }
+  // for (auto&& desk : desks_) {
+  //  desk.Draw();
+  //}
+  // enemy_manager_.Draw();
+  // for (auto&& obs : obstacles_) {
+  //  obs.Draw();
+  //}
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,

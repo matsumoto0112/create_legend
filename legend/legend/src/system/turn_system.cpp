@@ -20,19 +20,16 @@ bool TurnSystem::Init(const std::string& stage_name) {
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
 
-  // if (!physics_field_.Init()) {
-  //  return false;
-  //}
-  // if (!enemy_manager_.Initilaize()) {
-  //  return false;
-  //}
-
   if (!physics_field_.Init()) {
     return false;
   }
 
   if (!stage_generator_.LoadStage(stage_path, stage_name, this, &desks_,
                                   &obstacles_, &player_, &graffities_)) {
+    return false;
+  }
+
+  if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
 
@@ -47,10 +44,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //  physics_field_.AddObstacle(obs.GetCollisionRef());
   //  obs.SetMediator(this);
   //}
-  // for (auto&& enemy_parameter :
-  //     stage_generator_.GetEnemyParameters(current_turn_)) {
-  //  enemy_manager_.Add(enemy_parameter, physics_field_);
-  //}
+  for (auto&& enemy_parameter :
+       stage_generator_.GetEnemyParameters(current_turn_)) {
+    enemy_manager_.Add(enemy_parameter);
+  }
 
   // for (auto&& graffiti : graffities_) {
   //  physics_field_.AddGraffiti(graffiti.GetCollisionRef());
@@ -393,7 +390,7 @@ void TurnSystem::Draw() {
   for (auto&& desk : desks_) {
     desk.Draw();
   }
-  // enemy_manager_.Draw();
+  enemy_manager_.Draw();
   // for (auto&& obs : obstacles_) {
   //  obs.Draw();
   //}

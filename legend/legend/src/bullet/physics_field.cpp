@@ -57,6 +57,9 @@ bool PhysicsField::Update() {
     world_->stepSimulation(delta_time, 1);
   }
 
+  for (auto&& col : colliders_) {
+    col->UpdateOwnerTransform();
+  }
   // world_->rayTest(btVector3(0, 15, 0), btVector3(0, -5, 0), )
 
   return true;

@@ -45,8 +45,7 @@ class EnemyManager {
   /**
    * @brief “G‚ð’Ç‰Á
    */
-  void Add(const Enemy::InitializeParameter& paramater,
-           system::PhysicsField& physics_field);
+  void Add(const Enemy::InitializeParameter& paramater);
   /**
    * @brief ƒ{ƒX‚ð’Ç‰Á
    */

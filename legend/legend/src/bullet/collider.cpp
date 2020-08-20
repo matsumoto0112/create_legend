@@ -50,21 +50,15 @@ void Collider::SetAngularVelocity(const math::Vector3& velocity) {
 }
 
 void Collider::updateAction(btCollisionWorld* collisionWorld,
-                            btScalar deltaTimeStep) {
+                            btScalar deltaTimeStep) {}
+
+void Collider::debugDraw(btIDebugDraw* debugDrawer) {}
+
+void Collider::UpdateOwnerTransform() const {
   btTransform tr;
   motion_state_->getWorldTransform(tr);
   owner_transform_->SetPosition(helper::ToVector3(tr.getOrigin()));
   owner_transform_->SetRotation(helper::ToQuaternion(tr.getRotation()));
-
-  // MY_LOG(L"Update:(%f, %f, %f)", tr.getOrigin().x(), tr.getOrigin().y(),
-  //       tr.getOrigin().z());
-}
-
-void Collider::debugDraw(btIDebugDraw* debugDrawer) {
-  btTransform tr;
-  motion_state_->getWorldTransform(tr);
-  // MY_LOG(L"Draw:(%f, %f, %f)", tr.getOrigin().x(), tr.getOrigin().y(),
-  //       tr.getOrigin().z());
 }
 
 }  // namespace bullet

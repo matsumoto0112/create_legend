@@ -48,13 +48,13 @@ class Collider : public btActionInterface {
   btVector3 GetAngularVelocity();
   /**
    * @brief ‰ñ“]ˆÚ“®—Ê‚ÌŽw’è
-
    */
   void SetAngularVelocity(const math::Vector3& velocity);
   btMotionState* GetMotionState() const { return motion_state_.get(); }
   virtual void updateAction(btCollisionWorld* collisionWorld,
                             btScalar deltaTimeStep) override;
   virtual void debugDraw(btIDebugDraw* debugDrawer) override;
+  virtual void UpdateOwnerTransform() const;
 
  protected:
   util::Transform* owner_transform_;

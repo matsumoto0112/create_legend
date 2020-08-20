@@ -19,6 +19,7 @@ SkillSelectUI::SkillSelectUI() {
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
   }
+  skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
 }
 
 SkillSelectUI::~SkillSelectUI() {}
@@ -103,7 +104,7 @@ void SkillSelectUI::ChangeIsSelectMode() {
                 1.0f);
   } else {
     is_select_mode_ = true;
-    SelectSkillNumber(select_number_);
+    skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
     skill_select_frame_.SetScale(icon_scale_);
     audio.Start(
         util::resource::resource_names::audio::PLAYER_MOVE_SELECT_SKILL_MODE,
@@ -130,8 +131,6 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   select_number_ = select_number;
 
   skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
-  skill_select_frame_.SetScale(icon_scale_);
-  skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::SKILL_SELECT, 1.0f);
 }

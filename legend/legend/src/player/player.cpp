@@ -223,9 +223,7 @@ math::Vector3 Player::GetPosition() const { return transform_.GetPosition(); }
 math::Vector3 Player::GetScale() const { return transform_.GetScale(); }
 
 //ˆÚ“®—Ê‚ÌŽæ“¾
-math::Vector3 Player::GetVelocity() const {
-  return bullet::helper::ToVector3(box_->GetVelocity());
-}
+math::Vector3 Player::GetVelocity() const { return box_->GetVelocity(); }
 
 //‰ñ“]‚ÌŽæ“¾
 math::Quaternion Player::GetRotation() const {

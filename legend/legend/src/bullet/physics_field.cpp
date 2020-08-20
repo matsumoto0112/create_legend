@@ -49,7 +49,7 @@ bool PhysicsField::Update() {
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
   //テスト用
-  //for (auto&& collider : colliders_) {
+  // for (auto&& collider : colliders_) {
   //    collider->SetAngularVelocity(btVector3(0, 0, 0));
   //}
 
@@ -57,29 +57,18 @@ bool PhysicsField::Update() {
     world_->stepSimulation(delta_time, 1);
   }
 
-  //world_->rayTest(btVector3(0, 15, 0), btVector3(0, -5, 0), )
+  // world_->rayTest(btVector3(0, 15, 0), btVector3(0, -5, 0), )
 
   return true;
 }
 
-void PhysicsField::DebugDraw() {
-  constexpr legend::u32 WINDOW_WIDTH = 1280;
-  constexpr legend::u32 WINDOW_HEIGHT = 720;
+void PhysicsField::DebugDraw(camera::Camera* rendering_camera) {
+  world_->debugDrawWorld();
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  world_->debugDrawWorld();
-  math::Vector3 eye(0.0f, 100.0f, -100.0f);
-  math::Vector3 at(0.0f, 0.0f, 0.0f);
-  math::Vector3 up(0.0f, 1.0f, 0.0f);
-  float aspect =
-      static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-  float fov = 50.0f * math::util::DEG_2_RAD;
-  float near_z = 0.1f;
-  float far_z = 1000.0f;
-  debug_drawer_->Render(
-      math::Matrix4x4::CreateView(eye, at, up),
-      math::Matrix4x4::CreateProjection(fov, aspect, near_z, far_z),
-      command_list);
+  debug_drawer_->Render(rendering_camera->GetView(),
+                        rendering_camera->GetProjection(), command_list);
 }
 
 void PhysicsField::AddRigidBody(btRigidBody* rigid_body) {
@@ -89,6 +78,7 @@ void PhysicsField::AddRigidBody(btRigidBody* rigid_body) {
 void PhysicsField::AddCollision(std::shared_ptr<Collider> collider) {
   colliders_.push_back(collider);
   AddRigidBody(collider->GetRigidBody());
+  world_->addAction(collider.get());
 }
 
 }  // namespace bullet

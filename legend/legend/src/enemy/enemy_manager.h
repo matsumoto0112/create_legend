@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "src/actor/actor_mediator.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
@@ -28,7 +29,7 @@ class EnemyManager {
   /**
    * @brief 初期化
    */
-  bool Initilaize();
+  bool Initilaize(actor::IActorMediator* mediator);
   /**
    * @brief 更新
    */
@@ -109,6 +110,8 @@ class EnemyManager {
   //! 各敵の速度格納リスト
   std::vector<math::Vector3> velocities_;
   physics::BoundingBox player_obb_;
+
+  actor::IActorMediator* actor_mediator_;
 };
 }  // namespace enemy
 }  // namespace legend

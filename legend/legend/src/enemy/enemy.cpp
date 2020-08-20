@@ -28,10 +28,10 @@ bool Enemy::Init(const InitializeParameter& parameter) {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetRotation(transform_.GetRotation());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(parameter.bouding_box_length);
+  //this->collision_.SetPosition(transform_.GetPosition());
+  //this->collision_.SetRotation(transform_.GetRotation());
+  //this->collision_.SetScale(transform_.GetScale());
+  //this->collision_.SetLength(parameter.bouding_box_length);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -88,7 +88,7 @@ void Enemy::Move() {
 
 void Enemy::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  collision_.SetPosition(position);
+  //collision_.SetPosition(position);
 }
 
 //ë¨ìxÇÃê›íË

@@ -20,11 +20,12 @@ class BoundingBox : public Collider {
     btVector3 scale = btVector3(1, 1, 1);           //‘å‚«‚³
     btScalar mass = 1.0f;                           //Ž¿—Ê
     btScalar restitution = 0.5f;                    //”½”­
-    btScalar friction = 0.75f;                       //–€ŽC
+    btScalar friction = 0.75f;                      //–€ŽC
   };
 
  public:
-  BoundingBox(const InitializeParameter& parameter);
+  BoundingBox(util::Transform* owner_transform,
+              const InitializeParameter& parameter);
   ~BoundingBox();
   bool Update() override;
 };

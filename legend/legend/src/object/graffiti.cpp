@@ -92,11 +92,11 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
   }
 
   this->transform_ = param.transform;
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(param.bounding_box_length);
-  this->collision_.SetIsTrigger(true);
+  //this->collision_.SetPosition(transform_.GetPosition());
+  //this->collision_.SetPosition(transform_.GetPosition());
+  //this->collision_.SetScale(transform_.GetScale());
+  //this->collision_.SetLength(param.bounding_box_length);
+  //this->collision_.SetIsTrigger(true);
   remaining_graffiti_ = param.remaining_graffiti;
   is_erase_ = false;
   // transform_.SetPosition(param.position);
@@ -162,7 +162,7 @@ Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
 
   Fragment fragment;
   fragment.Init(parameter);
-  physics_field.AddFragment(fragment.GetCollisionRef());
+  //physics_field.AddFragment(fragment.GetCollisionRef());
   return fragment;
 }
 

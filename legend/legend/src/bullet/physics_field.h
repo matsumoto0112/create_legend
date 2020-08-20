@@ -8,6 +8,7 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "src/bullet/collider.h"
+#include "src/camera/camera.h"
 #include "src/directx/bullet_debug_draw.h"
 
 namespace legend {
@@ -34,11 +35,11 @@ class PhysicsField {
   /**
    * @brief デバック用の描画
    */
-  void DebugDraw();
+  void DebugDraw(camera::Camera* rendering_camera);
   /**
    * @brief 物理演算を行うオブジェクトの追加
    */
-  void AddRigidBody(btRigidBody *rigid_body);
+  void AddRigidBody(btRigidBody* rigid_body);
   void AddCollision(std::shared_ptr<Collider> collider);
 
  private:

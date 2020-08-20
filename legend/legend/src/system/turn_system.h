@@ -7,6 +7,7 @@
  */
 
 #include "src/actor/actor_mediator.h"
+#include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
 #include "src/camera/perspective_camera.h"
 #include "src/enemy/enemy_manager.h"
@@ -108,6 +109,7 @@ class TurnSystem : public actor::IActorMediator {
    * @brief 敵をシーンから取得する
    */
   virtual std::vector<enemy::Enemy*> GetEnemies() override;
+  virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) override;
 
  private:
   /**
@@ -156,14 +158,13 @@ class TurnSystem : public actor::IActorMediator {
    */
   void RemoveFragment();
 
-
  private:
   //! 現在ターン数
   i32 current_turn_;
   //! 現在のプレイ状態
   Mode current_mode_;
-  //! 物理フィールド
-  PhysicsField physics_field_;
+  ////! 物理フィールド
+  // PhysicsField physics_field_;
   //! ステージ生成
   stage_generate::StageGenerator stage_generator_;
   ////! メインカメラ
@@ -197,10 +198,13 @@ class TurnSystem : public actor::IActorMediator {
   //! 数値画像配列
   std::vector<ui::Number*> numbers_;
 
+  bullet::PhysicsField physics_field_;
+
  private:
   // UIのリアルタイム修正用パラメータ
   std::vector<legend::ui::UIComponent*> components_;
   std::vector<std::vector<std::string>> input_lines_;
+
 };
 
 }  // namespace system

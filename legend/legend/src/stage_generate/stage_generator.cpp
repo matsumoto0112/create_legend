@@ -22,6 +22,7 @@ StageGenerator::~StageGenerator() {}
     enemy::EnemyManager* enemy_manager)*/
 bool StageGenerator::LoadStage(std::filesystem::path filepath,
                                const std::string map_name,
+                               actor::IActorMediator* mediator,
                                std::vector<object::Desk>* desks,
                                std::vector<object::Obstacle>* obstacles,
                                player::Player* player,
@@ -33,7 +34,7 @@ bool StageGenerator::LoadStage(std::filesystem::path filepath,
   //各アクターを生成
   // return SetMapActors(map_name, indexs, physics_field, actors,
   // enemy_manager);
-  return SetMapActors(desks, obstacles, player, graffities);
+  return SetMapActors(mediator, desks, obstacles, player, graffities);
 }
 
 //ファイルの読み込み処理
@@ -70,7 +71,8 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    system::PhysicsField* physics_field,
 //    std::vector<actor::Actor<physics::BoundingBox>>* actors,
 //    enemy::EnemyManager* enemy_manager)
-bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
+bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
+                                  std::vector<object::Desk>* desks,
                                   std::vector<object::Obstacle>* obstacles,
                                   player::Player* player,
                                   std::vector<object::Graffiti>* graffities) {
@@ -103,7 +105,7 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
 
       auto& desk = desks->emplace_back();
 
-      if (!desk.Init(parameter)) {
+      if (!desk.Init(mediator, parameter)) {
         MY_LOG(L"机の生成に失敗しました。");
         is_all_ok = false;
       }
@@ -122,7 +124,7 @@ bool StageGenerator::SetMapActors(std::vector<object::Desk>* desks,
       parameter.max_strength = 3;
       parameter.min_strength = 0.5f;
 
-      if (!player->Init(parameter)) {
+      if (!player->Init(mediator, parameter)) {
         MY_LOG(L"プレイヤーの生成に失敗しました");
         is_all_ok = false;
       }
@@ -209,8 +211,8 @@ StageGenerator::GetEnemyParameters(const i32 turn_count) {
   return enemy_parameters;
 }
 
-std::vector<enemy::Boss::InitializeParameter>
-StageGenerator::GetBossParameters(const i32 turn_count) {
+std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
+    const i32 turn_count) {
   std::vector<enemy::Boss::InitializeParameter> boss_parameters;
 
   if (indexs_.empty() || indexs_[0] == "error") {
@@ -240,7 +242,8 @@ StageGenerator::GetBossParameters(const i32 turn_count) {
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
-      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
+      parameter.bouding_box_length =
+          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
       boss_parameters.push_back(parameter);
     }
   }

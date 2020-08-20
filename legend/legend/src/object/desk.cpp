@@ -12,16 +12,31 @@ Desk::Desk() : Parent(L"Desk") {}
 //デストラクタ
 Desk::~Desk() {}
 
-bool Desk::Init(const InitializeParameter& parameter) {
+bool Desk::Init(actor::IActorMediator* mediator,
+                const InitializeParameter& parameter) {
+  if (!Parent::Init(mediator)) {
+    return false;
+  }
   if (!Parent::InitBuffer()) {
     return false;
   }
 
   this->transform_ = parameter.transform;
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetRotation(transform_.GetRotation());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(parameter.bounding_box_length);
+
+  bullet::BoundingBox::InitializeParameter params;
+  params.mass = 0.0f;
+  params.position = btVector3(this->transform_.GetPosition().x,
+                              this->transform_.GetPosition().y,
+                              this->transform_.GetPosition().z);
+  params.scale = btVector3(parameter.bounding_box_length.x,
+                           parameter.bounding_box_length.y,
+                           parameter.bounding_box_length.z);
+  box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
+  mediator_->AddCollider(box_);
+  // this->collision_.SetPosition(transform_.GetPosition());
+  // this->collision_.SetRotation(transform_.GetRotation());
+  // this->collision_.SetScale(transform_.GetScale());
+  // this->collision_.SetLength(parameter.bounding_box_length);
   SetNormal(parameter.normal);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -40,13 +55,13 @@ bool Desk::Update() { return true; }
 //座標の設定
 void Desk::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  collision_.SetPosition(position);
+  // collision_.SetPosition(position);
 }
 
 //回転の設定
 void Desk::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  collision_.SetRotation(rotation);
+  // collision_.SetRotation(rotation);
 }
 
 //スケールの設定

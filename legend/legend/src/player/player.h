@@ -2,7 +2,7 @@
 #define LEGEND_PLAYER_PLAYER_H_
 
 #include "src/actor/actor.h"
-#include "src/physics/bounding_box.h"
+#include "src/bullet/bounding_box.h"
 #include "src/skill/skill_manager.h"
 
 namespace legend {
@@ -40,7 +40,8 @@ class Player : public actor::Actor {
   /**
    * @brief 初期化
    */
-  virtual bool Init(const InitializeParameter& parameter);
+  virtual bool Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
@@ -166,6 +167,8 @@ class Player : public actor::Actor {
 
   //! スキルマネージャー
   skill::SkillManager skill_manager_;
+
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace player

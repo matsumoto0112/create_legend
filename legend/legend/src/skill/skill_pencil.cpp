@@ -39,14 +39,14 @@ void SkillPencil::Init(player::Player* player) {
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3(1, 1, 1));
 
-  collision_.SetPosition(transform_.GetPosition());
-  collision_.SetRotation(transform_.GetRotation());
-  collision_.SetScale(transform_.GetScale());
-  collision_.SetLength(transform_.GetScale());
-  collision_.SetIsTrigger(true);
+  //collision_.SetPosition(transform_.GetPosition());
+  //collision_.SetRotation(transform_.GetRotation());
+  //collision_.SetScale(transform_.GetScale());
+  //collision_.SetLength(transform_.GetScale());
+  //collision_.SetIsTrigger(true);
 
-  collision_.SetTriggerCallback(
-      [&](actor::ActorType type) { Explosion(type); });
+  //collision_.SetTriggerCallback(
+  //    [&](actor::ActorType type) { Explosion(type); });
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -66,8 +66,8 @@ bool SkillPencil::Update() {
   transform_.SetPosition(player_->GetPosition());
   transform_.SetRotation(player_->GetRotation());
   // transform_.SetScale(math::Vector3(1, 1, 1));
-  collision_.SetPosition(transform_.GetPosition());
-  collision_.SetRotation(transform_.GetRotation());
+  //collision_.SetPosition(transform_.GetPosition());
+  //collision_.SetRotation(transform_.GetRotation());
   // collision_.SetScale(transform_.GetScale());
   // collision_.SetLength(transform_.GetScale());
 

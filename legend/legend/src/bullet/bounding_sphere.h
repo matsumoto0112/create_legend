@@ -24,7 +24,7 @@ class BoundingSphere : public Collider {
   };
 
  public:
-  BoundingSphere(const InitializeParameter& parameter);
+  BoundingSphere(util::Transform* owner_transform, const InitializeParameter& parameter);
   ~BoundingSphere();
   bool Update() override;
 };

@@ -38,32 +38,32 @@ bool StageGenerateTest::Initialize() {
         math::Vector3(0.06f, 0.025f, 0.14f) / 4.0f;
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
-    if (!player_.Init(player_parameter)) {
+    if (!player_.Init(nullptr, player_parameter)) {
       // return false;
     }
-    //physics_field_.SetPlayer(player_.GetCollisionRef());
+    // physics_field_.SetPlayer(player_.GetCollisionRef());
   }
   return true;
 }
 bool StageGenerateTest::Update() {
   //ステージ選択
   if (ImGui::Begin("StageGenerateTest")) {
-      ImGui::Text("Currently closed");
-    //if (ImGui::Button("Load aaaa")) {
+    ImGui::Text("Currently closed");
+    // if (ImGui::Button("Load aaaa")) {
     //  indexs_ = stage_generator_->LoadStringStageData(
     //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
     //      L"aaaa.txt");
     //  stage_generator_->LoadStage(
-    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"aaaa.txt",
-    //      "aaaa", &desks_, &obstacles_, &player_);
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
+    //      L"aaaa.txt", "aaaa", &desks_, &obstacles_, &player_);
     //}
-    //if (ImGui::Button("Load bbbb")) {
+    // if (ImGui::Button("Load bbbb")) {
     //  indexs_ = stage_generator_->LoadStringStageData(
     //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
     //      L"bbbb.txt");
     //  stage_generator_->LoadStage(
-    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" / L"bbbb.txt",
-    //      "bbbb", &desks_, &obstacles_, &player_);
+    //      util::Path::GetInstance()->exe() / L"assets" / L"stage" /
+    //      L"bbbb.txt", "bbbb", &desks_, &obstacles_, &player_);
     //}
   }
   ImGui::End();
@@ -162,13 +162,13 @@ void StageGenerateTest::Draw() {
   // for (auto object : map_actors_) {
   //    object.GetCollisionRef().DebugDraw(command_list);
   //}
-  player_.GetCollisionRef().DebugDraw(command_list);
-  for (auto&& obs : desks_) {
-    obs.GetCollisionRef().DebugDraw(command_list);
-  }
-  for (auto&& obs : obstacles_) {
-    obs.GetCollisionRef().DebugDraw(command_list);
-  }
+  // player_.GetCollisionRef().DebugDraw(command_list);
+  // for (auto&& obs : desks_) {
+  //  obs.GetCollisionRef().DebugDraw(command_list);
+  //}
+  // for (auto&& obs : obstacles_) {
+  //  obs.GetCollisionRef().DebugDraw(command_list);
+  //}
 }
 void StageGenerateTest::Finalize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();

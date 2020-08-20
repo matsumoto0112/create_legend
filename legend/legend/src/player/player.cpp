@@ -13,20 +13,38 @@ Player::Player() : Parent(L"Player") {}
 Player::~Player() {}
 
 //初期化
-bool Player::Init(const InitializeParameter& parameter) {
+bool Player::Init(actor::IActorMediator* mediator,
+                  const InitializeParameter& parameter) {
+  if (!Parent::Init(mediator)) {
+    return false;
+  }
   if (!Parent::InitBuffer()) {
     return false;
   }
 
   this->transform_ = parameter.transform;
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetRotation(transform_.GetRotation());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(parameter.bouding_box_length);
-  this->collision_.SetCollisionCallback(
-      [&](actor::ActorType type) { Player::OnCollisionHit(type); });
-  this->collision_.SetTriggerCallback(
-      [&](actor::ActorType type) { Player::OnTriggerHit(type); });
+  bullet::BoundingBox::InitializeParameter params;
+  params.position =
+      btVector3(transform_.GetPosition().x, transform_.GetPosition().y,
+                transform_.GetPosition().z);
+  // params.rotation = this->transform_.GetRotation();
+  // params.scale = parameter.bouding_box_length;
+  params.scale =
+      btVector3(parameter.bouding_box_length.x, parameter.bouding_box_length.y,
+                parameter.bouding_box_length.z);
+  params.mass = 1.0f;
+  params.friction = 0.8f;
+  params.restitution = 1.0f;
+  box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
+  mediator_->AddCollider(box_);
+  // this->collision_.SetPosition(transform_.GetPosition());
+  // this->collision_.SetRotation(transform_.GetRotation());
+  // this->collision_.SetScale(transform_.GetScale());
+  // this->collision_.SetLength(parameter.bouding_box_length);
+  // this->collision_.SetCollisionCallback(
+  //    [&](actor::ActorType type) { Player::OnCollisionHit(type); });
+  // this->collision_.SetTriggerCallback(
+  //    [&](actor::ActorType type) { Player::OnTriggerHit(type); });
   min_power_ = parameter.min_power;
   max_power_ = parameter.max_power;
 
@@ -35,6 +53,8 @@ bool Player::Init(const InitializeParameter& parameter) {
   strength_ = 1.0f;
   max_strength_ = parameter.max_strength;
   min_strength_ = parameter.min_strength;
+
+  // box_ = std::make_shared<bullet::BoundingBox>();
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -69,6 +89,11 @@ bool Player::Update() {
   //スキルマネージャーの更新
   skill_manager_.Update();
 
+  if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
+          input::key_code::A)) {
+    box_->SetVelocity(btVector3(10.0f, 0.0f, 0.0f));
+  }
+
   if (skill_manager_.IsProductionNow()) {
     return true;
   }
@@ -98,19 +123,19 @@ void Player::Draw() {
 //座標の設定
 void Player::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  collision_.SetPosition(position);
+  // collision_.SetPosition(position);
 }
 
 //回転の設定
 void Player::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  collision_.SetRotation(rotation);
+  // collision_.SetRotation(rotation);
 }
 
 //スケールの設定
 void Player::SetScale(math::Vector3 scale) {
   transform_.SetScale(scale);
-  collision_.SetScale(scale);
+  // collision_.SetScale(scale);
 }
 
 //速度の設定

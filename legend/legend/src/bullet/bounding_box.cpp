@@ -1,12 +1,15 @@
 #include "src/bullet/bounding_box.h"
 
+#include "src/bullet/bullet_helper.h"
 #include "src/bullet/physics_field.h"
 
 namespace legend {
 
 namespace bullet {
 
-BoundingBox::BoundingBox(const InitializeParameter& parameter) {
+BoundingBox::BoundingBox(util::Transform* owner_transform,
+                         const InitializeParameter& parameter)
+    : Collider(owner_transform) {
   //óßï˚ëÃÇ…ê›íË
   shape_ = std::make_shared<btBoxShape>(parameter.scale);
 

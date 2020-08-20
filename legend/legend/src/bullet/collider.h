@@ -11,12 +11,12 @@
 
 namespace legend {
 namespace bullet {
-class Collider {
+class Collider : public btActionInterface {
  public:
   /**
    * @brief コンストラクタ
    */
-  Collider();
+  Collider(util::Transform* owner_transform);
   /**
    * @brief デストラクタ
    */
@@ -51,13 +51,18 @@ class Collider {
 
    */
   void SetAngularVelocity(btVector3 velocity);
-
+  btMotionState* GetMotionState() const { return motion_state_.get(); }
+  virtual void updateAction(btCollisionWorld* collisionWorld,
+                            btScalar deltaTimeStep) override;
+  virtual void debugDraw(btIDebugDraw* debugDrawer) override;
 
  protected:
+  util::Transform* owner_transform_;
   std::shared_ptr<btCollisionShape> shape_;
   std::shared_ptr<btDefaultMotionState> motion_state_;
   btVector3 inertia_;
   std::shared_ptr<btRigidBody> rigid_body_;
+
 };
 }  // namespace bullet
 }  // namespace legend

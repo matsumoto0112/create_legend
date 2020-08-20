@@ -28,12 +28,11 @@ class Collider : public btActionInterface {
   /**
    * @brief デストラクタ
    */
-  ~Collider();
+  virtual ~Collider();
   /**
    * @brief 更新処理
    */
   virtual bool Update();
-
   /**
    * @brief 剛体オブジェクトを取得
    */

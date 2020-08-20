@@ -11,6 +11,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #include <cstdlib>
+#include <crtdbg.h>
 
 #define BT_NO_SIMD_OPERATOR_OVERLOADS
 

@@ -30,7 +30,7 @@ class Actor {
   /**
    * @brief デストラクタ
    */
-  ~Actor();
+  virtual ~Actor();
   /**
    * @brief 初期化
    * @param mediator アクター仲介
@@ -45,6 +45,7 @@ class Actor {
    * @brief 描画
    */
   virtual void Draw();
+  virtual void Destroy(){};
 
  public:
   std::wstring GetName() const { return name_; }

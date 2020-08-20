@@ -20,7 +20,6 @@ BoundingBox::BoundingBox(actor::Actor* owner,
   //慣性モーメントの計算
   inertia_ = btVector3(0, 0, 0);
   shape_->calculateLocalInertia(parameter.mass, inertia_);
-
   //剛体オブジェクト生成
   rigid_body_ = std::make_shared<btRigidBody>(
       btScalar(parameter.mass), motion_state_.get(), shape_.get(), inertia_);
@@ -28,7 +27,13 @@ BoundingBox::BoundingBox(actor::Actor* owner,
   rigid_body_->setFriction(btScalar(parameter.friction));
 }
 
-BoundingBox::~BoundingBox() {}
+BoundingBox::~BoundingBox() {
+  if (rigid_body_) {
+    rigid_body_->setUserPointer(nullptr);
+    rigid_body_->setMotionState(nullptr);
+    rigid_body_->setCollisionShape(nullptr);
+  }
+}
 
 bool BoundingBox::Update() { return true; }
 }  // namespace bullet

@@ -45,16 +45,21 @@ bool Desk::Init(actor::IActorMediator* mediator,
 //更新
 bool Desk::Update() { return true; }
 
+void Desk::Destroy() {
+  if (box_) {
+    mediator_->RemoveCollider(box_);
+  }
+  mediator_->RemoveActor(this);
+}
+
 //座標の設定
 void Desk::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  // collision_.SetPosition(position);
 }
 
 //回転の設定
 void Desk::SetRotation(math::Quaternion rotation) {
   transform_.SetRotation(rotation);
-  // collision_.SetRotation(rotation);
 }
 
 //スケールの設定

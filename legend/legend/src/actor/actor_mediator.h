@@ -51,6 +51,11 @@ class IActorMediator {
    */
   virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) = 0;
   /**
+   * @brief コライダーを削除する
+   */
+  virtual void RemoveCollider(std::shared_ptr<bullet::Collider> collider) = 0;
+  virtual void RemoveActor(Actor* actor) = 0;
+  /**
    * @brief レイキャスト
    */
   virtual btCollisionWorld::AllHitsRayResultCallback RayCast(

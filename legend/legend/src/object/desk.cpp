@@ -25,12 +25,11 @@ bool Desk::Init(actor::IActorMediator* mediator,
 
   bullet::BoundingBox::InitializeParameter params;
   params.mass = 0.0f;
-  params.position = btVector3(this->transform_.GetPosition().x,
-                              this->transform_.GetPosition().y,
-                              this->transform_.GetPosition().z);
-  params.scale = btVector3(parameter.bounding_box_length.x,
-                           parameter.bounding_box_length.y,
-                           parameter.bounding_box_length.z);
+  params.position = transform_.GetPosition();
+  params.rotation = transform_.GetRotation();
+  params.restitution = 1.0f;
+  params.friction = 0.8f;
+  params.scale = parameter.bounding_box_length;
   box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
   mediator_->AddCollider(box_);
   // this->collision_.SetPosition(transform_.GetPosition());

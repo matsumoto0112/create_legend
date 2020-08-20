@@ -24,23 +24,15 @@ bool Player::Init(actor::IActorMediator* mediator,
 
   this->transform_ = parameter.transform;
   bullet::BoundingBox::InitializeParameter params;
-  params.position =
-      btVector3(transform_.GetPosition().x, transform_.GetPosition().y,
-                transform_.GetPosition().z);
-  // params.rotation = this->transform_.GetRotation();
-  // params.scale = parameter.bouding_box_length;
-  params.scale =
-      btVector3(parameter.bouding_box_length.x, parameter.bouding_box_length.y,
-                parameter.bouding_box_length.z);
+  params.position = transform_.GetPosition();
+  params.rotation = transform_.GetRotation();
+  params.scale = parameter.bouding_box_length;
   params.mass = 1.0f;
   params.friction = 0.8f;
   params.restitution = 1.0f;
   box_ = std::make_shared<bullet::BoundingBox>(&this->transform_, params);
   mediator_->AddCollider(box_);
-  // this->collision_.SetPosition(transform_.GetPosition());
-  // this->collision_.SetRotation(transform_.GetRotation());
-  // this->collision_.SetScale(transform_.GetScale());
-  // this->collision_.SetLength(parameter.bouding_box_length);
+
   // this->collision_.SetCollisionCallback(
   //    [&](actor::ActorType type) { Player::OnCollisionHit(type); });
   // this->collision_.SetTriggerCallback(

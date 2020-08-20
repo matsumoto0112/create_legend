@@ -53,6 +53,7 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
   btTransform tr;
   motion_state_->getWorldTransform(tr);
   owner_transform_->SetPosition(helper::ToVector3(tr.getOrigin()));
+  owner_transform_->SetRotation(helper::ToQuaternion(tr.getRotation()));
 }
 
 void Collider::debugDraw(btIDebugDraw* debugDrawer) {}

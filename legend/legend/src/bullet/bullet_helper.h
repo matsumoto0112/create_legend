@@ -21,6 +21,15 @@ inline math::Vector3 ToVector3(const btVector3& v) {
 inline btVector3 TobtVector3(const math::Vector3& v) {
   return btVector3(btScalar(v.x), btScalar(v.y), btScalar(v.z));
 }
+
+inline btQuaternion TobtQuaternion(const math::Quaternion& q) {
+  return btQuaternion(q.x, q.y, q.z, q.w);
+}
+
+inline math::Quaternion ToQuaternion(const btQuaternion& q) {
+  return math::Quaternion(q.x(), q.y(), q.z(), q.w());
+}
+
 }  // namespace helper
 }  // namespace bullet
 }  // namespace legend

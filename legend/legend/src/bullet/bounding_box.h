@@ -15,12 +15,12 @@ class BoundingBox : public Collider {
    * @brief 初期化パラメータ
    */
   struct InitializeParameter {
-    btVector3 position = btVector3(0, 0, 0);        //座標
-    btQuaternion rotation = btQuaternion(0, 0, 0);  //回転
-    btVector3 scale = btVector3(1, 1, 1);           //大きさ
-    btScalar mass = 1.0f;                           //質量
-    btScalar restitution = 0.5f;                    //反発
-    btScalar friction = 0.75f;                      //摩擦
+    math::Vector3 position = math::Vector3::kZeroVector;      //座標
+    math::Quaternion rotation = math::Quaternion::kIdentity;  //回転
+    math::Vector3 scale = math::Vector3::kUnitVector;         //大きさ
+    float mass = 1.0f;                                        //質量
+    float restitution = 0.5f;                                 //反発
+    float friction = 0.75f;                                   //摩擦
   };
 
  public:

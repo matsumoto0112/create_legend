@@ -11,10 +11,11 @@ BoundingBox::BoundingBox(util::Transform* owner_transform,
                          const InitializeParameter& parameter)
     : Collider(owner_transform) {
   //立方体に設定
-  shape_ = std::make_shared<btBoxShape>(parameter.scale);
+  shape_ = std::make_shared<btBoxShape>(helper::TobtVector3(parameter.scale));
 
   motion_state_ = std::make_shared<btDefaultMotionState>(
-      btTransform(parameter.rotation, parameter.position));
+      btTransform(helper::TobtQuaternion(parameter.rotation),
+                  helper::TobtVector3(parameter.position)));
 
   //慣性モーメントの計算
   inertia_ = btVector3(0, 0, 0);
@@ -22,9 +23,9 @@ BoundingBox::BoundingBox(util::Transform* owner_transform,
 
   //剛体オブジェクト生成
   rigid_body_ = std::make_shared<btRigidBody>(
-      parameter.mass, motion_state_.get(), shape_.get(), inertia_);
+      btScalar(parameter.mass), motion_state_.get(), shape_.get(), inertia_);
 
-  rigid_body_->setFriction(parameter.friction);
+  rigid_body_->setFriction(btScalar(parameter.friction));
 }
 
 BoundingBox::~BoundingBox() {}

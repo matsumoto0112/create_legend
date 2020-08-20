@@ -41,5 +41,7 @@ bool Skill::GetUseFlag() { return is_use_; }
 
 bool Skill::ProductionFlag() { return is_production_; }
 
+void Skill::RemoveCollider() { mediator_->RemoveCollider(box_); }
+
 }  // namespace skill
 }  // namespace legend

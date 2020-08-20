@@ -1,7 +1,6 @@
 #ifndef LEGEND_SKILL_SKILL_PENCIL_H_
 #define LEGEND_SKILL_SKILL_PENCIL_H_
 
-#include "src/bullet/bounding_box.h"
 #include "src/skill/skill.h"
 #include "src/util/timer.h"
 
@@ -20,7 +19,6 @@ class SkillPencil : public Skill {
    * @brief デストラクタ
    */
   ~SkillPencil();
-
   /**
    * @brief 初期化
    */
@@ -58,7 +56,8 @@ class SkillPencil : public Skill {
  private:
   //! タイマー
   util::CountDownTimer explosion_timer_;
-  std::shared_ptr<bullet::BoundingBox> box_;
+  //std::shared_ptr<bullet::BoundingBox> box_;
+  bool is_explosion_;
 };
 
 }  // namespace skill

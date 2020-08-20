@@ -84,6 +84,8 @@ void SkillPencil::Draw() { actor::Actor::Draw(); }
 void SkillPencil::Use() {
   is_use_ = true;
   Action();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Start(util::resource::resource_names::audio::SKILL_PENCIL_SHOT, 1.0f);
 }
 
 void SkillPencil::Action() { is_production_ = true; }

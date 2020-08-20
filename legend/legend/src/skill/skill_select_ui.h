@@ -65,7 +65,7 @@ class SkillSelectUI {
 
   std::vector<draw::Sprite2D> skill_icons_;
   draw::Sprite2D skill_explanatory_;
-  draw::Sprite2D select_skill_frame_;
+  draw::Sprite2D skill_select_frame_;
 
   bool is_select_mode_;
   i32 select_number_;

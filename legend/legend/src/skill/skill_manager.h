@@ -62,6 +62,10 @@ class SkillManager {
    * @brief スキルの選択
    */
   bool SelectSkill();
+  /**
+   * @brief スキルの使用
+   */
+  void UseSkill();
 
  private:
   //! 所持できる最大スキル数
@@ -72,6 +76,9 @@ class SkillManager {
   SkillSelectUI select_ui_;
   //! このターン手に入れたスキル
   std::vector<std::shared_ptr<Skill>> this_turn_get_skills_;
+
+  //! 入力判定
+  bool select_move_;
 };
 }  // namespace skill
 }  // namespace legend

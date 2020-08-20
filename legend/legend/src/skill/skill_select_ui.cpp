@@ -7,15 +7,15 @@ namespace legend {
 namespace skill {
 
 SkillSelectUI::SkillSelectUI() {
-  icon_base_position_ = math::Vector2(64.0f, 64.0f);
-  icon_scale_ = math::Vector2(0.05f, 0.05f);
+  icon_base_position_ = math::Vector2(64.0f, 32.0f);
+  icon_scale_ = math::Vector2::kUnitVector;
 
   is_select_mode_ = false;
   select_number_ = 0;
 
-  if (!select_skill_frame_.Init(
+  if (!skill_select_frame_.Init(
           game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              util::resource::resource_names::texture::TEX),
+              util::resource::resource_names::texture::UI_SKILL_SELECT_FRAME),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
   }
@@ -52,14 +52,14 @@ void SkillSelectUI::Draw() {
   //                              .GetCurrentFrameResource()
   //                              ->GetCommandList());
 
-  if (is_select_mode_) sprite_renderer.AddDrawItems(&select_skill_frame_);
+  if (is_select_mode_) sprite_renderer.AddDrawItems(&skill_select_frame_);
 }
 
 void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
   draw::Sprite2D sprite;
   if (!sprite.Init(
           game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              util::resource::resource_names::texture::TEX),
+              util::resource::resource_names::texture::UI_SKILL_ICON_1),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル取得時のスキルアイコンの初期化に失敗しました。");
   }
@@ -96,11 +96,11 @@ void SkillSelectUI::ChangeIsSelectMode() {
 
   if (is_select_mode_) {
     is_select_mode_ = false;
-    select_skill_frame_.SetScale(math::Vector2(0, 0));
+    skill_select_frame_.SetScale(math::Vector2::kZeroVector);
   } else {
     is_select_mode_ = true;
     SelectSkillNumber(select_number_);
-    select_skill_frame_.SetScale(icon_scale_);
+    skill_select_frame_.SetScale(icon_scale_);
   }
 }
 
@@ -110,7 +110,7 @@ i32 SkillSelectUI::GetSkillNumber() { return select_number_; }
 //選択中のスキル更新
 void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   if (skill_icons_.size() == 0) {
-    select_skill_frame_.SetScale(math::Vector2(0, 0));
+    skill_select_frame_.SetScale(math::Vector2(0, 0));
     is_select_mode_ = false;
     return;
   }
@@ -121,9 +121,9 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
 
   select_number_ = select_number;
 
-  select_skill_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
-  select_skill_frame_.SetScale(icon_scale_ / 2);
-  select_skill_frame_.SetRect(math::Rect(0, 0, 1, 1));
+  skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
+  skill_select_frame_.SetScale(icon_scale_);
+  skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
 }
 
 }  // namespace skill

@@ -12,7 +12,10 @@ SkillManager::SkillManager() {}
 SkillManager::~SkillManager() {}
 
 //初期化
-void SkillManager::Init() { select_ui_.Init(); }
+void SkillManager::Init() {
+  select_ui_.Init();
+  select_move_ = false;
+}
 
 //スキル取得時
 void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
@@ -35,6 +38,7 @@ void SkillManager::Update() {
     skill->Update();
   }
 
+  UseSkill();
   RemoveSkill();
 }
 
@@ -119,7 +123,14 @@ void SkillManager::RemoveSkill() {
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
     i--;
-    select_ui_.SelectSkillNumber(i);
+    select_ui_.SelectSkillNumber(0);
+  }
+
+  //スキルの実装がまだなのでボタンで削除できるようにした
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  i32 skill_num = select_ui_.GetSkillNumber();
+  if (input.GetGamepad()->GetButtonDown(input::joy_code::B)) {
+    skills_[skill_num]->EndAction();
   }
 }
 
@@ -131,14 +142,31 @@ bool SkillManager::SelectSkill() {
 
   if (select_ui_.GetIsSelectMode()) {
     i32 number = select_ui_.GetSkillNumber();
-    if (input.GetGamepad()->GetStickLeft().x >= 0.8f)
+    //移動判定を1回だけにする
+    if (input.GetGamepad()->GetStickLeft().x >= 0.8f && !select_move_) {
       number++;
-    else if (input.GetGamepad()->GetStickLeft().x <= -0.8f)
+      select_move_ = true;
+    } else if (input.GetGamepad()->GetStickLeft().x <= -0.8f && !select_move_) {
       number--;
+      select_move_ = true;
+    }
+    if (input.GetGamepad()->GetStickLeft().x > -0.8f &&
+        input.GetGamepad()->GetStickLeft().x < 0.8f)
+      select_move_ = false;
     select_ui_.SelectSkillNumber(number);
     return true;
   } else {
     return false;
+  }
+}
+
+void SkillManager::UseSkill() {
+  if (!select_ui_.GetIsSelectMode()) return;
+
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  i32 skill_num = select_ui_.GetSkillNumber();
+  if (input.GetGamepad()->GetButtonDown(input::joy_code::A)) {
+    skills_[skill_num]->Use();
   }
 }
 

@@ -64,15 +64,6 @@ bool Player::Update() {
       skill->Init(this);
       skill_manager_.AddSkill(skill);
     }
-    for (auto&& skill : skill_manager_.GetSkillList()) {
-      if (ImGui::Button("Use Skill")) {
-        skill->Use();
-      }
-      ImGui::SameLine();
-      if (ImGui::Button("Decrease Count")) {
-        skill->EndAction();
-      }
-    }
   }
   ImGui::End();
   //スキルマネージャーの更新

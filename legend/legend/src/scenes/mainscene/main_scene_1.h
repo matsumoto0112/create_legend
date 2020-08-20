@@ -8,7 +8,7 @@
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
-#include "src/system/physics_field.h"
+
 #include "src/system/turn_system.h"
 
 namespace legend {

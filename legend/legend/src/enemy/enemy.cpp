@@ -2,6 +2,8 @@
 
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/game/game_device.h"
+#include "src/player/player.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
 #include "src/util/resource/resource_names.h"
@@ -24,14 +26,12 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) return false;
-  // if (!obb_.Initialize(device)) {
-  //  return false;
-  //}
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
+
   bullet::BoundingBox::InitializeParameter params;
   params.position = this->transform_.GetPosition();
   params.rotation = this->transform_.GetRotation();
@@ -40,6 +40,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.friction = 0.6f;
   params.restitution = 0.6f;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -149,6 +150,10 @@ float Enemy::GetPower() const { return power_; }
 bool Enemy::GetMoveEnd() const { return move_end_; }
 
 void Enemy::ResetMoveEnd() { move_end_ = false; }
+
+void Enemy::OnHit(bullet::Collider* other) {
+  //プレイヤーを参考に
+}
 
 }  // namespace enemy
 }  // namespace legend

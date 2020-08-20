@@ -15,28 +15,28 @@ bool EnemyManager::Initilaize(actor::IActorMediator* mediator) {
 }
 
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
-  if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
-    bool isMove = false;
-    for (auto& e : enemys_) {
-      isMove = (isMove || (0.01f <= e->GetVelocity().Magnitude()));
-    }
-    if (boss_ != nullptr) {
-      isMove = (isMove || (0.01f <= boss_->GetVelocity().Magnitude()));
-    }
-    if (!isMove) {
-      action_enemy_index_ = 0;
-      move_timer_ = 0.0f;
-    }
-  }
-  // 敵行動
-  EnemyAction(search_manaegr);
+  //if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
+  //  bool isMove = false;
+  //  for (auto& e : enemys_) {
+  //    isMove = (isMove || (0.01f <= e->GetVelocity().Magnitude()));
+  //  }
+  //  if (boss_ != nullptr) {
+  //    isMove = (isMove || (0.01f <= boss_->GetVelocity().Magnitude()));
+  //  }
+  //  if (!isMove) {
+  //    action_enemy_index_ = 0;
+  //    move_timer_ = 0.0f;
+  //  }
+  //}
+  //// 敵行動
+  //EnemyAction(search_manaegr);
 
-  for (auto&& enemy : enemys_) {
-    enemy->Update();
-  }
-  if (boss_ != nullptr) {
-    boss_->Update();
-  }
+  //for (auto&& enemy : enemys_) {
+  //  enemy->Update();
+  //}
+  //if (boss_ != nullptr) {
+  //  boss_->Update();
+  //}
   return true;
 }
 
@@ -44,69 +44,70 @@ void EnemyManager::Draw() {
   for (i32 i = 0; i < enemys_.size(); i++) {
     enemys_[i]->Draw();
   }
-  if (boss_ != nullptr) {
-    boss_->Draw();
-  }
+  // if (boss_ != nullptr) {
+  //  boss_->Draw();
+  //}
 }
 
 void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) || (enemys_.size() < action_enemy_index_)) {
     return;
   }
-  if (move_timer_ <= 0.0f) {
-    actor::Actor* _actor;
-    if ((boss_ != nullptr) && (enemys_.size() <= action_enemy_index_)) {
-      _actor = boss_.get();
-    } else {
-      _actor = enemys_[action_enemy_index_].get();
-    }
+  // if (move_timer_ <= 0.0f) {
+  //  actor::Actor* _actor;
+  //  if ((boss_ != nullptr) && (enemys_.size() <= action_enemy_index_)) {
+  //    _actor = boss_.get();
+  //  } else {
+  //    _actor = enemys_[action_enemy_index_].get();
+  //  }
 
-    // 速度設定
-    if (search_manaegr == nullptr) {  //探索管理がない場合
-      auto pos = _actor->GetTransform().GetPosition();
-      math::Vector3 velocity = (player_obb_.GetPosition() - pos).Normalized();
+  //  // 速度設定
+  //  if (search_manaegr == nullptr) {  //探索管理がない場合
+  //    auto pos = _actor->GetTransform().GetPosition();
+  //    math::Vector3 velocity = (player_obb_.GetPosition() - pos).Normalized();
 
-      if (_actor == boss_.get()) {
-        boss_->SetVelocity(velocity);
-      } else {
-        enemys_[action_enemy_index_]->SetVelocity(velocity);
-      }
-    } else {  //探索管理がある場合
-      std::vector<physics::BoundingBox*> collisions;
-      for (i32 i = 0; i < enemys_.size(); i++) {
-        // collisions.emplace_back(&enemys_[i]->GetCollisionRef());
-      }
-      if (boss_ != nullptr) {
-        // collisions.emplace_back(&boss_->GetCollisionRef());
-      }
-      // auto next =
-      //    search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions) -
-      //    _actor->GetCollisionRef().GetPosition();
-      // next.y = 0;
+  //    if (_actor == boss_.get()) {
+  //      boss_->SetVelocity(velocity);
+  //    } else {
+  //      enemys_[action_enemy_index_]->SetVelocity(velocity);
+  //    }
+  //  } else {  //探索管理がある場合
+  //    std::vector<physics::BoundingBox*> collisions;
+  //    for (i32 i = 0; i < enemys_.size(); i++) {
+  //      // collisions.emplace_back(&enemys_[i]->GetCollisionRef());
+  //    }
+  //    if (boss_ != nullptr) {
+  //      // collisions.emplace_back(&boss_->GetCollisionRef());
+  //    }
+  //    // auto next =
+  //    //    search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions)
+  //    -
+  //    //    _actor->GetCollisionRef().GetPosition();
+  //    // next.y = 0;
 
-      if (_actor == boss_.get()) {
-        // boss_->SetVelocity(next);
-      } else {
-        // enemys_[action_enemy_index_]->SetVelocity(next);
-      }
-    }
-  }
+  //    if (_actor == boss_.get()) {
+  //      // boss_->SetVelocity(next);
+  //    } else {
+  //      // enemys_[action_enemy_index_]->SetVelocity(next);
+  //    }
+  //  }
+  //}
 
-  move_timer_ +=
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  if (move_time_ <= move_timer_) {
-    move_timer_ = 0.0f;
-    action_enemy_index_ = (action_enemy_index_ + 1 < enemys_.size())
-                              ? (action_enemy_index_ + 1)
-                              : -1;
-    if (boss_ != nullptr) {
-      action_enemy_index_ = (enemys_.size() <= action_enemy_index_)
-                                ? -1
-                                : (action_enemy_index_ < 0)
-                                      ? static_cast<i32>(enemys_.size())
-                                      : action_enemy_index_;
-    }
-  }
+  // move_timer_ +=
+  //    game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+  // if (move_time_ <= move_timer_) {
+  //  move_timer_ = 0.0f;
+  //  action_enemy_index_ = (action_enemy_index_ + 1 < enemys_.size())
+  //                            ? (action_enemy_index_ + 1)
+  //                            : -1;
+  //  if (boss_ != nullptr) {
+  //    action_enemy_index_ = (enemys_.size() <= action_enemy_index_)
+  //                              ? -1
+  //                              : (action_enemy_index_ < 0)
+  //                                    ? static_cast<i32>(enemys_.size())
+  //                                    : action_enemy_index_;
+  //  }
+  //}
 }
 
 void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
@@ -122,28 +123,28 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
   // SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
-void EnemyManager::Add(const Boss::InitializeParameter& paramater,
-                       system::PhysicsField& physics_field) {
-  if (boss_ != nullptr) {
-    return;
-  }
+// void EnemyManager::Add(const Boss::InitializeParameter& paramater,
+//                       system::PhysicsField& physics_field) {
+//  if (boss_ != nullptr) {
+//    return;
+//  }
+//
+//  //boss_ = std::make_unique<Boss>();
+//  //boss_->Init(paramater);
+//  // physics_field.AddEnemy(boss_->GetCollisionRef());
+//}
 
-  boss_ = std::make_unique<Boss>();
-  boss_->Init(paramater);
-  // physics_field.AddEnemy(boss_->GetCollisionRef());
-}
-
-void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
-  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
-    return;
-  }
-
-  physics_field.RemoveEnemy(index);
-  enemys_.erase(enemys_.begin() + index);
-  if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
-    action_enemy_index_--;
-  }
-}
+// void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
+//  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
+//    return;
+//  }
+//
+//  physics_field.RemoveEnemy(index);
+//  enemys_.erase(enemys_.begin() + index);
+//  if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
+//    action_enemy_index_--;
+//  }
+//}
 
 void EnemyManager::SetPosition(Enemy* enemy) {
   auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
@@ -158,28 +159,28 @@ Enemy* EnemyManager::GetLastEnemy() const {
 }
 
 // obbの座標を基に座標更新
-void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
-  for (i32 i = 0; i < enemys_.size(); i++) {
-    enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
-    if (enemys_[i]->GetPosition().y <= -5.0f) {
-      Destroy(i, physics_field);
-      i--;
-    }
-  }
-}
+// void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
+//  //for (i32 i = 0; i < enemys_.size(); i++) {
+//  //  enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
+//  //  if (enemys_[i]->GetPosition().y <= -5.0f) {
+//  //    Destroy(i, physics_field);
+//  //    i--;
+//  //  }
+//  //}
+//}
 
 //敵の数を取得
 i32 EnemyManager::GetEnemiesSize() const {
   return static_cast<i32>(enemys_.size());
 }
 
-// obbの速度を基に速度更新
-void EnemyManager::SetVelocity(system::PhysicsField& physics_field) {
-  for (i32 i = 0; i < enemys_.size(); i++) {
-    if (enemys_[i]->GetMoveEnd()) continue;
-    enemys_[i]->SetVelocity(physics_field.GetEnemyVelocity(i));
-  }
-}
+//// obbの速度を基に速度更新
+// void EnemyManager::SetVelocity(system::PhysicsField& physics_field) {
+//  for (i32 i = 0; i < enemys_.size(); i++) {
+//    if (enemys_[i]->GetMoveEnd()) continue;
+//    enemys_[i]->SetVelocity(physics_field.GetEnemyVelocity(i));
+//  }
+//}
 
 void EnemyManager::ResetEnemyMove() {
   action_enemy_index_ = -1;
@@ -207,21 +208,21 @@ bool EnemyManager::LastEnemyMoveEnd() const {
   }
 
   bool end = false;
-  if (boss_ == nullptr ? enemys_[enemys_.size() - 1]->GetMoveEnd()
-                       : boss_->GetMoveEnd()) {
-    end = true;
-    for (i32 i = 0; i < enemys_.size(); i++) {
-      enemys_[i]->ResetMoveEnd();
-    }
-    if (boss_ != nullptr) {
-      boss_->ResetMoveEnd();
-    }
-  }
+  // if (boss_ == nullptr ? enemys_[enemys_.size() - 1]->GetMoveEnd()
+  //                     : boss_->GetMoveEnd()) {
+  //  end = true;
+  //  for (i32 i = 0; i < enemys_.size(); i++) {
+  //    enemys_[i]->ResetMoveEnd();
+  //  }
+  //  if (boss_ != nullptr) {
+  //    boss_->ResetMoveEnd();
+  //  }
+  //}
   return end;
 }
 
-void EnemyManager::SetPlayer(const physics::BoundingBox& player_obb) {
-  player_obb_ = player_obb;
+void EnemyManager::SetPlayer(const bullet::BoundingBox& player_obb) {
+  //player_obb_ = player_obb;
 }
 
 void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {

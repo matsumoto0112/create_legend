@@ -12,7 +12,7 @@
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
 #include "src/stage_generate/stage_generator.h"
-#include "src/system/physics_field.h"
+
 
 namespace legend {
 namespace scenes {
@@ -55,7 +55,7 @@ class StageGenerateTest : public Scene {
   //! 読み込んだステージデータ格納用
   std::vector<std::string> indexs_;
   //! 物理管理クラス
-  system::PhysicsField physics_field_;
+  //system::PhysicsField physics_field_;
   //! メインカメラ
   camera::PerspectiveCamera camera_;
   //! アクター格納リスト

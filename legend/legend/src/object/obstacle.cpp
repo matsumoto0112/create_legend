@@ -1,5 +1,6 @@
 #include "src/object/obstacle.h"
 
+#include "src/game/game_device.h"
 #include "src/util/resource/resource_names.h"
 
 namespace legend {
@@ -9,17 +10,23 @@ Obstacle::Obstacle() : Parent(L"Obstacle") {}
 
 Obstacle::~Obstacle() {}
 
-bool Obstacle::Init(const InitializeParameter& params) {
-  if (!InitBuffer()) {
+bool Obstacle::Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& parameter) {
+  if (!Parent::Init(mediator)) {
     return false;
   }
+  this->transform_.SetPosition(parameter.position);
+  this->transform_.SetRotation(parameter.rotation);
 
-  this->transform_.SetPosition(params.position);
-  this->transform_.SetRotation(params.rotation);
-  //this->collision_.SetPosition(transform_.GetPosition());
-  //this->collision_.SetRotation(transform_.GetRotation());
-  //this->collision_.SetScale(transform_.GetScale());
-  //this->collision_.SetLength(params.bounding_box_length);
+  bullet::BoundingBox::InitializeParameter params;
+  params.position = transform_.GetPosition();
+  params.rotation = transform_.GetRotation();
+  params.scale = parameter.bounding_box_length;
+  params.mass = 0.0f;
+  params.restitution = 1.0f;
+  params.friction = 0.0f;
+  box_ = std::make_unique<bullet::BoundingBox>(this, params);
+  mediator->AddCollider(box_);
 
   model_ = game::GameDevice::GetInstance()->GetResource().GetModel().Get(
       util::resource::resource_names::model::OBSTACLE);

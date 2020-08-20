@@ -2,6 +2,7 @@
 
 #include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace system {
@@ -24,38 +25,70 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  if (!stage_generator_.LoadStage(stage_path, stage_name, this, &desks_,
-                                  &obstacles_, &player_, &graffities_)) {
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          game::GameDevice::GetInstance()->GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
     return false;
+  }
+
+  //ステージデータの読み込み
+  {
+    player::Player::InitializeParameter player;
+    std::vector<object::Desk::InitializeParameter> desks;
+    std::vector<object::Obstacle::InitializeParameter> obstacles;
+    std::vector<object::GraffitiInitializeParameter> graffities;
+    if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
+                                    obstacles, graffities)) {
+      return false;
+    }
+
+    player_ = std::make_unique<player::Player>();
+    if (!player_->Init(this, player)) {
+      return false;
+    }
+    for (auto&& param : desks) {
+      auto obj = std::make_unique<object::Desk>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : obstacles) {
+      auto obj = std::make_unique<object::Obstacle>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : graffities) {
+      auto graf = std::make_unique<object::Graffiti>();
+      if (!graf->Init(this, param, command_list)) {
+        return false;
+      }
+      graffities_.emplace_back(std::move(graf));
+    }
   }
 
   if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
 
-  // physics_field_.SetPlayer(player_.GetCollisionRef());
-
-  // player_.SetMediator(this);
-  // for (auto&& desk : desks_) {
-  //  physics_field_.AddDesk(desk.GetCollisionRef());
-  //  desk.SetMediator(this);
-  //}
-  // for (auto&& obs : obstacles_) {
-  //  physics_field_.AddObstacle(obs.GetCollisionRef());
-  //  obs.SetMediator(this);
-  //}
   for (auto&& enemy_parameter :
        stage_generator_.GetEnemyParameters(current_turn_)) {
     enemy_manager_.Add(enemy_parameter);
   }
 
-  // for (auto&& graffiti : graffities_) {
-  //  physics_field_.AddGraffiti(graffiti.GetCollisionRef());
-  //  graffiti.SetMediator(this);
-  //}
   if (!InitCameras()) {
     return false;
   }
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   //{
   //  search_manager_.Initialize(&player_.GetCollisionRef());
@@ -89,12 +122,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //  }
 
   //  auto split = util::string_util::StringSplit(line, ',');
-  //  MY_ASSERTION(split.size() == ui_format::MAX, L"フォーマットが不正です。");
-  //  std::string name = split[ui_format::NAME];
-  //  std::wstring w_name = util::string_util::String_2_WString(name + ".png");
-  //  float x = std::stof(split[ui_format::X]);
-  //  float y = std::stof(split[ui_format::Y]);
-  //  float z = std::stof(split[ui_format::Z]);
+  //  MY_ASSERTION(split.size() == ui_format::MAX,
+  //  L"フォーマットが不正です。"); std::string name = split[ui_format::NAME];
+  //  std::wstring w_name = util::string_util::String_2_WString(name +
+  //  ".png"); float x = std::stof(split[ui_format::X]); float y =
+  //  std::stof(split[ui_format::Y]); float z =
+  //  std::stof(split[ui_format::Z]);
 
   //  ui::UIComponent* comp = nullptr;
   //  if (split[ui_format::ID] == "0") {
@@ -143,7 +176,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
 
 bool TurnSystem::Update() {
   countdown_timer_.Update();
-  player_.Update();
+  player_->Update();
 
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
@@ -251,13 +284,12 @@ bool TurnSystem::Update() {
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
-  if (player_.GetSkillSelect()) {
+  if (player_->GetSkillSelect()) {
     return true;
   }
   //プレイヤーの速度更新は入力を受け取って処理する
-  player_.CheckImpulse();
-  //player_.SetVelocity();
-  //player_.SetImpulse();
+  player_->SetVelocity();
+  player_->SetImpulse();
   return true;
 }
 
@@ -315,7 +347,7 @@ bool TurnSystem::InitCameras() {
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     auto main_camera = std::make_unique<camera::FollowCamera>();
-    if (!main_camera->Init(L"MainCamera", &player_,
+    if (!main_camera->Init(L"MainCamera", player_.get(),
                            math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
                            math::util::DEG_2_RAD * 50.0f, aspect_ratio,
                            math::Vector3::kUpVector, 0.1f, 300.0f)) {
@@ -360,7 +392,8 @@ void TurnSystem::RemoveGraffiti() {
 void TurnSystem::UpdateGraffiti() {
   // for (i32 i = 0; i < graffities_.size(); i++) {
   //  if (physics_field_.GetIsHitGraffiti(i)) {
-  //    if (physics_field_.GetPlayerPowerDown()) player_.UpdateStrength(-0.01f);
+  //    if (physics_field_.GetPlayerPowerDown())
+  //    player_.UpdateStrength(-0.01f);
 
   //    graffities_[i].DecreaseGraffiti(physics_field_.GetErasePercent(i));
   //    fragments_.emplace_back(graffities_[i].InstanceFragment(physics_field_));
@@ -390,17 +423,14 @@ void TurnSystem::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
 
   cameras_[current_camera_]->RenderStart();
-  player_.Draw();
-  for (auto&& desk : desks_) {
-    desk.Draw();
+  player_->Draw();
+  for (auto&& obj : static_objects_) {
+    obj->Draw();
   }
   enemy_manager_.Draw();
-  // for (auto&& obs : obstacles_) {
-  //  obs.Draw();
-  //}
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti.Draw(command_list);
-  //}
+  for (auto&& graffiti : graffities_) {
+    graffiti->Draw(command_list);
+  }
   // for (auto&& fragment : fragments_) {
   //  fragment.Draw();
   //}
@@ -414,26 +444,7 @@ void TurnSystem::Draw() {
 //デバッグ描画
 void TurnSystem::DebugDraw() {
   cameras_[current_camera_]->RenderStart();
-  // auto& command_list = game::GameDevice::GetInstance()
-  //                         ->GetDevice()
-  //                         .GetCurrentFrameResource()
-  //                         ->GetCommandList();
-
-  // player_.GetCollisionRef().DebugDraw(command_list);
-  // for (auto&& desk : desks_) {
-  //  desk.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // enemy_manager_.DebugDraw(command_list);
   // search_manager_.DebugDraw(command_list);
-  // for (auto&& obs : obstacles_) {
-  //  obs.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti.GetCollisionRef().DebugDraw(command_list);
-  //}
-  // for (auto&& fragment : fragments_) {
-  //  fragment.GetCollisionRef().DebugDraw(command_list);
-  //}
   physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
@@ -462,7 +473,7 @@ void TurnSystem::PlayerSkillActivate() {}
 //プレイヤーのスキル発動終了時処理
 void TurnSystem::PlayerSkillDeactivate() {}
 
-player::Player* TurnSystem::GetPlayer() { return &player_; }
+player::Player* TurnSystem::GetPlayer() { return player_.get(); }
 
 std::vector<enemy::Enemy*> TurnSystem::GetEnemies() {
   return enemy_manager_.GetEnemyPointers();

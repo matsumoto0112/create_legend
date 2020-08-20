@@ -3,7 +3,6 @@
 
 #include "src/actor/actor.h"
 #include "src/draw/model.h"
-#include "src/physics/bounding_box.h"
 #include "src/skill/skill_type.h"
 
 /**
@@ -22,10 +21,11 @@ class Skill : public actor::Actor {
 
  public:
   Skill();
+  virtual ~Skill();
   /**
    * @brief ‰Šú‰»
    */
-  virtual void Init(player::Player* player);
+  virtual bool Init(actor::IActorMediator* mediator, player::Player* player);
   /**
    * @brief XVˆ—
    */

@@ -95,6 +95,8 @@ class Enemy : public actor::Actor {
 
   bullet::BoundingBox* GetCollider() const { return box_.get(); }
 
+  void OnHit(bullet::Collider* other);
+
  private:
   //! ‘¬“x
   math::Vector3 velocity_;

@@ -6,7 +6,6 @@
 #include "src/object/graffiti.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
-#include "src/system/physics_field.h"
 
 namespace legend {
 namespace stage_generate {
@@ -32,11 +31,10 @@ class StageGenerator {
    * @return 処理が正しく終了したらtrueを返す
    */
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-                 actor::IActorMediator* mediator,
-                 std::vector<object::Desk>* desks,
-                 std::vector<object::Obstacle>* obstacles,
-                 player::Player* player,
-                 std::vector<object::Graffiti>* graffities);
+                 player::Player::InitializeParameter& player,
+                 std::vector<object::Desk::InitializeParameter>& desks,
+                 std::vector<object::Obstacle::InitializeParameter>& obstacles,
+                 std::vector<object::GraffitiInitializeParameter>& graffities);
   /**
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
@@ -46,17 +44,17 @@ class StageGenerator {
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool SetMapActors(actor::IActorMediator* mediator,
-                    std::vector<object::Desk>* desks,
-                    std::vector<object::Obstacle>* obstacles,
-                    player::Player* player,
-                    std::vector<object::Graffiti>* graffities);
+  bool SetMapActors(
+      player::Player::InitializeParameter& player,
+      std::vector<object::Desk::InitializeParameter>& desks,
+      std::vector<object::Obstacle::InitializeParameter>& obstacles,
+      std::vector<object::GraffitiInitializeParameter>& graffities);
 
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);
 
-  std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
-      const i32 turn_count);
+  // std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
+  //    const i32 turn_count);
 
  private:
   /**

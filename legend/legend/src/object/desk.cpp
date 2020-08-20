@@ -1,6 +1,7 @@
 #include "src/object/desk.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/game/game_device.h"
 #include "src/util/resource/resource_names.h"
 
 namespace legend {
@@ -17,9 +18,6 @@ bool Desk::Init(actor::IActorMediator* mediator,
   if (!Parent::Init(mediator)) {
     return false;
   }
-  if (!Parent::InitBuffer()) {
-    return false;
-  }
 
   this->transform_ = parameter.transform;
 
@@ -32,10 +30,6 @@ bool Desk::Init(actor::IActorMediator* mediator,
   params.scale = parameter.bounding_box_length;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   mediator_->AddCollider(box_);
-  // this->collision_.SetPosition(transform_.GetPosition());
-  // this->collision_.SetRotation(transform_.GetRotation());
-  // this->collision_.SetScale(transform_.GetScale());
-  // this->collision_.SetLength(parameter.bounding_box_length);
   SetNormal(parameter.normal);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();

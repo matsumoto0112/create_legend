@@ -3,7 +3,9 @@
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/enemy/enemy.h"
+#include "src/game/game_device.h"
 #include "src/object/desk.h"
+#include "src/object/graffiti.h"
 #include "src/util/resource/resource_names.h"
 
 namespace legend {
@@ -19,9 +21,6 @@ Player::~Player() {}
 bool Player::Init(actor::IActorMediator* mediator,
                   const InitializeParameter& parameter) {
   if (!Parent::Init(mediator)) {
-    return false;
-  }
-  if (!Parent::InitBuffer()) {
     return false;
   }
 
@@ -58,10 +57,10 @@ bool Player::Init(actor::IActorMediator* mediator,
       resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
 
   //スキルマネージャーの初期化
-  skill_manager_.Init();
+  skill_manager_.Init(mediator_);
 
   return true;
-}  // namespace player
+}
 
 //更新
 bool Player::Update() {
@@ -73,7 +72,7 @@ bool Player::Update() {
     if (ImGui::Button("Add Skill")) {
       std::shared_ptr<skill::SkillPencil> skill =
           std::make_shared<skill::SkillPencil>();
-      skill->Init(this);
+      skill->Init(mediator_, this);
       skill_manager_.AddSkill(skill);
     }
   }
@@ -266,6 +265,14 @@ bool Player::GetSkillSelect() {
 }
 
 void Player::OnHit(bullet::Collider* other) {
+  //落書きに触れた
+  {
+    object::Graffiti* e = dynamic_cast<object::Graffiti*>(other->GetOwner());
+    if (e) {
+      MY_LOG(L"Hit Graffiti");
+    }
+  }
+  //敵に触れた
   {
     enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (e) {

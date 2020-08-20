@@ -1,6 +1,4 @@
-#include "bounding_sphere.h"
-
-#include "src\\stdafx.h"
+#include "src/bullet/bounding_sphere.h"
 
 namespace legend {
 namespace bullet {
@@ -25,6 +23,7 @@ BoundingSphere::BoundingSphere(actor::Actor* owner,
   rigid_body_->setFriction(parameter.friction);
 }
 BoundingSphere::~BoundingSphere() {}
-bool BoundingSphere::Update() { return false; }
+bool BoundingSphere::Update() { return true; }
+
 }  // namespace bullet
 }  // namespace legend

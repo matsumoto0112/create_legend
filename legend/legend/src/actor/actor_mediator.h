@@ -46,7 +46,9 @@ class IActorMediator {
    * @brief 敵をシーンから取得する
    */
   virtual std::vector<enemy::Enemy*> GetEnemies() = 0;
-
+  /**
+   * @brief コライダーを追加する
+   */
   virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) = 0;
 };
 

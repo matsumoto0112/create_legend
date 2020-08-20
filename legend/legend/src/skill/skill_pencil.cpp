@@ -1,5 +1,6 @@
 #include "skill_pencil.h"
 
+#include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
@@ -13,9 +14,10 @@ SkillPencil::SkillPencil() {
 
 SkillPencil::~SkillPencil() {}
 
-void SkillPencil::Init(player::Player* player) {
-  if (!Parent::InitBuffer()) {
-    return;
+bool SkillPencil::Init(actor::IActorMediator* mediator,
+                       player::Player* player) {
+  if (!Parent::Init(mediator, player)) {
+    return false;
   }
   //! 規定使用可能回数
   usable_count_ = 1;
@@ -39,14 +41,15 @@ void SkillPencil::Init(player::Player* player) {
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3(1, 1, 1));
 
-  // collision_.SetPosition(transform_.GetPosition());
-  // collision_.SetRotation(transform_.GetRotation());
-  // collision_.SetScale(transform_.GetScale());
-  // collision_.SetLength(transform_.GetScale());
-  // collision_.SetIsTrigger(true);
+  bullet::BoundingBox::InitializeParameter params;
+  params.position = transform_.GetPosition();
+  params.rotation = transform_.GetRotation();
+  params.scale = math::Vector3(1.0f, 1.0f, 1.0f);
+  params.mass = 0.0f;
 
-  // collision_.SetTriggerCallback(
-  //    [&](actor::ActorType type) { Explosion(type); });
+  box_ = std::make_unique<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
+  mediator->AddCollider(box_);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -56,6 +59,8 @@ void SkillPencil::Init(player::Player* player) {
   //モデルの初期化
   model_ = resource.GetModel().Get(
       util::resource::resource_names::model::STATIONERY_01);
+
+  return true;
 }
 
 bool SkillPencil::Update() {
@@ -107,11 +112,13 @@ void SkillPencil::EndAction() {
   is_production_ = false;
 }
 
-void SkillPencil::Explosion(actor::ActorType type) {
-  if (type != actor::ActorType::ENEMY && type != actor::ActorType::BOSS &&
-      type != actor::ActorType::DESK && type != actor::ActorType::OBSTACLE)
-    return;
+void SkillPencil::OnHit(bullet::Collider* other) {
+  if (dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+    Explosion();
+  }
+}
 
+void SkillPencil::Explosion() {
   //周囲の敵を吹き飛ばす処理
 
   //パーティクルの再生?

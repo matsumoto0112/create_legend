@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "src/game/game_device.h"
-#include "src/physics/collision.h"
 
 namespace legend {
 namespace search {
@@ -13,7 +12,7 @@ SearchManager::SearchManager() {}
 
 SearchManager::~SearchManager() {}
 
-void SearchManager::Initialize(physics::BoundingBox* _player_obb) {
+void SearchManager::Initialize(bullet::BoundingBox* _player_obb) {
   player_obb_ = _player_obb;
 }
 
@@ -42,15 +41,15 @@ void SearchManager::SetBranch(i32 index, std::vector<i32> branch) {
 }
 
 math::Vector3 SearchManager::NextSearch(
-    physics::BoundingBox* _enemy, std::vector<physics::BoundingBox*> _enemys) {
+    bullet::BoundingBox* _enemy, std::vector<bullet::BoundingBox*> _enemys) {
   if (player_obb_ == nullptr) {
     return math::Vector3::kZeroVector;
   }
 
   ignore_enemy_ = _enemy;
   enemys_ = _enemys;
-  auto start = _enemy->GetPosition();
-  auto end = player_obb_->GetPosition();
+  auto start = _enemy->GetOwner()->GetTransform().GetPosition();
+  auto end = player_obb_->GetOwner()->GetTransform().GetPosition();
   auto vector = (end - start);
   vector.y = 0;
   course_list_.clear();
@@ -190,16 +189,16 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
 }
 
 bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 direction) {
-  physics::Ray ray(start, direction);
-  for (i32 index = 0; index < enemys_.size(); index++) {
-    auto enemy = enemys_[index];
-    if (enemy == ignore_enemy_) continue;
-    auto length = direction.Magnitude();
-    if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray, *enemy,
-                                                              &length)) {
-      return true;
-    }
-  }
+  // physics::Ray ray(start, direction);
+  // for (i32 index = 0; index < enemys_.size(); index++) {
+  //  auto enemy = enemys_[index];
+  //  if (enemy == ignore_enemy_) continue;
+  //  auto length = direction.Magnitude();
+  //  if (physics::Collision::GetInstance()->Collision_Ray_OBB(ray, *enemy,
+  //                                                            &length)) {
+  //    return true;
+  //  }
+  //}
   return false;
 }
 

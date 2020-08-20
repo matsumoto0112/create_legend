@@ -1,6 +1,8 @@
 #include "skill_manager.h"
 
+#include "src/game/game_device.h"
 #include "src/player/player.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace skill {
@@ -12,7 +14,8 @@ SkillManager::SkillManager() {}
 SkillManager::~SkillManager() {}
 
 //‰Šú‰»
-void SkillManager::Init() {
+void SkillManager::Init(actor::IActorMediator* mediator) {
+  this->mediator_ = mediator;
   select_ui_.Init();
   select_move_ = false;
 }
@@ -20,7 +23,7 @@ void SkillManager::Init() {
 //ƒXƒLƒ‹Žæ“¾Žž
 void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
   std::shared_ptr<SkillPencil> skill;
-  skill->Init(player);
+  skill->Init(mediator_, player);
   this_turn_get_skills_.push_back(skill);
 }
 

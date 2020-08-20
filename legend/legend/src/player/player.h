@@ -131,6 +131,8 @@ class Player : public actor::Actor {
    */
   void OnHit(bullet::Collider* other);
 
+  bullet::Collider* GetCollider() const { return box_.get(); }
+
  private:
   //! 速度
   math::Vector3 velocity_;
@@ -172,6 +174,7 @@ class Player : public actor::Actor {
   //! スキルマネージャー
   skill::SkillManager skill_manager_;
 
+  //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
 };
 

@@ -20,13 +20,12 @@ StageGenerator::~StageGenerator() {}
     system::PhysicsField* physics_field,
     std::vector<actor::Actor<physics::BoundingBox>>* actors,
     enemy::EnemyManager* enemy_manager)*/
-bool StageGenerator::LoadStage(std::filesystem::path filepath,
-                               const std::string map_name,
-                               actor::IActorMediator* mediator,
-                               std::vector<object::Desk>* desks,
-                               std::vector<object::Obstacle>* obstacles,
-                               player::Player* player,
-                               std::vector<object::Graffiti>* graffities) {
+bool StageGenerator::LoadStage(
+    std::filesystem::path filepath, const std::string map_name,
+    player::Player::InitializeParameter& player,
+    std::vector<object::Desk::InitializeParameter>& desks,
+    std::vector<object::Obstacle::InitializeParameter>& obstacles,
+    std::vector<object::GraffitiInitializeParameter>& graffities) {
   //テキストデータを読み込み
   indexs_ = LoadStringStageData(filepath);
   map_name_ = map_name;
@@ -34,7 +33,7 @@ bool StageGenerator::LoadStage(std::filesystem::path filepath,
   //各アクターを生成
   // return SetMapActors(map_name, indexs, physics_field, actors,
   // enemy_manager);
-  return SetMapActors(mediator, desks, obstacles, player, graffities);
+  return SetMapActors(player, desks, obstacles, graffities);
 }
 
 //ファイルの読み込み処理
@@ -71,11 +70,11 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    system::PhysicsField* physics_field,
 //    std::vector<actor::Actor<physics::BoundingBox>>* actors,
 //    enemy::EnemyManager* enemy_manager)
-bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
-                                  std::vector<object::Desk>* desks,
-                                  std::vector<object::Obstacle>* obstacles,
-                                  player::Player* player,
-                                  std::vector<object::Graffiti>* graffities) {
+bool StageGenerator::SetMapActors(
+    player::Player::InitializeParameter& player,
+    std::vector<object::Desk::InitializeParameter>& desks,
+    std::vector<object::Obstacle::InitializeParameter>& obstacles,
+    std::vector<object::GraffitiInitializeParameter>& graffities) {
   bool is_all_ok = true;
 
   if (indexs_.empty() || indexs_[0] == "error") {
@@ -102,13 +101,7 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
       parameter.normal = math::Vector3::kUpVector;
-
-      auto& desk = desks->emplace_back();
-
-      if (!desk.Init(mediator, parameter)) {
-        MY_LOG(L"机の生成に失敗しました。");
-        is_all_ok = false;
-      }
+      desks.emplace_back(parameter);
       continue;
     }
 
@@ -123,11 +116,7 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
       parameter.max_power = 1;
       parameter.max_strength = 3;
       parameter.min_strength = 0.5f;
-
-      if (!player->Init(mediator, parameter)) {
-        MY_LOG(L"プレイヤーの生成に失敗しました");
-        is_all_ok = false;
-      }
+      player = parameter;
       continue;
     }
 
@@ -138,36 +127,18 @@ bool StageGenerator::SetMapActors(actor::IActorMediator* mediator,
       parameter.rotation = transform.GetRotation();
       parameter.model_id = 0;
       parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      obstacles.emplace_back(parameter);
 
-      auto& obstacle = obstacles->emplace_back();
-
-      if (!obstacle.Init(parameter)) {
-        MY_LOG(L"障害物の生成に失敗しました。");
-        is_all_ok = false;
-      }
       continue;
     }
 
     if (infomation[0] == "graffiti") {
-      directx::device::CommandList command_list;
-      if (!command_list.Init(
-              game::GameDevice::GetInstance()->GetDevice(),
-              D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-        is_all_ok = false;
-        continue;
-      }
-
       object::GraffitiInitializeParameter parameter;
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
       parameter.remaining_graffiti = 100.0f;
+      graffities.emplace_back(parameter);
 
-      auto& graffiti = graffities->emplace_back();
-
-      if (!graffiti.Init(parameter, command_list)) {
-        MY_LOG(L"落書きの生成に失敗しました。");
-        is_all_ok = false;
-      }
       continue;
     }
   }
@@ -211,44 +182,45 @@ StageGenerator::GetEnemyParameters(const i32 turn_count) {
   return enemy_parameters;
 }
 
-std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
-    const i32 turn_count) {
-  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
-
-  if (indexs_.empty() || indexs_[0] == "error") {
-    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
-    return boss_parameters;
-  }
-
-  for (auto&& index : indexs_) {
-    //文字列を分割
-    std::vector<std::string> infomation = StringSplit(index, ',');
-
-    //本来は背景IDなどを読み込むが現在は無視
-    if (infomation[0] == map_name_) continue;
-
-    //敵の生成
-    if (infomation[0] == "boss") {
-      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
-
-      enemy::Boss::InitializeParameter parameter;
-      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
-
-      // Transformを読み込み(scaleは現状無視)
-      parameter.transform =
-          String_2_Transform(infomation[1], infomation[2], infomation[3],
-                             infomation[4], infomation[5], infomation[6],
-                             infomation[7], infomation[8], infomation[9]);
-      parameter.transform.SetPosition(parameter.transform.GetPosition() +
-                                      math::Vector3(0.0f, 10.0f, 0.0f));
-      parameter.transform.SetScale(scale);
-      parameter.bouding_box_length =
-          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
-      boss_parameters.push_back(parameter);
-    }
-  }
-  return boss_parameters;
-}
+// std::vector<enemy::Boss::InitializeParameter>
+// StageGenerator::GetBossParameters(
+//    const i32 turn_count) {
+//  std::vector<enemy::Boss::InitializeParameter> boss_parameters;
+//
+//  if (indexs_.empty() || indexs_[0] == "error") {
+//    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
+//    return boss_parameters;
+//  }
+//
+//  for (auto&& index : indexs_) {
+//    //文字列を分割
+//    std::vector<std::string> infomation = StringSplit(index, ',');
+//
+//    //本来は背景IDなどを読み込むが現在は無視
+//    if (infomation[0] == map_name_) continue;
+//
+//    //敵の生成
+//    if (infomation[0] == "boss") {
+//      if ((int)String_2_Float(infomation[15]) != turn_count) continue;
+//
+//      enemy::Boss::InitializeParameter parameter;
+//      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
+//
+//      // Transformを読み込み(scaleは現状無視)
+//      parameter.transform =
+//          String_2_Transform(infomation[1], infomation[2], infomation[3],
+//                             infomation[4], infomation[5], infomation[6],
+//                             infomation[7], infomation[8], infomation[9]);
+//      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+//                                      math::Vector3(0.0f, 10.0f, 0.0f));
+//      parameter.transform.SetScale(scale);
+//      parameter.bouding_box_length =
+//          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
+//      boss_parameters.push_back(parameter);
+//    }
+//  }
+//  return boss_parameters;
+//}
 
 float StageGenerator::String_2_Float(const std::string& string) {
   return std::stof(string.c_str());

@@ -1,7 +1,9 @@
 #include "src/object/graffiti.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
+#include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
 
 namespace {
@@ -25,9 +27,10 @@ Graffiti::Graffiti() : Parent(L"Graffiti") {}
 Graffiti::~Graffiti() {}
 
 //初期化
-bool Graffiti::Init(const GraffitiInitializeParameter& param,
+bool Graffiti::Init(actor::IActorMediator* mediator,
+                    const GraffitiInitializeParameter& parameter,
                     directx::device::CommandList& command_list) {
-  if (!Parent::InitBuffer()) {
+  if (!Parent::Init(mediator)) {
     return false;
   }
 
@@ -91,16 +94,23 @@ bool Graffiti::Init(const GraffitiInitializeParameter& param,
     return false;
   }
 
-  this->transform_ = param.transform;
-  //this->collision_.SetPosition(transform_.GetPosition());
-  //this->collision_.SetPosition(transform_.GetPosition());
-  //this->collision_.SetScale(transform_.GetScale());
-  //this->collision_.SetLength(param.bounding_box_length);
-  //this->collision_.SetIsTrigger(true);
-  remaining_graffiti_ = param.remaining_graffiti;
+  this->transform_ = parameter.transform;
+
+  //コライダーの設定
+  bullet::BoundingBox::InitializeParameter params;
+  params.position = this->transform_.GetPosition();
+  params.rotation = this->transform_.GetRotation();
+  params.scale = parameter.bounding_box_length;
+  params.mass = 0.0f;
+  params.friction = 0.8f;
+  params.restitution = 1.0f;
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
+  mediator_->AddCollider(box_);
+  box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+  remaining_graffiti_ = parameter.remaining_graffiti;
   is_erase_ = false;
-  // transform_.SetPosition(param.position);
-  // transform_.SetScale(param.scale);
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   return true;
@@ -151,20 +161,32 @@ float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
-Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
-  Fragment::InitializeParameter parameter;
-  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
-  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
-  parameter.position = math::Vector3(x, 2.0f, z);
-  parameter.rotation = math::Quaternion::kIdentity;
-  parameter.scale = math::Vector3::kUnitVector;
-  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
-
-  Fragment fragment;
-  fragment.Init(parameter);
-  //physics_field.AddFragment(fragment.GetCollisionRef());
-  return fragment;
+void Graffiti::OnHit(bullet::Collider* other) {
+  if (dynamic_cast<player::Player*>(other->GetOwner())) {
+    const float percentage = 0.01f;
+    remaining_graffiti_ -= percentage;
+  }
+  if (dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+    const float percentage = 10.0f;
+    remaining_graffiti_ -= percentage;
+    is_erase_ = remaining_graffiti_ <= 0.0f;
+  }
 }
+
+// Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
+//  Fragment::InitializeParameter parameter;
+//  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
+//  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
+//  parameter.position = math::Vector3(x, 2.0f, z);
+//  parameter.rotation = math::Quaternion::kIdentity;
+//  parameter.scale = math::Vector3::kUnitVector;
+//  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
+//
+//  Fragment fragment;
+//  fragment.Init(mediator_, parameter);
+//  // physics_field.AddFragment(fragment.GetCollisionRef());
+//  return fragment;
+//}
 
 void Graffiti::DecreaseGraffiti(const float& percentage) {
   remaining_graffiti_ -= percentage;

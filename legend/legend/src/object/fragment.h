@@ -5,8 +5,9 @@
  * @file fragment.h
  * @brief
  */
+
 #include "src/actor/actor.h"
-#include "src/physics/bounding_box.h"
+#include "src/bullet/bounding_box.h"
 
 namespace legend {
 namespace object {
@@ -24,10 +25,12 @@ class Fragment : public actor::Actor {
  public:
   Fragment();
   virtual ~Fragment();
-  virtual bool Init(const InitializeParameter& params);
+  virtual bool Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& params);
   virtual bool Update() override;
 
  private:
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace object

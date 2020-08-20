@@ -6,10 +6,10 @@
  */
 
 #include "src/actor/actor.h"
+#include "src/bullet/bounding_box.h"
+#include "src/object/fragment.h"
 #include "src/util/color_4.h"
 #include "src/util/transform.h"
-#include "src/object/fragment.h"
-#include "src/system/physics_field.h"
 
 namespace legend {
 namespace object {
@@ -46,7 +46,8 @@ class Graffiti : public actor::Actor {
    * @param command_list コマンドリスト
    * @return 初期化に成功したらtrueを返す
    */
-  bool Init(const GraffitiInitializeParameter& param,
+  bool Init(actor::IActorMediator* mediator,
+            const GraffitiInitializeParameter& param,
             directx::device::CommandList& command_list);
   /**
    * @brief 更新処理
@@ -73,7 +74,9 @@ class Graffiti : public actor::Actor {
   /**
    * @brief 消しカス生成処理
    */
-  Fragment InstanceFragment(system::PhysicsField& physics_field);
+  // Fragment InstanceFragment(system::PhysicsField& physics_field);
+
+  void OnHit(bullet::Collider* other);
 
  private:
   /**
@@ -111,6 +114,7 @@ class Graffiti : public actor::Actor {
   float remaining_graffiti_;
   //! 消えたかどうか
   bool is_erase_;
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace object

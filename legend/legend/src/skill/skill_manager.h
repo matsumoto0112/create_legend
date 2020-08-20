@@ -21,7 +21,7 @@ class SkillManager {
   /**
    * @brief 初期化処理
    */
-  void Init();
+  void Init(actor::IActorMediator *mediator);
   /**
    * @brief スキルを拾った際のメソッド
    */
@@ -68,6 +68,7 @@ class SkillManager {
   void UseSkill();
 
  private:
+  actor::IActorMediator *mediator_;
   //! 所持できる最大スキル数
   i32 skill_max_count_;
   //! 所持しているスキル用リスト

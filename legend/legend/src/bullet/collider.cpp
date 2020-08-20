@@ -1,5 +1,7 @@
 #include "src/bullet/collider.h"
 
+#include <set>
+
 #include "src/actor/actor.h"
 #include "src/bullet/bullet_helper.h"
 
@@ -109,11 +111,15 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
   MyCollisionCallback cb(ct_points, rigid_body_.get());
   cb.Penetrate = 0.0f;
   collisionWorld->contactTest(rigid_body_.get(), cb);
+
+  std::set<Collider*> hit_object_list;
   for (auto&& b : ct_points) {
     Collider* other = static_cast<Collider*>(b.pHitObj->getUserPointer());
-    if (other) {
-      OnHit(other);
-    }
+    hit_object_list.emplace(other);
+  }
+
+  for (auto&& a : hit_object_list) {
+    OnHit(a);
   }
 }
 
@@ -131,6 +137,10 @@ void Collider::OnHit(Collider* other) {
     callback_(other);
   }
 }
+
+int Collider::GetFlags() const { return rigid_body_->getCollisionFlags(); }
+
+void Collider::SetFlags(int flags) { rigid_body_->setCollisionFlags(flags); }
 
 }  // namespace bullet
 }  // namespace legend

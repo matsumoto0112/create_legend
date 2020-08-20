@@ -1,13 +1,19 @@
 #include "skill.h"
-#include "src/player/player.h"
 
+#include "src/player/player.h"
 
 namespace legend {
 namespace skill {
 Skill::Skill() : Parent(L"Skill") {}
-void Skill::Init(player::Player* player) {}
+Skill::~Skill() {}
+bool Skill::Init(actor::IActorMediator* mediator, player::Player* player) {
+  if (!Actor::Init(mediator)) {
+    return false;
+  }
+  return true;
+}
 bool Skill::Update() { return true; }
-//void Skill::Draw() {}
+// void Skill::Draw() {}
 void Skill::Use() { is_use_ = true; }
 void Skill::Action() {}
 void Skill::ProductionUpdate() { is_production_ = false; }

@@ -1,5 +1,6 @@
 #include "src/bullet/physics_field.h"
 
+#include "src/actor/actor.h"
 #include "src/game/game_device.h"
 
 namespace legend {
@@ -48,6 +49,12 @@ bool PhysicsField::Update() {
   float delta_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  auto check = [&]() {
+    for (auto&& col : colliders_) {
+      MY_LOG(col->GetOwner()->GetName().c_str());
+    }
+  };
+  check();
   //テスト用
   // for (auto&& collider : colliders_) {
   //    collider->SetAngularVelocity(btVector3(0, 0, 0));
@@ -79,7 +86,7 @@ void PhysicsField::AddRigidBody(btRigidBody* rigid_body) {
 }
 
 void PhysicsField::AddCollision(std::shared_ptr<Collider> collider) {
-  colliders_.push_back(collider);
+  colliders_.emplace_back(collider);
   AddRigidBody(collider->GetRigidBody());
   world_->addAction(collider.get());
 }

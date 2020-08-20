@@ -36,13 +36,13 @@ bool GraffitiTest::Initialize() {
       util::Transform(math::Vector3::kZeroVector, math::Quaternion::kIdentity,
                       math::Vector3::kUnitVector),
       math::Vector3::kUnitVector, 100.0f};
-  if (!graffiti_.Init(param, command_list)) {
-    return false;
-  }
+  //if (!graffiti_.Init(mediator_ param, command_list)) {
+  //  return false;
+  //}
 
-  command_list.Close();
-  device.ExecuteCommandList({command_list});
-  device.WaitExecute();
+  //command_list.Close();
+  //device.ExecuteCommandList({command_list});
+  //device.WaitExecute();
 
   return true;
 }

@@ -1,7 +1,10 @@
 #include "skill_pencil.h"
 
+#include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
+#include "src/object/desk.h"
+#include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
 
@@ -34,17 +37,18 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   //! 使用されているかのフラグ
   is_use_ = false;
   is_production_ = false;
+  is_explosion_ = false;
 
   player_ = player;
 
-  transform_.SetPosition(player->GetPosition());
+  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector * 2);
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3(1, 1, 1));
 
   bullet::BoundingBox::InitializeParameter params;
   params.position = transform_.GetPosition();
   params.rotation = transform_.GetRotation();
-  params.scale = math::Vector3(1.0f, 1.0f, 1.0f);
+  params.scale = math::Vector3(0.5f, 0.5f, 5.0f);
   params.mass = 0.0f;
 
   box_ = std::make_unique<bullet::BoundingBox>(this, params);
@@ -69,12 +73,15 @@ bool SkillPencil::Update() {
     return false;
   }
 
+  explosion_timer_.Update();
+  if (is_explosion_) return true;
+
   if (is_production_) {
     ProductionUpdate();
     return true;
   }
 
-  transform_.SetPosition(player_->GetPosition());
+  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector * 2);
   transform_.SetRotation(player_->GetRotation());
   box_->SetTransform(this->transform_);
   // transform_.SetScale(math::Vector3(1, 1, 1));
@@ -103,10 +110,11 @@ void SkillPencil::ProductionUpdate() {
   math::Vector3 forward =
       transform_.GetRotation() * math::Vector3::kForwardVector;
   math::Vector3 velocity =
-      forward + (math::Vector3(0, -20.0f, 0) * update_time);
+      forward.Normalized() + math::Vector3(0, -9.8f, 0) * update_time;
   math::Vector3 position = transform_.GetPosition() + velocity;
 
   transform_.SetPosition(position);
+  box_->SetTransform(transform_);
 }
 
 void SkillPencil::EndAction() {
@@ -115,13 +123,20 @@ void SkillPencil::EndAction() {
 }
 
 void SkillPencil::OnHit(bullet::Collider* other) {
-  if (dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+  //雑魚敵、ボス、机、障害物に当たったら爆発
+  if (dynamic_cast<enemy::Enemy*>(other->GetOwner()) ||
+      dynamic_cast<enemy::Boss*>(other->GetOwner()) ||
+      dynamic_cast<object::Desk*>(other->GetOwner()) ||
+      dynamic_cast<object::Obstacle*>(other->GetOwner())) {
     Explosion();
   }
 }
 
 void SkillPencil::Explosion() {
+  if (is_explosion_) return;
+
   //周囲の敵を吹き飛ばす処理
+  is_explosion_ = true;
 
   //パーティクルの再生?
 

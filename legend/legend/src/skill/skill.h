@@ -2,6 +2,7 @@
 #define LEGEND_SKILL_SKILL_H_
 
 #include "src/actor/actor.h"
+#include "src/bullet/bounding_box.h"
 #include "src/draw/model.h"
 #include "src/skill/skill_type.h"
 
@@ -65,6 +66,7 @@ class Skill : public actor::Actor {
   i32 GetExplanationTexture();
   bool GetUseFlag();
   bool ProductionFlag();
+  void RemoveCollider();
 
  protected:
   //! モデルのID
@@ -91,6 +93,7 @@ class Skill : public actor::Actor {
   bool is_production_;
   //! プレイヤー
   const player::Player* player_;
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace skill

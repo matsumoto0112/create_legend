@@ -123,6 +123,7 @@ void SkillManager::RemoveSkill() {
   for (i32 i = 0; i < skills_.size(); i++) {
     if (skills_[i]->GetRemainingUsableCount() >= 1) continue;
 
+    skills_[i]->RemoveCollider();
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
     i--;

@@ -9,7 +9,10 @@ EnemyManager::EnemyManager() {}
 
 EnemyManager::~EnemyManager() {}
 
-bool EnemyManager::Initilaize() { return true; }
+bool EnemyManager::Initilaize(actor::IActorMediator* mediator) {
+  this->actor_mediator_ = mediator;
+  return true;
+}
 
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
@@ -60,7 +63,7 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
 
     // ë¨ìxê›íË
     if (search_manaegr == nullptr) {  //íTçıä«óùÇ™Ç»Ç¢èÍçá
-      auto pos = _actor->GetCollisionRef().GetPosition();
+      auto pos = _actor->GetTransform().GetPosition();
       math::Vector3 velocity = (player_obb_.GetPosition() - pos).Normalized();
 
       if (_actor == boss_.get()) {
@@ -71,20 +74,20 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
     } else {  //íTçıä«óùÇ™Ç†ÇÈèÍçá
       std::vector<physics::BoundingBox*> collisions;
       for (i32 i = 0; i < enemys_.size(); i++) {
-        collisions.emplace_back(&enemys_[i]->GetCollisionRef());
+        // collisions.emplace_back(&enemys_[i]->GetCollisionRef());
       }
       if (boss_ != nullptr) {
-        collisions.emplace_back(&boss_->GetCollisionRef());
+        // collisions.emplace_back(&boss_->GetCollisionRef());
       }
-      auto next =
-          search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions) -
-          _actor->GetCollisionRef().GetPosition();
-      next.y = 0;
+      // auto next =
+      //    search_manaegr->NextSearch(&_actor->GetCollisionRef(), collisions) -
+      //    _actor->GetCollisionRef().GetPosition();
+      // next.y = 0;
 
       if (_actor == boss_.get()) {
-        boss_->SetVelocity(next);
+        // boss_->SetVelocity(next);
       } else {
-        enemys_[action_enemy_index_]->SetVelocity(next);
+        // enemys_[action_enemy_index_]->SetVelocity(next);
       }
     }
   }
@@ -106,15 +109,14 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   }
 }
 
-void EnemyManager::Add(const Enemy::InitializeParameter& paramater,
-                       system::PhysicsField& physics_field) {
+void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
 
   auto enemy = std::make_unique<Enemy>();
-  enemy->Init(paramater);
-  physics_field.AddEnemy(enemy->GetCollisionRef());
+  enemy->Init(actor_mediator_, paramater);
+  // physics_field.AddEnemy(enemy->GetCollisionRef());
 
   enemys_.emplace_back(std::move(enemy));
   // SetPosition(enemys_[enemys_.size() - 1].get());
@@ -128,7 +130,7 @@ void EnemyManager::Add(const Boss::InitializeParameter& paramater,
 
   boss_ = std::make_unique<Boss>();
   boss_->Init(paramater);
-  physics_field.AddEnemy(boss_->GetCollisionRef());
+  // physics_field.AddEnemy(boss_->GetCollisionRef());
 }
 
 void EnemyManager::Destroy(i32 index, system::PhysicsField& physics_field) {
@@ -223,12 +225,12 @@ void EnemyManager::SetPlayer(const physics::BoundingBox& player_obb) {
 }
 
 void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
-  for (i32 i = 0; i < enemys_.size(); i++) {
-    enemys_[i]->GetCollisionRef().DebugDraw(command_list);
-  }
-  if (boss_ != nullptr) {
-    boss_->GetCollisionRef().DebugDraw(command_list);
-  }
+  // for (i32 i = 0; i < enemys_.size(); i++) {
+  //  enemys_[i]->GetCollisionRef().DebugDraw(command_list);
+  //}
+  // if (boss_ != nullptr) {
+  //  boss_->GetCollisionRef().DebugDraw(command_list);
+  //}
 }
 
 std::vector<Enemy*> EnemyManager::GetEnemyPointers() const {

@@ -6,6 +6,8 @@
  * @brief
  */
 
+#include "src/bullet/collider.h"
+
 namespace legend {
 namespace player {
 class Player;
@@ -44,6 +46,8 @@ class IActorMediator {
    * @brief “G‚ğƒV[ƒ“‚©‚çæ“¾‚·‚é
    */
   virtual std::vector<enemy::Enemy*> GetEnemies() = 0;
+
+  virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) = 0;
 };
 
 }  // namespace actor

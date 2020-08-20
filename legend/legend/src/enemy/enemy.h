@@ -1,10 +1,8 @@
 #ifndef LEGEND_ENEMY_ENEMY_H_
 #define LEGEND_ENEMY_ENEMY_H_
 
-#include "src/directx/buffer/constant_buffer.h"
-#include "src/directx/shader/pipeline_state.h"
-#include "src/draw/model.h"
-#include "src/physics/collision.h"
+#include "src/actor/actor.h"
+#include "src/bullet/bounding_box.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -38,7 +36,8 @@ class Enemy : public actor::Actor {
   /**
    * @brief 初期化
    */
-  virtual bool Init(const InitializeParameter& parameter);
+  virtual bool Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
@@ -94,6 +93,8 @@ class Enemy : public actor::Actor {
    */
   void ResetMoveEnd();
 
+  bullet::BoundingBox* GetCollider() const { return box_.get(); }
+
  private:
   //! 速度
   math::Vector3 velocity_;
@@ -113,6 +114,8 @@ class Enemy : public actor::Actor {
 
   //! 移動終了判定
   bool move_end_;
+
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace enemy

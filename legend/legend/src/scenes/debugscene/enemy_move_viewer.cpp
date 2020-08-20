@@ -17,7 +17,7 @@ EnemyMoveViewer::~EnemyMoveViewer() {}
 //初期化
 bool EnemyMoveViewer::Initialize() {
   turn_ = system::Mode::PLAYER_MOVING;
-  //current_turn_ = system::TurnSystem();
+  // current_turn_ = system::TurnSystem();
   physics_field_.Init();
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -32,10 +32,10 @@ bool EnemyMoveViewer::Initialize() {
         math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
     player_parameter.min_power = 0;
     player_parameter.max_power = 1;
-    if (!player_.Init(player_parameter)) {
+    if (!player_.Init(nullptr, player_parameter)) {
       return false;
     }
-    physics_field_.SetPlayer(player_.GetCollisionRef());
+    // physics_field_.SetPlayer(player_.GetCollisionRef());
   }
 
   //机の初期化
@@ -56,10 +56,10 @@ bool EnemyMoveViewer::Initialize() {
       desk_parameter.transform = util::Transform(
           pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
       auto& desk = desks_.emplace_back();
-      if (!desk.Init(desk_parameter)) {
-        return false;
-      }
-      physics_field_.AddDesk(desk.GetCollisionRef());
+      // if (!desk.Init(desk_parameter)) {
+      //  return false;
+      //}
+      // physics_field_.AddDesk(desk.GetCollisionRef());
     }
   }
 
@@ -75,39 +75,38 @@ bool EnemyMoveViewer::Initialize() {
     if (!obs.Init(params)) {
       return false;
     }
-    physics_field_.AddObstacle(obs.GetCollisionRef());
+    // physics_field_.AddObstacle(obs.GetCollisionRef());
   }
 
   {
-    enemy::Enemy::InitializeParameter enemy_parameter;
-    enemy_parameter.bouding_box_length =
-        math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
-    for (i32 i = 0; i < 2; i++) {
-      float x =
-          game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
-          100.0f;
-      float z =
-          game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f) *
-          100.0f;
-      math::Vector3 pos = math::Vector3(x, 10.0f, z);
-      enemy_parameter.transform = util::Transform(
-          pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
-      enemy_manager_.Add(enemy_parameter, physics_field_);
-    }
+      // enemy::Enemy::InitializeParameter enemy_parameter;
+      // enemy_parameter.bouding_box_length =
+      //    math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      // for (i32 i = 0; i < 2; i++) {
+      //  float x =
+      //      game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
+      //      100.0f;
+      //  float z =
+      //      game::GameDevice::GetInstance()->GetRandom().Range(-0.25f, 0.25f)
+      //      * 100.0f;
+      //  math::Vector3 pos = math::Vector3(x, 10.0f, z);
+      //  enemy_parameter.transform = util::Transform(
+      //      pos, math::Quaternion::kIdentity, math::Vector3::kUnitVector);
+      //  enemy_manager_.Add(enemy_parameter, physics_field_);
+  }
 
-    {
-      search_manager_.Initialize(&player_.GetCollisionRef());
-      search_manager_.Add({
-          math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
-          math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
-          math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
-          math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
-      });
-      search_manager_.SetBranch(0, {1, 2, 3});
-      search_manager_.SetBranch(1, {0, 2, 3});
-      search_manager_.SetBranch(2, {0, 1, 3});
-      search_manager_.SetBranch(3, {0, 1, 2});
-	}
+  {
+    // search_manager_.Initialize(&player_.GetCollisionRef());
+    search_manager_.Add({
+        math::Vector3(1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, 1.0f) * 25.0f,
+        math::Vector3(1.0f, 0.0f, -1.0f) * 25.0f,
+        math::Vector3(-1.0f, 0.0f, -1.0f) * 25.0f,
+    });
+    search_manager_.SetBranch(0, {1, 2, 3});
+    search_manager_.SetBranch(1, {0, 2, 3});
+    search_manager_.SetBranch(2, {0, 1, 3});
+    search_manager_.SetBranch(3, {0, 1, 2});
   }
 
   //カメラの初期化
@@ -125,7 +124,7 @@ bool EnemyMoveViewer::Initialize() {
   }
 
   return true;
-}
+}  // namespace debugscene
 
 //更新
 bool EnemyMoveViewer::Update() {
@@ -133,8 +132,8 @@ bool EnemyMoveViewer::Update() {
     return false;
   }
 
-  if (!physics_field_.Update(turn_, player_.GetVelocity(),
-                             player_.GetImpulse(), player_.GetPower(),
+  if (!physics_field_.Update(turn_, player_.GetVelocity(), player_.GetImpulse(),
+                             player_.GetPower(),
                              enemy_manager_.GetVelocities())) {
     return false;
   }
@@ -208,24 +207,24 @@ void EnemyMoveViewer::Draw() {
 
   camera_.RenderStart();
   player_.Draw();
-  for (auto&& desk : desks_) {
-    desk.Draw();
-  }
-  enemy_manager_.Draw();
-  for (auto&& obs : obstacles_) {
-    obs.Draw();
-  }
+  // for (auto&& desk : desks_) {
+  //  desk.Draw();
+  //}
+  // enemy_manager_.Draw();
+  // for (auto&& obs : obstacles_) {
+  //  obs.Draw();
+  //}
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::NONE, false);
-  player_.GetCollisionRef().DebugDraw(command_list);
-  for (auto&& desk : desks_) {
-    desk.GetCollisionRef().DebugDraw(command_list);
-  }
-  for (auto&& obs : obstacles_) {
-    obs.GetCollisionRef().DebugDraw(command_list);
-  }
+  // player_.GetCollisionRef().DebugDraw(command_list);
+  // for (auto&& desk : desks_) {
+  //  desk.GetCollisionRef().DebugDraw(command_list);
+  //}
+  // for (auto&& obs : obstacles_) {
+  //  obs.GetCollisionRef().DebugDraw(command_list);
+  //}
   enemy_manager_.DebugDraw(command_list);
   search_manager_.DebugDraw(command_list);
 }
@@ -251,7 +250,7 @@ bool EnemyMoveViewer::UpdateTurn() {
       break;
     case legend::system::Mode::ENEMY_MOVING:
       MY_LOG(L"ENEMY TURN");
-      enemy_manager_.SetPlayer(player_.GetCollisionRef());
+      // enemy_manager_.SetPlayer(player_.GetCollisionRef());
       if (!enemy_manager_.Update(&search_manager_)) {
         return false;
       }
@@ -260,17 +259,18 @@ bool EnemyMoveViewer::UpdateTurn() {
       if (enemy_manager_.LastEnemyMoveEnd() ||
           enemy_manager_.GetEnemiesSize() == 0) {
         turn_ = system::Mode::PLAYER_MOVING;
-        //current_turn_.AddCurrentTurn();
+        // current_turn_.AddCurrentTurn();
 
         //{ //ボス追加
         //  enemy::Boss::InitializeParameter boss_parameter;
         //  boss_parameter.bouding_box_length =
         //      math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 2.0f;
         //  float x =
-        //      game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f) *
-        //      100.0f;
+        //      game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f)
+        //      * 100.0f;
         //  float z = game::GameDevice::GetInstance()->GetRandom().Range(-0.25f,
-        //                                                               0.25f) *
+        //                                                               0.25f)
+        //                                                               *
         //            100.0f;
         //  math::Vector3 pos = math::Vector3(x, 10.0f, z);
         //  boss_parameter.transform =

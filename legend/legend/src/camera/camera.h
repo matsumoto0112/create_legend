@@ -47,6 +47,9 @@ class Camera {
    */
   inline std::wstring GetName() const { return name_; }
 
+  inline math::Matrix4x4 GetView() const { return view_; }
+  inline math::Matrix4x4 GetProjection() const { return projection_; }
+
  protected:
   /**
    * @brief コンスタントバッファの初期化

@@ -140,6 +140,7 @@
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\scenes\debugscene\bullet_test.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
+    <ClCompile Include="src\actor\actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -327,6 +328,7 @@
     <ClInclude Include="src\bullet\bounding_box.h" />
     <ClInclude Include="src\scenes\debugscene\bullet_test.h" />
     <ClInclude Include="src\bullet\bounding_sphere.h" />
+    <ClInclude Include="src\bullet\bullet_helper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

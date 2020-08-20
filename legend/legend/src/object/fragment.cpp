@@ -16,10 +16,10 @@ bool Fragment::Init(const InitializeParameter& params) {
 
   this->transform_ =
       util::Transform(params.position, params.rotation, params.scale);
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetRotation(transform_.GetRotation());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(params.bounding_box_length);
+  //this->collision_.SetPosition(transform_.GetPosition());
+  //this->collision_.SetRotation(transform_.GetRotation());
+  //this->collision_.SetScale(transform_.GetScale());
+  //this->collision_.SetLength(params.bounding_box_length);
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ =

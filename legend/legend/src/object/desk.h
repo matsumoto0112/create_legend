@@ -2,7 +2,7 @@
 #define LEGEND_OBJECT_DESK_H_
 
 #include "src/actor/actor.h"
-#include "src/physics/bounding_box.h"
+#include "src/bullet/bounding_box.h"
 
 namespace legend {
 namespace object {
@@ -30,7 +30,8 @@ class Desk : public actor::Actor {
    */
   ~Desk();
 
-  virtual bool Init(const InitializeParameter& parameter);
+  virtual bool Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& parameter);
   /**
    * @brief çXêV
    */
@@ -70,6 +71,7 @@ class Desk : public actor::Actor {
 
  private:
   math::Vector3 normal_;
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace object

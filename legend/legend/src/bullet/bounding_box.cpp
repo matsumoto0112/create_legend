@@ -1,17 +1,21 @@
 #include "src/bullet/bounding_box.h"
 
+#include "src/bullet/bullet_helper.h"
 #include "src/bullet/physics_field.h"
 
 namespace legend {
 
 namespace bullet {
 
-BoundingBox::BoundingBox(const InitializeParameter& parameter) {
+BoundingBox::BoundingBox(actor::Actor* owner,
+                         const InitializeParameter& parameter)
+    : Collider(owner) {
   //立方体に設定
-  shape_ = std::make_shared<btBoxShape>(parameter.scale);
+  shape_ = std::make_shared<btBoxShape>(helper::TobtVector3(parameter.scale));
 
   motion_state_ = std::make_shared<btDefaultMotionState>(
-      btTransform(parameter.rotation, parameter.position));
+      btTransform(helper::TobtQuaternion(parameter.rotation),
+                  helper::TobtVector3(parameter.position)));
 
   //慣性モーメントの計算
   inertia_ = btVector3(0, 0, 0);
@@ -19,9 +23,9 @@ BoundingBox::BoundingBox(const InitializeParameter& parameter) {
 
   //剛体オブジェクト生成
   rigid_body_ = std::make_shared<btRigidBody>(
-      parameter.mass, motion_state_.get(), shape_.get(), inertia_);
-
-  rigid_body_->setFriction(parameter.friction);
+      btScalar(parameter.mass), motion_state_.get(), shape_.get(), inertia_);
+  rigid_body_->setUserPointer(this);
+  rigid_body_->setFriction(btScalar(parameter.friction));
 }
 
 BoundingBox::~BoundingBox() {}

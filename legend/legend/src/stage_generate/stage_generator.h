@@ -32,6 +32,7 @@ class StageGenerator {
    * @return 処理が正しく終了したらtrueを返す
    */
   bool LoadStage(std::filesystem::path filepath, const std::string map_name,
+                 actor::IActorMediator* mediator,
                  std::vector<object::Desk>* desks,
                  std::vector<object::Obstacle>* obstacles,
                  player::Player* player,
@@ -45,7 +46,8 @@ class StageGenerator {
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool SetMapActors(std::vector<object::Desk>* desks,
+  bool SetMapActors(actor::IActorMediator* mediator,
+                    std::vector<object::Desk>* desks,
                     std::vector<object::Obstacle>* obstacles,
                     player::Player* player,
                     std::vector<object::Graffiti>* graffities);

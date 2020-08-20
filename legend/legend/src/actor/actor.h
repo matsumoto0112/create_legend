@@ -11,7 +11,6 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
-#include "src/physics/bounding_box.h"
 #include "src/util/resource/resource_names.h"
 #include "src/util/transform.h"
 
@@ -34,6 +33,7 @@ class Actor {
    * @brief デストラクタ
    */
   ~Actor();
+  virtual bool Init(IActorMediator* mediator);
   /**
    * @brief 更新処理
    * @return オブジェクトを削除するときにtrueを返す
@@ -43,14 +43,8 @@ class Actor {
    * @brief 描画
    */
   virtual void Draw();
-  /**
-   * @brief コリジョンを取得する
-   */
-  physics::BoundingBox& GetCollisionRef() { return collision_; }
 
-  virtual void SetMediator(IActorMediator* mediator) {
-    this->mediator_ = mediator;
-  }
+  virtual void Destroy();
 
  protected:
   /**
@@ -78,9 +72,6 @@ class Actor {
   TransformConstantBuffer transform_cb_;
   //! 描画モデル
   std::shared_ptr<draw::Model> model_;
-  //! コリジョン
-  physics::BoundingBox collision_;
-
   //! 仲介者
   IActorMediator* mediator_;
 };
@@ -90,6 +81,11 @@ inline Actor::Actor(const std::wstring& name) : name_(name) {}
 
 //デストラクタ
 inline Actor::~Actor() {}
+
+inline bool Actor::Init(IActorMediator* mediator) {
+  this->mediator_ = mediator;
+  return true;
+}
 
 //描画
 inline void Actor::Draw() {
@@ -119,10 +115,6 @@ inline bool Actor::InitBuffer() {
           device.GetLocalHandle(
               directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
           name_ + L"_TransformConstantBuffer")) {
-    return false;
-  }
-
-  if (!collision_.Init()) {
     return false;
   }
 

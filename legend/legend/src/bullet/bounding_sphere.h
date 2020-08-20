@@ -20,11 +20,11 @@ class BoundingSphere : public Collider {
     btScalar radius = 1.0f;                         //‘å‚«‚³
     btScalar mass = 1.0f;                           //Ž¿—Ê
     btScalar restitution = 0.5f;                    //”½”­
-    btScalar friction = 0.75f;                       //–€ŽC
+    btScalar friction = 0.75f;                      //–€ŽC
   };
 
  public:
-  BoundingSphere(const InitializeParameter& parameter);
+  BoundingSphere(actor::Actor* owner, const InitializeParameter& parameter);
   ~BoundingSphere();
   bool Update() override;
 };

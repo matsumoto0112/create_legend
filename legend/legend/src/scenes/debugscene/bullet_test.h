@@ -9,6 +9,7 @@
 #include "src/bullet/bounding_box.h"
 #include "src/bullet/bounding_sphere.h"
 #include "src/bullet/physics_field.h"
+#include "src/camera/perspective_camera.h"
 #include "src/scenes/scene.h"
 
 namespace legend {
@@ -45,6 +46,7 @@ class BulletTest : public Scene {
 
  private:
   bullet::PhysicsField physics_field_;
+  std::unique_ptr<camera::PerspectiveCamera> camera_;
 };
 }  // namespace debugscene
 }  // namespace scenes

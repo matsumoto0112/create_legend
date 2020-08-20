@@ -2,7 +2,7 @@
 #define LEGEND_PLAYER_PLAYER_H_
 
 #include "src/actor/actor.h"
-#include "src/physics/bounding_box.h"
+#include "src/bullet/bounding_box.h"
 #include "src/skill/skill_manager.h"
 
 namespace legend {
@@ -40,7 +40,8 @@ class Player : public actor::Actor {
   /**
    * @brief 初期化
    */
-  virtual bool Init(const InitializeParameter& parameter);
+  virtual bool Init(actor::IActorMediator* mediator,
+                    const InitializeParameter& parameter);
   /**
    * @brief 更新
    */
@@ -110,14 +111,6 @@ class Player : public actor::Actor {
    */
   bool GetIsMove() const;
   /**
-   * @brief 何かのオブジェクトと物理衝突したときのイベント
-   */
-  void OnCollisionHit(actor::ActorType type);
-  /**
-   * @brief 何かのオブジェクトとトリガー衝突したときのイベント
-   */
-  void OnTriggerHit(actor::ActorType type);
-  /**
    * @brief 強化パラメータの更新
    */
   void UpdateStrength(const float& add_strength);
@@ -129,6 +122,10 @@ class Player : public actor::Actor {
    * @brief スキル選択中かを取得
    */
   bool GetSkillSelect();
+  /**
+   * @brief 別のコライダーと衝突したときのコールバック
+   */
+  void OnHit(bullet::Collider* other);
 
  private:
   //! 速度
@@ -170,6 +167,8 @@ class Player : public actor::Actor {
 
   //! スキルマネージャー
   skill::SkillManager skill_manager_;
+
+  std::shared_ptr<bullet::BoundingBox> box_;
 };
 
 }  // namespace player

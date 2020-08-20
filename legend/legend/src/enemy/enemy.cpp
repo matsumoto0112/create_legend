@@ -19,7 +19,11 @@ Enemy::Enemy() : Parent(L"Enemy"), velocity_(math::Vector3::kZeroVector) {
 Enemy::~Enemy() {}
 
 //èâä˙âª
-bool Enemy::Init(const InitializeParameter& parameter) {
+bool Enemy::Init(actor::IActorMediator* mediator,
+                 const InitializeParameter& parameter) {
+  if (!Parent::Init(mediator)) {
+    return false;
+  }
   if (!Parent::InitBuffer()) return false;
   // if (!obb_.Initialize(device)) {
   //  return false;
@@ -28,10 +32,15 @@ bool Enemy::Init(const InitializeParameter& parameter) {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
-  this->collision_.SetPosition(transform_.GetPosition());
-  this->collision_.SetRotation(transform_.GetRotation());
-  this->collision_.SetScale(transform_.GetScale());
-  this->collision_.SetLength(parameter.bouding_box_length);
+  bullet::BoundingBox::InitializeParameter params;
+  params.position = this->transform_.GetPosition();
+  params.rotation = this->transform_.GetRotation();
+  params.scale = parameter.bouding_box_length;
+  params.mass = 1.0f;
+  params.friction = 0.6f;
+  params.restitution = 0.6f;
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  mediator_->AddCollider(box_);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -88,7 +97,7 @@ void Enemy::Move() {
 
 void Enemy::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  collision_.SetPosition(position);
+  // collision_.SetPosition(position);
 }
 
 //ë¨ìxÇÃê›íË

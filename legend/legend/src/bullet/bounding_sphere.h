@@ -15,17 +15,17 @@ class BoundingSphere : public Collider {
    * @brief ‰Šú‰»ƒpƒ‰ƒ[ƒ^
    */
   struct InitializeParameter {
-    btVector3 position = btVector3(0, 0, 0);        //À•W
-    btQuaternion rotation = btQuaternion(0, 0, 0);  //‰ñ“]
-    btScalar radius = 1.0f;                         //‘å‚«‚³
-    btScalar mass = 1.0f;                           //¿—Ê
-    btScalar restitution = 0.5f;                    //”½”­
-    btScalar friction = 0.75f;                      //–€C
+    math::Vector3 position = math::Vector3::kZeroVector;      //À•W
+    math::Quaternion rotation = math::Quaternion::kIdentity;  //‰ñ“]
+    float radius = 1.0f;                                      //‘å‚«‚³
+    float mass = 1.0f;                                        //¿—Ê
+    float restitution = 0.5f;                                 //”½”­
+    float friction = 0.75f;                                   //–€C
   };
 
  public:
   BoundingSphere(actor::Actor* owner, const InitializeParameter& parameter);
-  ~BoundingSphere();
+  virtual ~BoundingSphere();
   bool Update() override;
 };
 }  // namespace bullet

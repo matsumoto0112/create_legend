@@ -127,6 +127,7 @@
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\skill\skill_item_box.cpp" />
+    <ClCompile Include="src\skill\explosion_pencil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -301,6 +302,7 @@
     <ClInclude Include="src\bullet\bullet_helper.h" />
     <ClInclude Include="src\system\game_data.h" />
     <ClInclude Include="src\skill\skill_item_box.h" />
+    <ClInclude Include="src\skill\explosion_pencil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

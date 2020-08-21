@@ -1,6 +1,8 @@
 #ifndef LEGEND_SKILL_SKILL_PENCIL_H_
 #define LEGEND_SKILL_SKILL_PENCIL_H_
 
+#include "src/bullet/bounding_sphere.h"
+#include "src/skill/explosion_pencil.h"
 #include "src/skill/skill.h"
 #include "src/util/timer.h"
 
@@ -52,11 +54,18 @@ class SkillPencil : public Skill {
    * @brief 爆発
    */
   void Explosion();
+  /**
+   * @brief 爆発更新
+   */
+  void ExplosionUpdate();
+  //void OnHitExplosion(bullet::Collider* other);
 
  private:
   //! タイマー
   util::CountDownTimer explosion_timer_;
-  //std::shared_ptr<bullet::BoundingBox> box_;
+  // std::shared_ptr<bullet::BoundingBox> box_;
+   //std::shared_ptr<bullet::BoundingSphere> sphere_;
+  ExplosionPencil explosion_pencil_;
   bool is_explosion_;
 };
 

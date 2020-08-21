@@ -51,10 +51,10 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   params.scale = math::Vector3(0.5f, 0.5f, 5.0f);
   params.mass = 0.0f;
 
-  box_ = std::make_unique<bullet::BoundingBox>(this, params);
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-  mediator->AddCollider(box_);
+  mediator_->AddCollider(box_);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -73,8 +73,10 @@ bool SkillPencil::Update() {
     return false;
   }
 
-  explosion_timer_.Update();
-  if (is_explosion_) return true;
+  if (is_explosion_) {
+    ExplosionUpdate();
+    return true;
+  }
 
   if (is_production_) {
     ProductionUpdate();
@@ -84,16 +86,16 @@ bool SkillPencil::Update() {
   transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector * 2);
   transform_.SetRotation(player_->GetRotation());
   box_->SetTransform(this->transform_);
-  // transform_.SetScale(math::Vector3(1, 1, 1));
-  // collision_.SetPosition(transform_.GetPosition());
-  // collision_.SetRotation(transform_.GetRotation());
-  // collision_.SetScale(transform_.GetScale());
-  // collision_.SetLength(transform_.GetScale());
 
   return true;
 }
 
-void SkillPencil::Draw() { actor::Actor::Draw(); }
+void SkillPencil::Draw() {
+  if (is_explosion_)
+    explosion_pencil_.Draw();
+  else
+    actor::Actor::Draw();
+}
 
 void SkillPencil::Use() {
   is_use_ = true;
@@ -115,14 +117,20 @@ void SkillPencil::ProductionUpdate() {
 
   transform_.SetPosition(position);
   box_->SetTransform(transform_);
+
+  if (transform_.GetPosition().y <= -2.0f) EndAction();
 }
 
 void SkillPencil::EndAction() {
   remaining_usable_count_--;
   is_production_ = false;
+  if (is_explosion_) explosion_pencil_.Destroy(mediator_);
+  if (remaining_usable_count_ <= 0) mediator_->RemoveActor(this);
 }
 
 void SkillPencil::OnHit(bullet::Collider* other) {
+  if (!is_production_) return;
+
   //雑魚敵、ボス、机、障害物に当たったら爆発
   if (dynamic_cast<enemy::Enemy*>(other->GetOwner()) ||
       dynamic_cast<enemy::Boss*>(other->GetOwner()) ||
@@ -135,12 +143,19 @@ void SkillPencil::OnHit(bullet::Collider* other) {
 void SkillPencil::Explosion() {
   if (is_explosion_) return;
 
+  explosion_timer_.Init(2.0f, [&]() { EndAction(); });
+
   //周囲の敵を吹き飛ばす処理
   is_explosion_ = true;
 
-  //パーティクルの再生?
+  explosion_pencil_.Init(transform_, mediator_);
 
-  explosion_timer_.Init(0.5f, [&]() { EndAction(); });
+  //パーティクルの再生?
+}
+
+void SkillPencil::ExplosionUpdate() {
+  //爆発中は更新
+  if (!explosion_timer_.Update()) explosion_pencil_.Update();
 }
 
 }  // namespace skill

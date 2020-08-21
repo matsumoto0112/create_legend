@@ -113,16 +113,20 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
   is_erase_ = false;
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
+
+  delete_time_.Init(5.0f);
   return true;
 }
 
 //XV
 bool Graffiti::Update() {
   if (is_erase_) {
-    if (box_) {
-      mediator_->RemoveCollider(box_);
+    if (delete_time_.Update()) {
+      if (box_) {
+        mediator_->RemoveCollider(box_);
+      }
+      mediator_->RemoveActor(this);
     }
-    mediator_->RemoveActor(this);
     return true;
   }
 

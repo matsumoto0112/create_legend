@@ -9,6 +9,7 @@
 #include "src/bullet/bounding_box.h"
 #include "src/object/fragment.h"
 #include "src/util/color_4.h"
+#include "src/util/timer.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -115,6 +116,8 @@ class Graffiti : public actor::Actor {
   //! è¡Ç¶ÇΩÇ©Ç«Ç§Ç©
   bool is_erase_;
   std::shared_ptr<bullet::BoundingBox> box_;
+
+  util::CountDownTimer delete_time_;
 };
 
 }  // namespace object

@@ -38,18 +38,18 @@ void SearchManager::Make(std::filesystem::path filepath) {
     std::vector<std::string> infomation = StringSplit(index, ',');
 
     if (infomation[0] == "search") {
-      auto x = std::stof(infomation[0].c_str());
-      auto y = std::stof(infomation[1].c_str());
-      auto z = std::stof(infomation[2].c_str());
+      auto x = std::stof(infomation[1].c_str());
+      auto y = std::stof(infomation[2].c_str());
+      auto z = std::stof(infomation[3].c_str());
 
       paramater search;
       search.index = static_cast<i32>(searchs.size());
       search.pos = math::Vector3(x, y, z);
 
-      for (i32 i = 3; i < infomation.size(); i++) {
+      for (i32 i = 4; i < infomation.size(); i++) {
         search.indexs.emplace_back(std::stoi(infomation[i].c_str()));
-        Add(search.pos);
       }
+      Add(search.pos);
       searchs.emplace_back(search);
     }
   }
@@ -276,9 +276,9 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
   return false;
 }
 
-void SearchManager::DebugDraw(directx::device::CommandList& command_list) {
+void SearchManager::DebugDraw(bullet::PhysicsField* physics_field_) {
   for (i32 i = 0; i < search_list_.size(); i++) {
-    search_list_[i]->DebugDraw(command_list);
+    search_list_[i]->DebugDraw(physics_field_);
   }
 }
 

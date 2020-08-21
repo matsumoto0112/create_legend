@@ -96,6 +96,11 @@ void PhysicsField::DebugDraw(camera::Camera* rendering_camera) {
                         rendering_camera->GetProjection(), command_list);
 }
 
+void PhysicsField::DrawLine(const btVector3& from, const btVector3& to,
+                            const btVector3& color) {
+  debug_drawer_->drawLine(from, to, color);
+}
+
 void PhysicsField::AddRigidBody(btRigidBody* rigid_body) {
   world_->addRigidBody(rigid_body);
 }

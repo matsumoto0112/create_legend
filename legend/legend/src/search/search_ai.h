@@ -2,6 +2,7 @@
 #define LEGEND_SEARCH_SEARCH_AI_H_
 
 #include <vector>
+#include "src/bullet/physics_field.h"
 #include "src/math/vector_3.h"
 #include "src/game/game_device.h"
 #include "src/primitive/line.h"
@@ -46,7 +47,7 @@ class SearchAI {
    */
   SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);
 
-  void DebugDraw(directx::device::CommandList& command_list);
+  void DebugDraw(bullet::PhysicsField* physics_field_);
  private:
   std::vector<SearchAI*> branch_;
   std::vector<std::unique_ptr<primitive::Line>> lines_;

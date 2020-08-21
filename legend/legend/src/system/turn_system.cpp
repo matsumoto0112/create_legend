@@ -93,21 +93,21 @@ bool TurnSystem::Init(const std::string& stage_name) {
   {
     search_manager_.Initialize(this);
 
-    ////探索データの拡張子は.txt
-    //auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
-    //                  (stage_name + "_searchData" + ".txt");
-    //search_manager_.Make(search_path);
+    //探索データの拡張子は.txt
+    auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
+                      (stage_name + "_searchData" + ".txt");
+    search_manager_.Make(search_path);
 
-    search_manager_.Add({
-        math::Vector3(1.0f, 0.25f, 1.0f) * 10.0f,
-        math::Vector3(-1.0f, 0.25f, 1.0f) * 10.0f,
-        math::Vector3(1.0f, 0.25f, -1.0f) * 10.0f,
-        math::Vector3(-1.0f, 0.25f, -1.0f) * 10.0f,
-    });
-    search_manager_.SetBranch(0, {1, 2, 3});
-    search_manager_.SetBranch(1, {0, 2, 3});
-    search_manager_.SetBranch(2, {0, 1, 3});
-    search_manager_.SetBranch(3, {0, 1, 2});
+    //search_manager_.Add({
+    //    math::Vector3(1.0f, 0.25f, 1.0f) * 10.0f,
+    //    math::Vector3(-1.0f, 0.25f, 1.0f) * 10.0f,
+    //    math::Vector3(1.0f, 0.25f, -1.0f) * 10.0f,
+    //    math::Vector3(-1.0f, 0.25f, -1.0f) * 10.0f,
+    //});
+    //search_manager_.SetBranch(0, {1, 2, 3});
+    //search_manager_.SetBranch(1, {0, 2, 3});
+    //search_manager_.SetBranch(2, {0, 1, 3});
+    //search_manager_.SetBranch(3, {0, 1, 2});
   }
 
   // UI情報を取得
@@ -508,7 +508,7 @@ void TurnSystem::Draw() {
 //デバッグ描画
 void TurnSystem::DebugDraw() {
   cameras_[current_camera_]->RenderStart();
-  // search_manager_.DebugDraw(command_list);
+   search_manager_.DebugDraw(&physics_field_);
   physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 

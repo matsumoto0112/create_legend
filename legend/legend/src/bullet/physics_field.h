@@ -37,6 +37,11 @@ class PhysicsField {
    */
   void DebugDraw(camera::Camera* rendering_camera);
   /**
+   * @brief ライン描画
+   */
+  void DrawLine(const btVector3& from, const btVector3& to,
+                const btVector3& color);
+  /**
    * @brief 物理演算を行うオブジェクトの追加
    */
   void AddRigidBody(btRigidBody* rigid_body);

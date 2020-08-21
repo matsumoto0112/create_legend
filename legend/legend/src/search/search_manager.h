@@ -1,6 +1,7 @@
 #ifndef LEGEND_SEARCH_SEARCH_MANAGER_H_
 #define LEGEND_SEARCH_SEARCH_MANAGER_H_
 
+#include "src/bullet/physics_field.h"
 #include "src/player/player.h"
 #include "src/search/search_course.h"
 
@@ -67,7 +68,7 @@ class SearchManager {
    */
   void SetCourse(SearchAI* sStart, SearchAI* sEnd);
 
-  void DebugDraw(directx::device::CommandList& command_list);
+  void DebugDraw(bullet::PhysicsField* physics_field_);
 
  private:
   /**

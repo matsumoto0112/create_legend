@@ -1,5 +1,7 @@
 #include "search_ai.h"
 
+#include "src/bullet/bullet_helper.h"
+
 namespace legend {
 namespace search {
 SearchAI::SearchAI(math::Vector3 _position) : position_(_position) {
@@ -52,22 +54,13 @@ SearchAI* legend::search::SearchAI::GetRandomSearch(
       0, static_cast<i32>(result.size()));
   return result[index];
 }
-void SearchAI::DebugDraw(directx::device::CommandList& command_list) {
-  auto scale = math::Vector3::kUnitVector * 1.0f;
-  box_->SetTransform(
-      util::Transform(position_, math::Quaternion(0, 0, 0, 1), scale));
-  box_->Render(command_list);
-
-  //  for (i32 index = 0; index < branch_.size(); index++) {
-  //  auto end = branch_[index]->GetPosition();
-  //  auto vector = (end - GetPosition());
-  //  lines_[index]->SetTransform(util::Transform(
-  //      position_,
-  //      math::Quaternion(math::Quaternion(0,0,0,1) * vector, 0),
-  //      math::Vector3::kUnitVector * 100));
-
-  //  lines_[index]->Render(command_list);
-  //}
+void SearchAI::DebugDraw(bullet::PhysicsField* physics_field_) {
+  for (auto b : branch_) {
+    auto from = bullet::helper::TobtVector3(GetPosition());
+    auto to = bullet::helper::TobtVector3(b->GetPosition());
+    auto color = bullet::helper::TobtVector3(math::Vector3(1, 0, 0));
+    physics_field_->DrawLine(from, to, color);
+  }
 }
 }  // namespace search
 }  // namespace legend

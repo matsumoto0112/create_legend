@@ -149,9 +149,7 @@ void Boss::ResetParameter() {
 math::Vector3 Boss::GetPosition() const { return transform_.GetPosition(); }
 
 //ˆÚ“®—Ê‚ÌŽæ“¾
-math::Vector3 Boss::GetVelocity() const {
-  return bullet::helper::ToVector3(box_->GetVelocity());
-}
+math::Vector3 Boss::GetVelocity() const { return box_->GetVelocity(); }
 
 math::Quaternion Boss::GetRotation() const { return transform_.GetRotation(); }
 

@@ -301,6 +301,9 @@ bool TurnSystem::Update() {
                               .c_str());
       }
     }
+    if (ImGui::Button("ggg")) {
+      eee = !eee;
+    }
   }
   ImGui::End();
   physics_field_.Update();
@@ -337,7 +340,7 @@ bool TurnSystem::EnemyMove() {
       enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     enemy_manager_.ResetEnemyMove();
-    //AddCurrentTurn();
+    // AddCurrentTurn();
   }
   return true;
 }
@@ -487,6 +490,22 @@ void TurnSystem::DebugDraw() {
   cameras_[current_camera_]->RenderStart();
   // search_manager_.DebugDraw(command_list);
   physics_field_.DebugDraw(cameras_[current_camera_].get());
+}
+
+bool legend::system::TurnSystem::IsGameEnd() const {
+  //プレイヤーが死亡したらtrueを返す
+
+  //敵のボスが死亡し、演出まで終了したらtrueを返す
+
+  //それ以外の状況ではfalseを返す
+  return false;
+}
+
+system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
+    const {
+  //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
+  return system::GameDataStorage::GameData{
+      system::GameDataStorage::GameEndType::PLAYER_DEAD, current_turn_};
 }
 
 //ターン数の増加

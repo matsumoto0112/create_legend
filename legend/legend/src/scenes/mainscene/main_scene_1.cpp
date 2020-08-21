@@ -1,6 +1,5 @@
 #include "src/scenes/mainscene/main_scene_1.h"
 
-#include "src/directx/shader/alpha_blend_desc.h"
 #include "src/game/game_device.h"
 
 namespace legend {
@@ -28,6 +27,11 @@ bool MainScene1::Update() {
     return false;
   }
 
+  if (turn_system_.IsGameEnd()) {
+    const auto data = turn_system_.GetResult();
+    system::GameDataStorage::GetInstance()->Set(data);
+    scene_change_->ChangeScene(SceneType::GAMEOVER);
+  }
   return true;
 }
 

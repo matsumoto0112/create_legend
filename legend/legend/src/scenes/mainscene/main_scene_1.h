@@ -8,7 +8,7 @@
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/scenes/scene.h"
-
+#include "src/system/game_data.h"
 #include "src/system/turn_system.h"
 
 namespace legend {
@@ -52,19 +52,6 @@ class MainScene1 : public Scene {
 
  private:
   system::TurnSystem turn_system_;
-  //  camera::PerspectiveCamera camera_;
-  //  system::Turn turn_;
-  //  system::PhysicsField physics_field_;
-  //  //! プレイヤー
-  //  player::Player player_;
-  //  //! 机
-  //  std::vector<object::Desk> desks_;
-  //  //! エネミー
-  //  enemy::EnemyManager enemy_manager_;
-  //  //! 障害物リスト
-  //  std::vector<object::Obstacle> obstacles_;
-  //
-  //  std::vector<object::Fragment> fragments_;
 };
 
 }  // namespace mainscene

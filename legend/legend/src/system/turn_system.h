@@ -17,6 +17,7 @@
 #include "src/player/player.h"
 #include "src/search/search_manager.h"
 #include "src/stage_generate/stage_generator.h"
+#include "src/system/game_data.h"
 #include "src/system/mode.h"
 #include "src/ui/gauge.h"
 #include "src/ui/image.h"
@@ -85,6 +86,14 @@ class TurnSystem : public actor::IActorMediator {
    * @brief デバッグ描画
    */
   void DebugDraw();
+  /**
+   * @brief ゲームが終了したかどうか
+   */
+  bool IsGameEnd() const;
+  /**
+   * @brief ゲーム結果を取得する
+   */
+  system::GameDataStorage::GameData GetResult() const;
   /**
    * @brief プレイヤーの移動開始時イベント
    */

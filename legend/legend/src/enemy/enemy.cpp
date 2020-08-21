@@ -15,7 +15,7 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-Enemy::Enemy() : Parent(L"Enemy")/*, velocity_(math::Vector3::kZeroVector)*/ {
+Enemy::Enemy() : Parent(L"Enemy") /*, velocity_(math::Vector3::kZeroVector)*/ {
   is_move_ = false;
   // deceleration_x_ = deceleration_z_ = 0;
 }
@@ -81,25 +81,25 @@ bool Enemy::Update() {
 
 //移動
 void Enemy::Move() {
-  //if (!is_move_) return;
-  //auto velocity = GetVelocity();
-  //velocity.y = 0;
+  // if (!is_move_) return;
+  // auto velocity = GetVelocity();
+  // velocity.y = 0;
   ////移動距離を求める
-  //float length =
+  // float length =
   //    math::util::Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 
   ////実際に動く距離
-  //float x = -velocity.x / length;
-  //float z = -velocity.z / length;
+  // float x = -velocity.x / length;
+  // float z = -velocity.z / length;
 
   //////減速計算
   //// deceleration_x_ = x / (length * length);
   //// deceleration_z_ = z / (length * length);
 
   ////移動処理
-  //math::Vector3 v = math::Vector3(x, 0, z);
-  //math::Vector3 position = GetPosition() + v * power_ * update_time_;
-  //SetPosition(position);
+  // math::Vector3 v = math::Vector3(x, 0, z);
+  // math::Vector3 position = GetPosition() + v * power_ * update_time_;
+  // SetPosition(position);
 
   //// Deceleration(2);
 }
@@ -151,7 +151,7 @@ void Enemy::ResetParameter() {
 math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }
 
 //移動量の取得
-math::Vector3 Enemy::GetVelocity() const { return bullet::helper::ToVector3(box_->GetVelocity()); }
+math::Vector3 Enemy::GetVelocity() const { return box_->GetVelocity(); }
 
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 

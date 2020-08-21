@@ -128,7 +128,7 @@ bool StageGenerator::SetMapActors(
       parameter.position = transform.GetPosition();
       parameter.rotation = transform.GetRotation();
       parameter.model_id = 0;
-      parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      parameter.bounding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 3.0f;
       obstacles.emplace_back(parameter);
 
       continue;

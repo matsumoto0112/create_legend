@@ -252,6 +252,11 @@ class InputCommand {
              return (Down(KeyCode::Escape, i_key) ||
                      Down(JoyCode::START, i_gamePad));
            }},
+          {InputCode::CAMERA_CHANGE,  //!< ƒJƒƒ‰Ø‚è‘Ö‚¦
+           [&](Keyboard* i_key, Mouse* i_mouse, GamePad* i_gamePad) {
+             return (Down(KeyCode::Space, i_key) ||
+                     Down(JoyCode::Y, i_gamePad));
+           }},
   };  //!< “ü—Í”»’è
 };
 }  // namespace input

@@ -324,6 +324,15 @@ bool TurnSystem::PlayerMoveReady() {
   }
   //プレイヤーの速度更新は入力を受け取って処理する
   player_->CheckImpulse();
+
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
+    if (current_camera_ == camera_mode::Main) {
+      current_camera_ = camera_mode::Sub1;
+    } else if (current_camera_ == camera_mode::Sub1) {
+      current_camera_ = camera_mode::Main;
+    }
+  }
   return true;
 }
 
@@ -523,6 +532,7 @@ i32 TurnSystem::GetCurrentTurn() { return current_turn_; }
 void TurnSystem::PlayerMoveStartEvent() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   current_mode_ = Mode::PLAYER_MOVING;
+  current_camera_ = camera_mode::Sub1;
 }
 
 //プレイヤーの移動終了時処理

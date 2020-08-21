@@ -12,18 +12,20 @@ PhysicsField::PhysicsField() {}
 
 //デストラクタ
 PhysicsField::~PhysicsField() {
-  const i32 size = static_cast<i32>(colliders_.size());
-  for (i32 i = size - 1; i >= 0; i--) {
-    if (auto col = colliders_[i]; col) {
-      world_->removeAction(col.get());
+  if (world_) {
+    const i32 size = static_cast<i32>(colliders_.size());
+    for (i32 i = size - 1; i >= 0; i--) {
+      if (auto col = colliders_[i]; col) {
+        world_->removeAction(col.get());
+      }
+      if (colliders_[i] && colliders_[i]->GetRigidBody()) {
+        world_->removeRigidBody(colliders_[i]->GetRigidBody());
+      }
     }
-    if (colliders_[i] && colliders_[i]->GetRigidBody()) {
-      world_->removeRigidBody(colliders_[i]->GetRigidBody());
-    }
-  }
-  colliders_.clear();
+    colliders_.clear();
 
-  world_->setDebugDrawer(nullptr);
+    world_->setDebugDrawer(nullptr);
+  }
 }
 
 //初期化

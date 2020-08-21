@@ -14,9 +14,10 @@ namespace input_code {
  * @brief キー番号
  */
 enum Enum : i32 {
-  End = -1,      //!< 終了コマンド
-  Decide = 0,    //!< 決定コマンド
-  Pause = 1,     //!< 待機コマンド
+  End = -1,       //!< 終了コマンド
+  Decide = 0,     //!< 決定コマンド
+  Pause = 1,      //!< 待機コマンド
+  CAMERA_CHANGE,  //!< カメラ切り替え
 };
 }  // namespace input_code
 }  // namespace input

@@ -81,11 +81,11 @@ bool Player::Update() {
   //スキルマネージャーの更新
   skill_manager_.Update();
 
-  if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
-          input::key_code::A) &&
-      0.05f < input_velocity_.Magnitude()) {
-    box_->ApplyCentralImpulse(input_velocity_ * power_);
-  }
+  // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
+  //        input::key_code::A) &&
+  //    0.05f < input_velocity_.Magnitude()) {
+  //  box_->ApplyCentralImpulse(input_velocity_ * power_);
+  //}
 
   if (skill_manager_.IsProductionNow()) {
     return true;
@@ -125,52 +125,49 @@ void Player::SetRotation(math::Quaternion rotation) {
 void Player::SetScale(math::Vector3 scale) { transform_.SetScale(scale); }
 
 void Player::CheckImpulse() {
+  auto framerate =
+      12.5f *
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
   if (!is_move_) {
     input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
     input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
     input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
 
-    velocity_update_time_ += update_time_;
-    if (!(velocity_update_time_ < change_time_)) {
-      velocity_ = input_velocity_;
-
-      // float thita = math::util::Atan2(velocity_.z, velocity_.x);
-      // SetRotation(math::Quaternion(0, thita, 0, 1));
-      if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
-
-      change_amount_velocity_ = velocity_;
-      velocity_update_time_ = 0;
+    if (0.2f <= input_velocity_.Magnitude()) {
+      is_input_ = true;
     }
+
+    if ((change_amount_velocity_.Magnitude() < input_velocity_.Magnitude()) ||
+        (change_amount_velocity_ - input_velocity_).Magnitude() <= framerate) {
+      change_amount_velocity_ = input_velocity_;
+    }
+    // velocity_update_time_ += update_time_;
+    // if (!(velocity_update_time_ < change_time_)) {
+    //  velocity_ = input_velocity_;
+
+    //  // float thita = math::util::Atan2(velocity_.z, velocity_.x);
+    //  // SetRotation(math::Quaternion(0, thita, 0, 1));
+    //  if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
+
+    //  change_amount_velocity_ = velocity_;
+    //  velocity_update_time_ = 0;
+    //}
   }
 
-  if ((change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
-       0.5f) &&
-      (input_velocity_.Magnitude() < change_amount_velocity_.Magnitude())) {
+  auto iv_mag = input_velocity_.Magnitude();
+  auto cav_mag = change_amount_velocity_.Magnitude();
+  auto vector = (change_amount_velocity_ - input_velocity_);
+  auto vec_mag = vector.Magnitude();
+
+  if (is_input_ && (iv_mag < cav_mag) && (iv_mag < framerate) &&
+      (framerate < vec_mag)) {
     is_move_ = true;
-    box_->ApplyCentralImpulse(input_velocity_.Normalized() * power_);
+
+    auto vel = vector.Normalized() * power_ * impulse_;
+    box_->ApplyCentralImpulse(vel);
     mediator_->PlayerMoveStartEvent();
   }
   SetImpulse();
-}
-
-//速度の設定
-void Player::SetVelocity() {
-  if (is_move_) return;
-
-  input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
-  input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
-  input_velocity_.z = -input.GetGamepad()->GetStickLeft().y;
-
-  velocity_update_time_ += update_time_;
-  if (velocity_update_time_ < change_time_) return;
-
-  velocity_ = input_velocity_;
-  // float thita = math::util::Atan2(velocity_.z, velocity_.x);
-  // SetRotation(math::Quaternion(0, thita, 0, 1));
-  if (velocity_.Magnitude() >= 0.2f) is_input_ = true;
-
-  change_amount_velocity_ = velocity_;
-  velocity_update_time_ = 0;
 }
 
 //速度の設定

@@ -69,10 +69,6 @@ class Player : public actor::Actor {
   /**
    * @brief ˆÚ“®—Ê‚Ìİ’è
    */
-  void SetVelocity();
-  /**
-   * @brief ˆÚ“®—Ê‚Ìİ’è
-   */
   void SetVelocity(math::Vector3 velocity);
   /**
    * @brief ‰Á‚¦‚é—Í‚Ìİ’è
@@ -146,7 +142,7 @@ class Player : public actor::Actor {
   const float change_time_ = 0.1f;
 
   //! ˆÚ“®‚É‰Á‚¦‚é—Í
-  const float power_ = 10.0f;
+  const float power_ = 50.0f;
   //! ÀÛ‚É‰Á‚¦‚é—Í‚Ì‰ÁŒ¸
   float impulse_;
   //! Å¬’l

@@ -301,9 +301,6 @@ bool TurnSystem::Update() {
                               .c_str());
       }
     }
-    if (ImGui::Button("ggg")) {
-      eee = !eee;
-    }
   }
   ImGui::End();
   physics_field_.Update();

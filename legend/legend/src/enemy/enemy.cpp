@@ -79,6 +79,25 @@ bool Enemy::Update() {
   return true;
 }
 
+void Enemy::Draw() {
+  MY_ASSERTION(model_.get(), L"ƒ‚ƒfƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+  if (GetPosition().y <= -20) return;
+
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  resource.GetPipeline()
+      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
+      ->SetCommandList(command_list);
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+
+  model_->Draw(command_list);
+}
+
 //ˆÚ“®
 void Enemy::Move() {
   //if (!is_move_) return;
@@ -151,7 +170,7 @@ void Enemy::ResetParameter() {
 math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }
 
 //ˆÚ“®—Ê‚Ìæ“¾
-math::Vector3 Enemy::GetVelocity() const { return bullet::helper::ToVector3(box_->GetVelocity()); }
+math::Vector3 Enemy::GetVelocity() const { return (box_->GetVelocity()); }
 
 math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 

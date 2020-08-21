@@ -75,7 +75,7 @@ class Graffiti : public actor::Actor {
   /**
    * @brief è¡ÇµÉJÉXê∂ê¨èàóù
    */
-  // Fragment InstanceFragment(system::PhysicsField& physics_field);
+   //void InstanceFragment();
 
   void OnHit(bullet::Collider* other);
 

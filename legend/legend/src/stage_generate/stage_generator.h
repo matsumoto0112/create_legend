@@ -6,6 +6,7 @@
 #include "src/object/graffiti.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
+#include "src/skill/skill_item_box.h"
 
 namespace legend {
 namespace stage_generate {
@@ -30,11 +31,13 @@ class StageGenerator {
    * @brief 読み込み&生成処理
    * @return 処理が正しく終了したらtrueを返す
    */
-  bool LoadStage(std::filesystem::path filepath, const std::string map_name,
-                 player::Player::InitializeParameter& player,
-                 std::vector<object::Desk::InitializeParameter>& desks,
-                 std::vector<object::Obstacle::InitializeParameter>& obstacles,
-                 std::vector<object::GraffitiInitializeParameter>& graffities);
+  bool LoadStage(
+      std::filesystem::path filepath, const std::string map_name,
+      player::Player::InitializeParameter& player,
+      std::vector<object::Desk::InitializeParameter>& desks,
+      std::vector<object::Obstacle::InitializeParameter>& obstacles,
+      std::vector<object::GraffitiInitializeParameter>& graffities,
+      std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes);
   /**
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
@@ -48,7 +51,8 @@ class StageGenerator {
       player::Player::InitializeParameter& player,
       std::vector<object::Desk::InitializeParameter>& desks,
       std::vector<object::Obstacle::InitializeParameter>& obstacles,
-      std::vector<object::GraffitiInitializeParameter>& graffities);
+      std::vector<object::GraffitiInitializeParameter>& graffities,
+      std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes);
 
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);

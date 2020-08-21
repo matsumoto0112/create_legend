@@ -38,8 +38,9 @@ bool TurnSystem::Init(const std::string& stage_name) {
     std::vector<object::Desk::InitializeParameter> desks;
     std::vector<object::Obstacle::InitializeParameter> obstacles;
     std::vector<object::GraffitiInitializeParameter> graffities;
+    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
     if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
-                                    obstacles, graffities)) {
+                                    obstacles, graffities, item_boxes)) {
       return false;
     }
 
@@ -70,6 +71,16 @@ bool TurnSystem::Init(const std::string& stage_name) {
       }
       graffities_.emplace_back(std::move(graf));
     }
+
+    for (auto&& param : item_boxes) {
+      auto obj = std::make_unique<skill::SkillItemBox>();
+      std::shared_ptr<skill::Skill> skill =
+          std::make_shared<skill::SkillPencil>();
+      if (!obj->Init(this, param, skill)) {
+        return false;
+      }
+      item_boxes_.emplace_back(std::move(obj));
+    }
   }
 
   if (!enemy_manager_.Initilaize(this)) {
@@ -94,9 +105,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
     search_manager_.Initialize(this);
 
     ////’Tõƒf[ƒ^‚ÌŠg’£Žq‚Í.txt
-    //auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
+    // auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage"
+    // /
     //                  (stage_name + "_searchData" + ".txt");
-    //search_manager_.Make(search_path);
+    // search_manager_.Make(search_path);
 
     search_manager_.Add({
         math::Vector3(1.0f, 0.25f, 1.0f) * 10.0f,
@@ -497,6 +509,9 @@ void TurnSystem::Draw() {
   }
   for (auto&& fragment : fragments_) {
     fragment.Draw();
+  }
+  for (auto&& obj : item_boxes_) {
+      obj->Draw();
   }
 
   ui_board_.Draw();

@@ -161,18 +161,35 @@ float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
 void Graffiti::OnHit(bullet::Collider* other) {
-  if (dynamic_cast<player::Player*>(other->GetOwner())) {
-    const float percentage = 0.01f;
-    remaining_graffiti_ -= percentage;
+  if (is_erase_) return;
+  is_erase_ = remaining_graffiti_ <= 0.0f;
+  {
+    player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
+    if (player) {
+      if (player->GetVelocity().Magnitude() >= 0.3f) {
+        const float percentage = 0.01f;
+        remaining_graffiti_ -= percentage;
+        //Žã‘Ì‰»
+        player->UpdateStrength(-0.01f);
+        //InstanceFragment();
+      }
+    }
   }
-  if (dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
-    const float percentage = 10.0f;
-    remaining_graffiti_ -= percentage;
-    is_erase_ = remaining_graffiti_ <= 0.0f;
+  {
+    enemy::Enemy* enemy = dynamic_cast<enemy::Enemy*>(other->GetOwner());
+    if (enemy) {
+      if (enemy->GetVelocity().Magnitude() >= 0.3f) {
+        const float percentage = 10.0f;
+        remaining_graffiti_ -= percentage;
+        //Žã‘Ì‰»
+        enemy->Weaking(0.01f);
+        //InstanceFragment();
+      }
+    }
   }
 }
 
-// Fragment Graffiti::InstanceFragment(system::PhysicsField& physics_field) {
+// void Graffiti::InstanceFragment() {
 //  Fragment::InitializeParameter parameter;
 //  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
 //  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
@@ -183,8 +200,6 @@ void Graffiti::OnHit(bullet::Collider* other) {
 //
 //  Fragment fragment;
 //  fragment.Init(mediator_, parameter);
-//  // physics_field.AddFragment(fragment.GetCollisionRef());
-//  return fragment;
 //}
 
 void Graffiti::DecreaseGraffiti(const float& percentage) {

@@ -126,6 +126,7 @@
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\actor\actor.cpp" />
+    <ClCompile Include="src\skill\skill_item_box.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -299,6 +300,7 @@
     <ClInclude Include="src\bullet\bounding_sphere.h" />
     <ClInclude Include="src\bullet\bullet_helper.h" />
     <ClInclude Include="src\system\game_data.h" />
+    <ClInclude Include="src\skill\skill_item_box.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

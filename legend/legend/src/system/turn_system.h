@@ -18,6 +18,7 @@
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
 #include "src/search/search_manager.h"
+#include "src/skill/skill_item_box.h"
 #include "src/stage_generate/stage_generator.h"
 #include "src/system/game_data.h"
 #include "src/system/mode.h"
@@ -198,6 +199,8 @@ class TurnSystem : public actor::IActorMediator {
   search::SearchManager search_manager_;
   //! タイマー
   util::CountDownTimer countdown_timer_;
+  //! スキルアイテムボックス
+  std::vector<std::unique_ptr<skill::SkillItemBox>> item_boxes_;
 
   //! 使用するカメラ
   std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;

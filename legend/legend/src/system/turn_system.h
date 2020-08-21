@@ -6,6 +6,8 @@
  * @brief ターンによるゲーム進行管理クラス定義
  */
 
+#include <set>
+
 #include "src/actor/actor_mediator.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
@@ -208,6 +210,8 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Gauge*> gauges_;
   //! 数値画像配列
   std::vector<ui::Number*> numbers_;
+
+  std::set<object::Graffiti*> remove_graffiti_list_;
 
  private:
   // UIのリアルタイム修正用パラメータ

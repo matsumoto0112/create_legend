@@ -14,7 +14,7 @@ MainScene1::~MainScene1() {}
 
 //‰Šú‰»
 bool MainScene1::Initialize() {
-  if (!turn_system_.Init("bbbb")) {
+  if (!turn_system_.Init("Test_01")) {
     return false;
   }
 

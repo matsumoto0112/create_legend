@@ -303,6 +303,16 @@ bool TurnSystem::Update() {
     }
   }
   ImGui::End();
+
+  graffities_.erase(
+      std::remove_if(graffities_.begin(), graffities_.end(),
+                     [&](auto& it) {
+                       return remove_graffiti_list_.find(it.get()) !=
+                              remove_graffiti_list_.end();
+                     }),
+      graffities_.end());
+  remove_graffiti_list_.clear();
+
   physics_field_.Update();
   return true;
 }
@@ -438,9 +448,7 @@ void TurnSystem::RemoveFragment() {
 
 void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
   if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
-    graffities_.erase(std::remove_if(graffities_.begin(), graffities_.end(),
-                                     [g](auto& it) { return it.get() == g; }),
-                      graffities_.end());
+    remove_graffiti_list_.emplace(g);
   }
 }
 

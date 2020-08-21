@@ -105,6 +105,10 @@ class Enemy : public actor::Actor {
   bullet::BoundingBox* GetCollider() const { return box_.get(); }
 
   void OnHit(bullet::Collider* other);
+  /**
+   * @brief ã‘Ì‰»
+   */
+  void Weaking(const float& weak);
 
  private:
   ////! ‘¬“x
@@ -125,6 +129,10 @@ class Enemy : public actor::Actor {
 
   //! ˆÚ“®I—¹”»’è
   bool move_end_;
+  //! ã‘Ì‰»ó‘Ô
+  float strength_;
+  //! ã‘Ì‰»‰ºŒÀ
+  float min_strength_;
 
   std::shared_ptr<bullet::BoundingBox> box_;
 };

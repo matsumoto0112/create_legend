@@ -45,6 +45,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
+  strength_ = 1.0f;
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -212,6 +213,11 @@ void Enemy::OnHit(bullet::Collider* other) {
       b->GetCollider()->ApplyCentralImpulse(direction * power_);
     }
   }
+}
+
+void Enemy::Weaking(const float& weak) {
+  strength_ -= weak;
+  if (strength_ <= min_strength_) strength_ = min_strength_;
 }
 
 }  // namespace enemy

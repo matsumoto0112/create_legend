@@ -38,8 +38,9 @@ bool TurnSystem::Init(const std::string& stage_name) {
     std::vector<object::Desk::InitializeParameter> desks;
     std::vector<object::Obstacle::InitializeParameter> obstacles;
     std::vector<object::GraffitiInitializeParameter> graffities;
+    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
     if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
-                                    obstacles, graffities)) {
+                                    obstacles, graffities, item_boxes)) {
       return false;
     }
 
@@ -69,6 +70,16 @@ bool TurnSystem::Init(const std::string& stage_name) {
         return false;
       }
       graffities_.emplace_back(std::move(graf));
+    }
+
+    for (auto&& param : item_boxes) {
+      auto obj = std::make_unique<skill::SkillItemBox>();
+      std::shared_ptr<skill::Skill> skill =
+          std::make_shared<skill::SkillPencil>();
+      if (!obj->Init(this, param, skill)) {
+        return false;
+      }
+      item_boxes_.emplace_back(std::move(obj));
     }
   }
 
@@ -497,6 +508,9 @@ void TurnSystem::Draw() {
   }
   for (auto&& fragment : fragments_) {
     fragment.Draw();
+  }
+  for (auto&& obj : item_boxes_) {
+      obj->Draw();
   }
 
   ui_board_.Draw();

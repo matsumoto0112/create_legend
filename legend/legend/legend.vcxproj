@@ -171,6 +171,7 @@
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
     <ClCompile Include="src\skill\skill.cpp" />
+    <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\skill_manager.cpp" />
     <ClCompile Include="src\skill\skill_pencil.cpp" />
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="src\scenes\task.h" />
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\skill\skill.h" />
+    <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\skill_manager.h" />
     <ClInclude Include="src\skill\skill_pencil.h" />
     <ClInclude Include="src\skill\skill_select_ui.h" />

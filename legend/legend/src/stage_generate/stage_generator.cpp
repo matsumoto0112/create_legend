@@ -25,7 +25,8 @@ bool StageGenerator::LoadStage(
     player::Player::InitializeParameter& player,
     std::vector<object::Desk::InitializeParameter>& desks,
     std::vector<object::Obstacle::InitializeParameter>& obstacles,
-    std::vector<object::GraffitiInitializeParameter>& graffities) {
+    std::vector<object::GraffitiInitializeParameter>& graffities,
+    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
   //テキストデータを読み込み
   indexs_ = LoadStringStageData(filepath);
   map_name_ = map_name;
@@ -33,7 +34,7 @@ bool StageGenerator::LoadStage(
   //各アクターを生成
   // return SetMapActors(map_name, indexs, physics_field, actors,
   // enemy_manager);
-  return SetMapActors(player, desks, obstacles, graffities);
+  return SetMapActors(player, desks, obstacles, graffities, itemboxes);
 }
 
 //ファイルの読み込み処理
@@ -74,7 +75,8 @@ bool StageGenerator::SetMapActors(
     player::Player::InitializeParameter& player,
     std::vector<object::Desk::InitializeParameter>& desks,
     std::vector<object::Obstacle::InitializeParameter>& obstacles,
-    std::vector<object::GraffitiInitializeParameter>& graffities) {
+    std::vector<object::GraffitiInitializeParameter>& graffities,
+    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
   bool is_all_ok = true;
 
   if (indexs_.empty() || indexs_[0] == "error") {
@@ -140,6 +142,13 @@ bool StageGenerator::SetMapActors(
       graffities.emplace_back(parameter);
 
       continue;
+    }
+
+    if (infomation[0] == "Stationery") {
+        skill::SkillItemBox::InitializeParameter parameter;
+        parameter.transform = transform;
+        parameter.bounding_box_length = math::Vector3(2.0f, 2.0f, 2.0f);
+        itemboxes.emplace_back(parameter);
     }
   }
 

@@ -8,6 +8,7 @@
 #include "src/object/desk.h"
 #include "src/object/graffiti.h"
 #include "src/util/resource/resource_names.h"
+#include "src/skill/skill_item_box.h"
 
 namespace legend {
 namespace player {
@@ -291,6 +292,14 @@ void Player::OnHit(bullet::Collider* other) {
           (boss_position - player_position).Normalized();
 
       b->GetCollider()->ApplyCentralImpulse(direction * power_);
+    }
+  }
+  //スキルアイテムボックスに触れた
+  {
+    skill::SkillItemBox* skill_item = dynamic_cast<skill::SkillItemBox*>(other->GetOwner());
+    if (skill_item) {
+        skill_item->ChangeDead();
+        skill_manager_.AddSkill(skill_item->GetSkill());
     }
   }
 }

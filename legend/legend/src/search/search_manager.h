@@ -25,7 +25,24 @@ class SearchManager {
   /**
    * @brief 初期設定
    */
-  void Initialize(bullet::Collider* _player_obb);
+  void Initialize(actor::IActorMediator* mediator);
+
+  /**
+   * @brief 生成
+   */
+  void Make(std::filesystem::path filepath);
+  /**
+   * @brief テキストの読み込み処理
+   * @return 処理が正しく終了したら読み込まれた内容(string)を返す
+   */
+  std::vector<std::string> LoadStringStageData(std::filesystem::path filepath);
+  /**
+   * @brief StringをStringのリストへ変換
+   * @param x,y,z 元文字列
+   * @return 変換されたStringのリスト
+   */
+  std::vector<std::string> StringSplit(const std::string& string, char border);
+
 
   /**
    * @brief 座標追加
@@ -81,9 +98,10 @@ class SearchManager {
   std::vector<std::unique_ptr<SearchAI>> search_list_;
   std::vector<SearchAI*> course_list_;
 
-  bullet::Collider* player_collider_;
   std::vector<bullet::Collider*> enemys_;
   bullet::Collider* ignore_enemy_;
+
+  actor::IActorMediator* mediator_;
 };
 }  // namespace search
 }  // namespace legend

@@ -41,6 +41,7 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   }
   if (boss_ != nullptr) {
     boss_->Update();
+    DestroyBoss();
   }
   return true;
 }
@@ -149,6 +150,13 @@ void EnemyManager::Destroy(i32 index) {
   if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
     action_enemy_index_--;
   }
+}
+
+void EnemyManager::DestroyBoss() {
+  if (boss_ == nullptr) return;
+  boss_->Remove();
+  boss_.reset();
+  is_game_clear_ = true;
 }
 
 void EnemyManager::SetPosition(Enemy* enemy) {

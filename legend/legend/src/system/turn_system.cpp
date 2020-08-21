@@ -91,12 +91,18 @@ bool TurnSystem::Init(const std::string& stage_name) {
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   {
-    search_manager_.Initialize(player_->GetCollider());
+    search_manager_.Initialize(this);
+
+    ////’Tõƒf[ƒ^‚ÌŠg’£Žq‚Í.txt
+    //auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
+    //                  (stage_name + "_searchData" + ".txt");
+    //search_manager_.Make(search_path);
+
     search_manager_.Add({
-        math::Vector3(1.0f, 0.0f, 1.0f) * 10.0f,
-        math::Vector3(-1.0f, 0.0f, 1.0f) * 10.0f,
-        math::Vector3(1.0f, 0.0f, -1.0f) * 10.0f,
-        math::Vector3(-1.0f, 0.0f, -1.0f) * 10.0f,
+        math::Vector3(1.0f, 0.25f, 1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.25f, 1.0f) * 10.0f,
+        math::Vector3(1.0f, 0.25f, -1.0f) * 10.0f,
+        math::Vector3(-1.0f, 0.25f, -1.0f) * 10.0f,
     });
     search_manager_.SetBranch(0, {1, 2, 3});
     search_manager_.SetBranch(1, {0, 2, 3});

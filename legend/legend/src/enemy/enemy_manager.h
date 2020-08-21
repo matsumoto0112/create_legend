@@ -52,7 +52,11 @@ class EnemyManager {
   /**
    * @brief “G‚ğíœ
    */
-   void Destroy(i32 index);
+  void Destroy(i32 index);
+  /**
+   * @brief ƒ{ƒX‚ğíœ
+   */
+  void DestroyBoss();
   /**
    * @brief “G‚ğíœ
    */
@@ -88,6 +92,10 @@ class EnemyManager {
    * @brief ÅŒã‚Ì“G‚ÌˆÚ“®I—¹”»’è‚Ìæ“¾
    */
   bool LastEnemyMoveEnd() const;
+  /**
+   * @brief ÅŒã‚Ì“G‚ÌˆÚ“®I—¹”»’è‚Ìæ“¾
+   */
+  bool IsGameClear() const { return is_game_clear_; };
 
   void SetPlayer(bullet::Collider* player_obb);
 
@@ -100,7 +108,7 @@ class EnemyManager {
   std::unique_ptr<Boss> boss_;
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
-  bool game_clear_flag_ = false;
+  bool is_game_clear_ = false;
   float move_timer_ = 0.0f;
   const float move_time_ = 0.5f;
 

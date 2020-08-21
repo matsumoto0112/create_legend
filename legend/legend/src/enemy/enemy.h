@@ -47,6 +47,11 @@ class Enemy : public actor::Actor {
    */
   bool Update();
   /**
+   * @brief •`‰æ
+   */
+  virtual void Draw();
+
+  /**
    * @brief ˆÚ“®
    */
   void Move();

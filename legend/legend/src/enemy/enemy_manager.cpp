@@ -18,7 +18,8 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
     bool isMove = false;
     for (auto& e : enemys_) {
-      isMove = (isMove || e->GetMoveEnd() ||(0.01f <= e->GetVelocity().Magnitude()));
+      isMove = (isMove || e->GetMoveEnd() ||
+                (0.01f <= e->GetVelocity().Magnitude()));
     }
     if (boss_ != nullptr) {
       isMove = (isMove || (0.01f <= boss_->GetVelocity().Magnitude()));
@@ -131,7 +132,7 @@ void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
 }
 
 void EnemyManager::Add(const Boss::InitializeParameter& paramater) {
-  if (boss_ != nullptr) {
+  if (boss_ != nullptr || is_game_clear_) {
     return;
   }
 
@@ -154,6 +155,10 @@ void EnemyManager::Destroy(i32 index) {
 
 void EnemyManager::DestroyBoss() {
   if (boss_ == nullptr) return;
+
+  if (-10 <= boss_->GetPosition().y) {
+    return;
+  }
   boss_->Remove();
   boss_.reset();
   is_game_clear_ = true;
@@ -221,8 +226,17 @@ bool EnemyManager::LastEnemyMoveEnd() const {
   }
 
   bool end = false;
-   if (boss_ == nullptr ? enemys_[enemys_.size() - 1]->GetMoveEnd()
+  if (boss_ == nullptr ? enemys_[enemys_.size() - 1]->GetMoveEnd()
                        : boss_->GetMoveEnd()) {
+    for (i32 i = 0; i < enemys_.size(); i++) {
+      if (enemys_[i]->GetVelocity().y < -1) {
+        return false;
+      }
+    }
+    if ((boss_ != nullptr) && (boss_->GetVelocity().y < -1)) {
+      return false;
+    }
+
     end = true;
     for (i32 i = 0; i < enemys_.size(); i++) {
       enemys_[i]->ResetMoveEnd();

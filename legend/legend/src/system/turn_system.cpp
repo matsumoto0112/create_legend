@@ -380,12 +380,13 @@ bool TurnSystem::EnemyMove() {
 
 //“G‚ÌˆÚ“®I—¹ˆ—
 bool TurnSystem::EnemyMoveEnd() {
+  AddCurrentTurn();
   for (auto&& enemy_parameter :
-       stage_generator_.GetEnemyParameters(current_turn_ + 1)) {
+       stage_generator_.GetEnemyParameters(current_turn_)) {
     enemy_manager_.Add(enemy_parameter);
   }
   for (auto&& boss_parameter :
-       stage_generator_.GetBossParameters(current_turn_ + 1)) {
+       stage_generator_.GetBossParameters(current_turn_)) {
     enemy_manager_.Add(boss_parameter);
   }
 

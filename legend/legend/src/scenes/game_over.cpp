@@ -48,10 +48,10 @@ bool GameOver::Initialize() {
     board_.AddComponent(std::move(image));
   }
 
-  //const i32 clear_turn = data.play_turn;
-  //std::stringstream ss;
-  //ss << std::setw(2) << clear_turn;
-  //for (auto&& c : ss.str()) {
+  // const i32 clear_turn = data.play_turn;
+  // std::stringstream ss;
+  // ss << std::setw(2) << clear_turn;
+  // for (auto&& c : ss.str()) {
   //  auto num = std::make_unique<ui::Number>();
   //  num->Init(TextureName::UI_NUMBER_1, heap_id);
   //}
@@ -86,5 +86,10 @@ void GameOver::Draw() {
                            ->GetCommandList();
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
+
+void GameOver::Finalize() {
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
+}
+
 }  // namespace scenes
 }  // namespace legend

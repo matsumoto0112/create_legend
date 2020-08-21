@@ -81,6 +81,8 @@ void Title::Draw() {
 void Title::Finalize() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Stop(bgm_key_);
+
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
 }  // namespace scenes

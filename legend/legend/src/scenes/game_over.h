@@ -33,6 +33,10 @@ class GameOver : public Scene {
    *@brief •`‰æ
    */
   void Draw() override;
+  /**
+   * @brief I—¹ˆ—
+   */
+  void Finalize() override;
 
  private:
   ui::UIBoard board_;

@@ -17,7 +17,7 @@ DirectXDevice::~DirectXDevice() {}
 bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   //デバイスに設定するオプションを定義する
   const DeviceOptionFlags flags = [](bool use_warp_device) {
-    DeviceOptionFlags flags = DeviceOptionFlags::TEARING;
+    DeviceOptionFlags flags = DeviceOptionFlags::NONE;
     if (use_warp_device) {
       flags |= DeviceOptionFlags::USE_WARP_DEVICE;
     }

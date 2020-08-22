@@ -1,5 +1,6 @@
 #include "src/system/turn_system.h"
 
+#include "src/camera/lookat_target_camera.h"
 #include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
 #include "src/util/resource/resource_names.h"
@@ -191,6 +192,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
 bool TurnSystem::Update() {
   countdown_timer_.Update();
   player_->Update();
+  UpdateCamera();
 
   for (auto&& graf : graffities_) {
     if (graf->GetIsHit()) {
@@ -428,13 +430,14 @@ bool TurnSystem::InitCameras() {
   auto InitMainCamera = [&]() {
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
-    auto main_camera = std::make_unique<camera::FollowCamera>();
-    if (!main_camera->Init(L"MainCamera", player_.get(),
-                           math::Vector3(0.0f, 30.0f, -30.0f), camera_rotation,
+    auto main_camera = std::make_unique<camera::LookAtTargetCamera>();
+    if (!main_camera->Init(L"MainCamera", player_.get(), 20.0f, 30.0f,
                            math::util::DEG_2_RAD * 50.0f, aspect_ratio,
                            math::Vector3::kUpVector, 0.1f, 300.0f)) {
       return false;
     }
+
+    player_follow_lookat_camera_ = main_camera.get();
     cameras_[camera_mode::Main] = std::move(main_camera);
     return true;
   };
@@ -462,6 +465,20 @@ bool TurnSystem::InitCameras() {
 void legend::system::TurnSystem::AddFragment(
     std::unique_ptr<object::Fragment> fragment) {
   fragments_.emplace_back(std::move(fragment));
+}
+
+void TurnSystem::UpdateCamera() {
+  auto& input = game::GameDevice::GetInstance()->GetInput();
+  float theta = player_follow_lookat_camera_->GetTheta();
+
+  const float delta_time =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  //右コントローラの入力を取得する
+  const math::Vector2 right_input = input.GetGamepad()->GetStickRight();
+  constexpr float POWER = 1.0f;
+  theta += right_input.x * POWER * delta_time;
+  player_follow_lookat_camera_->SetTheta(theta);
 }
 
 void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {

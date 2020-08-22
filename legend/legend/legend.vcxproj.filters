@@ -128,6 +128,7 @@
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\explosion_pencil.cpp" />
+    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -303,6 +304,7 @@
     <ClInclude Include="src\system\game_data.h" />
     <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\explosion_pencil.h" />
+    <ClInclude Include="src\camera\lookat_target_camera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

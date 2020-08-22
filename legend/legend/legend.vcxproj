@@ -86,6 +86,7 @@
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />
     <ClCompile Include="src\bullet\physics_field.cpp" />
+    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="src\bullet\bullet_helper.h" />
     <ClInclude Include="src\bullet\collider.h" />
     <ClInclude Include="src\bullet\physics_field.h" />
+    <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />

@@ -11,6 +11,7 @@
 #include "src/actor/actor_mediator.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
+#include "src/camera/lookat_target_camera.h"
 #include "src/camera/perspective_camera.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
@@ -166,6 +167,10 @@ class TurnSystem : public actor::IActorMediator {
    * @brief 消しカスの追加
    */
   void AddFragment(std::unique_ptr<object::Fragment> fragment);
+  /**
+   * @brief カメラの更新
+   */
+  void UpdateCamera();
 
  private:
   bullet::PhysicsField physics_field_;
@@ -196,6 +201,8 @@ class TurnSystem : public actor::IActorMediator {
 
   //! 使用するカメラ
   std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
+  //! プレイヤーを追尾し、操作で回転できるカメラへのポインタ
+  camera::LookAtTargetCamera* player_follow_lookat_camera_;
   //! 現在使用しているカメラ
   camera_mode::Enum current_camera_;
 

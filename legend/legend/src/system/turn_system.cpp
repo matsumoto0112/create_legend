@@ -196,7 +196,13 @@ bool TurnSystem::Update() {
   player_->Update();
 
   for (auto&& graf : graffities_) {
+    if (graf->GetIsHit()) {
+      AddFragment(graf->InstanceFragment());
+    }
     graf->Update();
+  }
+  for (auto&& fragment : fragments_) {
+    fragment->Update();
   }
   for (auto&& item_box : item_boxes_) {
     item_box->Update();
@@ -333,12 +339,21 @@ bool TurnSystem::Update() {
       graffities_.end());
   remove_graffiti_list_.clear();
 
+  fragments_.erase(
+      std::remove_if(fragments_.begin(), fragments_.end(),
+                     [&](auto& it) {
+                       return remove_fragment_list_.find(it.get()) !=
+                              remove_fragment_list_.end();
+                     }),
+      fragments_.end());
+  remove_fragment_list_.clear();
+
   item_boxes_.erase(
       std::remove_if(item_boxes_.begin(), item_boxes_.end(),
-          [&](auto& it) {
-              return remove_item_box_list_.find(it.get()) !=
-                  remove_item_box_list_.end();
-          }),
+                     [&](auto& it) {
+                       return remove_item_box_list_.find(it.get()) !=
+                              remove_item_box_list_.end();
+                     }),
       item_boxes_.end());
   remove_item_box_list_.clear();
 
@@ -449,49 +464,20 @@ bool TurnSystem::InitCameras() {
   return true;
 }
 
-//落書きの削除
-void TurnSystem::RemoveGraffiti() {
-  // for (i32 i = 0; i < graffities_.size(); i++) {
-  //  if (graffities_[i].GetIsErase()) {
-  //    physics_field_.RemoveGraffiti(i);
-  //    graffities_.erase(graffities_.begin() + i);
-  //    i--;
-  //  }
-  //}
-}
-
-//落書き更新処理
-void TurnSystem::UpdateGraffiti() {
-  // for (i32 i = 0; i < graffities_.size(); i++) {
-  //  if (physics_field_.GetIsHitGraffiti(i)) {
-  //    if (physics_field_.GetPlayerPowerDown())
-  //    player_.UpdateStrength(-0.01f);
-
-  //    graffities_[i].DecreaseGraffiti(physics_field_.GetErasePercent(i));
-  //    fragments_.emplace_back(graffities_[i].InstanceFragment(physics_field_));
-  //  }
-  //}
-}
-
-//消しカス削除
-void TurnSystem::RemoveFragment() {
-  // for (i32 i = 0; i < fragments_.size(); i++) {
-  //  if (physics_field_.GetIsHitFragment(i)) {
-  //    player_.UpdateStrength(0.1f);
-  //    physics_field_.RemoveFragment(i);
-  //    fragments_.erase(fragments_.begin() + i);
-  //    i--;
-  //  }
-  //}
+void legend::system::TurnSystem::AddFragment(
+    std::unique_ptr<object::Fragment> fragment) {
+  fragments_.emplace_back(std::move(fragment));
 }
 
 void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
   if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
     remove_graffiti_list_.emplace(g);
   }
-
+  if (auto fragment = dynamic_cast<object::Fragment*>(actor); fragment) {
+    remove_fragment_list_.emplace(fragment);
+  }
   if (auto item_box = dynamic_cast<skill::SkillItemBox*>(actor); item_box) {
-      remove_item_box_list_.emplace(item_box);
+    remove_item_box_list_.emplace(item_box);
   }
 }
 
@@ -524,7 +510,7 @@ void TurnSystem::Draw() {
     graffiti->Draw(command_list);
   }
   for (auto&& fragment : fragments_) {
-    fragment.Draw();
+    fragment->Draw();
   }
   for (auto&& item_box : item_boxes_) {
     item_box->Draw();

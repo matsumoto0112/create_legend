@@ -28,13 +28,26 @@ bool Fragment::Init(actor::IActorMediator* mediator,
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   mediator_->AddCollider(box_);
 
+  is_dead_ = false;
+  dead_time_.Init(2.0f);
+
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ = resource.GetModel().Get(
       util::resource::resource_names::model::FRAGMENT_01);
   return true;
 }
 
-bool Fragment::Update() { return true; }
+bool Fragment::Update() {
+  if (is_dead_) {
+    if (dead_time_.Update()) {
+      mediator_->RemoveCollider(box_);
+      mediator_->RemoveActor(this);
+    }
+  }
+  return true;
+}
+
+void Fragment::ChangeDead() { is_dead_ = true; }
 
 }  // namespace object
 }  // namespace legend

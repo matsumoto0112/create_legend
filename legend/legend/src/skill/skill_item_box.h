@@ -28,6 +28,7 @@ class SkillItemBox : public actor::Actor {
   void Draw() override;
 
   void ChangeDead();
+  bool GetIsDead() const;
   std::shared_ptr<Skill> GetSkill() const;
 
  private:

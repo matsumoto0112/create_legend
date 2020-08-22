@@ -215,6 +215,7 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Number*> numbers_;
 
   std::set<object::Graffiti*> remove_graffiti_list_;
+  std::set<skill::SkillItemBox*> remove_item_box_list_;
 
  private:
   // UIのリアルタイム修正用パラメータ

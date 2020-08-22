@@ -333,6 +333,15 @@ bool TurnSystem::Update() {
       graffities_.end());
   remove_graffiti_list_.clear();
 
+  item_boxes_.erase(
+      std::remove_if(item_boxes_.begin(), item_boxes_.end(),
+          [&](auto& it) {
+              return remove_item_box_list_.find(it.get()) !=
+                  remove_item_box_list_.end();
+          }),
+      item_boxes_.end());
+  remove_item_box_list_.clear();
+
   physics_field_.Update();
   return true;
 }
@@ -479,6 +488,10 @@ void TurnSystem::RemoveFragment() {
 void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
   if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
     remove_graffiti_list_.emplace(g);
+  }
+
+  if (auto item_box = dynamic_cast<skill::SkillItemBox*>(actor); item_box) {
+      remove_item_box_list_.emplace(item_box);
   }
 }
 

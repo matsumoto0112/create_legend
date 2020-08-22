@@ -144,10 +144,10 @@ bool StageGenerator::SetMapActors(
       continue;
     }
 
-    if (infomation[0] == "Stationery") {
+    if (infomation[0] == "stationery") {
         skill::SkillItemBox::InitializeParameter parameter;
         parameter.transform = transform;
-        parameter.bounding_box_length = math::Vector3(2.0f, 2.0f, 2.0f);
+        parameter.bounding_box_length = math::Vector3(0.5f, 0.5f, 5.0f);
         itemboxes.emplace_back(parameter);
     }
   }

@@ -8,6 +8,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/util/timer.h"
 
 namespace legend {
 namespace object {
@@ -29,8 +30,12 @@ class Fragment : public actor::Actor {
                     const InitializeParameter& params);
   virtual bool Update() override;
 
+  void ChangeDead();
+
  private:
   std::shared_ptr<bullet::BoundingBox> box_;
+  bool is_dead_;
+  util::CountDownTimer dead_time_;
 };
 
 }  // namespace object

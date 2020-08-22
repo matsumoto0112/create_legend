@@ -6,9 +6,11 @@
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
 #include "src/object/desk.h"
+#include "src/object/fragment.h"
 #include "src/object/graffiti.h"
-#include "src/util/resource/resource_names.h"
+#include "src/skill/skill.h"
 #include "src/skill/skill_item_box.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace player {
@@ -296,10 +298,23 @@ void Player::OnHit(bullet::Collider* other) {
   }
   //スキルアイテムボックスに触れた
   {
-    skill::SkillItemBox* skill_item = dynamic_cast<skill::SkillItemBox*>(other->GetOwner());
+    skill::SkillItemBox* skill_item =
+        dynamic_cast<skill::SkillItemBox*>(other->GetOwner());
     if (skill_item) {
+      if (!skill_item->GetIsDead()) {
         skill_item->ChangeDead();
-        skill_manager_.AddSkill(skill_item->GetSkill());
+        std::shared_ptr<skill::Skill> skill = skill_item->GetSkill();
+        skill->Init(mediator_, this);
+        skill_manager_.AddSkill(skill);
+      }
+    }
+  }
+  {
+    object::Fragment* fragment =
+        dynamic_cast<object::Fragment*>(other->GetOwner());
+    if (fragment) {
+      fragment->ChangeDead();
+      UpdateStrength(0.01f);
     }
   }
 }

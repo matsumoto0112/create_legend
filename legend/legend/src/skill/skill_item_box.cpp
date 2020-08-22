@@ -34,6 +34,7 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   delete_time_.Init(2.0f);
   skill_ = skill;
+  is_dead_ = false;
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -58,6 +59,8 @@ bool SkillItemBox::Update() {
 void SkillItemBox::Draw() { actor::Actor::Draw(); }
 
 void SkillItemBox::ChangeDead() { is_dead_ = true; }
+
+bool SkillItemBox::GetIsDead() const { return is_dead_; }
 
 std::shared_ptr<Skill> SkillItemBox::GetSkill() const { return skill_; }
 }  // namespace skill

@@ -4,6 +4,14 @@
 #include "src/ui/quarter_gauge.h"
 #include "src/util/resource/resource_names.h"
 
+namespace {
+legend::i32 CalcPlayerStrengthToPrintNumber(
+    const legend::player::Player& player) {
+  const float str = player.GetStrength();
+  return static_cast<legend::i32>(str * 100);
+}
+}  // namespace
+
 namespace legend {
 namespace system {
 namespace audio_name = util::resource::resource_names::audio;
@@ -108,17 +116,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
     auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                        (stage_name + "_searchData" + ".txt");
     search_manager_.Make(search_path);
-
-    // search_manager_.Add({
-    //    math::Vector3(1.0f, 0.25f, 1.0f) * 10.0f,
-    //    math::Vector3(-1.0f, 0.25f, 1.0f) * 10.0f,
-    //    math::Vector3(1.0f, 0.25f, -1.0f) * 10.0f,
-    //    math::Vector3(-1.0f, 0.25f, -1.0f) * 10.0f,
-    //});
-    // search_manager_.SetBranch(0, {1, 2, 3});
-    // search_manager_.SetBranch(1, {0, 2, 3});
-    // search_manager_.SetBranch(2, {0, 1, 3});
-    // search_manager_.SetBranch(3, {0, 1, 2});
   }
 
   // UI情報を取得
@@ -219,24 +216,6 @@ bool TurnSystem::Update() {
     return false;
   }
 
-  ////物理処理の適用
-  // if (!physics_field_.Update(current_mode_, player_.GetVelocity(),
-  //                           player_.GetImpulse(), player_.GetPower(),
-  //                           enemy_manager_.GetVelocities())) {
-  //  return false;
-  //}
-
-  ////物理処理の結果を各オブジェクトに更新させる
-  // player_.SetPosition(physics_field_.GetPlayerOBB().GetPosition());
-  // player_.SetVelocity(physics_field_.GetPlayerVelocity());
-  // player_.SetRotation(physics_field_.GetPlayerOBB().GetRotation());
-  // enemy_manager_.SetPosition(physics_field_);
-  // enemy_manager_.SetVelocity(physics_field_);
-
-  // UpdateGraffiti();
-  // RemoveGraffiti();
-  // RemoveFragment();
-
   if (ImGui::Begin("Camera")) {
     if (ImGui::Button("Main")) {
       current_camera_ = camera_mode::Main;
@@ -305,6 +284,14 @@ bool TurnSystem::Update() {
   //}
   // ImGui::End();
 
+  {
+    //プレイヤーの強化状態をUI数値に変換する
+    const i32 str = CalcPlayerStrengthToPrintNumber(*player_);
+    numbers_[number_id::DIGIT_3]->SetNumber(str / 100);
+    numbers_[number_id::DIGIT_2]->SetNumber(str / 10 % 10);
+    numbers_[number_id::DIGIT_1]->SetNumber(str % 10);
+  }
+
   gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_->GetImpulse());
 
   if (ImGui::Begin("RayCast")) {
@@ -366,8 +353,6 @@ bool TurnSystem::PlayerMoveReady() {
   if (player_->GetSkillSelect()) {
     return true;
   }
-  //プレイヤーの速度更新は入力を受け取って処理する
-  player_->CheckImpulse();
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
@@ -377,6 +362,16 @@ bool TurnSystem::PlayerMoveReady() {
       current_camera_ = camera_mode::Main;
     }
   }
+
+  //プレイヤーの速度更新は入力を受け取って処理する
+  player_->CheckImpulse();
+
+  //メインカメラの状態じゃないと移動できないようにする
+  if (current_camera_ == camera_mode::Main) {
+  } else {
+    //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
+  }
+
   return true;
 }
 
@@ -533,7 +528,9 @@ bool legend::system::TurnSystem::IsGameEnd() const {
   //プレイヤーが死亡したらtrueを返す
 
   //敵のボスが死亡し、演出まで終了したらtrueを返す
-
+  if (enemy_manager_.IsGameClear()) {
+    return true;
+  }
   //それ以外の状況ではfalseを返す
   return false;
 }
@@ -542,7 +539,8 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      system::GameDataStorage::GameEndType::PLAYER_DEAD, current_turn_};
+      system::GameDataStorage::GameEndType::PLAYER_DEAD,
+      CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
 }
 
 //ターン数の増加

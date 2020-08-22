@@ -64,12 +64,6 @@ bool PhysicsField::Update() {
   float delta_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  auto check = [&]() {
-    for (auto&& col : colliders_) {
-      MY_LOG(col->GetOwner()->GetName().c_str());
-    }
-  };
-  check();
   //テスト用
   // for (auto&& collider : colliders_) {
   //    collider->SetAngularVelocity(btVector3(0, 0, 0));

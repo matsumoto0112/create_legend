@@ -18,6 +18,7 @@ class GameDataStorage : public util::Singleton<GameDataStorage> {
   };
   struct GameData {
     GameEndType end_type;
+    i32 player_power;
     i32 play_turn;
   };
 

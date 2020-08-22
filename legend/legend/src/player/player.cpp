@@ -265,13 +265,6 @@ bool Player::GetSkillSelect() {
 }
 
 void Player::OnHit(bullet::Collider* other) {
-  //—‘‚«‚ÉG‚ê‚½
-  {
-    object::Graffiti* e = dynamic_cast<object::Graffiti*>(other->GetOwner());
-    if (e) {
-      MY_LOG(L"Hit Graffiti");
-    }
-  }
   //“G‚ÉG‚ê‚½
   {
     enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());

@@ -160,13 +160,6 @@ bool Boss::GetMoveEnd() const { return move_end_; }
 void Boss::ResetMoveEnd() { move_end_ = false; }
 
 void Boss::OnHit(bullet::Collider* other) {
-  //—‘‚«‚ÉG‚ê‚½
-  {
-    object::Graffiti* e = dynamic_cast<object::Graffiti*>(other->GetOwner());
-    if (e) {
-      MY_LOG(L"Hit Graffiti");
-    }
-  }
   //ƒvƒŒƒCƒ„[‚ÉG‚ê‚½
   {
     player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());

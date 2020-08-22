@@ -100,6 +100,7 @@ void SkillManager::EnemyTurnEnd() {
 //描画
 void SkillManager::Draw() {
   for (auto&& skill : skills_) {
+    if (skill->GetUseFlag()) continue;
     skill->Draw();
   }
   select_ui_.Draw();
@@ -128,14 +129,6 @@ void SkillManager::RemoveSkill() {
     select_ui_.RemoveSkillUI(i);
     i--;
     select_ui_.SelectSkillNumber(0);
-  }
-
-  //スキルの実装がまだなのでボタンで削除できるようにした
-  auto& input = game::GameDevice::GetInstance()->GetInput();
-  i32 skill_num = select_ui_.GetSkillNumber();
-  if (input.GetGamepad()->GetButtonDown(input::joy_code::B) &&
-      skills_.size() > 0) {
-    skills_[skill_num]->EndAction();
   }
 }
 
@@ -167,6 +160,9 @@ bool SkillManager::SelectSkill() {
 
 void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
+
+  ////プレイヤーターンでなければ使えないようにする
+  //if () return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();

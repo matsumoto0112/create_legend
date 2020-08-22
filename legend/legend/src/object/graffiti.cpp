@@ -111,6 +111,7 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
 
   remaining_graffiti_ = parameter.remaining_graffiti;
   is_erase_ = false;
+  is_hit_ = false;
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
@@ -160,6 +161,8 @@ float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
+bool Graffiti::GetIsHit() const { return is_hit_; }
+
 void Graffiti::OnHit(bullet::Collider* other) {
   if (is_erase_) return;
   is_erase_ = remaining_graffiti_ <= 0.0f;
@@ -167,11 +170,11 @@ void Graffiti::OnHit(bullet::Collider* other) {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
       if (player->GetVelocity().Magnitude() >= 0.3f) {
-        const float percentage = 0.01f;
+        const float percentage = 10.0f;
         remaining_graffiti_ -= percentage;
         //弱体化
         player->UpdateStrength(-0.01f);
-        //InstanceFragment();
+        is_hit_ = true;
       }
     }
   }
@@ -183,28 +186,25 @@ void Graffiti::OnHit(bullet::Collider* other) {
         remaining_graffiti_ -= percentage;
         //弱体化
         enemy->Weaking(0.01f);
-        //InstanceFragment();
+        is_hit_ = true;
       }
     }
   }
 }
 
-// void Graffiti::InstanceFragment() {
-//  Fragment::InitializeParameter parameter;
-//  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
-//  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
-//  parameter.position = math::Vector3(x, 2.0f, z);
-//  parameter.rotation = math::Quaternion::kIdentity;
-//  parameter.scale = math::Vector3::kUnitVector;
-//  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
-//
-//  Fragment fragment;
-//  fragment.Init(mediator_, parameter);
-//}
+std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
+  Fragment::InitializeParameter parameter;
+  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
+  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
+  parameter.position = math::Vector3(x, 2.0f, z);
+  parameter.rotation = math::Quaternion::kIdentity;
+  parameter.scale = math::Vector3::kUnitVector;
+  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
 
-void Graffiti::DecreaseGraffiti(const float& percentage) {
-  remaining_graffiti_ -= percentage;
-  if (remaining_graffiti_ <= 0) is_erase_ = true;
+  is_hit_ = false;
+  std::unique_ptr<Fragment> f = std::make_unique<Fragment>();
+  f->Init(mediator_, parameter);
+  return f;
 }
 
 //テクスチャの色を設定する

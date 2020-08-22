@@ -29,8 +29,10 @@ class Fragment : public actor::Actor {
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& params);
   virtual bool Update() override;
-
+  void Draw() override;
+   
   void ChangeDead();
+  bool GetIsDead() const;
 
  private:
   std::shared_ptr<bullet::BoundingBox> box_;

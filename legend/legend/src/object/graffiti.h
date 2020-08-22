@@ -60,11 +60,6 @@ class Graffiti : public actor::Actor {
    */
   void Draw(directx::device::CommandList& command_list);
   /**
-   * @brief —‘‚«‚ğÁ‚·ˆ—
-   * @param Á‚·Š„‡
-   */
-  void DecreaseGraffiti(const float& percentage);
-  /**
    * @brief —‘‚«‚Ìc—Ê‚Ìæ“¾
    */
   float GetRemainingGraffiti() const;
@@ -75,7 +70,9 @@ class Graffiti : public actor::Actor {
   /**
    * @brief Á‚µƒJƒX¶¬ˆ—
    */
-   //void InstanceFragment();
+  std::unique_ptr<Fragment> InstanceFragment();
+
+  bool GetIsHit() const;
 
   void OnHit(bullet::Collider* other);
 
@@ -115,6 +112,7 @@ class Graffiti : public actor::Actor {
   float remaining_graffiti_;
   //! Á‚¦‚½‚©‚Ç‚¤‚©
   bool is_erase_;
+  bool is_hit_;
   std::shared_ptr<bullet::BoundingBox> box_;
 
   util::CountDownTimer delete_time_;

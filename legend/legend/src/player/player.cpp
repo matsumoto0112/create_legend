@@ -313,8 +313,10 @@ void Player::OnHit(bullet::Collider* other) {
     object::Fragment* fragment =
         dynamic_cast<object::Fragment*>(other->GetOwner());
     if (fragment) {
-      fragment->ChangeDead();
-      UpdateStrength(0.01f);
+      if (!fragment->GetIsDead()) {
+        fragment->ChangeDead();
+        UpdateStrength(0.01f);
+      }
     }
   }
 }

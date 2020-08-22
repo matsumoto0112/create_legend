@@ -56,7 +56,10 @@ bool SkillItemBox::Update() {
   return true;
 }
 //•`‰æ
-void SkillItemBox::Draw() { actor::Actor::Draw(); }
+void SkillItemBox::Draw() {
+  if (is_dead_) return;
+  Parent::Draw();
+}
 
 void SkillItemBox::ChangeDead() { is_dead_ = true; }
 

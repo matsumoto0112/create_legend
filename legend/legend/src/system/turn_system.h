@@ -163,17 +163,9 @@ class TurnSystem : public actor::IActorMediator {
    */
   bool InitCameras();
   /**
-   * @brief 落書きの削除
+   * @brief 消しカスの追加
    */
-  void RemoveGraffiti();
-  /**
-   * @brief 落書き更新処理
-   */
-  void UpdateGraffiti();
-  /**
-   * @brief 消しカスの削除
-   */
-  void RemoveFragment();
+  void AddFragment(std::unique_ptr<object::Fragment> fragment);
 
  private:
   bullet::PhysicsField physics_field_;
@@ -192,7 +184,7 @@ class TurnSystem : public actor::IActorMediator {
   //! 落書き
   std::vector<std::unique_ptr<object::Graffiti>> graffities_;
   //! 消しカス
-  std::vector<object::Fragment> fragments_;
+  std::vector<std::unique_ptr<object::Fragment>> fragments_;
   //! 敵管理
   enemy::EnemyManager enemy_manager_;
   //! 分岐管理
@@ -215,6 +207,7 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Number*> numbers_;
 
   std::set<object::Graffiti*> remove_graffiti_list_;
+  std::set<object::Fragment*> remove_fragment_list_;
   std::set<skill::SkillItemBox*> remove_item_box_list_;
 
  private:

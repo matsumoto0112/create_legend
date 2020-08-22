@@ -194,8 +194,8 @@ void Graffiti::OnHit(bullet::Collider* other) {
 
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   Fragment::InitializeParameter parameter;
-  float x = game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
-  float z = game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
+  float x = transform_.GetPosition().x + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
+  float z = transform_.GetPosition().z + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
   parameter.position = math::Vector3(x, 2.0f, z);
   parameter.rotation = math::Quaternion::kIdentity;
   parameter.scale = math::Vector3::kUnitVector;

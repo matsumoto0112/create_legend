@@ -81,8 +81,6 @@ bool Player::Update() {
     }
   }
   ImGui::End();
-  //スキルマネージャーの更新
-  skill_manager_.Update();
 
   // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
   //        input::key_code::A) &&
@@ -321,6 +319,11 @@ void Player::OnHit(bullet::Collider* other) {
       }
     }
   }
+}
+
+void Player::SkillUpdate() {
+  //スキルマネージャーの更新
+  skill_manager_.Update();
 }
 
 }  // namespace player

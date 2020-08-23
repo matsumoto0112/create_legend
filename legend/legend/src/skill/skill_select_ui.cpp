@@ -95,6 +95,9 @@ bool SkillSelectUI::GetIsSelectMode() const { return is_select_mode_; }
 void SkillSelectUI::ChangeIsSelectMode() {
   if (skill_icons_.size() == 0) return;
 
+  ////プレイヤーターンでなければ使えないようにする
+  //if () return;
+
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   if (is_select_mode_) {
     is_select_mode_ = false;

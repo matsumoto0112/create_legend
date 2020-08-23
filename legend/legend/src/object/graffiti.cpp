@@ -110,6 +110,7 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
   remaining_graffiti_ = parameter.remaining_graffiti;
+  can_erase_speed_ = parameter.can_erase_speed;
   is_erase_ = false;
   is_hit_ = false;
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -169,24 +170,30 @@ void Graffiti::OnHit(bullet::Collider* other) {
   {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
-      if (player->GetVelocity().Magnitude() >= 0.3f) {
+      if (player->GetVelocity().Magnitude() >= can_erase_speed_) {
         const float percentage = 10.0f;
         remaining_graffiti_ -= percentage;
         //Žã‘Ì‰»
         player->UpdateStrength(-0.01f);
         is_hit_ = true;
+        instance_position_ =
+            player->GetTransform().GetPosition() +
+            (-3.5f * (player->GetCollider()->GetVelocity().Normalized()));
       }
     }
   }
   {
     enemy::Enemy* enemy = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (enemy) {
-      if (enemy->GetVelocity().Magnitude() >= 0.3f) {
+      if (enemy->GetVelocity().Magnitude() >= can_erase_speed_) {
         const float percentage = 10.0f;
         remaining_graffiti_ -= percentage;
         //Žã‘Ì‰»
         enemy->Weaking(0.01f);
         is_hit_ = true;
+        instance_position_ =
+            enemy->GetTransform().GetPosition() +
+            (-3.5f * (enemy->GetCollider()->GetVelocity().Normalized()));
       }
     }
   }
@@ -194,9 +201,8 @@ void Graffiti::OnHit(bullet::Collider* other) {
 
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   Fragment::InitializeParameter parameter;
-  float x = transform_.GetPosition().x + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
-  float z = transform_.GetPosition().z + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
-  parameter.position = math::Vector3(x, 2.0f, z);
+  parameter.position =
+      math::Vector3(instance_position_.x, 2.0f, instance_position_.z);
   parameter.rotation = math::Quaternion::kIdentity;
   parameter.scale = math::Vector3::kUnitVector;
   parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);

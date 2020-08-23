@@ -24,6 +24,7 @@ struct GraffitiInitializeParameter {
   util::Transform transform;
   math::Vector3 bounding_box_length;
   float remaining_graffiti;
+  float can_erase_speed;
 };
 
 /**
@@ -116,6 +117,10 @@ class Graffiti : public actor::Actor {
   std::shared_ptr<bullet::BoundingBox> box_;
 
   util::CountDownTimer delete_time_;
+  //! 消しカスの生成位置
+  math::Vector3 instance_position_;
+  //! 落書きを消せるスピードの大きさ
+  float can_erase_speed_;
 };
 
 }  // namespace object

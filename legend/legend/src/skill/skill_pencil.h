@@ -58,13 +58,10 @@ class SkillPencil : public Skill {
    * @brief 爆発更新
    */
   void ExplosionUpdate();
-  //void OnHitExplosion(bullet::Collider* other);
 
  private:
   //! タイマー
   util::CountDownTimer explosion_timer_;
-  // std::shared_ptr<bullet::BoundingBox> box_;
-   //std::shared_ptr<bullet::BoundingSphere> sphere_;
   ExplosionPencil explosion_pencil_;
   bool is_explosion_;
 };

@@ -8,7 +8,7 @@
 
 /**
  * @file skill.h
- * @brief シーンの基底クラス
+ * @brief スキルの基底クラス
  */
 namespace legend {
 namespace player {

@@ -139,6 +139,7 @@ bool StageGenerator::SetMapActors(
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
       parameter.remaining_graffiti = 100.0f;
+      parameter.can_erase_speed = 0.3f;
       graffities.emplace_back(parameter);
 
       continue;

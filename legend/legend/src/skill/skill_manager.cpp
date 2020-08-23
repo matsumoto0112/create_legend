@@ -161,9 +161,6 @@ bool SkillManager::SelectSkill() {
 void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
 
-  ////プレイヤーターンでなければ使えないようにする
-  //if () return;
-
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   i32 skill_num = select_ui_.GetSkillNumber();

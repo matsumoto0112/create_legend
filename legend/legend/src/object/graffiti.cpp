@@ -194,8 +194,10 @@ void Graffiti::OnHit(bullet::Collider* other) {
 
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   Fragment::InitializeParameter parameter;
-  float x = transform_.GetPosition().x + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
-  float z = transform_.GetPosition().z + game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
+  float x = transform_.GetPosition().x +
+            game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
+  float z = transform_.GetPosition().z +
+            game::GameDevice::GetInstance()->GetRandom().Range(-4.0f, 4.0f);
   parameter.position = math::Vector3(x, 2.0f, z);
   parameter.rotation = math::Quaternion::kIdentity;
   parameter.scale = math::Vector3::kUnitVector;
@@ -204,7 +206,7 @@ std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   is_hit_ = false;
   std::unique_ptr<Fragment> f = std::make_unique<Fragment>();
   f->Init(mediator_, parameter);
-  return f;
+  return std::move(f);
 }
 
 //テクスチャの色を設定する

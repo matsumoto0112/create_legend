@@ -292,32 +292,15 @@ bool TurnSystem::Update() {
     numbers_[number_id::DIGIT_3]->SetNumber(str / 100);
     numbers_[number_id::DIGIT_2]->SetNumber(str / 10 % 10);
     numbers_[number_id::DIGIT_1]->SetNumber(str % 10);
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
+        math::util::Clamp(str * 0.01f, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
+        math::util::Clamp((str * 0.01f) - 1.0f, 0.0f, 1.0f));
+    gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
+        math::util::Clamp((str * 0.01f) - 2.0f, 0.0f, 1.0f));
   }
 
   gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_->GetImpulse());
-
-  if (ImGui::Begin("RayCast")) {
-    static float start[3] = {0, 0, 0};
-    ImGui::SliderFloat3("Ray start", start, -200.0f, 200.0f);
-    static float end[3] = {0, 0, 10};
-    ImGui::SliderFloat3("Ray end", end, -200.0f, 200.0f);
-    math::Vector3 s = math::Vector3(start[0], start[1], start[2]);
-    math::Vector3 e = math::Vector3(end[0], end[1], end[2]);
-
-    //始点と終点の長さが0だとassertで落とされるため回避
-    if ((s - e).MagnitudeSquared() > 0.01f) {
-      const auto res = RayCast(s, e);
-      ImGui::Text("%d", res.m_collisionObjects.size());
-      for (i32 i = 0; i < res.m_collisionObjects.size(); i++) {
-        bullet::Collider* act = static_cast<bullet::Collider*>(
-            res.m_collisionObjects[i]->getUserPointer());
-        ImGui::Text("%s", util::string_util::WString_2_String(
-                              act->GetOwner()->GetName())
-                              .c_str());
-      }
-    }
-  }
-  ImGui::End();
 
   graffities_.erase(
       std::remove_if(graffities_.begin(), graffities_.end(),

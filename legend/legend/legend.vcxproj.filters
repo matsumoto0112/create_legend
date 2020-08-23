@@ -322,6 +322,7 @@
     <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\draw2d\ui_quarter_gauge.hlsli" />
     <None Include="assets\shaders\bullet\bullet_debug_draw.hlsli" />
+    <None Include="assets\shaders\differed_rendering\differed_rendering_pre.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -348,6 +349,8 @@
     <FxCompile Include="assets\shaders\draw2d\ui_quarter_gauge_ps.hlsl" />
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_vs.hlsl" />
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_ps.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_vs.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />

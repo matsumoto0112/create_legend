@@ -129,6 +129,8 @@ class Player : public actor::Actor {
 
   bullet::Collider* GetCollider() const { return box_.get(); }
 
+  void SkillUpdate();
+
  private:
   //! ‘¬“x
   math::Vector3 velocity_;

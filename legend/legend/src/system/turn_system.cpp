@@ -335,12 +335,9 @@ bool TurnSystem::Update() {
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
-  if (player_->GetSkillSelect()) {
-    return true;
-  }
-
   auto& input = game::GameDevice::GetInstance()->GetInput();
-  if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
+  if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
+      !player_->GetSkillSelect()) {
     if (current_camera_ == camera_mode::Main) {
       current_camera_ = camera_mode::Sub1;
     } else if (current_camera_ == camera_mode::Sub1) {
@@ -352,6 +349,10 @@ bool TurnSystem::PlayerMoveReady() {
   if (current_camera_ == camera_mode::Main) {
     //プレイヤーの速度更新は入力を受け取って処理する
     player_->CheckImpulse();
+    if (player_->GetSkillSelect()) {
+      player_->SkillUpdate();
+      return true;
+    }
   } else {
     //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
   }

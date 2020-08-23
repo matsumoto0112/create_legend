@@ -76,6 +76,10 @@ class GameDevice : public util::Singleton<GameDevice> {
   ~GameDevice();
 
  private:
+  static constexpr legend::u32 WINDOW_WIDTH = 1280;
+  static constexpr legend::u32 WINDOW_HEIGHT = 720;
+  static constexpr const wchar_t* GAME_TITLE = L"Armed Eraser";
+
   util::FPSCounter fps_counter_;
 
   std::unique_ptr<window::Window> window_;

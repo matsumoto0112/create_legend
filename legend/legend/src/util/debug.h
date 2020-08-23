@@ -29,6 +29,13 @@ namespace legend {
 namespace util {
 namespace debug {
 
+//デバッグ機能を有効にするか
+#if defined(_DEBUG)
+static constexpr bool ENABLE_DEBUG = true;
+#else
+static constexpr bool ENABLE_DEBUG = false;
+#endif
+
 /**
  * @brief アサーション関数
  * @param expr 条件

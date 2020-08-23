@@ -49,11 +49,13 @@ void MainScene1::Draw() {
 
   turn_system_.Draw();
 
-  //次にコリジョンなどのデバッグ描画
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::NONE, false);
-  turn_system_.DebugDraw();
+  if (util::debug::ENABLE_DEBUG) {
+    //次にコリジョンなどのデバッグ描画
+    render_resource_manager.SetRenderTargets(
+        command_list, directx::render_target::RenderTargetID::BACK_BUFFER,
+        false, directx::render_target::DepthStencilTargetID::NONE, false);
+    turn_system_.DebugDraw();
+  }
 }
 
 //終了

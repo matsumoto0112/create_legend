@@ -54,12 +54,21 @@ class IActorMediator {
    * @brief コライダーを削除する
    */
   virtual void RemoveCollider(std::shared_ptr<bullet::Collider> collider) = 0;
+  /**
+   * @brief アクターを削除する
+   * @details
+   * 削除はそのタイミングではなく、アクターの更新終了時に削除するようにする
+   */
   virtual void RemoveActor(Actor* actor) = 0;
   /**
    * @brief レイキャスト
    */
   virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
       const math::Vector3& start, const math::Vector3& end) const = 0;
+  /**
+   * @brief メインカメラのY軸回転量を取得する
+   */
+  virtual float GetMainCameraThetaAngle() const = 0;
 };
 
 }  // namespace actor

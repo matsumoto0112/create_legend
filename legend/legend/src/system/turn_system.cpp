@@ -481,6 +481,10 @@ void TurnSystem::UpdateCamera() {
   player_follow_lookat_camera_->SetTheta(theta);
 }
 
+float legend::system::TurnSystem::GetMainCameraThetaAngle() const {
+  return player_follow_lookat_camera_->GetTheta();
+}
+
 void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
   if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
     remove_graffiti_list_.emplace(g);

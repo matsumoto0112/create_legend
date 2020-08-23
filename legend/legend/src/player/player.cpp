@@ -166,6 +166,15 @@ void Player::CheckImpulse() {
       (framerate < vec_mag)) {
     is_move_ = true;
 
+    //ƒƒCƒ“ƒJƒƒ‰‚Ì‰ñ“]Šp‚ðŽæ“¾‚·‚é
+    //Šp“x‚ÍXY•½–Êã‚Å(1,0)‚Ì•ûŠp‚©‚ç0‚Æ‚µ‚Ä‚¢‚é‚½‚ßA90‹‰ñ“]‚·‚é•K—v‚ª‚ ‚é
+    float theta =
+        mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
+    vector = vector.Normalized();
+    //ˆÚ“®‚·‚é•ûŒüƒxƒNƒgƒ‹‚ÉƒJƒƒ‰‚ÌŒü‚«‚É‰ž‚¶‚½‰ñ“]‚ð‚©‚¯‚é‚±‚Æ‚ÅAƒJƒƒ‰‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚É‘Î‚µ‚½“ü—Í’l‚É•ÏŠ·‚·‚é
+    vector = math::Matrix4x4::MultiplyCoord(
+        vector, math::Matrix4x4::CreateRotationY(-theta));
+
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
     mediator_->PlayerMoveStartEvent();

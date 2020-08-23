@@ -128,6 +128,7 @@ class TurnSystem : public actor::IActorMediator {
   virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
       const math::Vector3& start, const math::Vector3& end) const override;
   virtual void RemoveActor(actor::Actor* actor) override;
+  virtual float GetMainCameraThetaAngle() const override;
 
  private:
   /**

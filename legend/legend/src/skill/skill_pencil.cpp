@@ -10,8 +10,9 @@
 
 namespace legend {
 namespace skill {
+namespace resource_name = util::resource::resource_names;
 
-    //コンストラクタ
+//コンストラクタ
 SkillPencil::SkillPencil() {
   //各ステータスの初期値を設定
 }
@@ -65,8 +66,11 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   //モデルの初期化
-  model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
+  model_ = resource.GetModel().Get(resource_name::model::STATIONERY_01);
+
+  //スキルアイコンのテクスチャ設定
+  skill_icon_texture_ =
+      resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_1);
 
   return true;
 }

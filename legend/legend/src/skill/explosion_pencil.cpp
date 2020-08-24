@@ -52,6 +52,7 @@ bool ExplosionPencil::Update() {
   radius_ +=
       1.0f *
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+  //sphere_->SetScale(radius_);
   return true;
 }
 

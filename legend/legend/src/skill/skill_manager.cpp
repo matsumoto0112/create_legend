@@ -30,7 +30,7 @@ void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
 //ƒXƒLƒ‹‚ÌŠl“¾
 void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
   skills_.push_back(skill);
-  select_ui_.AddSkill();
+  select_ui_.AddSkill(skill.get());
 }
 
 // void SkillManager::AddSkill() { select_ui_.AddSkill(); }

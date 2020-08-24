@@ -10,6 +10,8 @@
 #include "src/object/graffiti.h"
 #include "src/skill/skill.h"
 #include "src/skill/skill_item_box.h"
+#include "src/system/mode.h"
+#include "src/system/turn_system.h"
 #include "src/util/resource/resource_names.h"
 
 namespace legend {
@@ -273,28 +275,32 @@ bool Player::GetSkillSelect() {
 }
 
 void Player::OnHit(bullet::Collider* other) {
-  //敵に触れた
-  {
-    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
-    if (e) {
-      const math::Vector3 player_position = transform_.GetPosition();
-      const math::Vector3 enemy_position = e->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (enemy_position - player_position).Normalized();
+  system::Mode turn_mode = mediator_->GetCurrentTurn();
 
-      e->GetCollider()->ApplyCentralImpulse(direction * power_);
+  if (turn_mode == system::Mode::PLAYER_MOVING) {
+    //敵に触れた
+    {
+      enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
+      if (e) {
+        const math::Vector3 player_position = transform_.GetPosition();
+        const math::Vector3 enemy_position = e->GetTransform().GetPosition();
+        const math::Vector3 direction =
+            (enemy_position - player_position).Normalized();
+
+        e->GetCollider()->ApplyCentralImpulse(direction * power_);
+      }
     }
-  }
-  //ボスに触れた
-  {
-    enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
-    if (b) {
-      const math::Vector3 player_position = transform_.GetPosition();
-      const math::Vector3 boss_position = b->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (boss_position - player_position).Normalized();
+    //ボスに触れた
+    {
+      enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
+      if (b) {
+        const math::Vector3 player_position = transform_.GetPosition();
+        const math::Vector3 boss_position = b->GetTransform().GetPosition();
+        const math::Vector3 direction =
+            (boss_position - player_position).Normalized();
 
-      b->GetCollider()->ApplyCentralImpulse(direction * power_);
+        b->GetCollider()->ApplyCentralImpulse(direction * power_);
+      }
     }
   }
   //スキルアイテムボックスに触れた
@@ -324,7 +330,7 @@ void Player::OnHit(bullet::Collider* other) {
 
 void Player::SkillUpdate() {
   //スキルマネージャーの更新
-    skill_manager_.SelectUpdate();
+  skill_manager_.SelectUpdate();
 }
 
 }  // namespace player

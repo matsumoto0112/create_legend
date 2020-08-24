@@ -182,16 +182,19 @@ bool Enemy::GetMoveEnd() const { return move_end_; }
 void Enemy::ResetMoveEnd() { move_end_ = false; }
 
 void Enemy::OnHit(bullet::Collider* other) {
-  //プレイヤーに触れた
-  {
-    player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
-    if (p) {
-      const math::Vector3 enemy_position = transform_.GetPosition();
-      const math::Vector3 player_position = p->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (player_position - enemy_position).Normalized();
+  system::Mode turn_mode = mediator_->GetCurrentTurn();
+  if (turn_mode == system::Mode::ENEMY_MOVING) {
+    //プレイヤーに触れた
+    {
+      player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
+      if (p) {
+        const math::Vector3 enemy_position = transform_.GetPosition();
+        const math::Vector3 player_position = p->GetTransform().GetPosition();
+        const math::Vector3 direction =
+            (player_position - enemy_position).Normalized();
 
-      p->GetCollider()->ApplyCentralImpulse(direction * power_);
+        p->GetCollider()->ApplyCentralImpulse(direction * power_);
+      }
     }
   }
   //ボスに触れた

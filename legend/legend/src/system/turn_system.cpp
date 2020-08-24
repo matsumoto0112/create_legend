@@ -462,6 +462,14 @@ void TurnSystem::UpdateCamera() {
   constexpr float POWER = 1.0f;
   theta += right_input.x * POWER * delta_time;
   player_follow_lookat_camera_->SetTheta(theta);
+
+  if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
+          cameras_[camera_mode::Sub1].get());
+      camera) {
+    const math::Vector3 player_position = player_->GetPosition();
+    camera->SetPosition(math::Vector3(
+        player_position.x, camera->GetPosition().y, player_position.z));
+  }
 }
 
 float legend::system::TurnSystem::GetMainCameraThetaAngle() const {
@@ -563,8 +571,10 @@ void TurnSystem::PlayerMoveStartEvent() {
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
   // 0.1秒後にモードを切り替える
-  countdown_timer_.Init(
-      0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });
+  countdown_timer_.Init(0.1f, [&]() {
+    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    current_camera_ = camera_mode::Main;
+  });
 }
 
 //プレイヤーのスキル発動時処理

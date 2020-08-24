@@ -16,8 +16,8 @@ DirectXDevice::~DirectXDevice() {}
 //初期化
 bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   //デバイスに設定するオプションを定義する
-  const DeviceOptionFlags flags = [](bool use_warp_device) {
-    DeviceOptionFlags flags = DeviceOptionFlags::TEARING;
+  option_flags_ = [](bool use_warp_device) {
+    DeviceOptionFlags flags = DeviceOptionFlags::NONE;
     if (use_warp_device) {
       flags |= DeviceOptionFlags::USE_WARP_DEVICE;
     }
@@ -25,7 +25,7 @@ bool DirectXDevice::Init(u32 width, u32 height, HWND hwnd) {
   }(defines::USE_WARP_DEVICE);
 
   //デバイス回りの初期化をまずやる
-  if (!adapter_.Init(flags)) {
+  if (!adapter_.Init(option_flags_)) {
     return false;
   }
 
@@ -149,11 +149,8 @@ bool DirectXDevice::Present() {
   }
   fence_value_++;
 
-  // WARPデバイスを使用する環境だとwaitがおかしい？
-  //うまく機能しないためコマンドを逐次待機するようにする
-  if (defines::USE_WARP_DEVICE) {
-    WaitExecute();
-  }
+  //動作の安定化、チラつきの防止のために待機するようにした
+  WaitExecute();
 
   return true;
 }

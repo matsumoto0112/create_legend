@@ -145,6 +145,8 @@ class DirectXDevice : public IDirectXAccessor {
   render_target::RenderResourceManager render_resource_manager_;
   //! デフォルトのルートシグネチャ
   std::unique_ptr<shader::RootSignature> default_root_signature_;
+  //! デバイスフラグ
+  DeviceOptionFlags option_flags_;
 };
 
 }  // namespace device

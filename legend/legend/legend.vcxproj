@@ -91,7 +91,7 @@
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
-    <ClCompile Include="src\scenes\decorator\fade_in_out.cpp" />
+    <ClCompile Include="src\scenes\fade_in_out.cpp" />
     <ClCompile Include="src\search\search_manager.cpp" />
     <ClCompile Include="src\search\search_course.cpp" />
     <ClCompile Include="src\search\search_ai.cpp" />
@@ -226,7 +226,7 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
-    <ClInclude Include="src\scenes\decorator\fade_in_out.h" />
+    <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />
     <ClInclude Include="src\search\search_ai.h" />

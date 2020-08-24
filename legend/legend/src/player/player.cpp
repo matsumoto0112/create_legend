@@ -274,6 +274,11 @@ bool Player::GetSkillSelect() {
   return skill_manager_.SelectSkill();
 }
 
+bool Player::GetPlayerDeathFlag()
+{
+    return transform_.GetPosition().y <= -20;
+}
+
 void Player::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
 

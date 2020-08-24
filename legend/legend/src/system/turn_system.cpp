@@ -441,7 +441,7 @@ bool TurnSystem::InitCameras() {
 
   if (!InitMainCamera()) return false;
   if (!InitSub1Camera()) return false;
-
+  current_camera_ = camera_mode::Main;
   return true;
 }
 

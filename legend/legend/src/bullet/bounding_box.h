@@ -27,6 +27,7 @@ class BoundingBox : public Collider {
   BoundingBox(actor::Actor* owner, const InitializeParameter& parameter);
   virtual ~BoundingBox();
   bool Update() override;
+  void SetScale(math::Vector3 scale);
 };
 }  // namespace bullet
 }  // namespace legend

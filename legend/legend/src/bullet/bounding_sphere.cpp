@@ -36,5 +36,11 @@ BoundingSphere::~BoundingSphere() {
 
 bool BoundingSphere::Update() { return true; }
 
+void BoundingSphere::SetScale(float radius)
+{
+    //‹…‘Ì‚Éİ’è
+    shape_ = std::make_shared<btSphereShape>(radius);
+}
+
 }  // namespace bullet
 }  // namespace legend

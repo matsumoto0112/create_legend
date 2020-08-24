@@ -37,7 +37,7 @@ class SkillSelectUI {
   /**
    * @brief ’Ç‰Áˆ—
    */
-  void AddSkill(/*const Skill* skill*/);
+  void AddSkill(const Skill* skill);
   /**
    * @brief íœˆ—
    */

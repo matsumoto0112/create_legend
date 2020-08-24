@@ -66,6 +66,7 @@ class SkillManager {
    * @brief スキルの使用
    */
   void UseSkill();
+  void SelectUpdate();
 
  private:
   actor::IActorMediator *mediator_;

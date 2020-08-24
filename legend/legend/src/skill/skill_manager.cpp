@@ -40,9 +40,6 @@ void SkillManager::Update() {
   for (auto&& skill : skills_) {
     skill->Update();
   }
-
-  UseSkill();
-  RemoveSkill();
 }
 
 //プレイヤー行動後の処理
@@ -168,6 +165,11 @@ void SkillManager::UseSkill() {
     skills_[skill_num]->Use();
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
   }
+}
+
+void SkillManager::SelectUpdate() {
+  UseSkill();
+  RemoveSkill();
 }
 
 }  // namespace skill

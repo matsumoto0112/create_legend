@@ -348,11 +348,10 @@ bool TurnSystem::PlayerMoveReady() {
   //メインカメラの状態じゃないと移動できないようにする
   if (current_camera_ == camera_mode::Main) {
     //プレイヤーの速度更新は入力を受け取って処理する
-    player_->CheckImpulse();
-    if (player_->GetSkillSelect()) {
+    if (!player_->GetSkillSelect())
+      player_->CheckImpulse();
+    else
       player_->SkillUpdate();
-      return true;
-    }
   } else {
     //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
   }

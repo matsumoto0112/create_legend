@@ -82,6 +82,7 @@ bool Player::Update() {
   }
   ImGui::End();
 
+  skill_manager_.Update();
   // if (game::GameDevice::GetInstance()->GetInput().GetKeyboard()->GetKeyDown(
   //        input::key_code::A) &&
   //    0.05f < input_velocity_.Magnitude()) {
@@ -323,7 +324,7 @@ void Player::OnHit(bullet::Collider* other) {
 
 void Player::SkillUpdate() {
   //スキルマネージャーの更新
-  skill_manager_.Update();
+    skill_manager_.SelectUpdate();
 }
 
 }  // namespace player

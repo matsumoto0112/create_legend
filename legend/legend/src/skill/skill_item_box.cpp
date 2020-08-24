@@ -8,8 +8,10 @@ namespace legend {
 namespace skill {
 //コンストラクタ
 SkillItemBox::SkillItemBox() : Parent(L"ItemBox") {}
+
 //デストラクタ
 SkillItemBox::~SkillItemBox() {}
+
 //初期化
 bool SkillItemBox::Init(actor::IActorMediator* mediator,
                         const InitializeParameter& parameter,
@@ -32,7 +34,7 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
   mediator_->AddCollider(box_);
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
-  delete_time_.Init(2.0f);
+  delete_time_.Init(1.0f);
   skill_ = skill;
   is_dead_ = false;
 
@@ -45,6 +47,8 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   return true;
 }
+
+//更新
 bool SkillItemBox::Update() {
   if (is_dead_) {
     if (delete_time_.Update()) {
@@ -61,10 +65,13 @@ void SkillItemBox::Draw() {
   Parent::Draw();
 }
 
+//死亡判定の変更
 void SkillItemBox::ChangeDead() { is_dead_ = true; }
 
+//死亡判定の取得
 bool SkillItemBox::GetIsDead() const { return is_dead_; }
 
+//設定されたスキルの取得
 std::shared_ptr<Skill> SkillItemBox::GetSkill() const { return skill_; }
 }  // namespace skill
 }  // namespace legend

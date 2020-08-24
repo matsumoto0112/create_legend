@@ -66,6 +66,9 @@ class SkillManager {
    * @brief スキルの使用
    */
   void UseSkill();
+  /**
+   * @brief 選択したスキルの更新
+   */
   void SelectUpdate();
 
  private:

@@ -5,7 +5,7 @@
 
 namespace legend {
 namespace skill {
-
+    //コンストラクタ
 SkillSelectUI::SkillSelectUI() {
   icon_base_position_ = math::Vector2(64.0f, 32.0f);
   icon_scale_ = math::Vector2::kUnitVector;
@@ -22,6 +22,7 @@ SkillSelectUI::SkillSelectUI() {
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
 }
 
+//デストラクタ
 SkillSelectUI::~SkillSelectUI() {}
 
 void SkillSelectUI::Init() {
@@ -40,8 +41,10 @@ void SkillSelectUI::Init() {
   device.WaitExecute();
 }
 
+//更新
 void SkillSelectUI::Update() {}
 
+//描画
 void SkillSelectUI::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
@@ -56,6 +59,7 @@ void SkillSelectUI::Draw() {
   if (is_select_mode_) sprite_renderer.AddDrawItems(&skill_select_frame_);
 }
 
+//スキルの追加
 void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
   draw::Sprite2D sprite;
   if (!sprite.Init(
@@ -115,7 +119,7 @@ void SkillSelectUI::ChangeIsSelectMode() {
 //選択中のスキル番号を取得
 i32 SkillSelectUI::GetSkillNumber() { return select_number_; }
 
-//選択中のスキル更新
+//選択中のスキル番号更新
 void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   if (skill_icons_.size() == 0) {
     skill_select_frame_.SetScale(math::Vector2(0, 0));

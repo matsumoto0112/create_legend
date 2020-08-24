@@ -13,6 +13,8 @@
 #include "src/camera/follow_camera.h"
 #include "src/camera/lookat_target_camera.h"
 #include "src/camera/perspective_camera.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"
@@ -222,6 +224,9 @@ class TurnSystem : public actor::IActorMediator {
   // UIのリアルタイム修正用パラメータ
   std::vector<legend::ui::UIComponent*> components_;
   std::vector<std::vector<std::string>> input_lines_;
+
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
 };
 
 }  // namespace system

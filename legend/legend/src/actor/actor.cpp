@@ -35,7 +35,7 @@ void Actor::Draw() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
+      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING_PRE)
       ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();

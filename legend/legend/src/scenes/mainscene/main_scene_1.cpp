@@ -42,10 +42,10 @@ void MainScene1::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
-  //‚Ü‚¸‚Í’Êí‚Ìƒ‚ƒfƒ‹•`‰æ
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  ////‚Ü‚¸‚Í’Êí‚Ìƒ‚ƒfƒ‹•`‰æ
+  //render_resource_manager.SetRenderTargets(
+  //    command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   turn_system_.Draw();
 

@@ -9,9 +9,13 @@
 #include "differed_rendering_pre.hlsli"
 
 PSOutput main(const PSInput i) {
+    //PSOutput result = (PSOutput)0;
+    //result.position = i.world_pos;
+    //result.normal = float4(i.normal, 1.0);
+    //result.diffuse = g_albedo.Sample(g_sampler_warp, i.uv);
     PSOutput result = (PSOutput)0;
-    result.position = i.world_pos;
-    result.normal = float4(i.normal, 1.0);
+    result.position = g_albedo.Sample(g_sampler_warp, i.uv);
+    result.normal = g_albedo.Sample(g_sampler_warp, i.uv);
     result.diffuse = g_albedo.Sample(g_sampler_warp, i.uv);
 
     return result;

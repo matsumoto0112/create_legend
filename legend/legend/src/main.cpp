@@ -19,6 +19,29 @@ class MyApp final : public device::Application {
       return false;
     }
 
+    {
+      auto& device = game::GameDevice::GetInstance()->GetDevice();
+      auto& render_resource_manager = device.GetRenderResourceManager();
+      const math::IntVector2 screen_size =
+          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+      const u32 x = static_cast<u32>(screen_size.x);
+      const u32 y = static_cast<u32>(screen_size.y);
+
+      std::vector<directx::render_target::MultiRenderTargetTexture::Info> infos{
+          {0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, x, y,
+           util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"DIFFERED_RENDERING_PRE_1"},
+          {1, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, x, y,
+           util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"DIFFERED_RENDERING_PRE_2"},
+          {2, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, x, y,
+           util::Color4(0.0f, 0.0f, 0.0f, 1.0f), L"DIFFERED_RENDERING_PRE_3"},
+      };
+      if (!render_resource_manager.AddRenderTarget(
+              directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+              device, infos)) {
+        return false;
+      }
+    }
+
     if (!util::PipelineInitializer::Init(std::filesystem::path("parameters") /
                                          "pipeline.txt")) {
       return false;

@@ -17,8 +17,8 @@ namespace render_target {
 enum class RenderTargetID : u32 {
   //スワップチェイン
   BACK_BUFFER = 0,
-
   MULTI_RENDER_TARGET_TEST,
+  DIFFERED_RENDERING_PRE,
 };
 
 /**

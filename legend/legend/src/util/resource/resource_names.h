@@ -78,6 +78,8 @@ constexpr name GPU_PARTICLE = L"gpu_particle_vs.cso";
 constexpr name OBB = L"obb_vs.cso";
 constexpr name GAUGE = L"ui_gauge_vs.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_vs.cso";
+constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre_vs";
+constexpr name DIFFERED_RENDERING = L"differed_rendering_vs";
 }  // namespace vertex_shader
 
 namespace pixel_shader {
@@ -88,6 +90,8 @@ constexpr name GPU_PARTICLE = L"gpu_particle_ps.cso";
 constexpr name OBB = L"obb_ps.cso";
 constexpr name GAUGE = L"ui_gauge_ps.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_ps.cso";
+constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre_ps";
+constexpr name DIFFERED_RENDERING = L"differed_rendering_ps";
 }  // namespace pixel_shader
 
 namespace geometry_shader {
@@ -106,6 +110,8 @@ constexpr name GPU_PARTICLE = L"gpu_particle";
 constexpr name OBB = L"obb";
 constexpr name GAUGE = L"gauge";
 constexpr name QUARTER_GAUGE = L"quarter_gauge";
+constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre";
+constexpr name DIFFERED_RENDERING = L"differed_rendering";
 }  // namespace pipeline
 
 namespace audio {

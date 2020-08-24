@@ -186,6 +186,26 @@ bool TurnSystem::Init(const std::string& stage_name) {
       numbers_.size() == number_id::MAX,
       L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
 
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  {
+    const std::vector<directx::Sprite> vertices = {
+        {{-1.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+        {{1.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+        {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}},
+        {{0.0f, 1.0f, -1.0f}, {0.0f, 1.0f}}};
+    const u32 size = static_cast<u32>(vertices.size());
+    vertex_buffer_.Init(device, sizeof(directx::Sprite), size, L"VertexBuffer");
+    vertex_buffer_.WriteBufferResource(vertices.data());
+  }
+  {
+    const std::vector<u16> indices = {0, 1, 2, 0, 2, 3};
+    const u32 size = static_cast<u32>(indices.size());
+    index_buffer_.Init(device, sizeof(u16), size,
+                       directx::PrimitiveTopology::TRIANGLE_LIST,
+                       L"IndexBuffer");
+    index_buffer_.WriteBufferResource(indices.data());
+  }
+
   return true;
 }
 
@@ -497,34 +517,67 @@ btCollisionWorld::AllHitsRayResultCallback legend::system::TurnSystem::RayCast(
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& render_resource_manager = device.GetRenderResourceManager();
 
-  cameras_[current_camera_]->RenderStart();
-  player_->Draw();
-  for (auto&& obj : static_objects_) {
-    obj->Draw();
-  }
-  enemy_manager_.Draw();
-  for (auto&& graffiti : graffities_) {
-    graffiti->Draw(command_list);
-  }
-  for (auto&& fragment : fragments_) {
-    fragment->Draw();
-  }
-  for (auto&& item_box : item_boxes_) {
-    item_box->Draw();
-  }
+  //まずは通常のモデル描画
+  // render_resource_manager.SetRenderTargets(
+  //    command_list,
+  //    directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
+  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  ui_board_.Draw();
+  // cameras_[current_camera_]->RenderStart();
+  // player_->Draw();
+  //// for (auto&& obj : static_objects_) {
+  //  obj->Draw();
+  //}
+  // enemy_manager_.Draw();
+  // for (auto&& graffiti : graffities_) {
+  //  graffiti->Draw(command_list);
+  //}
+  // for (auto&& fragment : fragments_) {
+  //  fragment->Draw();
+  //}
+  // for (auto&& item_box : item_boxes_) {
+  //  item_box->Draw();
+  //}
 
-  //スプライトは最後に描画リストにあるものをまとめて描画する
-  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  // render_resource_manager.UseAsSRV(
+  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+  //    0);
+  // render_resource_manager.UseAsSRV(
+  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+  //    1);
+  // render_resource_manager.UseAsSRV(
+  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+  //    2);
+  // device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+  //                                                          command_list);
+
+  // cameras_[current_camera_]->RenderStart();
+  // player_->Draw();
+
+  resource.GetPipeline()
+      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
+      ->SetCommandList(command_list);
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.Draw(command_list);
+
+  // ui_board_.Draw();
+
+  ////スプライトは最後に描画リストにあるものをまとめて描画する
+  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  cameras_[current_camera_]->RenderStart();
-  search_manager_.DebugDraw(&physics_field_);
-  physics_field_.DebugDraw(cameras_[current_camera_].get());
+  // cameras_[current_camera_]->RenderStart();
+  // search_manager_.DebugDraw(&physics_field_);
+  // physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const {

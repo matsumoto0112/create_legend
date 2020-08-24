@@ -372,7 +372,6 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  MY_LOG(L"EnemyMove");
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_->GetCollider());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
@@ -450,6 +449,7 @@ void legend::system::TurnSystem::AddFragment(
 }
 
 void TurnSystem::UpdateCamera() {
+  //メインカメラの回転処理
   auto& input = game::GameDevice::GetInstance()->GetInput();
   float theta = player_follow_lookat_camera_->GetTheta();
 
@@ -462,6 +462,7 @@ void TurnSystem::UpdateCamera() {
   theta += right_input.x * POWER * delta_time;
   player_follow_lookat_camera_->SetTheta(theta);
 
+  //サブカメラ1はプレイヤーの頭上を移動する
   if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
           cameras_[camera_mode::Sub1].get());
       camera) {
@@ -542,16 +543,22 @@ bool legend::system::TurnSystem::IsGameEnd() const {
   if (enemy_manager_.IsGameClear()) {
     return true;
   }
+
   //それ以外の状況ではfalseを返す
   return false;
 }
 
 system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {
+  const system::GameDataStorage::GameEndType end_type = [&]() {
+    if (enemy_manager_.IsGameClear())
+      return system::GameDataStorage::GameEndType::BOSS_KILLED;
+    else
+      return system::GameDataStorage::GameEndType::PLAYER_DEAD;
+  }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      system::GameDataStorage::GameEndType::PLAYER_DEAD,
-      CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
+      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
 }
 
 //ターン数の増加

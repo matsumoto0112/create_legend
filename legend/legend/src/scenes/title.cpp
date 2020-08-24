@@ -17,7 +17,8 @@ bool Title::Initialize() {
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
-  bgm_key_ = audio.Start(L"free_2.wav", 1.0f, true);
+  bgm_key_ =
+      audio.Start(util::resource::resource_names::audio::BGM_TITLE, 1.0f, true);
 
   {
     auto image = std::make_unique<ui::Image>();

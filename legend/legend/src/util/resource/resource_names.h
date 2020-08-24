@@ -142,6 +142,10 @@ constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
 constexpr name RESULT_GAMEOVER = L"free_2.wav";
 constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
 constexpr name RESULT_MOVE_OTHER_SCENE = L"free_2.wav";
+
+constexpr name BGM_MAIN = L"BGM_main.wav";
+constexpr name BGM_TITLE = L"BGM_title.wav";
+constexpr name BGM_RESULT = L"BGM_result.wav";
 }  // namespace audio
 
 }  // namespace resource_names

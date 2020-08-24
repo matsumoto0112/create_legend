@@ -35,6 +35,7 @@ void ExplosionPencil::Init(util::Transform transform,
   sphere_->SetFlags(sphere_->GetFlags() |
                     btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator->AddCollider(sphere_);
+  is_destroy_ = false;
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
@@ -55,7 +56,10 @@ bool ExplosionPencil::Update() {
 }
 
 //•`‰æ
-void ExplosionPencil::Draw() { actor::Actor::Draw(); }
+void ExplosionPencil::Draw() {
+  if (is_destroy_) return;
+  actor::Actor::Draw();
+}
 
 //Õ“Ë”»’è
 void ExplosionPencil::OnHit(bullet::Collider* other) {
@@ -85,6 +89,7 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
 
 //íœ
 void ExplosionPencil::Destroy(actor::IActorMediator* mediator) {
+  is_destroy_ = true;
   mediator->RemoveCollider(sphere_);
   mediator->RemoveActor(this);
 }

@@ -5,6 +5,7 @@
 #include "src/scenes/debugscene/skill_test.h"
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
+#include "src/scenes/decorator/fade_in_out.h"
 #include "src/scenes/decorator/pausable.h"
 #include "src/scenes/game_over.h"
 #include "src/scenes/mainscene/main_scene_1.h"
@@ -16,7 +17,9 @@ namespace scenes {
 //コンストラクタ
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
   //シーン遷移は現状、この方法でしか分からない
-  current_scene_ = std::make_unique<Title>(this);
+  current_scene_ = std::make_unique<decorator::FadeInOut>(
+      this, std::make_unique<Title>(this));
+
   current_scene_type_ = SceneType::TITLE;
 }
 
@@ -57,7 +60,8 @@ bool SceneManager::Update() {
     auto CreateScene = [&](SceneType type) -> std::unique_ptr<Scene> {
       switch (type) {
         case SceneType::TITLE:
-          return std::make_unique<Title>(this);
+          return std::make_unique<decorator::FadeInOut>(
+              this, std::make_unique<Title>(this));
         case SceneType::GAMEOVER:
           return std::make_unique<GameOver>(this);
         case SceneType::MODEL_VIEW:

@@ -36,6 +36,9 @@ bool Pausable::Update() {
   }
 
   if (is_pause_) {
+    if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
+      scene_change_->ChangeScene(SceneType::TITLE);
+    }
     return true;
   }
   return inner_->Update();

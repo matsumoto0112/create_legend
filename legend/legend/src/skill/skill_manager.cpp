@@ -40,9 +40,6 @@ void SkillManager::Update() {
   for (auto&& skill : skills_) {
     skill->Update();
   }
-
-  UseSkill();
-  RemoveSkill();
 }
 
 //プレイヤー行動後の処理
@@ -132,6 +129,7 @@ void SkillManager::RemoveSkill() {
   }
 }
 
+//スキルの選択
 bool SkillManager::SelectSkill() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
@@ -158,11 +156,9 @@ bool SkillManager::SelectSkill() {
   }
 }
 
+//スキルの使用
 void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
-
-  ////プレイヤーターンでなければ使えないようにする
-  //if () return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
@@ -171,6 +167,12 @@ void SkillManager::UseSkill() {
     skills_[skill_num]->Use();
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
   }
+}
+
+//選択したスキルの更新
+void SkillManager::SelectUpdate() {
+  UseSkill();
+  RemoveSkill();
 }
 
 }  // namespace skill

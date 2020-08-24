@@ -335,12 +335,9 @@ bool TurnSystem::Update() {
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
-  if (player_->GetSkillSelect()) {
-    return true;
-  }
-
   auto& input = game::GameDevice::GetInstance()->GetInput();
-  if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
+  if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
+      !player_->GetSkillSelect()) {
     if (current_camera_ == camera_mode::Main) {
       current_camera_ = camera_mode::Sub1;
     } else if (current_camera_ == camera_mode::Sub1) {
@@ -348,11 +345,13 @@ bool TurnSystem::PlayerMoveReady() {
     }
   }
 
-  //プレイヤーの速度更新は入力を受け取って処理する
-  player_->CheckImpulse();
-
   //メインカメラの状態じゃないと移動できないようにする
   if (current_camera_ == camera_mode::Main) {
+    //プレイヤーの速度更新は入力を受け取って処理する
+    if (!player_->GetSkillSelect())
+      player_->CheckImpulse();
+    else
+      player_->SkillUpdate();
   } else {
     //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
   }
@@ -373,7 +372,6 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  MY_LOG(L"EnemyMove");
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_->GetCollider());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
@@ -441,7 +439,7 @@ bool TurnSystem::InitCameras() {
 
   if (!InitMainCamera()) return false;
   if (!InitSub1Camera()) return false;
-
+  current_camera_ = camera_mode::Main;
   return true;
 }
 
@@ -451,6 +449,7 @@ void legend::system::TurnSystem::AddFragment(
 }
 
 void TurnSystem::UpdateCamera() {
+  //メインカメラの回転処理
   auto& input = game::GameDevice::GetInstance()->GetInput();
   float theta = player_follow_lookat_camera_->GetTheta();
 
@@ -462,6 +461,15 @@ void TurnSystem::UpdateCamera() {
   constexpr float POWER = 1.0f;
   theta += right_input.x * POWER * delta_time;
   player_follow_lookat_camera_->SetTheta(theta);
+
+  //サブカメラ1はプレイヤーの頭上を移動する
+  if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
+          cameras_[camera_mode::Sub1].get());
+      camera) {
+    const math::Vector3 player_position = player_->GetPosition();
+    camera->SetPosition(math::Vector3(
+        player_position.x, camera->GetPosition().y, player_position.z));
+  }
 }
 
 float legend::system::TurnSystem::GetMainCameraThetaAngle() const {
@@ -535,16 +543,22 @@ bool legend::system::TurnSystem::IsGameEnd() const {
   if (enemy_manager_.IsGameClear()) {
     return true;
   }
+
   //それ以外の状況ではfalseを返す
   return false;
 }
 
 system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {
+  const system::GameDataStorage::GameEndType end_type = [&]() {
+    if (enemy_manager_.IsGameClear())
+      return system::GameDataStorage::GameEndType::BOSS_KILLED;
+    else
+      return system::GameDataStorage::GameEndType::PLAYER_DEAD;
+  }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      system::GameDataStorage::GameEndType::PLAYER_DEAD,
-      CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
+      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
 }
 
 //ターン数の増加
@@ -563,8 +577,10 @@ void TurnSystem::PlayerMoveStartEvent() {
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
   // 0.1秒後にモードを切り替える
-  countdown_timer_.Init(
-      0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });
+  countdown_timer_.Init(0.1f, [&]() {
+    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    current_camera_ = camera_mode::Main;
+  });
 }
 
 //プレイヤーのスキル発動時処理

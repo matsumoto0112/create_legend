@@ -11,12 +11,15 @@
 namespace legend {
 namespace skill {
 
+    //コンストラクタ
 SkillPencil::SkillPencil() {
   //各ステータスの初期値を設定
 }
 
+//デストラクタ
 SkillPencil::~SkillPencil() {}
 
+//初期化
 bool SkillPencil::Init(actor::IActorMediator* mediator,
                        player::Player* player) {
   if (!Parent::Init(mediator, player)) {
@@ -68,6 +71,7 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   return true;
 }
 
+//更新
 bool SkillPencil::Update() {
   if (player_ == nullptr) {
     return false;
@@ -90,6 +94,7 @@ bool SkillPencil::Update() {
   return true;
 }
 
+//描画
 void SkillPencil::Draw() {
   if (is_explosion_)
     explosion_pencil_.Draw();
@@ -97,6 +102,7 @@ void SkillPencil::Draw() {
     actor::Actor::Draw();
 }
 
+//スキルの使用
 void SkillPencil::Use() {
   is_use_ = true;
   Action();
@@ -104,15 +110,22 @@ void SkillPencil::Use() {
   audio.Start(util::resource::resource_names::audio::SKILL_PENCIL_SHOT, 1.0f);
 }
 
+//発動
 void SkillPencil::Action() { is_production_ = true; }
 
+//演出の更新
 void SkillPencil::ProductionUpdate() {
   float update_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  math::Vector3 forward =
-      transform_.GetRotation() * math::Vector3::kForwardVector;
-  math::Vector3 velocity =
-      forward.Normalized() + math::Vector3(0, -9.8f, 0) * update_time;
+  //メインカメラの回転角を取得する
+  //角度はXY平面上で(1,0)の方角から0としているため、90°回転する必要がある
+  float theta =
+      mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
+  //移動する方向ベクトルにカメラの向きに応じた回転をかけることで、カメラの向いている方向に対した入力値に変換する
+  math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
+      math::Vector3::kForwardVector, math::Matrix4x4::CreateRotationY(-theta));
+  velocity = velocity.Normalized();
+  velocity = velocity + math::Vector3(0, -9.8f, 0) * update_time;
   math::Vector3 position = transform_.GetPosition() + velocity;
 
   transform_.SetPosition(position);
@@ -121,6 +134,7 @@ void SkillPencil::ProductionUpdate() {
   if (transform_.GetPosition().y <= -2.0f) EndAction();
 }
 
+//終了
 void SkillPencil::EndAction() {
   remaining_usable_count_--;
   is_production_ = false;
@@ -128,6 +142,7 @@ void SkillPencil::EndAction() {
   if (remaining_usable_count_ <= 0) mediator_->RemoveActor(this);
 }
 
+//衝突判定
 void SkillPencil::OnHit(bullet::Collider* other) {
   if (!is_production_) return;
 
@@ -140,6 +155,7 @@ void SkillPencil::OnHit(bullet::Collider* other) {
   }
 }
 
+//爆発開始
 void SkillPencil::Explosion() {
   if (is_explosion_) return;
 
@@ -153,6 +169,7 @@ void SkillPencil::Explosion() {
   //パーティクルの再生?
 }
 
+//爆発更新
 void SkillPencil::ExplosionUpdate() {
   //爆発中は更新
   if (!explosion_timer_.Update()) explosion_pencil_.Update();

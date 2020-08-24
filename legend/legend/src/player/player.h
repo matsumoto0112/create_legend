@@ -126,11 +126,17 @@ class Player : public actor::Actor {
    */
   bool GetSkillSelect();
   /**
+   * @brief スキル選択中かを取得
+   */
+  bool GetPlayerDeathFlag();
+  /**
    * @brief 別のコライダーと衝突したときのコールバック
    */
   void OnHit(bullet::Collider* other);
 
   bullet::Collider* GetCollider() const { return box_.get(); }
+
+  void SkillUpdate();
 
  private:
   //! 速度

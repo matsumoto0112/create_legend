@@ -129,6 +129,7 @@ void SkillManager::RemoveSkill() {
   }
 }
 
+//スキルの選択
 bool SkillManager::SelectSkill() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
@@ -155,6 +156,7 @@ bool SkillManager::SelectSkill() {
   }
 }
 
+//スキルの使用
 void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
 
@@ -167,6 +169,7 @@ void SkillManager::UseSkill() {
   }
 }
 
+//選択したスキルの更新
 void SkillManager::SelectUpdate() {
   UseSkill();
   RemoveSkill();

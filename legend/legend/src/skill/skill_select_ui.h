@@ -55,19 +55,26 @@ class SkillSelectUI {
    */
   i32 GetSkillNumber();
   /**
-   * @brief 選択中のスキルの更新
+   * @brief 選択中のスキル番号の更新
    */
   void SelectSkillNumber(i32 select_number);
 
  private:
+  //! スキルアイコンの基本座標
   math::Vector2 icon_base_position_;
+  //! スキルアイコンのスケーリング
   math::Vector2 icon_scale_;
 
+  //! 描画するスキルアイコンのリスト
   std::vector<draw::Sprite2D> skill_icons_;
+  //! スキルの説明画像
   draw::Sprite2D skill_explanatory_;
+  //! スキルの選択中フレーム画像
   draw::Sprite2D skill_select_frame_;
 
+  //! スキル選択モードか
   bool is_select_mode_;
+  //! 選択番号
   i32 select_number_;
 };
 }  // namespace skill

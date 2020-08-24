@@ -27,6 +27,7 @@ class BoundingSphere : public Collider {
   BoundingSphere(actor::Actor* owner, const InitializeParameter& parameter);
   virtual ~BoundingSphere();
   bool Update() override;
+  void SetScale(float radius);
 };
 }  // namespace bullet
 }  // namespace legend

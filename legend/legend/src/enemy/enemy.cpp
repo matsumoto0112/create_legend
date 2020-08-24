@@ -39,9 +39,9 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.position = this->transform_.GetPosition();
   params.rotation = this->transform_.GetRotation();
   params.scale = parameter.bouding_box_length;
-  params.mass = 1.0f;
-  params.friction = 0.6f;
-  params.restitution = 0.6f;
+  params.mass = parameter.mass;
+  params.friction = parameter.friction;
+  params.restitution = parameter.restitution;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);

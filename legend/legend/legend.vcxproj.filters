@@ -307,6 +307,8 @@
     <ClInclude Include="src\skill\explosion_pencil.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />
+    <ClInclude Include="src\bullet\shape_type.h" />
+    <ClInclude Include="src\scenes\decorator\fade_in_out.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

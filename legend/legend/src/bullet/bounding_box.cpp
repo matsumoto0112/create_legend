@@ -36,5 +36,9 @@ BoundingBox::~BoundingBox() {
 }
 
 bool BoundingBox::Update() { return true; }
+void BoundingBox::SetScale(math::Vector3 scale) {
+  //óßï˚ëÃÇ…ê›íË
+  shape_ = std::make_shared<btBoxShape>(helper::TobtVector3(scale));
+}
 }  // namespace bullet
 }  // namespace legend

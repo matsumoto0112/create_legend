@@ -55,7 +55,7 @@ bool Title::Initialize() {
     board_.AddComponent(std::move(image));
   }
 
-  fade_.Init(util::resource::resource_names::texture::TEX);
+  fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
   fade_.StartFadeIn(1.0f);
   is_scene_end_ = false;
 

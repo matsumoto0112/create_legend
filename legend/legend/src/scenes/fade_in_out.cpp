@@ -19,6 +19,12 @@ bool FadeInOut::Init(
     return false;
   }
 
+  const math::IntVector2 screen_size =
+      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+  const math::Vector2 content_size = fade_image_.GetContentSize();
+  fade_image_.SetScale(math::Vector2(screen_size.x / content_size.x,
+                                     screen_size.y / content_size.y));
+
   fade_image_.SetZOrder(0.1f);
   fade_type_ = FadeType::NONE;
   return true;

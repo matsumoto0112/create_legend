@@ -37,6 +37,7 @@ constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 }  // namespace model
 
 namespace texture {
+constexpr name FADE_IMAGE = L"fade_image.png";
 constexpr name RESULT_GAMEOVER = L"Result_gameOver.png";
 constexpr name RESULT_PLAYERPOWER_TEXT_1 = L"Result_playerPower_text_1.png";
 constexpr name RESULT_PLAYERPOWER_TEXT_2 = L"Result_playerPower_text_2.png";

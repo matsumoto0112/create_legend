@@ -305,6 +305,7 @@
     <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\explosion_pencil.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
+    <ClInclude Include="src\bullet\shape_type.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

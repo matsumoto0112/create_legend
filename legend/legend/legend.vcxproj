@@ -220,6 +220,7 @@
     <ClInclude Include="src\bullet\bullet_helper.h" />
     <ClInclude Include="src\bullet\collider.h" />
     <ClInclude Include="src\bullet\physics_field.h" />
+    <ClInclude Include="src\bullet\shape_type.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\enemy\boss.h" />

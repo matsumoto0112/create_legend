@@ -7,7 +7,7 @@ namespace bullet {
 BoundingSphere::BoundingSphere(actor::Actor* owner,
                                const InitializeParameter& parameter)
     : Collider(owner) {
-  //—§•û‘Ì‚Éİ’è
+  //‹…‘Ì‚Éİ’è
   shape_ = std::make_shared<btSphereShape>(parameter.radius);
 
   motion_state_ = std::make_shared<btDefaultMotionState>(

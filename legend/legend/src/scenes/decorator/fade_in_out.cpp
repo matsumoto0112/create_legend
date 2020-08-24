@@ -9,9 +9,11 @@ constexpr legend::directx::descriptor_heap::heap_parameter::LocalHeapID
         LocalHeapID::GLOBAL_ID;
 
 }  // namespace
+
 namespace legend {
 namespace scenes {
 namespace decorator {
+
 FadeInOut::FadeInOut(ISceneChange* scene_change, std::unique_ptr<Scene> inner)
     : Scene(scene_change), inner_(std::move(inner)) {}
 
@@ -29,23 +31,24 @@ bool FadeInOut::Initialize() {
 }
 
 bool FadeInOut::Update() {
-  // pause_image_.Alpha();
+  pause_image_.SetColor(pause_image_.GetColor() -
+                        util::Color4(0.0f, 0.0f, 0.0f, 0.01f));
   return inner_->Update();
 }
 
 void FadeInOut::Draw() {
   inner_->Draw();
-  //auto& device = game::GameDevice::GetInstance()->GetDevice();
-  //auto& command_list = game::GameDevice::GetInstance()
-  //                         ->GetDevice()
-  //                         .GetCurrentFrameResource()
-  //                         ->GetCommandList();
-  //device.GetRenderResourceManager().SetRenderTargets(
-  //    command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
-  //auto& sprite = game::GameDevice::GetInstance()->GetSpriteRenderer();
-  //sprite.AddDrawItems(&pause_image_);
-  //sprite.DrawItems(command_list);
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = game::GameDevice::GetInstance()
+                           ->GetDevice()
+                           .GetCurrentFrameResource()
+                           ->GetCommandList();
+  device.GetRenderResourceManager().SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
+  auto& sprite = game::GameDevice::GetInstance()->GetSpriteRenderer();
+  sprite.AddDrawItems(&pause_image_);
+  sprite.DrawItems(command_list);
 }
 
 void FadeInOut::Finalize() { inner_->Finalize(); }

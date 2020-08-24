@@ -48,6 +48,8 @@ class ExplosionPencil : public actor::Actor {
   float radius_;
   //! ”š”­ˆĞ—Í
   float explosion_power_;
+  //! Á–Å”»’è
+  bool is_destroy_;
 };
 }  // namespace skill
 }  // namespace legend

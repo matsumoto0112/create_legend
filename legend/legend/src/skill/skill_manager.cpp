@@ -30,7 +30,7 @@ void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
 //スキルの獲得
 void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
   skills_.push_back(skill);
-  select_ui_.AddSkill();
+  select_ui_.AddSkill(skill.get());
 }
 
 // void SkillManager::AddSkill() { select_ui_.AddSkill(); }
@@ -40,9 +40,6 @@ void SkillManager::Update() {
   for (auto&& skill : skills_) {
     skill->Update();
   }
-
-  UseSkill();
-  RemoveSkill();
 }
 
 //プレイヤー行動後の処理
@@ -132,6 +129,7 @@ void SkillManager::RemoveSkill() {
   }
 }
 
+//スキルの選択
 bool SkillManager::SelectSkill() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
@@ -158,6 +156,7 @@ bool SkillManager::SelectSkill() {
   }
 }
 
+//スキルの使用
 void SkillManager::UseSkill() {
   if (!select_ui_.GetIsSelectMode()) return;
 
@@ -168,6 +167,12 @@ void SkillManager::UseSkill() {
     skills_[skill_num]->Use();
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
   }
+}
+
+//選択したスキルの更新
+void SkillManager::SelectUpdate() {
+  UseSkill();
+  RemoveSkill();
 }
 
 }  // namespace skill

@@ -26,6 +26,9 @@ class Player : public actor::Actor {
     float max_power;
     float min_strength;
     float max_strength;
+    float mass = 1.0f;
+    float restitution = 0.5f;
+    float friction = 1.5f;
   };
 
  public:
@@ -123,11 +126,17 @@ class Player : public actor::Actor {
    */
   bool GetSkillSelect();
   /**
+   * @brief スキル選択中かを取得
+   */
+  bool GetPlayerDeathFlag();
+  /**
    * @brief 別のコライダーと衝突したときのコールバック
    */
   void OnHit(bullet::Collider* other);
 
   bullet::Collider* GetCollider() const { return box_.get(); }
+
+  void SkillUpdate();
 
  private:
   //! 速度

@@ -17,6 +17,7 @@ namespace scenes {
 SceneManager::SceneManager() : next_scene_(SceneType::NONE) {
   //シーン遷移は現状、この方法でしか分からない
   current_scene_ = std::make_unique<Title>(this);
+
   current_scene_type_ = SceneType::TITLE;
 }
 

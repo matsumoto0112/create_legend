@@ -5,7 +5,8 @@
 
 namespace legend {
 namespace skill {
-
+namespace resource_name = util::resource::resource_names;
+//コンストラクタ
 SkillSelectUI::SkillSelectUI() {
   icon_base_position_ = math::Vector2(64.0f, 32.0f);
   icon_scale_ = math::Vector2::kUnitVector;
@@ -15,13 +16,23 @@ SkillSelectUI::SkillSelectUI() {
 
   if (!skill_select_frame_.Init(
           game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              util::resource::resource_names::texture::UI_SKILL_SELECT_FRAME),
+              resource_name::texture::UI_SKILL_SELECT_FRAME),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
+  if (!skill_explanatory_.Init(
+          game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
+              resource_name::texture::TEX),
+          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+    MY_LOG(L"スキル説明画像の初期化に失敗しました。");
+  }
+  skill_explanatory_.SetPosition(math::Vector2(960.0f, 32.0f));
+  skill_explanatory_.SetScale(math::Vector2(0.1f, 0.1f));
+  skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
 }
 
+//デストラクタ
 SkillSelectUI::~SkillSelectUI() {}
 
 void SkillSelectUI::Init() {
@@ -40,8 +51,10 @@ void SkillSelectUI::Init() {
   device.WaitExecute();
 }
 
+//更新
 void SkillSelectUI::Update() {}
 
+//描画
 void SkillSelectUI::Draw() {
   legend::draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
@@ -53,14 +66,17 @@ void SkillSelectUI::Draw() {
   //                              .GetCurrentFrameResource()
   //                              ->GetCommandList());
 
-  if (is_select_mode_) sprite_renderer.AddDrawItems(&skill_select_frame_);
+  if (is_select_mode_) {
+    sprite_renderer.AddDrawItems(&skill_select_frame_);
+    //sprite_renderer.AddDrawItems(&skill_explanatory_);
+  }
 }
 
-void SkillSelectUI::AddSkill(/*const Skill* skill*/) {
+//スキルの追加
+void SkillSelectUI::AddSkill(const Skill* skill) {
   draw::Sprite2D sprite;
   if (!sprite.Init(
-          game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              util::resource::resource_names::texture::UI_SKILL_ICON_1),
+          skill->GetIconTexture(),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル取得時のスキルアイコンの初期化に失敗しました。");
   }
@@ -95,30 +111,24 @@ bool SkillSelectUI::GetIsSelectMode() const { return is_select_mode_; }
 void SkillSelectUI::ChangeIsSelectMode() {
   if (skill_icons_.size() == 0) return;
 
-  ////プレイヤーターンでなければ使えないようにする
-  //if () return;
-
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   if (is_select_mode_) {
     is_select_mode_ = false;
     skill_select_frame_.SetScale(math::Vector2::kZeroVector);
-    audio.Start(util::resource::resource_names::audio::
-                    PLAYER_RETURN_FROM_SELECT_SKILL_MODE,
+    audio.Start(resource_name::audio::PLAYER_RETURN_FROM_SELECT_SKILL_MODE,
                 1.0f);
   } else {
     is_select_mode_ = true;
     skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
     skill_select_frame_.SetScale(icon_scale_);
-    audio.Start(
-        util::resource::resource_names::audio::PLAYER_MOVE_SELECT_SKILL_MODE,
-        1.0f);
+    audio.Start(resource_name::audio::PLAYER_MOVE_SELECT_SKILL_MODE, 1.0f);
   }
 }
 
 //選択中のスキル番号を取得
 i32 SkillSelectUI::GetSkillNumber() { return select_number_; }
 
-//選択中のスキル更新
+//選択中のスキル番号更新
 void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   if (skill_icons_.size() == 0) {
     skill_select_frame_.SetScale(math::Vector2(0, 0));
@@ -135,7 +145,7 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
 
   skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  audio.Start(util::resource::resource_names::audio::SKILL_SELECT, 1.0f);
+  audio.Start(resource_name::audio::SKILL_SELECT, 1.0f);
 }
 
 }  // namespace skill

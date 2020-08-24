@@ -85,6 +85,9 @@ class Sprite2D {
    * @brief 現在のUV矩形を取得する
    */
   math::Rect GetRect() const;
+
+  util::Color4 GetColor() const;
+  void SetColor(const util::Color4& color);
   /**
    * @brief コマンドリストに積む
    */
@@ -94,6 +97,7 @@ class Sprite2D {
   using Transform_CBStruct =
       directx::buffer::constant_buffer_structure::Transform;
   using UVRect_CBStruct = directx::buffer::constant_buffer_structure::UVRect;
+  using Color_CBStruct = directx::buffer::constant_buffer_structure::Color;
 
  protected:
   //! テクスチャ
@@ -112,6 +116,7 @@ class Sprite2D {
   directx::buffer::ConstantBuffer<Transform_CBStruct>
       transform_constant_buffer_;
   directx::buffer::ConstantBuffer<UVRect_CBStruct> uv_rect_constant_buffer_;
+  directx::buffer::ConstantBuffer<Color_CBStruct> color_constant_buffer_;
 };
 }  // namespace draw
 }  // namespace legend

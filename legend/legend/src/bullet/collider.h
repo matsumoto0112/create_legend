@@ -10,6 +10,7 @@
 
 #include "src/math/quaternion.h"
 #include "src/util/transform.h"
+#include "src/bullet/shape_type.h"
 
 namespace legend {
 namespace actor {
@@ -33,6 +34,14 @@ class Collider : public btActionInterface {
    * @brief 更新処理
    */
   virtual bool Update();
+  /**
+   * @brief 初期化処理
+   */
+  void InitBox(const BoxInitializeParameter& parameter);
+  /**
+   * @brief 初期化処理
+   */
+  void InitSphere(const SphereInitializeParameter& parameter);
   /**
    * @brief 剛体オブジェクトを取得
    */

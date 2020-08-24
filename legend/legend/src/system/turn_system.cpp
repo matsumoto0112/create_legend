@@ -186,25 +186,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
       numbers_.size() == number_id::MAX,
       L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
 
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  {
-    const std::vector<directx::Sprite> vertices = {
-        {{-1.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
-        {{1.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}},
-        {{0.0f, 1.0f, -1.0f}, {0.0f, 1.0f}}};
-    const u32 size = static_cast<u32>(vertices.size());
-    vertex_buffer_.Init(device, sizeof(directx::Sprite), size, L"VertexBuffer");
-    vertex_buffer_.WriteBufferResource(vertices.data());
-  }
-  {
-    const std::vector<u16> indices = {0, 1, 2, 0, 2, 3};
-    const u32 size = static_cast<u32>(indices.size());
-    index_buffer_.Init(device, sizeof(u16), size,
-                       directx::PrimitiveTopology::TRIANGLE_LIST,
-                       L"IndexBuffer");
-    index_buffer_.WriteBufferResource(indices.data());
-  }
+  fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
+  fade_.StartFadeIn(1.0f);
+  is_scene_all_end_ = false;
+  is_scene_end_fade_start_ = false;
 
   return true;
 }
@@ -248,63 +233,51 @@ bool TurnSystem::Update() {
   }
   ImGui::End();
 
-  // if (ImGui::Begin("UI")) {
-  //  const u32 size = static_cast<u32>(components_.size());
-  //  for (u32 i = 0; i < size; i++) {
-  //    std::stringstream ss;
-  //    ss << "Image:" << i;
-  //    ImGui::Text(ss.str().c_str());
+  if (ImGui::Begin("UI")) {
+    const u32 size = static_cast<u32>(components_.size());
+    for (u32 i = 0; i < size; i++) {
+      std::stringstream ss;
+      ss << "Image:" << i;
+      ImGui::Text(ss.str().c_str());
 
-  //    math::Vector2 pos = components_[i]->GetPosition();
-  //    float field[2] = {pos.x, pos.y};
-  //    ss.str("");
-  //    ss.clear(std::stringstream::goodbit);
-  //    ss << "Position:" << i;
-  //    ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
-  //    components_[i]->SetPosition(math::Vector2(field[0], field[1]));
+      math::Vector2 pos = components_[i]->GetPosition();
+      float field[2] = {pos.x, pos.y};
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Position:" << i;
+      ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
+      components_[i]->SetPosition(math::Vector2(field[0], field[1]));
 
-  //    float z = components_[i]->GetZOrder();
-  //    ss.str("");
-  //    ss.clear(std::stringstream::goodbit);
-  //    ss << "Z_Order:" << i;
-  //    ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
-  //    components_[i]->SetZOrder(z);
-  //  }
+      float z = components_[i]->GetZOrder();
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Z_Order:" << i;
+      ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
+      components_[i]->SetZOrder(z);
+    }
 
-  //  if (ImGui::Button("Apply")) {
-  //    std::ofstream ofs(
-  //        std::filesystem::path("assets") / "parameters" / "main_ui.txt",
-  //        std::ios::out);
-  //    ofs.clear();
-  //    const u32 size = static_cast<u32>(components_.size());
-  //    for (u32 i = 0; i < size; i++) {
-  //      input_lines_[i][ui_format::X] =
-  //          std::to_string(components_[i]->GetPosition().x);
-  //      input_lines_[i][ui_format::Y] =
-  //          std::to_string(components_[i]->GetPosition().y);
-  //      input_lines_[i][ui_format::Z] =
-  //          std::to_string(components_[i]->GetZOrder());
-  //      for (auto&& s : input_lines_[i]) {
-  //        ofs << s << ",";
-  //      }
-  //      ofs << "\n";
-  //    }
-  //    ofs.flush();
-  //  }
-
-  //  static int power = 100;
-  //  ImGui::SliderInt("PlayerPower", &power, 0, 300);
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
-  //      math::util::Clamp(power * 0.01f, 0.0f, 1.0f));
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
-  //      math::util::Clamp((power * 0.01f) - 1.0f, 0.0f, 1.0f));
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
-  //      math::util::Clamp((power * 0.01f) - 2.0f, 0.0f, 1.0f));
-  //  numbers_[number_id::DIGIT_3]->SetNumber(power / 100);
-  //  numbers_[number_id::DIGIT_2]->SetNumber(power / 10 % 10);
-  //  numbers_[number_id::DIGIT_1]->SetNumber(power % 10);
-  //}
-  // ImGui::End();
+    if (ImGui::Button("Apply")) {
+      std::ofstream ofs(
+          std::filesystem::path("assets") / "parameters" / "main_ui.txt",
+          std::ios::out);
+      ofs.clear();
+      const u32 size = static_cast<u32>(components_.size());
+      for (u32 i = 0; i < size; i++) {
+        input_lines_[i][ui_format::X] =
+            std::to_string(components_[i]->GetPosition().x);
+        input_lines_[i][ui_format::Y] =
+            std::to_string(components_[i]->GetPosition().y);
+        input_lines_[i][ui_format::Z] =
+            std::to_string(components_[i]->GetZOrder());
+        for (auto&& s : input_lines_[i]) {
+          ofs << s << ",";
+        }
+        ofs << "\n";
+      }
+      ofs.flush();
+    }
+  }
+  ImGui::End();
 
   {
     //プレイヤーの強化状態をUI数値に変換する
@@ -350,17 +323,31 @@ bool TurnSystem::Update() {
   remove_item_box_list_.clear();
 
   physics_field_.Update();
+
+  fade_.Update();
+  if (is_scene_end_fade_start_) {
+    if (fade_.IsEnd()) {
+      is_scene_all_end_ = true;
+    }
+  } else {
+    if (player_->GetPlayerDeathFlag()) {
+      is_scene_end_fade_start_ = true;
+      fade_.StartFadeOut(1.0f);
+    }
+    if (enemy_manager_.IsGameClear()) {
+      is_scene_end_fade_start_ = true;
+      fade_.StartFadeOut(1.0f);
+    }
+  }
+
   return true;
 }
 
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
-  if (player_->GetSkillSelect()) {
-    return true;
-  }
-
   auto& input = game::GameDevice::GetInstance()->GetInput();
-  if (input.GetCommand(input::input_code::CAMERA_CHANGE)) {
+  if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
+      !player_->GetSkillSelect()) {
     if (current_camera_ == camera_mode::Main) {
       current_camera_ = camera_mode::Sub1;
     } else if (current_camera_ == camera_mode::Sub1) {
@@ -371,7 +358,10 @@ bool TurnSystem::PlayerMoveReady() {
   //メインカメラの状態じゃないと移動できないようにする
   if (current_camera_ == camera_mode::Main) {
     //プレイヤーの速度更新は入力を受け取って処理する
-    player_->CheckImpulse();
+    if (!player_->GetSkillSelect())
+      player_->CheckImpulse();
+    else
+      player_->SkillUpdate();
   } else {
     //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
   }
@@ -392,7 +382,6 @@ bool TurnSystem::PlayerSkillAfterModed() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  MY_LOG(L"EnemyMove");
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_->GetCollider());
   if (enemy_manager_.GetEnemiesSize() == 0 ||
@@ -460,7 +449,7 @@ bool TurnSystem::InitCameras() {
 
   if (!InitMainCamera()) return false;
   if (!InitSub1Camera()) return false;
-
+  current_camera_ = camera_mode::Main;
   return true;
 }
 
@@ -470,6 +459,7 @@ void legend::system::TurnSystem::AddFragment(
 }
 
 void TurnSystem::UpdateCamera() {
+  //メインカメラの回転処理
   auto& input = game::GameDevice::GetInstance()->GetInput();
   float theta = player_follow_lookat_camera_->GetTheta();
 
@@ -481,6 +471,15 @@ void TurnSystem::UpdateCamera() {
   constexpr float POWER = 1.0f;
   theta += right_input.x * POWER * delta_time;
   player_follow_lookat_camera_->SetTheta(theta);
+
+  //サブカメラ1はプレイヤーの頭上を移動する
+  if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
+          cameras_[camera_mode::Sub1].get());
+      camera) {
+    const math::Vector3 player_position = player_->GetPosition();
+    camera->SetPosition(math::Vector3(
+        player_position.x, camera->GetPosition().y, player_position.z));
+  }
 }
 
 float legend::system::TurnSystem::GetMainCameraThetaAngle() const {
@@ -517,86 +516,50 @@ btCollisionWorld::AllHitsRayResultCallback legend::system::TurnSystem::RayCast(
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
-  auto& render_resource_manager = device.GetRenderResourceManager();
 
-  //まずは通常のモデル描画
-  // render_resource_manager.SetRenderTargets(
-  //    command_list,
-  //    directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
-  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  cameras_[current_camera_]->RenderStart();
+  player_->Draw();
+  for (auto&& obj : static_objects_) {
+    obj->Draw();
+  }
+  enemy_manager_.Draw();
+  for (auto&& graffiti : graffities_) {
+    graffiti->Draw(command_list);
+  }
+  for (auto&& fragment : fragments_) {
+    fragment->Draw();
+  }
+  for (auto&& item_box : item_boxes_) {
+    item_box->Draw();
+  }
 
-  // cameras_[current_camera_]->RenderStart();
-  // player_->Draw();
-  //// for (auto&& obj : static_objects_) {
-  //  obj->Draw();
-  //}
-  // enemy_manager_.Draw();
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti->Draw(command_list);
-  //}
-  // for (auto&& fragment : fragments_) {
-  //  fragment->Draw();
-  //}
-  // for (auto&& item_box : item_boxes_) {
-  //  item_box->Draw();
-  //}
+  ui_board_.Draw();
+  fade_.Draw();
 
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-  // render_resource_manager.UseAsSRV(
-  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-  //    0);
-  // render_resource_manager.UseAsSRV(
-  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-  //    1);
-  // render_resource_manager.UseAsSRV(
-  //    device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-  //    2);
-  // device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
-  //                                                          command_list);
-
-  // cameras_[current_camera_]->RenderStart();
-  // player_->Draw();
-
-  resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
-      ->SetCommandList(command_list);
-  vertex_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.Draw(command_list);
-
-  // ui_board_.Draw();
-
-  ////スプライトは最後に描画リストにあるものをまとめて描画する
-  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  // cameras_[current_camera_]->RenderStart();
-  // search_manager_.DebugDraw(&physics_field_);
-  // physics_field_.DebugDraw(cameras_[current_camera_].get());
+  cameras_[current_camera_]->RenderStart();
+  search_manager_.DebugDraw(&physics_field_);
+  physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
-bool legend::system::TurnSystem::IsGameEnd() const {
-  //プレイヤーが死亡したらtrueを返す
-
-  //敵のボスが死亡し、演出まで終了したらtrueを返す
-  if (enemy_manager_.IsGameClear()) {
-    return true;
-  }
-  //それ以外の状況ではfalseを返す
-  return false;
-}
+bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
 
 system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {
+  const system::GameDataStorage::GameEndType end_type = [&]() {
+    if (enemy_manager_.IsGameClear())
+      return system::GameDataStorage::GameEndType::BOSS_KILLED;
+    else
+      return system::GameDataStorage::GameEndType::PLAYER_DEAD;
+  }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      system::GameDataStorage::GameEndType::PLAYER_DEAD,
-      CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
+      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
 }
 
 //ターン数の増加
@@ -615,8 +578,10 @@ void TurnSystem::PlayerMoveStartEvent() {
 //プレイヤーの移動終了時処理
 void TurnSystem::PlayerMoveEndEvent() {
   // 0.1秒後にモードを切り替える
-  countdown_timer_.Init(
-      0.1f, [&]() { current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED; });
+  countdown_timer_.Init(0.1f, [&]() {
+    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    current_camera_ = camera_mode::Main;
+  });
 }
 
 //プレイヤーのスキル発動時処理

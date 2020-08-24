@@ -39,9 +39,9 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   params.position = this->transform_.GetPosition();
   params.rotation = this->transform_.GetRotation();
   params.scale = parameter.bouding_box_length;
-  params.mass = 1.0f;
-  params.friction = 0.6f;
-  params.restitution = 0.6f;
+  params.mass = parameter.mass;
+  params.friction = parameter.friction;
+  params.restitution = parameter.restitution;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);
@@ -182,16 +182,19 @@ bool Enemy::GetMoveEnd() const { return move_end_; }
 void Enemy::ResetMoveEnd() { move_end_ = false; }
 
 void Enemy::OnHit(bullet::Collider* other) {
-  //プレイヤーに触れた
-  {
-    player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
-    if (p) {
-      const math::Vector3 enemy_position = transform_.GetPosition();
-      const math::Vector3 player_position = p->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (player_position - enemy_position).Normalized();
+  system::Mode turn_mode = mediator_->GetCurrentTurn();
+  if (turn_mode == system::Mode::ENEMY_MOVING) {
+    //プレイヤーに触れた
+    {
+      player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
+      if (p) {
+        const math::Vector3 enemy_position = transform_.GetPosition();
+        const math::Vector3 player_position = p->GetTransform().GetPosition();
+        const math::Vector3 direction =
+            (player_position - enemy_position).Normalized();
 
-      p->GetCollider()->ApplyCentralImpulse(direction * power_);
+        p->GetCollider()->ApplyCentralImpulse(direction * power_);
+      }
     }
   }
   //ボスに触れた

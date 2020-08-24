@@ -17,7 +17,8 @@ bool Title::Initialize() {
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
-  bgm_key_ = audio.Start(L"free_2.wav", 1.0f, true);
+  bgm_key_ =
+      audio.Start(util::resource::resource_names::audio::BGM_TITLE, 1.0f, true);
 
   {
     auto image = std::make_unique<ui::Image>();
@@ -33,6 +34,7 @@ bool Title::Initialize() {
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
     const float y = image->GetSprite().GetContentSize().y * 0.5f;
     image->SetPosition(math::Vector2(x, y));
+    image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
   }
   {
@@ -49,8 +51,14 @@ bool Title::Initialize() {
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
     const float y = image->GetSprite().GetContentSize().y * 0.5f + 400.0f;
     image->SetPosition(math::Vector2(x, y));
+    image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
   }
+
+  fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
+  fade_.StartFadeIn(1.0f);
+  is_scene_end_ = false;
+
   return true;
 }
 
@@ -58,9 +66,23 @@ bool Title::Initialize() {
 bool Title::Update() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
 
-  if (input.GetCommand(input::input_code::Decide)) {
-    scene_change_->ChangeScene(SceneType::MAIN_SCENE_1);
+  //シーンが終了しているならフェード処理をする
+  if (is_scene_end_) {
+    fade_.Update();
+    //フェードまで終了したら次のシーンに向かう
+    if (fade_.IsEnd()) {
+      scene_change_->ChangeScene(SceneType::MAIN_SCENE_1);
+    }
+    return true;
   }
+
+  //決定キーでフェードを開始し、シーンを終了する
+  if (input.GetCommand(input::input_code::Decide)) {
+    fade_.StartFadeOut(1.0f);
+    is_scene_end_ = true;
+  }
+
+  fade_.Update();
   return true;
 }
 
@@ -75,6 +97,8 @@ void Title::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
   board_.Draw();
+
+  fade_.Draw();
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 

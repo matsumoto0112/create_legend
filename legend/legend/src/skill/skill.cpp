@@ -34,9 +34,13 @@ SkillActivationTiming Skill::GetActivetionTiming() {
 
 SkillEffectEndTiming Skill::GetEndTiming() { return end_timing_; }
 
-i32 Skill::GetIconTexture() { return i32(); }
+std::shared_ptr<directx::buffer::Texture2D> Skill::GetIconTexture() const {
+  return skill_icon_texture_;
+}
 
-i32 Skill::GetExplanationTexture() { return i32(); }
+// i32 Skill::GetIconTexture() { return i32(); }
+
+// i32 Skill::GetExplanationTexture() { return i32(); }
 bool Skill::GetUseFlag() { return is_use_; }
 
 bool Skill::ProductionFlag() { return is_production_; }

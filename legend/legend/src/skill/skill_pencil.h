@@ -49,9 +49,12 @@ class SkillPencil : public Skill {
    * @brief 終了
    */
   void EndAction() override;
+  /**
+   * @brief 衝突判定
+   */
   void OnHit(bullet::Collider* other);
   /**
-   * @brief 爆発
+   * @brief 爆発開始
    */
   void Explosion();
   /**
@@ -62,7 +65,9 @@ class SkillPencil : public Skill {
  private:
   //! タイマー
   util::CountDownTimer explosion_timer_;
+  //! 爆発クラス
   ExplosionPencil explosion_pencil_;
+  //! 爆発中か
   bool is_explosion_;
 };
 

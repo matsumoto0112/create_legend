@@ -176,9 +176,8 @@ void Graffiti::OnHit(bullet::Collider* other) {
         //Žã‘Ì‰»
         player->UpdateStrength(-0.01f);
         is_hit_ = true;
-        instance_position_ =
-            player->GetTransform().GetPosition() +
-            (-3.5f * (player->GetCollider()->GetVelocity().Normalized()));
+        SetInstancePosition(player->GetTransform().GetPosition(),
+                            player->GetCollider()->GetVelocity().Normalized());
       }
     }
   }
@@ -191,19 +190,22 @@ void Graffiti::OnHit(bullet::Collider* other) {
         //Žã‘Ì‰»
         enemy->Weaking(0.01f);
         is_hit_ = true;
-        instance_position_ =
-            enemy->GetTransform().GetPosition() +
-            (-3.5f * (enemy->GetCollider()->GetVelocity().Normalized()));
+        SetInstancePosition(enemy->GetTransform().GetPosition(),
+                            enemy->GetCollider()->GetVelocity().Normalized());
       }
     }
   }
 }
 
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
+  float rotate_y =
+      game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+
   Fragment::InitializeParameter parameter;
   parameter.position =
       math::Vector3(instance_position_.x, 2.0f, instance_position_.z);
-  parameter.rotation = math::Quaternion::kIdentity;
+  parameter.rotation =
+      math::Quaternion::FromEular(0, rotate_y * math::util::DEG_2_RAD, 0);
   parameter.scale = math::Vector3::kUnitVector;
   parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
 
@@ -248,5 +250,18 @@ void Graffiti::UpdateTexture(directx::device::CommandList& command_list) {
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 }
+void Graffiti::SetInstancePosition(math::Vector3 position,
+                                   math::Vector3 velocity) {
+  instance_position_ = position + (-3.5f * (velocity));
+  float theta =
+      mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
+  float position_x =
+      game::GameDevice::GetInstance()->GetRandom().Range(-3.0f, 3.0f);
+  math::Vector3 pos(position_x, 0, -1.0f);
+
+  instance_position_ += math::Matrix4x4::MultiplyCoord(
+      pos, math::Matrix4x4::CreateRotationY(-theta));
+}
+
 }  // namespace object
 }  // namespace legend

@@ -91,6 +91,8 @@ class Graffiti : public actor::Actor {
    */
   void UpdateTexture(directx::device::CommandList& command_list);
 
+  void SetInstancePosition(math::Vector3 position, math::Vector3 velocity);
+
  private:
   //! ピクセルのバイトサイズ
   static constexpr u32 PIXEL_SIZE = 4;

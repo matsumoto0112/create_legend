@@ -13,25 +13,17 @@ namespace resource {
 namespace resource_names {
 using name = const wchar_t*;
 namespace model {
-//! 敵モデル
 constexpr name ENEMY = L"enemy_eraser_01.glb";
-//! 机モデル
+constexpr name BOSS = L"boss_01.glb";
 constexpr name DESK = L"desk.glb";
-//! プレイヤーモデル
 constexpr name PLAYER = L"eraser_01.glb";
-//! 消しカスモデル
 constexpr name FRAGMENT_01 = L"eraser_fragment_01.glb";
-//! 文房具1
 constexpr name STATIONERY_01 = L"stationery_01.glb";
-//! 文房具2
 constexpr name STATIONERY_02 = L"stationery_02.glb";
-//! 文房具3
 constexpr name STATIONERY_03 = L"stationery_03.glb";
 constexpr name STATIONERY_04 = L"stationery_04.glb";
 constexpr name STATIONERY_05 = L"stationery_05.glb";
-//! 障害物
 constexpr name OBSTACLE = L"field_object_01.glb";
-//! 落書き
 constexpr name GRAFFITI = L"graffiti_01.glb";
 constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 }  // namespace model

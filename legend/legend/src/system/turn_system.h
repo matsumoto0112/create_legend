@@ -18,6 +18,7 @@
 #include "src/object/fragment.h"
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
+#include "src/scenes/fade_in_out.h"
 #include "src/search/search_manager.h"
 #include "src/skill/skill_item_box.h"
 #include "src/stage_generate/stage_generator.h"
@@ -221,6 +222,9 @@ class TurnSystem : public actor::IActorMediator {
   std::set<object::Graffiti*> remove_graffiti_list_;
   std::set<object::Fragment*> remove_fragment_list_;
   std::set<skill::SkillItemBox*> remove_item_box_list_;
+  scenes::FadeInOut fade_;
+  bool is_scene_all_end_;
+  bool is_scene_end_fade_start_;
 
  private:
   // UIのリアルタイム修正用パラメータ

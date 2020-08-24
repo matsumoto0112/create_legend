@@ -186,6 +186,11 @@ bool TurnSystem::Init(const std::string& stage_name) {
       numbers_.size() == number_id::MAX,
       L"main_ui.txtのUI定義が不正です。数値UIの個数が定義と違います。");
 
+  fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
+  fade_.StartFadeIn(1.0f);
+  is_scene_all_end_ = false;
+  is_scene_end_fade_start_ = false;
+
   return true;
 }
 
@@ -228,63 +233,51 @@ bool TurnSystem::Update() {
   }
   ImGui::End();
 
-  // if (ImGui::Begin("UI")) {
-  //  const u32 size = static_cast<u32>(components_.size());
-  //  for (u32 i = 0; i < size; i++) {
-  //    std::stringstream ss;
-  //    ss << "Image:" << i;
-  //    ImGui::Text(ss.str().c_str());
+  if (ImGui::Begin("UI")) {
+    const u32 size = static_cast<u32>(components_.size());
+    for (u32 i = 0; i < size; i++) {
+      std::stringstream ss;
+      ss << "Image:" << i;
+      ImGui::Text(ss.str().c_str());
 
-  //    math::Vector2 pos = components_[i]->GetPosition();
-  //    float field[2] = {pos.x, pos.y};
-  //    ss.str("");
-  //    ss.clear(std::stringstream::goodbit);
-  //    ss << "Position:" << i;
-  //    ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
-  //    components_[i]->SetPosition(math::Vector2(field[0], field[1]));
+      math::Vector2 pos = components_[i]->GetPosition();
+      float field[2] = {pos.x, pos.y};
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Position:" << i;
+      ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
+      components_[i]->SetPosition(math::Vector2(field[0], field[1]));
 
-  //    float z = components_[i]->GetZOrder();
-  //    ss.str("");
-  //    ss.clear(std::stringstream::goodbit);
-  //    ss << "Z_Order:" << i;
-  //    ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
-  //    components_[i]->SetZOrder(z);
-  //  }
+      float z = components_[i]->GetZOrder();
+      ss.str("");
+      ss.clear(std::stringstream::goodbit);
+      ss << "Z_Order:" << i;
+      ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
+      components_[i]->SetZOrder(z);
+    }
 
-  //  if (ImGui::Button("Apply")) {
-  //    std::ofstream ofs(
-  //        std::filesystem::path("assets") / "parameters" / "main_ui.txt",
-  //        std::ios::out);
-  //    ofs.clear();
-  //    const u32 size = static_cast<u32>(components_.size());
-  //    for (u32 i = 0; i < size; i++) {
-  //      input_lines_[i][ui_format::X] =
-  //          std::to_string(components_[i]->GetPosition().x);
-  //      input_lines_[i][ui_format::Y] =
-  //          std::to_string(components_[i]->GetPosition().y);
-  //      input_lines_[i][ui_format::Z] =
-  //          std::to_string(components_[i]->GetZOrder());
-  //      for (auto&& s : input_lines_[i]) {
-  //        ofs << s << ",";
-  //      }
-  //      ofs << "\n";
-  //    }
-  //    ofs.flush();
-  //  }
-
-  //  static int power = 100;
-  //  ImGui::SliderInt("PlayerPower", &power, 0, 300);
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
-  //      math::util::Clamp(power * 0.01f, 0.0f, 1.0f));
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_1]->SetValue(
-  //      math::util::Clamp((power * 0.01f) - 1.0f, 0.0f, 1.0f));
-  //  gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_2]->SetValue(
-  //      math::util::Clamp((power * 0.01f) - 2.0f, 0.0f, 1.0f));
-  //  numbers_[number_id::DIGIT_3]->SetNumber(power / 100);
-  //  numbers_[number_id::DIGIT_2]->SetNumber(power / 10 % 10);
-  //  numbers_[number_id::DIGIT_1]->SetNumber(power % 10);
-  //}
-  // ImGui::End();
+    if (ImGui::Button("Apply")) {
+      std::ofstream ofs(
+          std::filesystem::path("assets") / "parameters" / "main_ui.txt",
+          std::ios::out);
+      ofs.clear();
+      const u32 size = static_cast<u32>(components_.size());
+      for (u32 i = 0; i < size; i++) {
+        input_lines_[i][ui_format::X] =
+            std::to_string(components_[i]->GetPosition().x);
+        input_lines_[i][ui_format::Y] =
+            std::to_string(components_[i]->GetPosition().y);
+        input_lines_[i][ui_format::Z] =
+            std::to_string(components_[i]->GetZOrder());
+        for (auto&& s : input_lines_[i]) {
+          ofs << s << ",";
+        }
+        ofs << "\n";
+      }
+      ofs.flush();
+    }
+  }
+  ImGui::End();
 
   {
     //プレイヤーの強化状態をUI数値に変換する
@@ -330,6 +323,23 @@ bool TurnSystem::Update() {
   remove_item_box_list_.clear();
 
   physics_field_.Update();
+
+  fade_.Update();
+  if (is_scene_end_fade_start_) {
+    if (fade_.IsEnd()) {
+      is_scene_all_end_ = true;
+    }
+  } else {
+    if (player_->GetPlayerDeathFlag()) {
+      is_scene_end_fade_start_ = true;
+      fade_.StartFadeOut(1.0f);
+    }
+    if (enemy_manager_.IsGameClear()) {
+      is_scene_end_fade_start_ = true;
+      fade_.StartFadeOut(1.0f);
+    }
+  }
+
   return true;
 }
 
@@ -524,6 +534,7 @@ void TurnSystem::Draw() {
   }
 
   ui_board_.Draw();
+  fade_.Draw();
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
@@ -536,17 +547,7 @@ void TurnSystem::DebugDraw() {
   physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
-bool legend::system::TurnSystem::IsGameEnd() const {
-  //プレイヤーが死亡したらtrueを返す
-
-  //敵のボスが死亡し、演出まで終了したらtrueを返す
-  if (enemy_manager_.IsGameClear()) {
-    return true;
-  }
-
-  //それ以外の状況ではfalseを返す
-  return false;
-}
+bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
 
 system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {

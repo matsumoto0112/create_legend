@@ -7,6 +7,7 @@
 #include "src/object/fragment.h"
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
+#include "src/scenes/fade_in_out.h"
 #include "src/scenes/scene.h"
 #include "src/system/game_data.h"
 #include "src/system/turn_system.h"

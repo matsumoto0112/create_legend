@@ -26,6 +26,9 @@ class Player : public actor::Actor {
     float max_power;
     float min_strength;
     float max_strength;
+    float mass = 1.0f;
+    float restitution = 0.5f;
+    float friction = 1.5f;
   };
 
  public:

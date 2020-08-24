@@ -37,9 +37,9 @@ bool Player::Init(actor::IActorMediator* mediator,
   params.scale = parameter.bouding_box_length;
 
   // TODO: ‚±‚±‚ç•Ó‚à‰Šú‰»ƒpƒ‰ƒ[ƒ^‚É‚¢‚ê‚é
-  params.mass = 1.0f;
-  params.friction = 0.8f;
-  params.restitution = 1.0f;
+  params.mass = parameter.mass;
+  params.friction = parameter.friction;
+  params.restitution = parameter.restitution;
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   mediator_->AddCollider(box_);

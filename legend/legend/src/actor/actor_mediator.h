@@ -7,6 +7,7 @@
  */
 
 #include "src/bullet/collider.h"
+#include "src/system/mode.h"
 
 namespace legend {
 namespace player {
@@ -69,6 +70,10 @@ class IActorMediator {
    * @brief メインカメラのY軸回転量を取得する
    */
   virtual float GetMainCameraThetaAngle() const = 0;
+  /**
+   * @brief 現在のターン状況を取得する
+   */
+  virtual system::Mode GetCurrentTurn() const = 0;
 };
 
 }  // namespace actor

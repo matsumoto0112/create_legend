@@ -129,6 +129,10 @@ class TurnSystem : public actor::IActorMediator {
       const math::Vector3& start, const math::Vector3& end) const override;
   virtual void RemoveActor(actor::Actor* actor) override;
   virtual float GetMainCameraThetaAngle() const override;
+  /**
+   * @brief Œ»İ‚Ìƒ^[ƒ“ó‹µ‚ğæ“¾‚·‚é
+   */
+  Mode GetCurrentTurn() const override { return current_mode_; }
 
  private:
   /**

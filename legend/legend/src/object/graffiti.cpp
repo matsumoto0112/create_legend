@@ -174,10 +174,12 @@ void Graffiti::OnHit(bullet::Collider* other) {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
       if (player->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f;
+        const float percentage = 10.0f/* * game::GameDevice::GetInstance()
+                                             ->GetFPSCounter()
+                                             .GetDeltaSeconds<float>()*/;
         remaining_graffiti_ -= percentage;
         //Žã‘Ì‰»
-        player->UpdateStrength(-0.01f);
+        player->UpdateStrength(-0.04f);
         is_hit_ = true;
         SetInstancePosition(player->GetTransform().GetPosition(),
                             player->GetCollider()->GetVelocity().Normalized());
@@ -189,10 +191,12 @@ void Graffiti::OnHit(bullet::Collider* other) {
     enemy::Enemy* enemy = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (enemy) {
       if (enemy->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f;
+        const float percentage = 10.0f/* * game::GameDevice::GetInstance()
+                                             ->GetFPSCounter()
+                                             .GetDeltaSeconds<float>()*/;
         remaining_graffiti_ -= percentage;
         //Žã‘Ì‰»
-        enemy->Weaking(0.01f);
+        enemy->Weaking(0.04f);
         is_hit_ = true;
         SetInstancePosition(enemy->GetTransform().GetPosition(),
                             enemy->GetCollider()->GetVelocity().Normalized());

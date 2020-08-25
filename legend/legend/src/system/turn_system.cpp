@@ -580,18 +580,7 @@ void TurnSystem::Draw() {
   for (auto&& item_box : item_boxes_) {
     actor_render_command_list_.Push(item_box.get());
   }
-
-  // player_->Draw();
-  // for (auto&& obj : static_objects_) {
-  //  obj->Draw();
-  //}
-  // for (auto&& fragment : fragments_) {
-  //  fragment->Draw();
-  //}
-  // for (auto&& item_box : item_boxes_) {
-  //  item_box->Draw();
-  //}
-  // enemy_manager_.Draw();
+  enemy_manager_.Draw(&actor_render_command_list_);
 
   math::Vector3 light_pos = math::Vector3(50, 80, 20);
   light_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
@@ -608,18 +597,6 @@ void TurnSystem::Draw() {
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
   cameras_[current_camera_]->RenderStart();
   actor_render_command_list_.RenderPass();
-
-  // player_->Draw();
-  // for (auto&& obj : static_objects_) {
-  //  obj->Draw();
-  //}
-  // for (auto&& fragment : fragments_) {
-  //  fragment->Draw();
-  //}
-  // for (auto&& item_box : item_boxes_) {
-  //  item_box->Draw();
-  //}
-  // enemy_manager_.Draw();
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
@@ -674,9 +651,9 @@ void TurnSystem::Draw() {
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  // cameras_[current_camera_]->RenderStart();
-  // search_manager_.DebugDraw(&physics_field_);
-  // physics_field_.DebugDraw(cameras_[current_camera_].get());
+  cameras_[current_camera_]->RenderStart();
+  search_manager_.DebugDraw(&physics_field_);
+  physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }

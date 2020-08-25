@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "src/actor/actor_mediator.h"
+#include "src/actor/actor_render_command_list.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
@@ -36,7 +37,7 @@ class EnemyManager {
   /**
    * @brief •`‰æ
    */
-  void Draw();
+  void Draw(actor::ActorRenderCommandList* render_command_list);
   /**
    * @brief “G‚Ìs“®ˆ—
    */

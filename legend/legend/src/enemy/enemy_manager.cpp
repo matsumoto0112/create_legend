@@ -47,12 +47,12 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   return true;
 }
 
-void EnemyManager::Draw() {
+void EnemyManager::Draw(actor::ActorRenderCommandList* render_command_list) {
   for (i32 i = 0; i < enemys_.size(); i++) {
-    enemys_[i]->Draw();
+    render_command_list->Push(enemys_[i].get());
   }
   if (boss_ != nullptr) {
-    boss_->Draw();
+    render_command_list->Push(boss_.get());
   }
 }
 

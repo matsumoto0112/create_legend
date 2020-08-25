@@ -48,81 +48,29 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          game::GameDevice::GetInstance()->GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
+  // directx::device::CommandList command_list;
+  // if (!command_list.Init(
+  //        game::GameDevice::GetInstance()->GetDevice(),
+  //        D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+  //  return false;
+  //}
 
-  //ステージデータの読み込み
-  {
-    player::Player::InitializeParameter player;
-    std::vector<object::Desk::InitializeParameter> desks;
-    std::vector<object::Obstacle::InitializeParameter> obstacles;
-    std::vector<object::GraffitiInitializeParameter> graffities;
-    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
-    if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
-                                    obstacles, graffities, item_boxes)) {
-      return false;
-    }
-
-    player_ = std::make_unique<player::Player>();
-    if (!player_->Init(this, player)) {
-      return false;
-    }
-    for (auto&& param : desks) {
-      auto obj = std::make_unique<object::Desk>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& param : obstacles) {
-      auto obj = std::make_unique<object::Obstacle>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& param : graffities) {
-      auto graf = std::make_unique<object::Graffiti>();
-      if (!graf->Init(this, param, command_list)) {
-        return false;
-      }
-      graffities_.emplace_back(std::move(graf));
-    }
-
-    for (auto&& param : item_boxes) {
-      auto obj = std::make_unique<skill::SkillItemBox>();
-      std::shared_ptr<skill::Skill> skill =
-          std::make_shared<skill::SkillPencil>();
-      if (!obj->Init(this, param, skill)) {
-        return false;
-      }
-      item_boxes_.emplace_back(std::move(obj));
-    }
-  }
+  // command_list.Close();
+  // game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+  //    {command_list});
+  // game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
-
-  for (auto&& enemy_parameter :
-       stage_generator_.GetEnemyParameters(current_turn_)) {
-    enemy_manager_.Add(enemy_parameter);
+  stage_generator_.LoadStringStageData(stage_path, stage_name);
+  if (!GenerateActors()) {
+    return false;
   }
 
   if (!InitCameras()) {
     return false;
   }
-
-  command_list.Close();
-  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-      {command_list});
-  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   {
     search_manager_.Initialize(this);
@@ -259,8 +207,9 @@ bool TurnSystem::Update() {
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
       {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
+      {Mode::PLAYER_MOVE_END, [&]() { return WaitEnemyMoveStart(); }},
       {Mode::PLAYER_SKILL_AFTER_MOVED,
-       [&]() { return PlayerSkillAfterModed(); }},
+       [&]() { return PlayerSkillAfterMoved(); }},
       {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
   };
@@ -417,7 +366,21 @@ bool TurnSystem::PlayerMoveReady() {
 //プレイヤーの移動中処理
 bool TurnSystem::PlayerMoving() { return true; }
 
-bool TurnSystem::PlayerSkillAfterModed() {
+bool TurnSystem::WaitEnemyMoveStart() {
+  if (enemy_manager_.GetEnemiesSize() == 0) {
+    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    return true;
+  }
+  for (auto& velocity : enemy_manager_.GetVelocities()) {
+    if (velocity != math::Vector3::kZeroVector) {
+      return true;
+    }
+  }
+  current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+  return true;
+}
+
+bool TurnSystem::PlayerSkillAfterMoved() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
@@ -440,14 +403,18 @@ bool TurnSystem::EnemyMove() {
 //敵の移動終了時処理
 bool TurnSystem::EnemyMoveEnd() {
   AddCurrentTurn();
-  for (auto&& enemy_parameter :
-       stage_generator_.GetEnemyParameters(current_turn_)) {
-    enemy_manager_.Add(enemy_parameter);
+
+  if (!GenerateActors()) {
+    return false;
   }
-  for (auto&& boss_parameter :
-       stage_generator_.GetBossParameters(current_turn_)) {
-    enemy_manager_.Add(boss_parameter);
-  }
+  // for (auto&& enemy_parameter :
+  //     stage_generator_.GetEnemyParameters(current_turn_)) {
+  //  enemy_manager_.Add(enemy_parameter);
+  //}
+  // for (auto&& boss_parameter :
+  //     stage_generator_.GetBossParameters(current_turn_)) {
+  //  enemy_manager_.Add(boss_parameter);
+  //}
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
@@ -670,6 +637,80 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
       end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
 }
 
+bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
+  {
+    player::Player::InitializeParameter player;
+    std::vector<object::Desk::InitializeParameter> desks;
+    std::vector<object::Obstacle::InitializeParameter> obstacles;
+    std::vector<object::GraffitiInitializeParameter> graffities;
+    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
+    std::vector<enemy::Enemy::InitializeParameter> enemys;
+    std::vector<enemy::Boss::InitializeParameter> bosses;
+    if (!stage_generator_.GetMapActors(current_turn_, player, desks, obstacles,
+                                       graffities, item_boxes, enemys,
+                                       bosses)) {
+      return false;
+    }
+
+    if (!player_) {
+      player_ = std::make_unique<player::Player>();
+      if (!player_->Init(this, player)) {
+        return false;
+      }
+    }
+    for (auto&& param : desks) {
+      auto obj = std::make_unique<object::Desk>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : obstacles) {
+      auto obj = std::make_unique<object::Obstacle>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+    directx::device::CommandList command_list;
+    if (!command_list.Init(
+            game::GameDevice::GetInstance()->GetDevice(),
+            D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+      return false;
+    }
+
+    for (auto&& param : graffities) {
+      auto graf = std::make_unique<object::Graffiti>();
+      if (!graf->Init(this, param, command_list)) {
+        return false;
+      }
+      graffities_.emplace_back(std::move(graf));
+    }
+
+    command_list.Close();
+    game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+        {command_list});
+    game::GameDevice::GetInstance()->GetDevice().WaitExecute();
+
+    for (auto&& param : item_boxes) {
+      auto obj = std::make_unique<skill::SkillItemBox>();
+      std::shared_ptr<skill::Skill> skill =
+          std::make_shared<skill::SkillPencil>();
+      if (!obj->Init(this, param, skill)) {
+        return false;
+      }
+      item_boxes_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& enemy_parameter : enemys) {
+      enemy_manager_.Add(enemy_parameter);
+    }
+  }
+
+  return true;
+}
+
 //ターン数の増加
 void TurnSystem::AddCurrentTurn() { current_turn_++; }
 
@@ -687,7 +728,7 @@ void TurnSystem::PlayerMoveStartEvent() {
 void TurnSystem::PlayerMoveEndEvent() {
   // 0.1秒後にモードを切り替える
   countdown_timer_.Init(0.1f, [&]() {
-    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    current_mode_ = Mode::PLAYER_MOVE_END;
     current_camera_ = camera_mode::Main;
   });
 }

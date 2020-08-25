@@ -140,6 +140,10 @@ class TurnSystem : public actor::IActorMediator {
 
  private:
   /**
+   * @brief 各アクターの生成
+   */
+  bool GenerateActors();
+  /**
    * @brief ターン数の増加
    */
   void AddCurrentTurn();
@@ -155,10 +159,12 @@ class TurnSystem : public actor::IActorMediator {
    * @brief プレイヤーの移動処理
    */
   bool PlayerMoving();
+
+  bool WaitEnemyMoveStart();
   /**
    * @brief プレイヤーの移動終了後のスキル発動処理
    */
-  bool PlayerSkillAfterModed();
+  bool PlayerSkillAfterMoved();
   /**
    * @brief 敵の移動処理
    */

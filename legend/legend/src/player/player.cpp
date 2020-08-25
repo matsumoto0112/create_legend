@@ -66,6 +66,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   skill_manager_.Init(mediator_);
 
   is_hit_obstacle_ = false;
+  is_play_se_ = false;
 
   return true;
 }
@@ -134,8 +135,8 @@ void Player::CheckImpulse() {
   auto framerate =
       12.5f *
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+
   if (!is_move_) {
     input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
     input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
@@ -143,8 +144,6 @@ void Player::CheckImpulse() {
 
     if (0.2f <= input_velocity_.Magnitude()) {
       is_input_ = true;
-
-      audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f);
     }
 
     if ((change_amount_velocity_.Magnitude() < input_velocity_.Magnitude()) ||
@@ -185,6 +184,8 @@ void Player::CheckImpulse() {
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
     mediator_->PlayerMoveStartEvent();
+    is_play_se_ = false;
+    audio.Stop(se_power_);
     audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }
   SetImpulse();
@@ -202,6 +203,7 @@ void Player::SetVelocity(math::Vector3 velocity) {
 void Player::SetImpulse() {
   if (is_set_power_ || !is_input_) return;
 
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetStickLeft().Magnitude() >= 0.2f) {
     if (up_power_) {
@@ -216,6 +218,10 @@ void Player::SetImpulse() {
         impulse_ = min_power_;
         up_power_ = true;
       }
+    }
+    if (!is_play_se_) {
+        is_play_se_ = true;
+        se_power_ = audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f, true);
     }
   } else {
     is_set_power_ = true;

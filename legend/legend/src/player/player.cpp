@@ -220,8 +220,9 @@ void Player::SetImpulse() {
       }
     }
     if (!is_play_se_) {
-        is_play_se_ = true;
-        se_power_ = audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f, true);
+      is_play_se_ = true;
+      se_power_ =
+          audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f, true);
     }
   } else {
     is_set_power_ = true;
@@ -303,7 +304,7 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (enemy_position - player_position).Normalized();
 
-        e->GetCollider()->ApplyCentralImpulse(direction * power_);
+        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
@@ -323,7 +324,7 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (boss_position - player_position).Normalized();
 
-        b->GetCollider()->ApplyCentralImpulse(direction * power_);
+        b->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {

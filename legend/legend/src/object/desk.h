@@ -18,6 +18,9 @@ class Desk : public actor::Actor {
     util::Transform transform;
     math::Vector3 bounding_box_length;
     math::Vector3 normal;
+    float mass = 0.0f;
+    float restitution = 0.5f;
+    float friction = 1.5f;
   };
 
  public:

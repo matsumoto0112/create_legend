@@ -1,4 +1,13 @@
 #include "src/directx/render_target/depth_stencil.h"
+namespace {
+DXGI_FORMAT ConvertToSRVFormat(DXGI_FORMAT dsv_format) {
+  if (dsv_format == DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT) {
+    return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+  } else {
+    return DXGI_FORMAT::DXGI_FORMAT_R24G8_TYPELESS;
+  }
+}
+}  // namespace
 
 namespace legend {
 namespace directx {
@@ -18,7 +27,8 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
 
   const buffer::CommittedResource::Tex2DDesc desc{
       ds_desc.name,
-      ds_desc.format,
+      //ds_desc.format,
+      DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS,
       ds_desc.width,
       ds_desc.height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
@@ -40,6 +50,19 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
   dsv_view.ViewDimension = D3D12_DSV_DIMENSION::D3D12_DSV_DIMENSION_TEXTURE2D;
   accessor.GetDevice()->CreateDepthStencilView(resource_.GetResource(),
                                                &dsv_view, handle_.cpu_handle_);
+
+  //レンダーターゲットをテクスチャとして使用できるようにするために設定する
+  D3D12_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+  srv_desc.Texture2D.MipLevels = 1;
+  srv_desc.Format = ConvertToSRVFormat(ds_desc.format);
+  srv_desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+  srv_desc.ViewDimension = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+
+  srv_handle_ = accessor.GetLocalHandle(
+      descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
+  accessor.GetDevice()->CreateShaderResourceView(
+      resource_.GetResource(), &srv_desc, srv_handle_.cpu_handle_);
+
   return true;
 }
 
@@ -54,6 +77,14 @@ void DepthStencil::ClearDepthStencil(device::CommandList& command_list) const {
 void DepthStencil::Transition(device::CommandList& command_list,
                               D3D12_RESOURCE_STATES next_states) {
   resource_.Transition(command_list, next_states);
+}
+
+void DepthStencil::UseAsSRV(device::IDirectXAccessor& accessor,
+                            device::CommandList& command_list,
+                            u32 register_num) {
+  // resource_.Transition(
+  //    command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
+  accessor.RegisterHandle(register_num, shader::ResourceType::SRV, srv_handle_);
 }
 
 D3D12_DEPTH_STENCIL_DESC DepthStencil::GetDepthStencilDesc() const {

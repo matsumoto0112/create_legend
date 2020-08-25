@@ -1,6 +1,7 @@
 #ifndef LEGEND_SCENES_TITLE_H_
 #define LEGEND_SCENES_TITLE_H_
 
+#include "src/scenes/fade_in_out.h"
 #include "src/scenes/scene.h"
 #include "src/ui/ui_board.h"
 
@@ -35,6 +36,8 @@ class Title : public Scene {
  private:
   i32 bgm_key_;
   ui::UIBoard board_;
+  FadeInOut fade_;
+  bool is_scene_end_;
 };
 
 }  // namespace scenes

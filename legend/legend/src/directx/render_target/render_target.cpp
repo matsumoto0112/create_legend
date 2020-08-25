@@ -33,7 +33,7 @@ bool RenderTarget::Init(device::IDirectXAccessor& accessor,
   this->format_ = rt_desc.format;
   this->viewport_ =
       CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(rt_desc.width),
-                       static_cast<float>(rt_desc.width));
+                       static_cast<float>(rt_desc.height));
   this->scissor_rect_ = CD3DX12_RECT(0, 0, rt_desc.width, rt_desc.height);
 
   D3D12_RENDER_TARGET_VIEW_DESC rtv_desc = {};

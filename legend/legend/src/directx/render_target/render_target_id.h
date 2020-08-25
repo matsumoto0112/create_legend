@@ -17,8 +17,9 @@ namespace render_target {
 enum class RenderTargetID : u32 {
   //スワップチェイン
   BACK_BUFFER = 0,
-
   MULTI_RENDER_TARGET_TEST,
+  DIFFERED_RENDERING_PRE,
+  NONE,
 };
 
 /**
@@ -30,6 +31,7 @@ enum class DepthStencilTargetID {
   NONE,
 
   DEPTH_ONLY,
+  SHADOW_MAP,
 };
 
 }  // namespace render_target

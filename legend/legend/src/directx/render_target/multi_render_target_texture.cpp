@@ -101,12 +101,15 @@ void MultiRenderTargetTexture::ClearRenderTarget(
 
 //シェーダーリソースとして使用する
 void MultiRenderTargetTexture::UseAsSRV(device::IDirectXAccessor& accessor,
+                                        device::CommandList& command_list,
                                         u32 render_target_number) {
   MY_ASSERTION(
       math::util::IsInRange(render_target_number, 0u, render_target_num_),
       L"render_target_numberが範囲外です。");
 
-  const RenderTargetTexture& rtt = render_targets_[render_target_number];
+  RenderTargetTexture& rtt = render_targets_[render_target_number];
+  rtt.render_target.Transition(
+      command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
   accessor.RegisterHandle(rtt.register_num, shader::ResourceType::SRV,
                           rtt.srv_handle);
 }

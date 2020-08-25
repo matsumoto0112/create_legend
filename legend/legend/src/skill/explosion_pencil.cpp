@@ -50,8 +50,14 @@ void ExplosionPencil::Init(util::Transform transform,
 //更新
 bool ExplosionPencil::Update() {
   radius_ +=
-      1.0f *
+      10.0f *
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+  //再生成しているためか、一度格納したコライダーを取り除いて
+  //格納し直さないとうまく出来なかった
+  mediator_->RemoveCollider(sphere_);
+  float mass = 0.0f;
+  sphere_->SetScale(radius_, mass);
+  mediator_->AddCollider(sphere_);
   return true;
 }
 
@@ -70,6 +76,8 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 enemy_position = enemy->GetTransform().GetPosition();
       math::Vector3 direction =
           (enemy_position - explosion_position).Normalized();
+      //値は適当
+      direction.y = 1.0f;
 
       enemy->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
     }
@@ -81,6 +89,8 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 boss_position = boss->GetTransform().GetPosition();
       math::Vector3 direction =
           (boss_position - explosion_position).Normalized();
+      //値は適当
+      direction.y = 1.0f;
 
       boss->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
     }

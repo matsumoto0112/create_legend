@@ -9,15 +9,19 @@
 #include <set>
 
 #include "src/actor/actor_mediator.h"
+#include "src/actor/actor_render_command_list.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
 #include "src/camera/lookat_target_camera.h"
 #include "src/camera/perspective_camera.h"
+#include "src/directx/buffer/index_buffer.h"
+#include "src/directx/buffer/vertex_buffer.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
+#include "src/scenes/fade_in_out.h"
 #include "src/search/search_manager.h"
 #include "src/skill/skill_item_box.h"
 #include "src/stage_generate/stage_generator.h"
@@ -225,11 +229,19 @@ class TurnSystem : public actor::IActorMediator {
   std::set<object::Graffiti*> remove_graffiti_list_;
   std::set<object::Fragment*> remove_fragment_list_;
   std::set<skill::SkillItemBox*> remove_item_box_list_;
+  scenes::FadeInOut fade_;
+  bool is_scene_all_end_;
+  bool is_scene_end_fade_start_;
+
+  actor::ActorRenderCommandList actor_render_command_list_;
 
  private:
   // UIのリアルタイム修正用パラメータ
   std::vector<legend::ui::UIComponent*> components_;
   std::vector<std::vector<std::string>> input_lines_;
+
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
 };
 
 }  // namespace system

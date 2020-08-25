@@ -36,10 +36,15 @@ BoundingSphere::~BoundingSphere() {
 
 bool BoundingSphere::Update() { return true; }
 
-void BoundingSphere::SetScale(float radius)
-{
-    //球体に設定
-    shape_ = std::make_shared<btSphereShape>(radius);
+void BoundingSphere::SetScale(float radius, float mass) {
+  //球体に設定
+  shape_ = std::make_shared<btSphereShape>(radius);
+
+  //rigidbody関係でエラーを吐かれたので勝手に追加しました
+  //剛体オブジェクト生成
+  rigid_body_ = std::make_shared<btRigidBody>(mass, motion_state_.get(),
+                                              shape_.get(), inertia_);
+  rigid_body_->setUserPointer(this);
 }
 
 }  // namespace bullet

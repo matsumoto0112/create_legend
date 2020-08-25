@@ -62,8 +62,9 @@ class Skill : public actor::Actor {
   i32 GetRemainingRecastTurn();
   SkillActivationTiming GetActivetionTiming();
   SkillEffectEndTiming GetEndTiming();
-  i32 GetIconTexture();
-  i32 GetExplanationTexture();
+  //i32 GetIconTexture();
+  std::shared_ptr<directx::buffer::Texture2D> GetIconTexture() const;
+  //i32 GetExplanationTexture();
   bool GetUseFlag();
   bool ProductionFlag();
   void RemoveCollider();
@@ -83,10 +84,14 @@ class Skill : public actor::Actor {
   SkillActivationTiming activetion_timing_;
   //! スキルの効果終了タイミング
   SkillEffectEndTiming end_timing_;
-  //! スキルアイコンのID
+  ////! スキルアイコンのID
   // i32 skill_icon_id_;
+
+  //! スキルアイコンのテクスチャ
+  std::shared_ptr<directx::buffer::Texture2D> skill_icon_texture_;
   //! スキル説明の画像のID
   // i32 skill_explanation_id_;
+
   //! 使用されるかのフラグ
   bool is_use_;
   //! 演出中かどうか

@@ -27,6 +27,7 @@ VS_Output VS_Main(const VS_Input input) {
 
 float4 PS_Main(const PS_Input input) {
     float4 color = g_albedo.Sample(g_sampler_warp, input.uv);
+    color *= g_color.color;
     clip(color.a - 0.0001);
     return color;
 }

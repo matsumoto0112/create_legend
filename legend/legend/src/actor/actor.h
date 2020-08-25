@@ -52,7 +52,7 @@ class Actor {
   util::Transform& GetTransformRef() { return transform_; }
   util::Transform GetTransform() const { return transform_; }
 
- protected:
+ //protected:
   //! アクター名
   std::wstring name_;
   //! トランスフォーム
@@ -63,6 +63,8 @@ class Actor {
   std::shared_ptr<draw::Model> model_;
   //! 仲介者
   IActorMediator* mediator_;
+
+  static const wchar_t* PIPELINE_NAME;
 };
 
 }  // namespace actor

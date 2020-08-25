@@ -10,8 +10,9 @@
 
 namespace legend {
 namespace skill {
+namespace resource_name = util::resource::resource_names;
 
-    //コンストラクタ
+//コンストラクタ
 SkillPencil::SkillPencil() {
   //各ステータスの初期値を設定
 }
@@ -65,8 +66,11 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   //モデルの初期化
-  model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
+  model_ = resource.GetModel().Get(resource_name::model::STATIONERY_01);
+
+  //スキルアイコンのテクスチャ設定
+  skill_icon_texture_ =
+      resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_1);
 
   return true;
 }
@@ -87,7 +91,7 @@ bool SkillPencil::Update() {
     return true;
   }
 
-  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector * 2);
+  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
   transform_.SetRotation(player_->GetRotation());
   box_->SetTransform(this->transform_);
 
@@ -96,9 +100,7 @@ bool SkillPencil::Update() {
 
 //描画
 void SkillPencil::Draw() {
-  if (is_explosion_)
-    explosion_pencil_.Draw();
-  else
+  if (!is_explosion_)
     actor::Actor::Draw();
 }
 
@@ -158,11 +160,13 @@ void SkillPencil::OnHit(bullet::Collider* other) {
 //爆発開始
 void SkillPencil::Explosion() {
   if (is_explosion_) return;
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   explosion_timer_.Init(2.0f, [&]() { EndAction(); });
 
   //周囲の敵を吹き飛ばす処理
   is_explosion_ = true;
+  audio.Start(resource_name::audio::SKILL_PENCIL_HIT, 1.0f);
 
   explosion_pencil_.Init(transform_, mediator_);
 

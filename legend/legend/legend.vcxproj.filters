@@ -129,7 +129,8 @@
     <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\explosion_pencil.cpp" />
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
-    <ClCompile Include="src\scenes\decorator\fade_in_out.cpp" />
+    <ClCompile Include="src\scenes\fade_in_out.cpp" />
+    <ClCompile Include="src\actor\actor_render_command_list.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -306,8 +307,9 @@
     <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\explosion_pencil.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
+    <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
-    <ClInclude Include="src\scenes\decorator\fade_in_out.h" />
+    <ClInclude Include="src\actor\actor_render_command_list.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -325,6 +327,8 @@
     <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\draw2d\ui_quarter_gauge.hlsli" />
     <None Include="assets\shaders\bullet\bullet_debug_draw.hlsli" />
+    <None Include="assets\shaders\differed_rendering\differed_rendering_pre.hlsli" />
+    <None Include="assets\shaders\differed_rendering\differed_rendering.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -351,6 +355,11 @@
     <FxCompile Include="assets\shaders\draw2d\ui_quarter_gauge_ps.hlsl" />
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_vs.hlsl" />
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_ps.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_vs.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_ps.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_vs.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_ps.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\shadow_map_vs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />

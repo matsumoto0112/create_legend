@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\actor\actor.cpp" />
+    <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />
@@ -91,7 +92,7 @@
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
-    <ClCompile Include="src\scenes\decorator\fade_in_out.cpp" />
+    <ClCompile Include="src\scenes\fade_in_out.cpp" />
     <ClCompile Include="src\search\search_manager.cpp" />
     <ClCompile Include="src\search\search_course.cpp" />
     <ClCompile Include="src\search\search_ai.cpp" />
@@ -216,6 +217,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
     <ClInclude Include="src\bullet\bounding_sphere.h" />
     <ClInclude Include="src\bullet\bullet_helper.h" />
@@ -227,7 +229,7 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
-    <ClInclude Include="src\scenes\decorator\fade_in_out.h" />
+    <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />
     <ClInclude Include="src\search\search_ai.h" />
@@ -395,6 +397,8 @@
     <ClInclude Include="src\window\window_procedure_event_callback.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\differed_rendering\differed_rendering.hlsli" />
+    <None Include="assets\shaders\differed_rendering\differed_rendering_pre.hlsli" />
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
     <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\draw2d\ui_quarter_gauge.hlsli" />
@@ -415,6 +419,26 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\differed_rendering\shadow_map_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
@@ -510,7 +534,10 @@
   <ItemGroup>
     <Text Include="assets\parameters\audio_list.txt" />
     <Text Include="assets\parameters\main_ui.txt" />
-    <Text Include="assets\parameters\pipeline.txt" />
+    <Text Include="assets\parameters\pipeline.txt">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </Text>
     <Text Include="assets\stage\bbbb.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

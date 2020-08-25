@@ -112,7 +112,8 @@ class MultiRenderTargetTexture {
    * @details render_target_numberは何番目のテクスチャを使用するかを指定する
    事前にTransitionでシェーダーリソースとして扱えるようにしておく必要がある
    */
-  void UseAsSRV(device::IDirectXAccessor& accessor, u32 render_target_number);
+  void UseAsSRV(device::IDirectXAccessor& accessor,
+                device::CommandList& command_list, u32 render_target_number);
   /**
    * @brief ハンドルを取得する
    */

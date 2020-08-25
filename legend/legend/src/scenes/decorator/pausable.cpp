@@ -20,11 +20,20 @@ Pausable::~Pausable() {}
 
 bool Pausable::Initialize() {
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-  if (!pause_image_.Init(resource.GetTexture().Get(
-                             util::resource::resource_names::texture::TEX),
-                         USE_HEAP_ID)) {
+  if (!pause_image_.Init(
+          resource.GetTexture().Get(
+              util::resource::resource_names::texture::UI_POSE_BACK),
+          USE_HEAP_ID)) {
     return false;
   }
+
+  const math::IntVector2 screen_size =
+      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+  const float x = static_cast<float>(screen_size.x) * 0.5f -
+                  pause_image_.GetContentSize().x * 0.5f;
+  const float y = static_cast<float>(screen_size.y) * 0.5f -
+                  pause_image_.GetContentSize().y * 0.5f;
+  pause_image_.SetPosition(math::Vector2(x, y));
 
   return inner_->Initialize();
 }

@@ -181,6 +181,11 @@ class Player : public actor::Actor {
 
   //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
+
+  //! 障害物に衝突したか
+  bool is_hit_obstacle_;
+
+  util::CountDownTimer se_interval_;
 };
 
 }  // namespace player

@@ -87,9 +87,7 @@ void Enemy::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
-      ->SetCommandList(command_list);
+  resource.GetPipeline().Get(PIPELINE_NAME)->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();

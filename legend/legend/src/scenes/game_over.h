@@ -1,6 +1,7 @@
 #ifndef LEGEND_SCENES_GAME_OVER_H_
 #define LEGEND_SCENES_GAME_OVER_H_
 
+#include "src/scenes/fade_in_out.h"
 #include "src/scenes/scene.h"
 #include "src/ui/ui_board.h"
 
@@ -40,6 +41,10 @@ class GameOver : public Scene {
 
  private:
   ui::UIBoard board_;
+
+  FadeInOut fade_;
+  bool is_scene_end_;
+  i32 bgm_;
 };
 }  // namespace scenes
 }  // namespace legend

@@ -65,6 +65,9 @@ class DepthStencil {
    */
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_states);
+
+  void UseAsSRV(device::IDirectXAccessor& accessor,
+                device::CommandList& command_list, u32 register_num);
   /**
    * @brief ディスクリプタハンドルを取得する
    */
@@ -79,6 +82,7 @@ class DepthStencil {
   buffer::CommittedResource resource_;
   //! ハンドル
   descriptor_heap::DescriptorHandle handle_;
+  descriptor_heap::DescriptorHandle srv_handle_;
   //! フォーマット
   DXGI_FORMAT format_;
   //! デプス値

@@ -1,6 +1,7 @@
 #include "src/scenes/mainscene/main_scene_1.h"
 
 #include "src/game/game_device.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace scenes {
@@ -17,6 +18,10 @@ bool MainScene1::Initialize() {
   if (!turn_system_.Init("Test_01")) {
     return false;
   }
+
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  bgm_ =
+      audio.Start(util::resource::resource_names::audio::BGM_MAIN, 1.0f, true);
 
   return true;
 }
@@ -42,10 +47,10 @@ void MainScene1::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
-  //‚Ü‚¸‚Í’Êí‚Ìƒ‚ƒfƒ‹•`‰æ
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  ////‚Ü‚¸‚Í’Êí‚Ìƒ‚ƒfƒ‹•`‰æ
+  // render_resource_manager.SetRenderTargets(
+  //    command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+  //    directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   turn_system_.Draw();
 
@@ -61,6 +66,9 @@ void MainScene1::Draw() {
 //I—¹
 void MainScene1::Finalize() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Stop(bgm_);
+
   device.WaitExecute();
 }
 

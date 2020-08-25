@@ -53,6 +53,10 @@ bool Sprite2D::Init(
                                      L"Sprite_UVRectConstantBuffer")) {
     return false;
   }
+  if (!color_constant_buffer_.Init(device, device.GetLocalHandle(cbv_heap_id),
+                                   L"Sprite_ColorConstantBuffer")) {
+    return false;
+  }
 
   uv_rect_constant_buffer_.GetStagingRef() =
       Convert(math::Rect(0.0f, 0.0f, 1.0f, 1.0f));
@@ -62,6 +66,8 @@ bool Sprite2D::Init(
   this->scale_ = math::Vector2::kUnitVector;
   this->position_ = math::Vector2::kZeroVector;
   transform_constant_buffer_.GetStagingRef().world = math::Matrix4x4::kIdentity;
+  color_constant_buffer_.GetStagingRef().color =
+      util::Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
   this->scale_ = math::Vector2::kUnitVector;
   this->z_order_ = 0.0f;
@@ -77,6 +83,14 @@ void Sprite2D::SetRect(const math::Rect& rect) {
 // UV矩形を取得する
 math::Rect Sprite2D::GetRect() const {
   return Convert(uv_rect_constant_buffer_.GetStaging());
+}
+
+util::Color4 Sprite2D::GetColor() const {
+  return color_constant_buffer_.GetStaging().color;
+}
+
+void Sprite2D::SetColor(const util::Color4& color) {
+  color_constant_buffer_.GetStagingRef().color = color;
 }
 
 //コマンドリストに積む
@@ -99,6 +113,9 @@ void Sprite2D::SetToGraphicsCommandList(
 
   uv_rect_constant_buffer_.UpdateStaging();
   uv_rect_constant_buffer_.RegisterHandle(device, ConstantBufferID::UV_RECT);
+
+  color_constant_buffer_.UpdateStaging();
+  color_constant_buffer_.RegisterHandle(device, ConstantBufferID::COLOR);
 }
 
 }  // namespace draw

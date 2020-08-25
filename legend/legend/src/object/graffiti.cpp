@@ -19,6 +19,7 @@ DXGI_FORMAT GetFormat(legend::u32 size) {
 
 namespace legend {
 namespace object {
+namespace resource_name = util::resource::resource_names;
 
 //コンストラクタ
 Graffiti::Graffiti() : Parent(L"Graffiti") {}
@@ -122,6 +123,9 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
 
 //更新
 bool Graffiti::Update() {
+  update_time_ =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
   if (is_erase_) {
     if (delete_time_.Update()) {
       if (box_) {
@@ -167,18 +171,23 @@ bool Graffiti::GetIsHit() const { return is_hit_; }
 void Graffiti::OnHit(bullet::Collider* other) {
   if (is_erase_) return;
   is_erase_ = remaining_graffiti_ <= 0.0f;
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+
   {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
       if (player->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f;
+        const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        //弱体化
-        player->UpdateStrength(-0.01f);
-        is_hit_ = true;
-        instance_position_ =
-            player->GetTransform().GetPosition() +
-            (-3.5f * (player->GetCollider()->GetVelocity().Normalized()));
+        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+          //弱体化
+          player->UpdateStrength(-0.04f);
+          is_hit_ = true;
+          SetInstancePosition(
+              player->GetTransform().GetPosition(),
+              player->GetCollider()->GetVelocity().Normalized());
+          audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        }
       }
     }
   }
@@ -186,24 +195,30 @@ void Graffiti::OnHit(bullet::Collider* other) {
     enemy::Enemy* enemy = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (enemy) {
       if (enemy->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f;
+        const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        //弱体化
-        enemy->Weaking(0.01f);
-        is_hit_ = true;
-        instance_position_ =
-            enemy->GetTransform().GetPosition() +
-            (-3.5f * (enemy->GetCollider()->GetVelocity().Normalized()));
+        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+          //弱体化
+          enemy->Weaking(0.04f);
+          is_hit_ = true;
+          SetInstancePosition(enemy->GetTransform().GetPosition(),
+                              enemy->GetCollider()->GetVelocity().Normalized());
+          audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        }
       }
     }
   }
 }
 
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
+  float rotate_y =
+      game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+
   Fragment::InitializeParameter parameter;
   parameter.position =
       math::Vector3(instance_position_.x, 2.0f, instance_position_.z);
-  parameter.rotation = math::Quaternion::kIdentity;
+  parameter.rotation =
+      math::Quaternion::FromEular(0, rotate_y * math::util::DEG_2_RAD, 0);
   parameter.scale = math::Vector3::kUnitVector;
   parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
 
@@ -248,5 +263,18 @@ void Graffiti::UpdateTexture(directx::device::CommandList& command_list) {
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 }
+void Graffiti::SetInstancePosition(math::Vector3 position,
+                                   math::Vector3 velocity) {
+  instance_position_ = position + (-3.5f * (velocity));
+  float theta =
+      mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
+  float position_x =
+      game::GameDevice::GetInstance()->GetRandom().Range(-3.0f, 3.0f);
+  math::Vector3 pos(position_x, 0, -1.0f);
+
+  instance_position_ += math::Matrix4x4::MultiplyCoord(
+      pos, math::Matrix4x4::CreateRotationY(-theta));
+}
+
 }  // namespace object
 }  // namespace legend

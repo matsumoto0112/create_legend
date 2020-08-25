@@ -123,6 +123,7 @@ class Graffiti : public actor::Actor {
   math::Vector3 instance_position_;
   //! 落書きを消せるスピードの大きさ
   float can_erase_speed_;
+  float update_time_;
 };
 
 }  // namespace object

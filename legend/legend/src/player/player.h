@@ -184,6 +184,9 @@ class Player : public actor::Actor {
 
   //! è·äQï®Ç…è’ìÀÇµÇΩÇ©
   bool is_hit_obstacle_;
+
+  bool is_play_se_;
+  i32 se_power_;
 };
 
 }  // namespace player

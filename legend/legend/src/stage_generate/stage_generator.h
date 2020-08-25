@@ -42,7 +42,7 @@ class StageGenerator {
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
    */
-  std::vector<std::string> LoadStringStageData(std::filesystem::path filepath);
+  std::vector<std::string> LoadStringStageData(std::filesystem::path filepath, const std::string map_name);
   /**
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
@@ -53,6 +53,15 @@ class StageGenerator {
       std::vector<object::Obstacle::InitializeParameter>& obstacles,
       std::vector<object::GraffitiInitializeParameter>& graffities,
       std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes);
+
+  bool GetMapActors(
+      const i32 turn_count, player::Player::InitializeParameter& player,
+      std::vector<object::Desk::InitializeParameter>& desks,
+      std::vector<object::Obstacle::InitializeParameter>& obstacles,
+      std::vector<object::GraffitiInitializeParameter>& graffities,
+      std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes,
+      std::vector<enemy::Enemy::InitializeParameter>& enemys,
+      std::vector<enemy::Boss::InitializeParameter>& bosses);
 
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);

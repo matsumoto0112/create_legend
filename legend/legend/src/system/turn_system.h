@@ -136,6 +136,10 @@ class TurnSystem : public actor::IActorMediator {
 
  private:
   /**
+   * @brief 各アクターの生成
+   */
+  bool GenerateActors();
+  /**
    * @brief ターン数の増加
    */
   void AddCurrentTurn();

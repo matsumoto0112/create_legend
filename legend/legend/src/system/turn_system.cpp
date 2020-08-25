@@ -41,65 +41,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  //ステージデータの読み込み
-  {
-    player::Player::InitializeParameter player;
-    std::vector<object::Desk::InitializeParameter> desks;
-    std::vector<object::Obstacle::InitializeParameter> obstacles;
-    std::vector<object::GraffitiInitializeParameter> graffities;
-    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
-    if (!stage_generator_.LoadStage(stage_path, stage_name, player, desks,
-                                    obstacles, graffities, item_boxes)) {
-      return false;
-    }
-
-    player_ = std::make_unique<player::Player>();
-    if (!player_->Init(this, player)) {
-      return false;
-    }
-    for (auto&& param : desks) {
-      auto obj = std::make_unique<object::Desk>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& param : obstacles) {
-      auto obj = std::make_unique<object::Obstacle>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& param : graffities) {
-      auto graf = std::make_unique<object::Graffiti>();
-      if (!graf->Init(this, param, command_list)) {
-        return false;
-      }
-      graffities_.emplace_back(std::move(graf));
-    }
-
-    for (auto&& param : item_boxes) {
-      auto obj = std::make_unique<skill::SkillItemBox>();
-      std::shared_ptr<skill::Skill> skill =
-          std::make_shared<skill::SkillPencil>();
-      if (!obj->Init(this, param, skill)) {
-        return false;
-      }
-      item_boxes_.emplace_back(std::move(obj));
-    }
-  }
-
   if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
 
-  for (auto&& enemy_parameter :
-       stage_generator_.GetEnemyParameters(current_turn_)) {
-    enemy_manager_.Add(enemy_parameter);
-  }
+  stage_generator_.LoadStringStageData(stage_path, stage_name);
+  GenerateActors();
 
   if (!InitCameras()) {
     return false;
@@ -559,6 +506,67 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
       end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
+}
+
+bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
+  {
+    player::Player::InitializeParameter player;
+    std::vector<object::Desk::InitializeParameter> desks;
+    std::vector<object::Obstacle::InitializeParameter> obstacles;
+    std::vector<object::GraffitiInitializeParameter> graffities;
+    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
+    std::vector<enemy::Enemy::InitializeParameter> enemys;
+    std::vector<enemy::Boss::InitializeParameter> bosses;
+    if (!stage_generator_.GetMapActors(current_turn_, player, desks, obstacles,
+                                       graffities, item_boxes, enemys,
+                                       bosses)) {
+      return false;
+    }
+
+    player_ = std::make_unique<player::Player>();
+    if (!player_->Init(this, player)) {
+      return false;
+    }
+    for (auto&& param : desks) {
+      auto obj = std::make_unique<object::Desk>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& param : obstacles) {
+      auto obj = std::make_unique<object::Obstacle>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
+
+    // for (auto&& param : graffities) {
+    //    auto graf = std::make_unique<object::Graffiti>();
+    //    if (!graf->Init(this, param, command_list)) {
+    //        return false;
+    //    }
+    //    graffities_.emplace_back(std::move(graf));
+    //}
+
+    for (auto&& param : item_boxes) {
+      auto obj = std::make_unique<skill::SkillItemBox>();
+      std::shared_ptr<skill::Skill> skill =
+          std::make_shared<skill::SkillPencil>();
+      if (!obj->Init(this, param, skill)) {
+        return false;
+      }
+      item_boxes_.emplace_back(std::move(obj));
+    }
+
+    for (auto&& enemy_parameter : enemys) {
+      enemy_manager_.Add(enemy_parameter);
+    }
+  }
+
+  return true;
 }
 
 //ターン数の増加

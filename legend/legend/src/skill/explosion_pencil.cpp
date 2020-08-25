@@ -50,9 +50,14 @@ void ExplosionPencil::Init(util::Transform transform,
 //更新
 bool ExplosionPencil::Update() {
   radius_ +=
-      1.0f *
+      10.0f *
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  //sphere_->SetScale(radius_);
+  //再生成しているためか、一度格納したコライダーを取り除いて
+  //格納し直さないとうまく出来なかった
+  mediator_->RemoveCollider(sphere_);
+  float mass = 0.0f;
+  sphere_->SetScale(radius_, mass);
+  mediator_->AddCollider(sphere_);
   return true;
 }
 

@@ -49,6 +49,7 @@ constexpr name UI_PLAYERPOWER_GAUGE_201TO300 =
     L"UI_playerPower_gauge_201to300.png";
 constexpr name UI_PLAYERPOWER_GAUGE_FRAME = L"UI_playerPower_gauge_frame.png";
 constexpr name UI_PLAYER_ESTIMATE = L"UI_player_estimate.png";
+constexpr name UI_POSE_BACK = L"UI_pose_back.png";
 constexpr name UI_POWERGAUGE = L"UI_powerGauge.png";
 constexpr name UI_POWERGAUGE_BLURRYPOINT = L"UI_powerGauge_blurryPoint.png";
 constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";

@@ -112,11 +112,6 @@ constexpr name SHADOW_MAP = L"shadow_map";
 namespace audio {
 constexpr name ENEMY_TURN_END = L"enemy_turn_end.wav";
 constexpr name ERASE_GRAFFITI = L"erase_graffiti.wav";
-constexpr name FREE_2 = L"free_2.wav";
-constexpr name FREE_3 = L"free_3.wav";
-constexpr name FREE_4 = L"free_4.wav";
-constexpr name FREE_5 = L"free_5.wav";
-constexpr name FREE_6 = L"free_6.wav";
 constexpr name PLAYER_ENEMY_HIT_BIG = L"player_enemy_hit_big.wav";
 constexpr name PLAYER_ENEMY_HIT_SMALL = L"player_enemy_hit_small.wav";
 constexpr name PLAYER_FALL_OUT = L"player_fall_out.wav";
@@ -131,8 +126,6 @@ constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE =
     L"player_return_from_select_skill_mode.wav";
 constexpr name PLAYER_SNAP = L"player_snap.wav";
 constexpr name PLAYER_TURN_END = L"player_turn_end.wav";
-constexpr name PROTO_FLICK = L"Proto_flick.wav";
-constexpr name PROTO_HIT = L"Proto_hit.wav";
 constexpr name SKILL_DECISION = L"skill_decision.wav";
 constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";

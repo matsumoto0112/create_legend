@@ -26,7 +26,7 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
     if (boss_ != nullptr) {
       auto velocity = boss_->GetVelocity();
       velocity.y = 0;
-      isMove = (!boss_->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
+      isMove |= (!boss_->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
     }
     if (isMove) {
       action_enemy_index_ = 0;
@@ -48,17 +48,24 @@ void EnemyManager::Draw(actor::ActorRenderCommandList* render_command_list) {
 }
 
 void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
-  if ((action_enemy_index_ < 0) || (enemys_.size() <= action_enemy_index_)) {
-    if (boss_ == nullptr) {
-      return;
-    } else if (enemys_.size() == action_enemy_index_) {
+  //ボスの行動indexは敵の配列サイズと一致したとき
+  const bool is_index_is_boss = enemys_.size() == action_enemy_index_;
+  //配列の範囲外かチェック
+  const bool is_out_of_range =
+      action_enemy_index_ < 0 || enemys_.size() <= action_enemy_index_;
+
+  //範囲外でボス行動indexでないときは終了させる
+  if (is_out_of_range && !is_index_is_boss) {
+    return;
+  }
+
+  if (is_index_is_boss) {
+    //ボスが存在しないときはそのindexは無効なので処理をしない
+    if (!boss_) {
       return;
     }
   }
 
-  MY_LOG(L"%d", action_enemy_index_);
-  MY_ASSERTION(0 <= action_enemy_index_ && action_enemy_index_ < enemys_.size(),
-               L"範囲外");
   if (move_timer_ <= 0.0f) {
     bullet::Collider* _collider;
     if ((boss_ != nullptr) && (enemys_.size() == action_enemy_index_)) {

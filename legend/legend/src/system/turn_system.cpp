@@ -184,6 +184,8 @@ bool TurnSystem::Init(const std::string& stage_name) {
       device.GetLocalHandle(
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
       L"L_CB");
+
+  current_turn_ = 16;
   return true;
 }
 

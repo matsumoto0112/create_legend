@@ -66,7 +66,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   skill_manager_.Init(mediator_);
 
   is_hit_obstacle_ = false;
-  is_play_se_ = false;
+  se_interval_.Init(0.0f);
 
   return true;
 }
@@ -184,8 +184,6 @@ void Player::CheckImpulse() {
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
     mediator_->PlayerMoveStartEvent();
-    is_play_se_ = false;
-    audio.Stop(se_power_);
     audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }
   SetImpulse();
@@ -219,10 +217,9 @@ void Player::SetImpulse() {
         up_power_ = true;
       }
     }
-    if (!is_play_se_) {
-      is_play_se_ = true;
-      se_power_ =
-          audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f, true);
+    if (se_interval_.Update()) {
+      audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f);
+      se_interval_.Init(1.0f);
     }
   } else {
     is_set_power_ = true;

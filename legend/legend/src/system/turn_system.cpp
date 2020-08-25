@@ -371,7 +371,7 @@ bool TurnSystem::WaitEnemyMoveStart() {
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;
   }
-  for (auto& velocity : enemy_manager_.GetVelocities()) {
+  for (auto&& velocity : enemy_manager_.GetVelocities()) {
     if (velocity != math::Vector3::kZeroVector) {
       return true;
     }
@@ -705,6 +705,10 @@ bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
 
     for (auto&& enemy_parameter : enemys) {
       enemy_manager_.Add(enemy_parameter);
+    }
+
+    for (auto&& boss_parameter : bosses) {
+      enemy_manager_.Add(boss_parameter);
     }
   }
 

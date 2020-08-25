@@ -110,6 +110,7 @@ class EnemyManager {
   i32 action_enemy_index_ = -1;
   i32 enemy_max_count_ = 50;
   bool is_game_clear_ = false;
+  float move_speed_ = 30.0f;
   float move_timer_ = 0.0f;
   const float move_time_ = 0.5f;
 

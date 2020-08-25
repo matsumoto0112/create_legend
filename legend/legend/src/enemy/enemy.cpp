@@ -69,9 +69,10 @@ bool Enemy::Update() {
 
   auto velocity = GetVelocity();
   velocity.y = 0;
-  const bool is_nearly_zero_vector = velocity.MagnitudeSquared() < 0.01f;
-  if (is_move_ && is_nearly_zero_vector) move_end_ = true;
-  is_move_ = (0.01f <= velocity.Magnitude());
+  if (is_move_ && (velocity.Magnitude() < 0.01f)) {
+    move_end_ = true;
+    is_move_ = false;
+  }
   // Move();
 
   // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
@@ -130,6 +131,7 @@ void Enemy::SetPosition(math::Vector3 position) {
 //‘¬“x‚ÌÝ’è
 void Enemy::SetVelocity(math::Vector3 velocity) {
   box_->ApplyCentralImpulse(velocity);
+  is_move_ = true;
 }
 
 void Enemy::SetRotation() {
@@ -144,6 +146,7 @@ void Enemy::ResetParameter() {
 
   // deceleration_x_ = deceleration_z_ = 0;
   is_move_ = false;
+  move_end_ = false;
 }
 
 ////Œ¸‘¬
@@ -175,7 +178,7 @@ math::Quaternion Enemy::GetRotation() const { return transform_.GetRotation(); }
 
 float Enemy::GetPower() const { return power_; }
 
-bool Enemy::GetMoveEnd() const { return move_end_; }
+bool Enemy::GetMoveEnd() const { return (!is_move_ && move_end_); }
 
 void Enemy::ResetMoveEnd() { move_end_ = false; }
 

@@ -429,8 +429,7 @@ bool TurnSystem::PlayerSkillAfterModed() {
 bool TurnSystem::EnemyMove() {
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_->GetCollider());
-  if (enemy_manager_.GetEnemiesSize() == 0 ||
-      enemy_manager_.LastEnemyMoveEnd()) {
+  if (enemy_manager_.LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
     enemy_manager_.ResetEnemyMove();
     // AddCurrentTurn();

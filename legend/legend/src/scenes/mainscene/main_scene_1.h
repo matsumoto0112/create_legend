@@ -53,6 +53,7 @@ class MainScene1 : public Scene {
 
  private:
   system::TurnSystem turn_system_;
+  i32 bgm_;
 };
 
 }  // namespace mainscene

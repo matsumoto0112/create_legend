@@ -44,6 +44,7 @@ class GameOver : public Scene {
 
   FadeInOut fade_;
   bool is_scene_end_;
+  i32 bgm_;
 };
 }  // namespace scenes
 }  // namespace legend

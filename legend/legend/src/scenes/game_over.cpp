@@ -8,6 +8,7 @@
 
 namespace legend {
 namespace scenes {
+namespace resource_name = util::resource::resource_names;
 
 //コンストラクタ
 GameOver::GameOver(ISceneChange* scene_change) : Scene(scene_change) {}
@@ -16,7 +17,7 @@ GameOver::~GameOver() {}
 
 //初期化
 bool GameOver::Initialize() {
-  namespace TextureName = util::resource::resource_names::texture;
+  namespace TextureName = resource_name::texture;
 
   const auto window_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
@@ -24,6 +25,10 @@ bool GameOver::Initialize() {
       system::GameDataStorage::GetInstance()->Get();
   const auto heap_id =
       directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
+
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  bgm_ = audio.Start(resource_name::audio::BGM_RESULT, 1.0f,
+                     true);
 
   //プレイヤーが死亡したらgameover画像を出す
   if (data.end_type == system::GameDataStorage::GameEndType::PLAYER_DEAD) {
@@ -37,6 +42,7 @@ bool GameOver::Initialize() {
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
+    audio.Start(resource_name::audio::RESULT_GAMEOVER, 1.0f);
   } else {
     auto image = std::make_unique<ui::Image>();
     if (!image->Init(TextureName::RESULT_STAGECLEAR, heap_id)) {
@@ -48,6 +54,7 @@ bool GameOver::Initialize() {
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
+    audio.Start(resource_name::audio::RESULT_STAGE_CLEAR, 1.0f);
   }
 
   // const i32 clear_turn = data.play_turn;
@@ -58,7 +65,7 @@ bool GameOver::Initialize() {
   //  num->Init(TextureName::UI_NUMBER_1, heap_id);
   //}
 
-  fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
+  fade_.Init(resource_name::texture::FADE_IMAGE);
   fade_.StartFadeIn(1.0f);
   is_scene_end_ = false;
   return true;
@@ -67,6 +74,7 @@ bool GameOver::Initialize() {
 //更新
 bool GameOver::Update() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   //シーンが終了しているならフェード処理をする
   if (is_scene_end_) {
@@ -82,6 +90,8 @@ bool GameOver::Update() {
   if (input.GetCommand(input::input_code::Decide)) {
     fade_.StartFadeOut(1.0f);
     is_scene_end_ = true;
+    audio.Start(resource_name::audio::RESULT_MOVE_OTHER_SCENE,
+                1.0f);
   }
 
   fade_.Update();
@@ -105,6 +115,9 @@ void GameOver::Draw() {
 }
 
 void GameOver::Finalize() {
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Stop(bgm_);
+
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 

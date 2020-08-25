@@ -73,6 +73,7 @@ constexpr name GAUGE = L"ui_gauge_vs.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_vs.cso";
 constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre_vs";
 constexpr name DIFFERED_RENDERING = L"differed_rendering_vs";
+constexpr name SHADOW_MAP = L"shadow_map_vs";
 }  // namespace vertex_shader
 
 namespace pixel_shader {
@@ -105,6 +106,7 @@ constexpr name GAUGE = L"gauge";
 constexpr name QUARTER_GAUGE = L"quarter_gauge";
 constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre";
 constexpr name DIFFERED_RENDERING = L"differed_rendering";
+constexpr name SHADOW_MAP = L"shadow_map";
 }  // namespace pipeline
 
 namespace audio {

@@ -47,6 +47,33 @@ void RenderResourceManager::SetRenderTargets(
     device::CommandList& command_list, RenderTargetID render_target_id,
     bool clear_render_target, DepthStencilTargetID depth_stencil_target_id,
     bool clear_depth_stencil_target) {
+  //レンダーターゲットを使用しない設定
+  if (render_target_id == RenderTargetID::NONE) {
+    //デプス・ステンシルも使用しないなら全部nullptrにする
+    if (depth_stencil_target_id == DepthStencilTargetID::NONE) {
+      command_list.GetCommandList()->OMSetRenderTargets(0, nullptr, FALSE,
+                                                        nullptr);
+      return;
+    }
+
+    MY_ASSERTION(util::Exist(depth_stencil_targets_, depth_stencil_target_id),
+                 L"未登録のDepthStencilIDが選択されました。");
+    //デプス・ステンシルを使用可能状態にする
+    DepthStencil& depth_stencil_target =
+        depth_stencil_targets_.at(depth_stencil_target_id).Get();
+    depth_stencil_target.Transition(
+        command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE);
+    const D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle =
+        depth_stencil_target.GetHandle().cpu_handle_;
+    command_list.GetCommandList()->OMSetRenderTargets(0, nullptr, FALSE,
+                                                      &dsv_handle);
+    //デプス・ステンシルのクリアが必要なら処理をする
+    if (clear_depth_stencil_target) {
+      depth_stencil_target.ClearDepthStencil(command_list);
+    }
+    return;
+  }
+
   MY_ASSERTION(util::Exist(render_targets_, render_target_id),
                L"未登録のRenderTargetIDが選択されました。");
 
@@ -157,6 +184,15 @@ void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
                L"未登録のIDが選択されました。");
 
   render_targets_.at(id).Get().UseAsSRV(accessor, render_target_number);
+}
+
+void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
+                                     DepthStencilTargetID id,
+                                     u32 register_num) {
+  MY_ASSERTION(util::Exist(depth_stencil_targets_, id),
+               L"未登録のIDが選択されました。");
+
+  depth_stencil_targets_.at(id).Get().UseAsSRV(accessor, register_num);
 }
 
 //登録済みか判定

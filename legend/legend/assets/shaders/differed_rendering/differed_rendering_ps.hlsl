@@ -13,6 +13,8 @@ texture2D g_world_position : register(t1);
 texture2D g_diffuse : register(t2);
 
 float4 main(const PSInput i) : SV_TARGET{
+
+
     float3 world_position = g_world_position.Sample(g_sampler_warp, i.uv).rgb;
     float3 world_normal = 0;
     float depth = 0;
@@ -35,6 +37,10 @@ float4 main(const PSInput i) : SV_TARGET{
     color.rgb += attenuation * light_color * diffuse.rgb * max(dot(L, world_normal), 0);
 
     color.a = 1.0;
+
+    //float4 position = g_world_position.Sample(g_sampler_warp, i.uv);
+    //float4 diffuse = 
+
     return color;
 }
 

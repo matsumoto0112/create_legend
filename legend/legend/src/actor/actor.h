@@ -52,7 +52,7 @@ class Actor {
   util::Transform& GetTransformRef() { return transform_; }
   util::Transform GetTransform() const { return transform_; }
 
- protected:
+ //protected:
   //! アクター名
   std::wstring name_;
   //! トランスフォーム

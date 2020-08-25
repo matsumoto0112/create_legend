@@ -13,7 +13,7 @@ PSOutput main(const PSInput i) {
     float depth = i.world_pos.z / i.world_pos.w;
 
     result.position = float4(i.world_pos.xyz, 1.0);
-    result.normal = float4(i.normal.xyz * 0.5 + 0.5, 1.0);
+    result.normal = float4(i.normal.xyz * 0.5 + 0.5, depth);
     result.diffuse = g_albedo.Sample(g_sampler_warp, i.uv);
     return result;
 }

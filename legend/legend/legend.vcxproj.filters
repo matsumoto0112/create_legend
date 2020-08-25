@@ -130,6 +130,7 @@
     <ClCompile Include="src\skill\explosion_pencil.cpp" />
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\scenes\fade_in_out.cpp" />
+    <ClCompile Include="src\actor\actor_render_command_list.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -308,7 +309,7 @@
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
-    <ClInclude Include="src\scenes\decorator\fade_in_out.h" />
+    <ClInclude Include="src\actor\actor_render_command_list.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />
@@ -358,6 +359,7 @@
     <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_pre_ps.hlsl" />
     <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_vs.hlsl" />
     <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_ps.hlsl" />
+    <FxCompile Include="assets\shaders\differed_rendering\shadow_map_vs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />

@@ -16,6 +16,15 @@ struct Camera {
   legend::math::Vector3 camera_position;
 };
 legend::directx::buffer::ConstantBuffer<Camera> camera_cb_;
+
+struct Light {
+  legend::math::Vector3 position;
+};
+struct LightCBStruct {
+  legend::math::Matrix4x4 view;
+  legend::math::Matrix4x4 proj;
+};
+legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
 }  // namespace
 
 namespace legend {
@@ -221,6 +230,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
       device.GetLocalHandle(
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
       L"CB");
+
+  light_cb_.Init(
+      device,
+      device.GetLocalHandle(
+          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
+      L"L_CB");
   return true;
 }
 
@@ -548,23 +563,55 @@ void TurnSystem::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
+  //シャドウマップ用描画
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::NONE, false,
+      directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
+
+  cameras_[current_camera_]->RenderStart();
+
+  actor_render_command_list_.Push(player_.get());
+  for (auto&& obj : static_objects_) {
+    actor_render_command_list_.Push(obj.get());
+  }
+  for (auto&& fragment : fragments_) {
+    actor_render_command_list_.Push(fragment.get());
+  }
+  for (auto&& item_box : item_boxes_) {
+    actor_render_command_list_.Push(item_box.get());
+  }
+
+  // player_->Draw();
+  // for (auto&& obj : static_objects_) {
+  //  obj->Draw();
+  //}
+  // for (auto&& fragment : fragments_) {
+  //  fragment->Draw();
+  //}
+  // for (auto&& item_box : item_boxes_) {
+  //  item_box->Draw();
+  //}
+  // enemy_manager_.Draw();
+  actor_render_command_list_.ShadowPass();
+
   render_resource_manager.SetRenderTargets(
       command_list,
       directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  actor_render_command_list_.RenderPass();
 
-  cameras_[current_camera_]->RenderStart();
-  player_->Draw();
-  for (auto&& obj : static_objects_) {
-    obj->Draw();
-  }
-  for (auto&& fragment : fragments_) {
-    fragment->Draw();
-  }
-  for (auto&& item_box : item_boxes_) {
-    item_box->Draw();
-  }
-  enemy_manager_.Draw();
+  // cameras_[current_camera_]->RenderStart();
+  // player_->Draw();
+  // for (auto&& obj : static_objects_) {
+  //  obj->Draw();
+  //}
+  // for (auto&& fragment : fragments_) {
+  //  fragment->Draw();
+  //}
+  // for (auto&& item_box : item_boxes_) {
+  //  item_box->Draw();
+  //}
+  // enemy_manager_.Draw();
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
@@ -583,6 +630,8 @@ void TurnSystem::Draw() {
   render_resource_manager.UseAsSRV(
       device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
       2);
+  render_resource_manager.UseAsSRV(
+      device, directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
 
   camera_cb_.GetStagingRef().camera_position =
       player_follow_lookat_camera_->GetPosition();
@@ -608,13 +657,15 @@ void TurnSystem::Draw() {
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+
+  actor_render_command_list_.Clear();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  cameras_[current_camera_]->RenderStart();
-  search_manager_.DebugDraw(&physics_field_);
-  physics_field_.DebugDraw(cameras_[current_camera_].get());
+   cameras_[current_camera_]->RenderStart();
+   search_manager_.DebugDraw(&physics_field_);
+   physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }

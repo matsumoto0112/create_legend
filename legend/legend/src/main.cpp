@@ -43,9 +43,54 @@ class MyApp final : public device::Application {
       }
     }
 
+    {
+      auto& device = game::GameDevice::GetInstance()->GetDevice();
+      auto& render_resource_manager = device.GetRenderResourceManager();
+      const math::IntVector2 screen_size =
+          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+      const u32 x = static_cast<u32>(screen_size.x);
+      const u32 y = static_cast<u32>(screen_size.y);
+      const directx::render_target::DepthStencil::DepthStencilDesc desc{
+          L"ShadowDepth", DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT, x, y, 1.0f, 0};
+      if (!render_resource_manager.AddDepthStencil(
+              directx::render_target::DepthStencilTargetID::SHADOW_MAP, device,
+              desc)) {
+        return false;
+      }
+    }
+
     if (!util::PipelineInitializer::Init(std::filesystem::path("parameters") /
                                          "pipeline.txt")) {
       return false;
+    }
+
+    {
+      auto& device = game::GameDevice::GetInstance()->GetDevice();
+      auto& render_resource_manager = device.GetRenderResourceManager();
+      auto& resource = game::GameDevice::GetInstance()->GetResource();
+
+      directx::shader::GraphicsPipelineStateDesc desc = {};
+      desc.SetVertexShader(
+          resource.GetVertexShader()
+              .Get(std::wstring(util::resource::resource_names::vertex_shader::
+                                    SHADOW_MAP) +
+                   L".cso")
+              .get());
+      desc.SetRootSignature(device.GetDefaultRootSignature());
+      desc.SetDepthStencilTarget(render_resource_manager.GetDepthStencilTarget(
+          directx::render_target::DepthStencilTargetID::SHADOW_MAP));
+      desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+      desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+      desc.PrimitiveTopologyType =
+          D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+      desc.SampleMask = UINT_MAX;
+      desc.SampleDesc.Count = 1;
+      auto pipeline = std::make_shared<directx::shader::PipelineState>();
+      if (!pipeline->Init(device, desc)) {
+        return false;
+      }
+      resource.GetPipeline().Register(
+          util::resource::resource_names::pipeline::SHADOW_MAP, pipeline);
     }
 
     //égópÇ∑ÇÈâπåπÇéñëOÇ…ì«Ç›çûÇﬁ

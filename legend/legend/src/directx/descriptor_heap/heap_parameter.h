@@ -22,7 +22,7 @@ constexpr u32 GLOBAL_HEAP_DESCRIPTOR_NUM = 500000;
 //! RTVで使用する割り当て可能数
 constexpr u32 RTV_HEAP_DESCRIPTOR_NUM = 100;
 //! DSVで使用する割り当て可能数
-constexpr u32 DSV_HEAP_DESCRIPTOR_NUM = 5;
+constexpr u32 DSV_HEAP_DESCRIPTOR_NUM = 6;
 
 /**
  * @brief ローカルヒープの登録ID

@@ -9,6 +9,7 @@
 #include <set>
 
 #include "src/actor/actor_mediator.h"
+#include "src/actor/actor_render_command_list.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
 #include "src/camera/lookat_target_camera.h"
@@ -227,6 +228,8 @@ class TurnSystem : public actor::IActorMediator {
   scenes::FadeInOut fade_;
   bool is_scene_all_end_;
   bool is_scene_end_fade_start_;
+
+  actor::ActorRenderCommandList actor_render_command_list_;
 
  private:
   // UIのリアルタイム修正用パラメータ

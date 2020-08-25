@@ -16,6 +16,7 @@ struct VSInput {
 struct VSOutput {
     float4 position : SV_POSITION;
     float2 uv : TEXCOORD0;
+    float4 light_pos : POSITION;
 };
 
 typedef VSOutput PSInput;

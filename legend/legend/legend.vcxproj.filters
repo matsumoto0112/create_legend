@@ -80,7 +80,6 @@
     <ClCompile Include="src\enemy\enemy.cpp" />
     <ClCompile Include="src\scenes\scene_names.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
-    <ClCompile Include="src\scenes\game_over.cpp" />
     <ClCompile Include="src\scenes\title.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
@@ -131,6 +130,7 @@
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\scenes\fade_in_out.cpp" />
     <ClCompile Include="src\actor\actor_render_command_list.cpp" />
+    <ClCompile Include="src\scenes\result_scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -250,7 +250,6 @@
     <ClInclude Include="src\enemy\enemy_manager.h" />
     <ClInclude Include="src\scenes\scene_names.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
-    <ClInclude Include="src\scenes\game_over.h" />
     <ClInclude Include="src\scenes\title.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
     <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
@@ -310,6 +309,7 @@
     <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
+    <ClInclude Include="src\scenes\result_scene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

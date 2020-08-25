@@ -1,5 +1,5 @@
-#ifndef LEGEND_SCENES_GAME_OVER_H_
-#define LEGEND_SCENES_GAME_OVER_H_
+#ifndef LEGEND_SCENES_RESULT_SCENE_H_
+#define LEGEND_SCENES_RESULT_SCENE_H_
 
 #include "src/scenes/fade_in_out.h"
 #include "src/scenes/scene.h"
@@ -12,16 +12,16 @@ namespace scenes {
  *@class GameOver
  *@brief ゲームオーバーシーン
  */
-class GameOver : public Scene {
+class ResultScene : public Scene {
  public:
   /**
    *@brief コンストラクタ
    */
-  GameOver(ISceneChange* scene_change);
+  ResultScene(ISceneChange* scene_change);
   /**
    * @brief デストラクタ
    */
-  virtual ~GameOver();
+  virtual ~ResultScene();
   /**
    *@brief 初期化
    */
@@ -49,4 +49,4 @@ class GameOver : public Scene {
 }  // namespace scenes
 }  // namespace legend
 
-#endif  //! LEGEND_SCENES_GAME_OVER_H_
+#endif  //! LEGEND_SCENES_RESULT_SCENE_H_

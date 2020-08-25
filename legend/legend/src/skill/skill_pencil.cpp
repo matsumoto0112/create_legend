@@ -162,11 +162,13 @@ void SkillPencil::OnHit(bullet::Collider* other) {
 //”š”­ŠJn
 void SkillPencil::Explosion() {
   if (is_explosion_) return;
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   explosion_timer_.Init(2.0f, [&]() { EndAction(); });
 
   //üˆÍ‚Ì“G‚ğ‚«”ò‚Î‚·ˆ—
   is_explosion_ = true;
+  audio.Start(resource_name::audio::SKILL_PENCIL_HIT, 1.0f);
 
   explosion_pencil_.Init(transform_, mediator_);
 

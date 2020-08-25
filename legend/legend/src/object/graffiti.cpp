@@ -19,6 +19,7 @@ DXGI_FORMAT GetFormat(legend::u32 size) {
 
 namespace legend {
 namespace object {
+namespace resource_name = util::resource::resource_names;
 
 //コンストラクタ
 Graffiti::Graffiti() : Parent(L"Graffiti") {}
@@ -167,6 +168,8 @@ bool Graffiti::GetIsHit() const { return is_hit_; }
 void Graffiti::OnHit(bullet::Collider* other) {
   if (is_erase_) return;
   is_erase_ = remaining_graffiti_ <= 0.0f;
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+
   {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
@@ -178,6 +181,7 @@ void Graffiti::OnHit(bullet::Collider* other) {
         is_hit_ = true;
         SetInstancePosition(player->GetTransform().GetPosition(),
                             player->GetCollider()->GetVelocity().Normalized());
+        audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
       }
     }
   }
@@ -192,6 +196,7 @@ void Graffiti::OnHit(bullet::Collider* other) {
         is_hit_ = true;
         SetInstancePosition(enemy->GetTransform().GetPosition(),
                             enemy->GetCollider()->GetVelocity().Normalized());
+        audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
       }
     }
   }

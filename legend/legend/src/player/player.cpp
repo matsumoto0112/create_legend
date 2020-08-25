@@ -16,6 +16,7 @@
 
 namespace legend {
 namespace player {
+namespace resource_name = util::resource::resource_names;
 
 //コンストラク
 Player::Player() : Parent(L"Player") {}
@@ -59,11 +60,12 @@ bool Player::Init(actor::IActorMediator* mediator,
   transform_cb_.UpdateStaging();
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-  model_ =
-      resource.GetModel().Get(util::resource::resource_names::model::PLAYER);
+  model_ = resource.GetModel().Get(resource_name::model::PLAYER);
 
   //スキルマネージャーの初期化
   skill_manager_.Init(mediator_);
+
+  is_hit_obstacle_ = false;
 
   return true;
 }
@@ -132,6 +134,8 @@ void Player::CheckImpulse() {
   auto framerate =
       12.5f *
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   if (!is_move_) {
     input::InputManager& input = game::GameDevice::GetInstance()->GetInput();
     input_velocity_.x = -input.GetGamepad()->GetStickLeft().x;
@@ -139,6 +143,8 @@ void Player::CheckImpulse() {
 
     if (0.2f <= input_velocity_.Magnitude()) {
       is_input_ = true;
+
+      audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f);
     }
 
     if ((change_amount_velocity_.Magnitude() < input_velocity_.Magnitude()) ||
@@ -179,6 +185,7 @@ void Player::CheckImpulse() {
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
     mediator_->PlayerMoveStartEvent();
+    audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }
   SetImpulse();
 }
@@ -274,13 +281,11 @@ bool Player::GetSkillSelect() {
   return skill_manager_.SelectSkill();
 }
 
-bool Player::GetPlayerDeathFlag()
-{
-    return transform_.GetPosition().y <= -20;
-}
+bool Player::GetPlayerDeathFlag() { return transform_.GetPosition().y <= -20; }
 
 void Player::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   if (turn_mode == system::Mode::PLAYER_MOVING) {
     //敵に触れた
@@ -293,6 +298,14 @@ void Player::OnHit(bullet::Collider* other) {
             (enemy_position - player_position).Normalized();
 
         e->GetCollider()->ApplyCentralImpulse(direction * power_);
+        std::wstring file;
+        //ヒット時の速度の大きさでSE音を適用
+        if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
+          file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
+        } else {
+          file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
+        }
+        audio.Start(file, 1.0f);
       }
     }
     //ボスに触れた
@@ -305,6 +318,26 @@ void Player::OnHit(bullet::Collider* other) {
             (boss_position - player_position).Normalized();
 
         b->GetCollider()->ApplyCentralImpulse(direction * power_);
+        std::wstring file;
+        //ヒット時の速度の大きさでSE音を適用
+        if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
+          file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
+        } else {
+          file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
+        }
+        audio.Start(file, 1.0f);
+      }
+    }
+    {
+      object::Obstacle* obstacle =
+          dynamic_cast<object::Obstacle*>(other->GetOwner());
+      if (obstacle) {
+        if (!is_hit_obstacle_) {
+          is_hit_obstacle_ = true;
+          audio.Start(resource_name::audio::PLAYER_OBSTACLE_HIT, 0.8f);
+        }
+      } else {
+        is_hit_obstacle_ = false;
       }
     }
   }
@@ -318,6 +351,7 @@ void Player::OnHit(bullet::Collider* other) {
         std::shared_ptr<skill::Skill> skill = skill_item->GetSkill();
         skill->Init(mediator_, this);
         skill_manager_.AddSkill(skill);
+        audio.Start(resource_name::audio::PLAYER_GET_STATIONERY, 1.0f);
       }
     }
   }
@@ -328,6 +362,7 @@ void Player::OnHit(bullet::Collider* other) {
       if (!fragment->GetIsDead()) {
         fragment->ChangeDead();
         UpdateStrength(0.01f);
+        audio.Start(resource_name::audio::PLAYER_GET_FRAGMENT, 1.0f);
       }
     }
   }

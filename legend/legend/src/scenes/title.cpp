@@ -65,6 +65,7 @@ bool Title::Initialize() {
 //更新
 bool Title::Update() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   //シーンが終了しているならフェード処理をする
   if (is_scene_end_) {
@@ -80,6 +81,7 @@ bool Title::Update() {
   if (input.GetCommand(input::input_code::Decide)) {
     fade_.StartFadeOut(1.0f);
     is_scene_end_ = true;
+    audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
   }
 
   fade_.Update();

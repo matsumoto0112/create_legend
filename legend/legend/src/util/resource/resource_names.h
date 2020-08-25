@@ -138,11 +138,11 @@ constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";
 constexpr name SKILL_SELECT = L"skill_select.wav";
 
-constexpr name TITLE_DECISION = L"free_2.wav";
+constexpr name TITLE_DECISION = L"title_decision.wav";
 constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
 constexpr name RESULT_GAMEOVER = L"free_2.wav";
 constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
-constexpr name RESULT_MOVE_OTHER_SCENE = L"free_2.wav";
+constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
 
 constexpr name BGM_MAIN = L"BGM_main.wav";
 constexpr name BGM_TITLE = L"BGM_title.wav";

@@ -97,7 +97,6 @@ void SkillManager::EnemyTurnEnd() {
 //•`‰æ
 void SkillManager::Draw() {
   for (auto&& skill : skills_) {
-    if (skill->GetUseFlag()) continue;
     skill->Draw();
   }
   select_ui_.Draw();

@@ -368,7 +368,7 @@ void Player::OnHit(bullet::Collider* other) {
     if (fragment) {
       if (!fragment->GetIsDead()) {
         fragment->ChangeDead();
-        UpdateStrength(0.01f);
+        UpdateStrength(0.03f);
         audio.Start(resource_name::audio::PLAYER_GET_FRAGMENT, 1.0f);
       }
     }

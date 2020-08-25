@@ -91,7 +91,7 @@ bool SkillPencil::Update() {
     return true;
   }
 
-  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector * 2);
+  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
   transform_.SetRotation(player_->GetRotation());
   box_->SetTransform(this->transform_);
 
@@ -100,9 +100,7 @@ bool SkillPencil::Update() {
 
 //•`‰æ
 void SkillPencil::Draw() {
-  if (is_explosion_)
-    explosion_pencil_.Draw();
-  else
+  if (!is_explosion_)
     actor::Actor::Draw();
 }
 

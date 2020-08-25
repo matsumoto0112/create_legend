@@ -123,6 +123,9 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
 
 //XV
 bool Graffiti::Update() {
+  update_time_ =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
   if (is_erase_) {
     if (delete_time_.Update()) {
       if (box_) {
@@ -174,16 +177,17 @@ void Graffiti::OnHit(bullet::Collider* other) {
     player::Player* player = dynamic_cast<player::Player*>(other->GetOwner());
     if (player) {
       if (player->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f/* * game::GameDevice::GetInstance()
-                                             ->GetFPSCounter()
-                                             .GetDeltaSeconds<float>()*/;
+        const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        //Žã‘Ì‰»
-        player->UpdateStrength(-0.04f);
-        is_hit_ = true;
-        SetInstancePosition(player->GetTransform().GetPosition(),
-                            player->GetCollider()->GetVelocity().Normalized());
-        audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+          //Žã‘Ì‰»
+          player->UpdateStrength(-0.04f);
+          is_hit_ = true;
+          SetInstancePosition(
+              player->GetTransform().GetPosition(),
+              player->GetCollider()->GetVelocity().Normalized());
+          audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        }
       }
     }
   }
@@ -191,16 +195,16 @@ void Graffiti::OnHit(bullet::Collider* other) {
     enemy::Enemy* enemy = dynamic_cast<enemy::Enemy*>(other->GetOwner());
     if (enemy) {
       if (enemy->GetVelocity().Magnitude() >= can_erase_speed_) {
-        const float percentage = 10.0f/* * game::GameDevice::GetInstance()
-                                             ->GetFPSCounter()
-                                             .GetDeltaSeconds<float>()*/;
+        const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        //Žã‘Ì‰»
-        enemy->Weaking(0.04f);
-        is_hit_ = true;
-        SetInstancePosition(enemy->GetTransform().GetPosition(),
-                            enemy->GetCollider()->GetVelocity().Normalized());
-        audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+          //Žã‘Ì‰»
+          enemy->Weaking(0.04f);
+          is_hit_ = true;
+          SetInstancePosition(enemy->GetTransform().GetPosition(),
+                              enemy->GetCollider()->GetVelocity().Normalized());
+          audio.Start(resource_name::audio::ERASE_GRAFFITI, 0.8f);
+        }
       }
     }
   }

@@ -48,28 +48,29 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          game::GameDevice::GetInstance()->GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
+  // directx::device::CommandList command_list;
+  // if (!command_list.Init(
+  //        game::GameDevice::GetInstance()->GetDevice(),
+  //        D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+  //  return false;
+  //}
+
+  // command_list.Close();
+  // game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+  //    {command_list});
+  // game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
-
   stage_generator_.LoadStringStageData(stage_path, stage_name);
-  GenerateActors();
+  if (!GenerateActors()) {
+    return false;
+  }
 
   if (!InitCameras()) {
     return false;
   }
-
-  command_list.Close();
-  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-      {command_list});
-  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   {
     search_manager_.Initialize(this);
@@ -206,8 +207,9 @@ bool TurnSystem::Update() {
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
       {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
+      {Mode::PLAYER_MOVE_END, [&]() { return WaitEnemyMoveStart(); }},
       {Mode::PLAYER_SKILL_AFTER_MOVED,
-       [&]() { return PlayerSkillAfterModed(); }},
+       [&]() { return PlayerSkillAfterMoved(); }},
       {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
   };
@@ -364,7 +366,21 @@ bool TurnSystem::PlayerMoveReady() {
 //プレイヤーの移動中処理
 bool TurnSystem::PlayerMoving() { return true; }
 
-bool TurnSystem::PlayerSkillAfterModed() {
+bool TurnSystem::WaitEnemyMoveStart() {
+  if (enemy_manager_.GetEnemiesSize() == 0) {
+    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    return true;
+  }
+  for (auto& velocity : enemy_manager_.GetVelocities()) {
+    if (velocity != math::Vector3::kZeroVector) {
+      return true;
+    }
+  }
+  current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+  return true;
+}
+
+bool TurnSystem::PlayerSkillAfterMoved() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
@@ -388,14 +404,18 @@ bool TurnSystem::EnemyMove() {
 //敵の移動終了時処理
 bool TurnSystem::EnemyMoveEnd() {
   AddCurrentTurn();
-  for (auto&& enemy_parameter :
-       stage_generator_.GetEnemyParameters(current_turn_)) {
-    enemy_manager_.Add(enemy_parameter);
+
+  if (!GenerateActors()) {
+    return false;
   }
-  for (auto&& boss_parameter :
-       stage_generator_.GetBossParameters(current_turn_)) {
-    enemy_manager_.Add(boss_parameter);
-  }
+  // for (auto&& enemy_parameter :
+  //     stage_generator_.GetEnemyParameters(current_turn_)) {
+  //  enemy_manager_.Add(enemy_parameter);
+  //}
+  // for (auto&& boss_parameter :
+  //     stage_generator_.GetBossParameters(current_turn_)) {
+  //  enemy_manager_.Add(boss_parameter);
+  //}
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
@@ -633,9 +653,11 @@ bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
       return false;
     }
 
-    player_ = std::make_unique<player::Player>();
-    if (!player_->Init(this, player)) {
-      return false;
+    if (!player_) {
+      player_ = std::make_unique<player::Player>();
+      if (!player_->Init(this, player)) {
+        return false;
+      }
     }
     for (auto&& param : desks) {
       auto obj = std::make_unique<object::Desk>();
@@ -652,14 +674,25 @@ bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
       }
       static_objects_.emplace_back(std::move(obj));
     }
+    directx::device::CommandList command_list;
+    if (!command_list.Init(
+            game::GameDevice::GetInstance()->GetDevice(),
+            D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+      return false;
+    }
 
-    // for (auto&& param : graffities) {
-    //    auto graf = std::make_unique<object::Graffiti>();
-    //    if (!graf->Init(this, param, command_list)) {
-    //        return false;
-    //    }
-    //    graffities_.emplace_back(std::move(graf));
-    //}
+    for (auto&& param : graffities) {
+      auto graf = std::make_unique<object::Graffiti>();
+      if (!graf->Init(this, param, command_list)) {
+        return false;
+      }
+      graffities_.emplace_back(std::move(graf));
+    }
+
+    command_list.Close();
+    game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+        {command_list});
+    game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
     for (auto&& param : item_boxes) {
       auto obj = std::make_unique<skill::SkillItemBox>();
@@ -696,7 +729,7 @@ void TurnSystem::PlayerMoveStartEvent() {
 void TurnSystem::PlayerMoveEndEvent() {
   // 0.1秒後にモードを切り替える
   countdown_timer_.Init(0.1f, [&]() {
-    current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
+    current_mode_ = Mode::PLAYER_MOVE_END;
     current_camera_ = camera_mode::Main;
   });
 }

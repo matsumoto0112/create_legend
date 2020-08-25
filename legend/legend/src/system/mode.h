@@ -15,6 +15,7 @@ namespace system {
 enum class Mode {
   PLAYER_MOVE_READY,         //! プレイヤーの移動準備
   PLAYER_MOVING,             //! プレイヤーの移動中
+  PLAYER_MOVE_END,           //! プレイヤーの移動終了
   PLAYER_SKILL_AFTER_MOVED,  //! プレイヤーの移動終了後スキル発動処理Ak
   ENEMY_MOVING,              //! 敵の移動中
   ENEMY_MOVE_END,            //! 敵の移動終了

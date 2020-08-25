@@ -11,6 +11,11 @@ legend::i32 CalcPlayerStrengthToPrintNumber(
   const float str = player.GetStrength();
   return static_cast<legend::i32>(str * 100);
 }
+
+struct Camera {
+  legend::math::Vector3 camera_position;
+};
+legend::directx::buffer::ConstantBuffer<Camera> camera_cb_;
 }  // namespace
 
 namespace legend {
@@ -191,6 +196,31 @@ bool TurnSystem::Init(const std::string& stage_name) {
   is_scene_all_end_ = false;
   is_scene_end_fade_start_ = false;
 
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  {
+    const std::vector<directx::Sprite> vertices = {
+        {{-1.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{1.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
+        {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
+    };
+    const u32 size = static_cast<u32>(vertices.size());
+    vertex_buffer_.Init(device, sizeof(directx::Sprite), size, L"VB");
+    vertex_buffer_.WriteBufferResource(vertices.data());
+  }
+  {
+    const std::vector<u16> indices = {0, 1, 2, 0, 2, 3};
+    const u32 size = static_cast<u32>(indices.size());
+    index_buffer_.Init(device, sizeof(u16), size,
+                       directx::PrimitiveTopology::TRIANGLE_LIST, L"IB");
+    index_buffer_.WriteBufferResource(indices.data());
+  }
+
+  camera_cb_.Init(
+      device,
+      device.GetLocalHandle(
+          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
+      L"CB");
   return true;
 }
 
@@ -516,21 +546,61 @@ btCollisionWorld::AllHitsRayResultCallback legend::system::TurnSystem::RayCast(
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  auto& render_resource_manager = device.GetRenderResourceManager();
+
+  render_resource_manager.SetRenderTargets(
+      command_list,
+      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   cameras_[current_camera_]->RenderStart();
   player_->Draw();
   for (auto&& obj : static_objects_) {
     obj->Draw();
   }
-  enemy_manager_.Draw();
-  for (auto&& graffiti : graffities_) {
-    graffiti->Draw(command_list);
-  }
   for (auto&& fragment : fragments_) {
     fragment->Draw();
   }
   for (auto&& item_box : item_boxes_) {
     item_box->Draw();
+  }
+  enemy_manager_.Draw();
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
+      directx::render_target::DepthStencilTargetID::NONE, true);
+
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  resource.GetPipeline()
+      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
+      ->SetCommandList(command_list);
+  render_resource_manager.UseAsSRV(
+      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+      0);
+  render_resource_manager.UseAsSRV(
+      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+      1);
+  render_resource_manager.UseAsSRV(
+      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
+      2);
+
+  camera_cb_.GetStagingRef().camera_position =
+      player_follow_lookat_camera_->GetPosition();
+  camera_cb_.UpdateStaging();
+  camera_cb_.RegisterHandle(device, 6);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
+
+  vertex_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.SetGraphicsCommandList(command_list);
+  index_buffer_.Draw(command_list);
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+
+  for (auto&& graffiti : graffities_) {
+    graffiti->Draw(command_list);
   }
 
   ui_board_.Draw();

@@ -25,8 +25,8 @@ struct VSOutput {
 typedef VSOutput PSInput;
 
 struct PSOutput {
-    float4 position : SV_TARGET0;
-    float4 normal : SV_TARGET1;
+    float4 normal : SV_TARGET0;
+    float4 position : SV_TARGET1;
     float4 diffuse : SV_TARGET2;
 };
 

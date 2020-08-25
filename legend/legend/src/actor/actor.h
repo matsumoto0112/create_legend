@@ -63,6 +63,8 @@ class Actor {
   std::shared_ptr<draw::Model> model_;
   //! ’‡‰îŽÒ
   IActorMediator* mediator_;
+
+  static const wchar_t* PIPELINE_NAME;
 };
 
 }  // namespace actor

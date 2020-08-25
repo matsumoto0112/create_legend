@@ -10,10 +10,13 @@
 
 VSOutput main(const VSInput v) {
     VSOutput result = (VSOutput)0;
-    result.world_pos = mul(float4(v.position, 1.0), g_transform.world);
-    result.position = mul(result.world_pos, g_world_context.view);
-    result.position = mul(result.position, g_world_context.projection);
 
+    float4 world_pos = mul(float4(v.position, 1.0), g_transform.world);
+    float4 view_pos = mul(world_pos, g_world_context.view);
+    float4 proj_pos = mul(view_pos, g_world_context.projection);
+
+    result.position = proj_pos;
+    result.world_pos = world_pos;
     result.normal = mul(v.normal, (float3x3)g_transform.world);
     result.uv = v.uv;
 

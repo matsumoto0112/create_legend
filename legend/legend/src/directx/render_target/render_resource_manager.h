@@ -151,7 +151,8 @@ class RenderResourceManager {
    */
   void UseAsSRV(device::IDirectXAccessor& accessor, RenderTargetID id,
                 u32 render_target_index);
-  void UseAsSRV(device::IDirectXAccessor& accessor, DepthStencilTargetID id,
+  void UseAsSRV(device::IDirectXAccessor& accessor,
+                device::CommandList& command_list, DepthStencilTargetID id,
                 u32 register_num);
   /**
    * @brief レンダーターゲットIDがすでに登録されているか

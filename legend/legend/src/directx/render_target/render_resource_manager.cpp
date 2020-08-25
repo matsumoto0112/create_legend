@@ -187,12 +187,14 @@ void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
 }
 
 void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
+                                     device::CommandList& command_list,
                                      DepthStencilTargetID id,
                                      u32 register_num) {
   MY_ASSERTION(util::Exist(depth_stencil_targets_, id),
                L"ñ¢ìoò^ÇÃIDÇ™ëIëÇ≥ÇÍÇ‹ÇµÇΩÅB");
 
-  depth_stencil_targets_.at(id).Get().UseAsSRV(accessor, register_num);
+  depth_stencil_targets_.at(id).Get().UseAsSRV(accessor, command_list,
+                                               register_num);
 }
 
 //ìoò^çœÇ›Ç©îªíË

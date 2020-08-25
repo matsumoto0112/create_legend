@@ -27,7 +27,8 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
 
   const buffer::CommittedResource::Tex2DDesc desc{
       ds_desc.name,
-      ds_desc.format,
+      //ds_desc.format,
+      DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS,
       ds_desc.width,
       ds_desc.height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
@@ -79,7 +80,10 @@ void DepthStencil::Transition(device::CommandList& command_list,
 }
 
 void DepthStencil::UseAsSRV(device::IDirectXAccessor& accessor,
+                            device::CommandList& command_list,
                             u32 register_num) {
+  // resource_.Transition(
+  //    command_list, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
   accessor.RegisterHandle(register_num, shader::ResourceType::SRV, srv_handle_);
 }
 

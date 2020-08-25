@@ -24,6 +24,8 @@ constexpr u32 CalcPixelSizeFromFormat(DXGI_FORMAT format) {
       return 4;
     case DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT:
       return sizeof(float);
+    case DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS:
+      return 4;
     default:
       MY_LOG(L"未定義のフォーマットが選択されました。");
       return UINT_MAX;

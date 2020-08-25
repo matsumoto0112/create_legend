@@ -66,7 +66,8 @@ class DepthStencil {
   void Transition(device::CommandList& command_list,
                   D3D12_RESOURCE_STATES next_states);
 
-  void UseAsSRV(device::IDirectXAccessor& accessor, u32 register_num);
+  void UseAsSRV(device::IDirectXAccessor& accessor,
+                device::CommandList& command_list, u32 register_num);
   /**
    * @brief ディスクリプタハンドルを取得する
    */

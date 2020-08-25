@@ -79,13 +79,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
       static_objects_.emplace_back(std::move(obj));
     }
 
-    for (auto&& param : obstacles) {
-      auto obj = std::make_unique<object::Obstacle>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
+    // for (auto&& param : obstacles) {
+    //  auto obj = std::make_unique<object::Obstacle>();
+    //  if (!obj->Init(this, param)) {
+    //    return false;
+    //  }
+    //  static_objects_.emplace_back(std::move(obj));
+    //}
 
     for (auto&& param : graffities) {
       auto graf = std::make_unique<object::Graffiti>();
@@ -574,12 +574,12 @@ void TurnSystem::Draw() {
   for (auto&& obj : static_objects_) {
     actor_render_command_list_.Push(obj.get());
   }
-  for (auto&& fragment : fragments_) {
-    actor_render_command_list_.Push(fragment.get());
-  }
-  for (auto&& item_box : item_boxes_) {
-    actor_render_command_list_.Push(item_box.get());
-  }
+  // for (auto&& fragment : fragments_) {
+  //  actor_render_command_list_.Push(fragment.get());
+  //}
+  // for (auto&& item_box : item_boxes_) {
+  //  actor_render_command_list_.Push(item_box.get());
+  //}
 
   // player_->Draw();
   // for (auto&& obj : static_objects_) {
@@ -592,6 +592,14 @@ void TurnSystem::Draw() {
   //  item_box->Draw();
   //}
   // enemy_manager_.Draw();
+
+  math::Vector3 light_pos = math::Vector3(50, 80, 20);
+  light_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
+      light_pos, math::Vector3::kZeroVector, math::Vector3::kUpVector);
+  light_cb_.GetStagingRef().proj =
+      player_follow_lookat_camera_->GetProjection();
+  light_cb_.UpdateStaging();
+  light_cb_.RegisterHandle(device, 2);
   actor_render_command_list_.ShadowPass();
 
   render_resource_manager.SetRenderTargets(
@@ -631,12 +639,15 @@ void TurnSystem::Draw() {
       device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
       2);
   render_resource_manager.UseAsSRV(
-      device, directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
+      device, command_list,
+      directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
 
   camera_cb_.GetStagingRef().camera_position =
       player_follow_lookat_camera_->GetPosition();
   camera_cb_.UpdateStaging();
   camera_cb_.RegisterHandle(device, 6);
+  light_cb_.RegisterHandle(device, 7);
+
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                             command_list);
 
@@ -648,24 +659,24 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
-  for (auto&& graffiti : graffities_) {
-    graffiti->Draw(command_list);
-  }
+  // for (auto&& graffiti : graffities_) {
+  //  graffiti->Draw(command_list);
+  //}
 
-  ui_board_.Draw();
-  fade_.Draw();
+  // ui_board_.Draw();
+  // fade_.Draw();
 
-  //スプライトは最後に描画リストにあるものをまとめて描画する
-  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  ////スプライトは最後に描画リストにあるものをまとめて描画する
+  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 
   actor_render_command_list_.Clear();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-   cameras_[current_camera_]->RenderStart();
-   search_manager_.DebugDraw(&physics_field_);
-   physics_field_.DebugDraw(cameras_[current_camera_].get());
+  // cameras_[current_camera_]->RenderStart();
+  // search_manager_.DebugDraw(&physics_field_);
+  // physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }

@@ -79,13 +79,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
       static_objects_.emplace_back(std::move(obj));
     }
 
-    // for (auto&& param : obstacles) {
-    //  auto obj = std::make_unique<object::Obstacle>();
-    //  if (!obj->Init(this, param)) {
-    //    return false;
-    //  }
-    //  static_objects_.emplace_back(std::move(obj));
-    //}
+    for (auto&& param : obstacles) {
+      auto obj = std::make_unique<object::Obstacle>();
+      if (!obj->Init(this, param)) {
+        return false;
+      }
+      static_objects_.emplace_back(std::move(obj));
+    }
 
     for (auto&& param : graffities) {
       auto graf = std::make_unique<object::Graffiti>();
@@ -574,12 +574,12 @@ void TurnSystem::Draw() {
   for (auto&& obj : static_objects_) {
     actor_render_command_list_.Push(obj.get());
   }
-  // for (auto&& fragment : fragments_) {
-  //  actor_render_command_list_.Push(fragment.get());
-  //}
-  // for (auto&& item_box : item_boxes_) {
-  //  actor_render_command_list_.Push(item_box.get());
-  //}
+  for (auto&& fragment : fragments_) {
+    actor_render_command_list_.Push(fragment.get());
+  }
+  for (auto&& item_box : item_boxes_) {
+    actor_render_command_list_.Push(item_box.get());
+  }
 
   // player_->Draw();
   // for (auto&& obj : static_objects_) {
@@ -606,9 +606,9 @@ void TurnSystem::Draw() {
       command_list,
       directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+  cameras_[current_camera_]->RenderStart();
   actor_render_command_list_.RenderPass();
 
-  // cameras_[current_camera_]->RenderStart();
   // player_->Draw();
   // for (auto&& obj : static_objects_) {
   //  obj->Draw();
@@ -630,14 +630,14 @@ void TurnSystem::Draw() {
       .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
       ->SetCommandList(command_list);
   render_resource_manager.UseAsSRV(
-      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-      0);
+      device, command_list,
+      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 0);
   render_resource_manager.UseAsSRV(
-      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-      1);
+      device, command_list,
+      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 1);
   render_resource_manager.UseAsSRV(
-      device, directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE,
-      2);
+      device, command_list,
+      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 2);
   render_resource_manager.UseAsSRV(
       device, command_list,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
@@ -657,17 +657,17 @@ void TurnSystem::Draw() {
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
 
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti->Draw(command_list);
-  //}
+  for (auto&& graffiti : graffities_) {
+    graffiti->Draw(command_list);
+  }
 
-  // ui_board_.Draw();
-  // fade_.Draw();
+  ui_board_.Draw();
+  fade_.Draw();
 
-  ////スプライトは最後に描画リストにあるものをまとめて描画する
-  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 
   actor_render_command_list_.Clear();
 }

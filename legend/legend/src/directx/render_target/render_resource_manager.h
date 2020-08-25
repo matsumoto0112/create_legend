@@ -149,7 +149,8 @@ class RenderResourceManager {
    * @param id レンダーターゲットID
    * @param render_target_index 使用するマルチレンダーターゲットのインデックス
    */
-  void UseAsSRV(device::IDirectXAccessor& accessor, RenderTargetID id,
+  void UseAsSRV(device::IDirectXAccessor& accessor,
+                device::CommandList& command_list, RenderTargetID id,
                 u32 render_target_index);
   void UseAsSRV(device::IDirectXAccessor& accessor,
                 device::CommandList& command_list, DepthStencilTargetID id,

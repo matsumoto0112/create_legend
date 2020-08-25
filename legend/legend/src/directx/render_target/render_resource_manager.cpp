@@ -178,12 +178,14 @@ bool RenderResourceManager::AddDepthStencil(
 
 //シェーダーリソースとして使用する
 void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,
+                                     device::CommandList& command_list,
                                      RenderTargetID id,
                                      u32 render_target_number) {
   MY_ASSERTION(util::Exist(render_targets_, id),
                L"未登録のIDが選択されました。");
 
-  render_targets_.at(id).Get().UseAsSRV(accessor, render_target_number);
+  render_targets_.at(id).Get().UseAsSRV(accessor, command_list,
+                                        render_target_number);
 }
 
 void RenderResourceManager::UseAsSRV(device::IDirectXAccessor& accessor,

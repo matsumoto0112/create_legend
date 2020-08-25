@@ -51,6 +51,10 @@ class EnemyManager {
    */
   void Add(const Boss::InitializeParameter& paramater);
   /**
+   * @brief íœˆ—
+   */
+  void DestroyUpdate();
+  /**
    * @brief “G‚ğíœ
    */
   void Destroy(i32 index);

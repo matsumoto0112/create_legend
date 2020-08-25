@@ -190,6 +190,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
 bool TurnSystem::Update() {
   countdown_timer_.Update();
   player_->Update();
+  enemy_manager_.DestroyUpdate();
   UpdateCamera();
 
   for (auto&& graf : graffities_) {

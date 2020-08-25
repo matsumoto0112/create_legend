@@ -35,19 +35,6 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   }
   // ìGçsìÆ
   EnemyAction(search_manaegr);
-
-  for (i32 index = 0; index < enemys_.size(); index++) {
-    if (enemys_[index]->GetPosition().y < -30) {
-      Destroy(index);
-      index--;
-    } else {
-      enemys_[index]->Update();
-    }
-  }
-  if (boss_ != nullptr) {
-    boss_->Update();
-    DestroyBoss();
-  }
   return true;
 }
 
@@ -130,14 +117,28 @@ void EnemyManager::Add(const Boss::InitializeParameter& paramater) {
   // physics_field.AddEnemy(boss_->GetCollisionRef());
 }
 
-void EnemyManager::Destroy(i32 index) {
-  if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
-    return;
+void EnemyManager::DestroyUpdate() {
+  for (i32 index = 0; index < enemys_.size(); index++) {
+    enemys_[index]->Update();
+    if (enemys_[index]->GetPosition().y < -30) {
+      Destroy(index);
+      index--;
+    } 
   }
+  if (boss_ != nullptr) {
+    boss_->Update();
+    DestroyBoss();
+  }
+}
+
+void EnemyManager::Destroy(i32 index) {
+  //if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
+  //  return;
+  //}
 
   enemys_[index]->Remove();
   enemys_.erase(enemys_.begin() + index);
-  if ((0 < action_enemy_index_) && (index <= action_enemy_index_)) {
+  if ((0 <= action_enemy_index_) && (index <= action_enemy_index_)) {
     action_enemy_index_--;
   }
 }

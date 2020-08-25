@@ -22,9 +22,9 @@ class Enemy : public actor::Actor {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bouding_box_length;
-    float mass = 1.0f;
+    float mass = 1.5f;
     float restitution = 0.5f;
-    float friction = 1.5f;
+    float friction = 1.0f;
   };
 
  public:

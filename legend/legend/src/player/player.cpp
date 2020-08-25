@@ -304,7 +304,7 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (boss_position - player_position).Normalized();
 
-        b->GetCollider()->ApplyCentralImpulse(direction * power_);
+        b->GetCollider()->ApplyCentralImpulse(direction * power_ / 2);
       }
     }
   }

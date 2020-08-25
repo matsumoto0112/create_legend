@@ -151,7 +151,7 @@ class Player : public actor::Actor {
   const float change_time_ = 0.1f;
 
   //! ˆÚ“®‚É‰Á‚¦‚é—Í
-  const float power_ = 40.0f;
+  const float power_ = 60.0f;
   //! ÀÛ‚É‰Á‚¦‚é—Í‚Ì‰ÁŒ¸
   float impulse_;
   //! Å¬’l

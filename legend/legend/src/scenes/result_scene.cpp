@@ -1,4 +1,4 @@
-#include "src/scenes/game_over.h"
+#include "src/scenes/result_scene.h"
 
 #include "src/game/game_device.h"
 #include "src/system/game_data.h"
@@ -11,12 +11,12 @@ namespace scenes {
 namespace resource_name = util::resource::resource_names;
 
 //コンストラクタ
-GameOver::GameOver(ISceneChange* scene_change) : Scene(scene_change) {}
+ResultScene::ResultScene(ISceneChange* scene_change) : Scene(scene_change) {}
 
-GameOver::~GameOver() {}
+ResultScene::~ResultScene() {}
 
 //初期化
-bool GameOver::Initialize() {
+bool ResultScene::Initialize() {
   namespace TextureName = resource_name::texture;
 
   const auto window_size =
@@ -69,7 +69,7 @@ bool GameOver::Initialize() {
     play_turn_image->SetZOrder(0.5f);
     board_.AddComponent(std::move(play_turn_image));
 
-    const i32 clear_turn = 4132;
+    const i32 clear_turn = data.play_turn;
     std::string line = std::to_string(clear_turn);
     std::vector<std::unique_ptr<ui::Number>> numbers = {};
     float numbers_width = 0.0f;
@@ -121,7 +121,7 @@ bool GameOver::Initialize() {
     player_power_image->SetZOrder(0.5f);
     board_.AddComponent(std::move(player_power_image));
 
-    const i32 player_power = 87653;
+    const i32 player_power = data.player_power;
     std::string line = std::to_string(player_power);
     std::vector<std::unique_ptr<ui::Number>> numbers = {};
     float numbers_width = 0.0f;
@@ -166,7 +166,7 @@ bool GameOver::Initialize() {
 }
 
 //更新
-bool GameOver::Update() {
+bool ResultScene::Update() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
@@ -192,7 +192,7 @@ bool GameOver::Update() {
 }
 
 //描画
-void GameOver::Draw() {
+void ResultScene::Draw() {
   Scene::Draw();
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -207,7 +207,7 @@ void GameOver::Draw() {
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
-void GameOver::Finalize() {
+void ResultScene::Finalize() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Stop(bgm_);
 

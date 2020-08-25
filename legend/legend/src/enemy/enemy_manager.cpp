@@ -88,7 +88,7 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
 
       if ((boss_ != nullptr) &&
           (_collider->GetOwner() == boss_->GetCollider()->GetOwner())) {
-        boss_->SetVelocity(next);
+        boss_->SetVelocity(next.Normalized() * move_speed_ * 1.5f);
       } else {
         enemys_[action_enemy_index_]->SetVelocity(next.Normalized() *
                                                   move_speed_);

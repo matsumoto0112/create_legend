@@ -6,7 +6,7 @@
 #include "src/scenes/debugscene/sound_test.h"
 #include "src/scenes/debugscene/sprite_render_test.h"
 #include "src/scenes/decorator/pausable.h"
-#include "src/scenes/game_over.h"
+#include "src/scenes/result_scene.h"
 #include "src/scenes/mainscene/main_scene_1.h"
 #include "src/scenes/title.h"
 
@@ -60,7 +60,7 @@ bool SceneManager::Update() {
         case SceneType::TITLE:
           return std::make_unique<Title>(this);
         case SceneType::GAMEOVER:
-          return std::make_unique<GameOver>(this);
+          return std::make_unique<ResultScene>(this);
         case SceneType::MODEL_VIEW:
           return std::make_unique<debugscene::ModelView>(this);
         case SceneType::SOUND_TEST:

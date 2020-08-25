@@ -56,6 +56,9 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
     }
   }
 
+  MY_LOG(L"%d", action_enemy_index_);
+  MY_ASSERTION(0 <= action_enemy_index_ && action_enemy_index_ < enemys_.size(),
+               L"�͈͊O");
   if (move_timer_ <= 0.0f) {
     bullet::Collider* _collider;
     if ((boss_ != nullptr) && (enemys_.size() == action_enemy_index_)) {
@@ -123,7 +126,7 @@ void EnemyManager::DestroyUpdate() {
     if (enemys_[index]->GetPosition().y < -30) {
       Destroy(index);
       index--;
-    } 
+    }
   }
   if (boss_ != nullptr) {
     boss_->Update();
@@ -132,7 +135,7 @@ void EnemyManager::DestroyUpdate() {
 }
 
 void EnemyManager::Destroy(i32 index) {
-  //if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
+  // if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
   //  return;
   //}
 

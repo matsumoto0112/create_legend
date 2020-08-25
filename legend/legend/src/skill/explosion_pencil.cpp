@@ -76,6 +76,8 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 enemy_position = enemy->GetTransform().GetPosition();
       math::Vector3 direction =
           (enemy_position - explosion_position).Normalized();
+      //値は適当
+      direction.y = 1.0f;
 
       enemy->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
     }
@@ -87,6 +89,8 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 boss_position = boss->GetTransform().GetPosition();
       math::Vector3 direction =
           (boss_position - explosion_position).Normalized();
+      //値は適当
+      direction.y = 1.0f;
 
       boss->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
     }

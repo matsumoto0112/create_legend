@@ -18,13 +18,17 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
     bool isMove = false;
     for (auto& e : enemys_) {
-      isMove = (isMove || e->GetMoveEnd() ||
-                (0.01f <= e->GetVelocity().Magnitude()));
+      if (isMove) break;
+      auto velocity = e->GetVelocity();
+      velocity.y = 0;
+      isMove = (!e->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
     }
     if (boss_ != nullptr) {
-      isMove = (isMove || (0.01f <= boss_->GetVelocity().Magnitude()));
+      auto velocity = boss_->GetVelocity();
+      velocity.y = 0;
+      isMove = (!boss_->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
     }
-    if (!isMove) {
+    if (isMove) {
       action_enemy_index_ = 0;
       move_timer_ = 0.0f;
     }
@@ -57,33 +61,26 @@ void EnemyManager::Draw() {
 }
 
 void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
-  if ((action_enemy_index_ < 0) || (enemys_.size() < action_enemy_index_)) {
-    return;
+  if ((action_enemy_index_ < 0) || (enemys_.size() <= action_enemy_index_)) {
+    if (boss_ == nullptr) {
+      return;
+    } else if (enemys_.size() == action_enemy_index_) {
+      return;
+    }
   }
+
   if (move_timer_ <= 0.0f) {
     bullet::Collider* _collider;
-    if ((boss_ != nullptr) && (enemys_.size() <= action_enemy_index_)) {
+    if ((boss_ != nullptr) && (enemys_.size() == action_enemy_index_)) {
       _collider = boss_->GetCollider();
     } else {
       _collider = enemys_[action_enemy_index_]->GetCollider();
     }
 
-    //// 速度設定
-    // if (search_manaegr == nullptr) {  //探索管理がない場合
-    //  auto pos = _actor->GetTransform().GetPosition();
-    //  math::Vector3 velocity = (actor_mediator_->GetPlayer()->GetPosition() -
-    //  pos).Normalized();
-
-    //  if (_actor == boss_.get()) {
-    //    boss_->SetVelocity(velocity);
-    //  } else {
-    //    enemys_[action_enemy_index_]->SetVelocity(velocity);
-    //  }
-    //} else
     {  //探索管理がある場合
       std::vector<bullet::Collider*> collisions;
-      for (i32 i = 0; i < enemys_.size(); i++) {
-        collisions.emplace_back(enemys_[i]->GetCollider());
+      for (auto&& e : enemys_) {
+        collisions.emplace_back(e->GetCollider());
       }
       if (boss_ != nullptr) {
         collisions.emplace_back(boss_->GetCollider());
@@ -96,7 +93,8 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
           (_collider->GetOwner() == boss_->GetCollider()->GetOwner())) {
         boss_->SetVelocity(next);
       } else {
-        enemys_[action_enemy_index_]->SetVelocity(next);
+        enemys_[action_enemy_index_]->SetVelocity(next.Normalized() *
+                                                  move_speed_);
       }
     }
   }
@@ -105,16 +103,7 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
   if (move_time_ <= move_timer_) {
     move_timer_ = 0.0f;
-    action_enemy_index_ = (action_enemy_index_ + 1 < enemys_.size())
-                              ? (action_enemy_index_ + 1)
-                              : -1;
-    if (boss_ != nullptr) {
-      action_enemy_index_ = (enemys_.size() <= action_enemy_index_)
-                                ? -1
-                                : (action_enemy_index_ < 0)
-                                      ? static_cast<i32>(enemys_.size())
-                                      : action_enemy_index_;
-    }
+    action_enemy_index_++;
   }
 }
 
@@ -148,7 +137,7 @@ void EnemyManager::Destroy(i32 index) {
 
   enemys_[index]->Remove();
   enemys_.erase(enemys_.begin() + index);
-  if ((0 < action_enemy_index_) && (index < action_enemy_index_)) {
+  if ((0 < action_enemy_index_) && (index <= action_enemy_index_)) {
     action_enemy_index_--;
   }
 }
@@ -202,7 +191,7 @@ i32 EnemyManager::GetEnemiesSize() const {
 
 void EnemyManager::ResetEnemyMove() {
   action_enemy_index_ = -1;
-  move_timer_ = 0.0f;
+  move_timer_ = -1.0f;
 }
 
 //各敵の速度を取得
@@ -218,26 +207,33 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
 //最後の敵の移動終了判定を取得
 bool EnemyManager::LastEnemyMoveEnd() const {
   //空かどうかチェック
-  if (enemys_.empty()) {
-    return false;
+  if (enemys_.empty() || enemys_.size() <= 0 && boss_ == nullptr) {
+    return true;
   }
-  if (!(0 <= move_timer_ && action_enemy_index_ < 0)) {
-    return false;
+  if (action_enemy_index_ < 0) {
+    return true;
   }
 
-  bool end = false;
-  if (boss_ == nullptr ? enemys_[enemys_.size() - 1]->GetMoveEnd()
-                       : boss_->GetMoveEnd()) {
+  bool end = true;
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    if (!enemys_[i]->GetMoveEnd()) {
+      end = false;
+    }
+  }
+  if ((boss_ != nullptr) && (!boss_->GetMoveEnd())) {
+    end = false;
+  }
+
+  if (end) {
     for (i32 i = 0; i < enemys_.size(); i++) {
-      if (enemys_[i]->GetVelocity().y < -1) {
+      if (enemys_[i]->GetVelocity().y < -0.1f) {
         return false;
       }
     }
-    if ((boss_ != nullptr) && (boss_->GetVelocity().y < -1)) {
+    if ((boss_ != nullptr) && (boss_->GetVelocity().y < -0.1f)) {
       return false;
     }
 
-    end = true;
     for (i32 i = 0; i < enemys_.size(); i++) {
       enemys_[i]->ResetMoveEnd();
     }

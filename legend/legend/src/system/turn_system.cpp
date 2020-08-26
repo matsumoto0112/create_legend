@@ -12,19 +12,14 @@ legend::i32 CalcPlayerStrengthToPrintNumber(
   return static_cast<legend::i32>(str * 100);
 }
 
-struct Camera {
-  legend::math::Vector3 camera_position;
-};
-legend::directx::buffer::ConstantBuffer<Camera> camera_cb_;
-
-struct Light {
+struct LightState {
   legend::math::Vector3 position;
-};
-struct LightCBStruct {
+  legend::math::Vector3 direction;
+  legend::util::Color4 color;
   legend::math::Matrix4x4 view;
   legend::math::Matrix4x4 proj;
 };
-legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
+legend::directx::buffer::ConstantBuffer<LightState> light_cb_;
 }  // namespace
 
 namespace legend {
@@ -172,12 +167,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
                        directx::PrimitiveTopology::TRIANGLE_LIST, L"IB");
     index_buffer_.WriteBufferResource(indices.data());
   }
-
-  camera_cb_.Init(
-      device,
-      device.GetLocalHandle(
-          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
-      L"CB");
 
   light_cb_.Init(
       device,
@@ -551,13 +540,18 @@ void TurnSystem::Draw() {
   }
   enemy_manager_.Draw(&actor_render_command_list_);
 
-  math::Vector3 light_pos = math::Vector3(50, 80, 20);
-  light_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      light_pos, math::Vector3::kZeroVector, math::Vector3::kUpVector);
-  light_cb_.GetStagingRef().proj =
-      player_follow_lookat_camera_->GetProjection();
+  LightState ls;
+  ls.position = math::Vector3(50, 80, 20);
+  ls.direction = -1 * ls.position.Normalized();
+  ls.view = math::Matrix4x4::CreateView(ls.position, ls.position + ls.direction,
+                                        math::Vector3::kUpVector);
+  ls.proj = player_follow_lookat_camera_->GetProjection();
+  ls.color = util::Color4(1.0f, 0.0f, 1.0f, 1.0f);
+  light_cb_.GetStagingRef() = ls;
   light_cb_.UpdateStaging();
   light_cb_.RegisterHandle(device, 2);
+  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
+                                                            command_list);
   actor_render_command_list_.ShadowPass();
 
   render_resource_manager.SetRenderTargets(
@@ -588,10 +582,6 @@ void TurnSystem::Draw() {
       device, command_list,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
 
-  camera_cb_.GetStagingRef().camera_position =
-      player_follow_lookat_camera_->GetPosition();
-  camera_cb_.UpdateStaging();
-  camera_cb_.RegisterHandle(device, 6);
   light_cb_.RegisterHandle(device, 7);
 
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,

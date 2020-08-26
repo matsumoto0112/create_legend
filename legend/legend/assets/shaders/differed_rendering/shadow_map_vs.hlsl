@@ -19,11 +19,20 @@ struct VSOutput {
     float4 position : SV_POSITION;
 };
 
+struct LightState {
+    float3 position;
+    float3 direction;
+    float4 color;
+    float4x4 view;
+    float4x4 proj;
+};
+ConstantBuffer<LightState> g_light_cb: register(b2);
+
 VSOutput main(const VSInput v) {
     VSOutput result = (VSOutput)0;
     float4 world_pos = mul(float4(v.position, 1.0), g_transform.world);
-    float4 view_pos = mul(world_pos, g_world_context.view);
-    float4 proj_pos = mul(view_pos, g_world_context.projection);
+    float4 view_pos = mul(world_pos, g_light_cb.view);
+    float4 proj_pos = mul(view_pos, g_light_cb.proj);
 
     result.position = proj_pos;
     return result;

@@ -1,10 +1,17 @@
 #include "src/directx/render_target/depth_stencil.h"
 namespace {
+DXGI_FORMAT ConvertToTex2DFormat(DXGI_FORMAT dsv_format) {
+  if (dsv_format == DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT) {
+    return DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS;
+  } else {
+    return DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
+  }
+}
 DXGI_FORMAT ConvertToSRVFormat(DXGI_FORMAT dsv_format) {
   if (dsv_format == DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT) {
     return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
   } else {
-    return DXGI_FORMAT::DXGI_FORMAT_R24G8_TYPELESS;
+    return DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
   }
 }
 }  // namespace
@@ -27,8 +34,7 @@ bool DepthStencil::Init(device::IDirectXAccessor& accessor,
 
   const buffer::CommittedResource::Tex2DDesc desc{
       ds_desc.name,
-      //ds_desc.format,
-      DXGI_FORMAT::DXGI_FORMAT_R32_TYPELESS,
+      ConvertToTex2DFormat(ds_desc.format),
       ds_desc.width,
       ds_desc.height,
       D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,

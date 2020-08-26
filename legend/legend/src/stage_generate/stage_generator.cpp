@@ -230,7 +230,7 @@ bool StageGenerator::GetMapActors(
     if (infomation[0] == "graffiti" && turn_count == 0) {
       object::GraffitiInitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
+      parameter.bounding_box_length = math::Vector3(3.25f, 0.25f, 3.25f);
       parameter.remaining_graffiti = 100.0f;
       parameter.can_erase_speed = 0.3f;
       graffities.emplace_back(parameter);

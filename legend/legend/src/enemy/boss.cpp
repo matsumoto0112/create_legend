@@ -50,7 +50,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
   transform_cb_.UpdateStaging();
 
   model_ =
-      resource.GetModel().Get(util::resource::resource_names::model::ENEMY);
+      resource.GetModel().Get(util::resource::resource_names::model::BOSS);
 
   move_end_ = false;
 

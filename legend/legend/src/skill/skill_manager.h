@@ -70,6 +70,10 @@ class SkillManager {
    * @brief 選択したスキルの更新
    */
   void SelectUpdate();
+  /**
+   * @brief スキル終了
+   */
+  void EndSkill();
 
  private:
   actor::IActorMediator *mediator_;

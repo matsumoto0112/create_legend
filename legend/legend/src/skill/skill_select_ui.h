@@ -67,6 +67,8 @@ class SkillSelectUI {
 
   //! 描画するスキルアイコンのリスト
   std::vector<draw::Sprite2D> skill_icons_;
+  //! 空のスキルフレームアイコン
+  draw::Sprite2D skill_frame_icons_[5];
   //! スキルの説明画像
   draw::Sprite2D skill_explanatory_;
   //! スキルの選択中フレーム画像

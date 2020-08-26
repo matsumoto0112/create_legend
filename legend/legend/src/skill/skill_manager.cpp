@@ -14,7 +14,8 @@ SkillManager::SkillManager() {}
 SkillManager::~SkillManager() {}
 
 //初期化
-void SkillManager::Init(actor::IActorMediator* mediator, player::Player* player) {
+void SkillManager::Init(actor::IActorMediator* mediator,
+                        player::Player* player) {
   this->mediator_ = mediator;
   player_ = player;
   select_ui_.Init();
@@ -151,6 +152,8 @@ void SkillManager::RemoveSkill() {
 
 //スキルの選択
 bool SkillManager::SelectSkill() {
+  if (IsProductionNow()) return true;
+
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
     select_ui_.ChangeIsSelectMode();
@@ -178,15 +181,7 @@ bool SkillManager::SelectSkill() {
 
 //スキルの使用
 void SkillManager::UseSkill() {
-  bool can_use = true;
-  for (auto&& skill : skills_) {
-    //他のスキルの演出中は使えないようにする
-    if (skill->ProductionFlag()) {
-      can_use = false;
-      break;
-    }
-  }
-  if (!select_ui_.GetIsSelectMode() || !can_use) return;
+  if (!select_ui_.GetIsSelectMode() || IsProductionNow()) return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
@@ -200,7 +195,18 @@ void SkillManager::UseSkill() {
 //選択したスキルの更新
 void SkillManager::SelectUpdate() {
   UseSkill();
+  EndSkill();
   RemoveSkill();
+}
+
+//スキル終了
+void SkillManager::EndSkill() {
+  for (auto&& skill : skills_) {
+    if (skill->EndSkillProduction()) {
+      select_ui_.ChangeIsSelectMode();
+      break;
+    }
+  }
 }
 
 }  // namespace skill

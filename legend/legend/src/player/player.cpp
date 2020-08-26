@@ -96,9 +96,9 @@ bool Player::Update() {
   //  box_->ApplyCentralImpulse(input_velocity_ * power_);
   //}
 
-  if (skill_manager_.IsProductionNow()) {
-    return true;
-  }
+  //if (skill_manager_.IsProductionNow()) {
+  //  return true;
+  //}
 
   // if (change_amount_velocity_.Magnitude() - input_velocity_.Magnitude() >=
   //    0.5f) {

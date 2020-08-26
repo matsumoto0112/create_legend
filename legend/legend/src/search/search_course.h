@@ -2,6 +2,7 @@
 #define LEGEND_SEARCH_SEARCH_COURSE_H_
 
 #include <vector>
+#include "src/actor/actor_mediator.h"
 #include "src/search/search_ai.h"
 
 namespace legend {
@@ -16,11 +17,12 @@ struct SearchCourse {
   /**
    * @brief コンストラクタ
    */
-  SearchCourse(SearchAI* _baseSearch);
+  SearchCourse(actor::IActorMediator* _mediator, SearchAI* _baseSearch);
   /**
    * @brief コンストラクタ
    */
-  SearchCourse(SearchAI* _baseSearch, SearchCourse* _parentSearch);
+  SearchCourse(actor::IActorMediator* _mediator, SearchAI* _baseSearch,
+               SearchCourse* _parentSearch);
 
   /**
    * @brief デスクトラクタ
@@ -34,7 +36,8 @@ struct SearchCourse {
   /**
    * @brief 探索先設定
    */
-  std::vector<SearchCourse*> SetChild(std::vector<SearchCourse*> rem);
+  void SetChild(std::vector<SearchCourse>& children,
+                std::vector<SearchCourse>& remove, actor::Actor* ignore);
   /**
    * @brief 原点までの分岐元取得
    */
@@ -48,13 +51,18 @@ struct SearchCourse {
    */
   const float Length();
 
-  private:
+ private:
   std::vector<SearchCourse*> GetParents(std::vector<SearchCourse*> _parents);
+
+  bool OnCollision(actor::Actor* ignore, math::Vector3 start,
+                   math::Vector3 direction);
 
  private:
   SearchAI* baseSearch_;
   SearchCourse* parentSearch_;
-  std::vector<SearchCourse*> childSearch_ = {};
+  std::vector<SearchCourse> childSearch_ = {};
+
+  actor::IActorMediator* mediator_;
 };
 }  // namespace search
 }  // namespace legend

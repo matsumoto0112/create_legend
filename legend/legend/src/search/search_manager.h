@@ -80,11 +80,6 @@ class SearchManager {
    */
   math::Vector3 NextCourse(math::Vector3 _position);
   /**
-   * @brief •ªŠòæİ’è
-   */
-  std::vector<SearchCourse*> SetChild(SearchCourse* course,
-                                      std::vector<SearchCourse*> searched);
-  /**
    * @brief ’Tõ‰ÓŠƒ‰ƒ“ƒ_ƒ€‚Åæ“¾
    */
   SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);

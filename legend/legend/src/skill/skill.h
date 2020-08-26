@@ -70,6 +70,10 @@ class Skill : public actor::Actor {
   bool GetUseFlag();
   bool ProductionFlag();
   void RemoveCollider();
+  /**
+   * @brief スキルの演出終了判定取得
+   */
+  bool EndSkillProduction() const;
 
  protected:
   //! モデルのID

@@ -20,21 +20,21 @@ StageGenerator::~StageGenerator() {}
     system::PhysicsField* physics_field,
     std::vector<actor::Actor<physics::BoundingBox>>* actors,
     enemy::EnemyManager* enemy_manager)*/
-bool StageGenerator::LoadStage(
-    std::filesystem::path filepath, const std::string map_name,
-    player::Player::InitializeParameter& player,
-    std::vector<object::Desk::InitializeParameter>& desks,
-    std::vector<object::Obstacle::InitializeParameter>& obstacles,
-    std::vector<object::GraffitiInitializeParameter>& graffities,
-    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
-  //テキストデータを読み込み
-  indexs_ = LoadStringStageData(filepath, map_name);
-
-  //各アクターを生成
-  // return SetMapActors(map_name, indexs, physics_field, actors,
-  // enemy_manager);
-  return SetMapActors(player, desks, obstacles, graffities, itemboxes);
-}
+//bool StageGenerator::LoadStage(
+//    std::filesystem::path filepath, const std::string map_name,
+//    player::Player::InitializeParameter& player,
+//    std::vector<object::Desk::InitializeParameter>& desks,
+//    std::vector<object::Obstacle::InitializeParameter>& obstacles,
+//    std::vector<object::GraffitiInitializeParameter>& graffities,
+//    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
+//  //テキストデータを読み込み
+//  indexs_ = LoadStringStageData(filepath, map_name);
+//
+//  //各アクターを生成
+//  // return SetMapActors(map_name, indexs, physics_field, actors,
+//  // enemy_manager);
+//  return SetMapActors(player, desks, obstacles, graffities, itemboxes);
+//}
 
 //ファイルの読み込み処理
 std::vector<std::string> StageGenerator::LoadStringStageData(
@@ -73,91 +73,91 @@ std::vector<std::string> StageGenerator::LoadStringStageData(
 //    system::PhysicsField* physics_field,
 //    std::vector<actor::Actor<physics::BoundingBox>>* actors,
 //    enemy::EnemyManager* enemy_manager)
-bool StageGenerator::SetMapActors(
-    player::Player::InitializeParameter& player,
-    std::vector<object::Desk::InitializeParameter>& desks,
-    std::vector<object::Obstacle::InitializeParameter>& obstacles,
-    std::vector<object::GraffitiInitializeParameter>& graffities,
-    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
-  bool is_all_ok = true;
-
-  if (indexs_.empty() || indexs_[0] == "error") {
-    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
-    return false;
-  }
-
-  for (auto&& index : indexs_) {
-    //文字列を分割
-    std::vector<std::string> infomation = StringSplit(index, ',');
-
-    //本来は背景IDなどを読み込むが現在は無視
-    if (infomation[0] == map_name_) continue;
-
-    // Transformを読み込み(scaleは現状無視)
-    util::Transform transform =
-        String_2_Transform(infomation[1], infomation[2], infomation[3],
-                           infomation[4], infomation[5], infomation[6],
-                           infomation[7], infomation[8], infomation[9]);
-
-    //机の初期化
-    if (infomation[0] == "floor") {
-      object::Desk::InitializeParameter parameter;
-      parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
-      parameter.normal = math::Vector3::kUpVector;
-      desks.emplace_back(parameter);
-      continue;
-    }
-
-    //プレイヤーの生成
-    if (infomation[0] == "startpoint") {
-      player::Player::InitializeParameter parameter;
-      parameter.transform = transform;
-      parameter.transform.SetPosition(parameter.transform.GetPosition() +
-                                      math::Vector3(0.0f, 10.0f, 0.0f));
-      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
-      parameter.min_power = 0;
-      parameter.max_power = 1;
-      parameter.max_strength = 3;
-      parameter.min_strength = 0.5f;
-      player = parameter;
-      continue;
-    }
-
-    //障害物の生成
-    if (infomation[0] == "obstacle") {
-      object::Obstacle::InitializeParameter parameter;
-      parameter.position = transform.GetPosition();
-      parameter.rotation = transform.GetRotation();
-      parameter.model_id = 0;
-      parameter.bounding_box_length =
-          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 3.0f;
-      obstacles.emplace_back(parameter);
-
-      continue;
-    }
-
-    if (infomation[0] == "graffiti") {
-      object::GraffitiInitializeParameter parameter;
-      parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
-      parameter.remaining_graffiti = 100.0f;
-      parameter.can_erase_speed = 0.3f;
-      graffities.emplace_back(parameter);
-
-      continue;
-    }
-
-    if (infomation[0] == "stationery") {
-      skill::SkillItemBox::InitializeParameter parameter;
-      parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(0.5f, 0.5f, 5.0f);
-      itemboxes.emplace_back(parameter);
-    }
-  }
-
-  return is_all_ok;
-}
+//bool StageGenerator::SetMapActors(
+//    player::Player::InitializeParameter& player,
+//    std::vector<object::Desk::InitializeParameter>& desks,
+//    std::vector<object::Obstacle::InitializeParameter>& obstacles,
+//    std::vector<object::GraffitiInitializeParameter>& graffities,
+//    std::vector<skill::SkillItemBox::InitializeParameter>& itemboxes) {
+//  bool is_all_ok = true;
+//
+//  if (indexs_.empty() || indexs_[0] == "error") {
+//    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
+//    return false;
+//  }
+//
+//  for (auto&& index : indexs_) {
+//    //文字列を分割
+//    std::vector<std::string> infomation = StringSplit(index, ',');
+//
+//    //本来は背景IDなどを読み込むが現在は無視
+//    if (infomation[0] == map_name_) continue;
+//
+//    // Transformを読み込み(scaleは現状無視)
+//    util::Transform transform =
+//        String_2_Transform(infomation[1], infomation[2], infomation[3],
+//                           infomation[4], infomation[5], infomation[6],
+//                           infomation[7], infomation[8], infomation[9]);
+//
+//    //机の初期化
+//    if (infomation[0] == "floor") {
+//      object::Desk::InitializeParameter parameter;
+//      parameter.transform = transform;
+//      parameter.bounding_box_length = math::Vector3(120.0f, 5.0f, 80.0f) / 4.0f;
+//      parameter.normal = math::Vector3::kUpVector;
+//      desks.emplace_back(parameter);
+//      continue;
+//    }
+//
+//    //プレイヤーの生成
+//    if (infomation[0] == "startpoint") {
+//      player::Player::InitializeParameter parameter;
+//      parameter.transform = transform;
+//      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+//                                      math::Vector3(0.0f, 10.0f, 0.0f));
+//      parameter.bouding_box_length = math::Vector3(5.5f, 2.0f, 13.0f) / 4.0f;
+//      parameter.min_power = 0;
+//      parameter.max_power = 1;
+//      parameter.max_strength = 3;
+//      parameter.min_strength = 0.5f;
+//      player = parameter;
+//      continue;
+//    }
+//
+//    //障害物の生成
+//    if (infomation[0] == "obstacle") {
+//      object::Obstacle::InitializeParameter parameter;
+//      parameter.position = transform.GetPosition();
+//      parameter.rotation = transform.GetRotation();
+//      parameter.model_id = 0;
+//      parameter.bounding_box_length =
+//          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 3.0f;
+//      obstacles.emplace_back(parameter);
+//
+//      continue;
+//    }
+//
+//    if (infomation[0] == "graffiti") {
+//      object::GraffitiInitializeParameter parameter;
+//      parameter.transform = transform;
+//      parameter.bounding_box_length = math::Vector3(4.0f, 2.0f, 4.0f);
+//      parameter.remaining_graffiti = 100.0f;
+//      parameter.can_erase_speed = 0.3f;
+//      graffities.emplace_back(parameter);
+//
+//      continue;
+//    }
+//
+//    if (infomation[0] == "stationery") {
+//      skill::SkillItemBox::InitializeParameter parameter;
+//      parameter.transform = transform;
+//      parameter.bounding_box_length = math::Vector3(0.5f, 0.5f, 5.0f);
+//      itemboxes.emplace_back(parameter);
+//    }
+//  }
+//
+//  return is_all_ok;
+//}
 
 bool StageGenerator::GetMapActors(
     const i32 turn_count, player::Player::InitializeParameter& player,
@@ -203,7 +203,8 @@ bool StageGenerator::GetMapActors(
       parameter.transform = transform;
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
-      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      parameter.transform.SetRotation(math::Quaternion::FromEular(0, 0, 180+45));
+      parameter.bouding_box_length = math::Vector3(1.25f, 0.5f, 2.75f);
       parameter.min_power = 0;
       parameter.max_power = 1;
       parameter.max_strength = 3;
@@ -254,7 +255,7 @@ bool StageGenerator::GetMapActors(
       parameter.transform = transform;
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
-      parameter.bouding_box_length = math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f;
+      parameter.bouding_box_length = math::Vector3(1.25f, 0.5f, 2.75f);
       enemys.push_back(parameter);
       continue;
     }

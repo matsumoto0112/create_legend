@@ -140,6 +140,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
     comp->SetZOrder(z);
     components_.emplace_back(comp);
     input_lines_.emplace_back(split);
+
+    //敵のターンでは表示しないUIをリストに積む
+    if (w_name ==
+            util::resource::resource_names::texture::UI_POWERGAUGE_FRAME ||
+        w_name == util::resource::resource_names::texture::UI_POWERGAUGE) {
+      no_render_if_enemy_turn_uis_.emplace_back(comp);
+    }
   }
   MY_ASSERTION(
       gauges_.size() == gauge_id::MAX,
@@ -607,6 +614,12 @@ void TurnSystem::Draw() {
 
   for (auto&& graffiti : graffities_) {
     graffiti->Draw(command_list);
+  }
+
+  const bool is_player_turn = current_mode_ == Mode::PLAYER_MOVING ||
+                              current_mode_ == Mode::PLAYER_MOVE_READY;
+  for (auto&& ui : no_render_if_enemy_turn_uis_) {
+    ui->SetEnable(is_player_turn);
   }
 
   ui_board_.Draw();

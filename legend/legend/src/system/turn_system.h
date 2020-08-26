@@ -227,6 +227,7 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Gauge*> gauges_;
   //! ”’l‰æ‘œ”z—ñ
   std::vector<ui::Number*> numbers_;
+  std::vector<ui::UIComponent*> no_render_if_enemy_turn_uis_;
 
   std::set<object::Graffiti*> remove_graffiti_list_;
   std::set<object::Fragment*> remove_fragment_list_;

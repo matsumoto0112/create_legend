@@ -20,7 +20,7 @@ class UIComponent {
   /**
    * @brief コンストラクタ
    */
-  UIComponent() = default;
+  UIComponent() : enable_(true){};
   /**
    * @brief デストラクタ
    */
@@ -45,6 +45,14 @@ class UIComponent {
    * @brief 自身の描画アイテムを描画リストに追加する
    */
   virtual void StackOwnItems(draw::SpriteRenderer& renderer) = 0;
+
+  virtual void SetEnable(bool enable) { this->enable_ = enable; }
+
+  virtual bool GetEnable() const { return this->enable_; }
+
+ protected:
+  //! UIが描画されるかどうか
+  bool enable_;
 };
 
 }  // namespace ui

@@ -49,8 +49,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
-  model_ =
-      resource.GetModel().Get(util::resource::resource_names::model::BOSS);
+  model_ = resource.GetModel().Get(util::resource::resource_names::model::BOSS);
 
   move_end_ = false;
 

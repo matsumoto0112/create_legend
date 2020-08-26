@@ -26,10 +26,12 @@ long long Paint(IWindowProcedureEventCallback* callback);
 long long CALLBACK WindowProcdures(HWND__* hWnd, unsigned int msg,
                                    unsigned long long wParam,
                                    long long lParam) {
-  // Imguiイベントが発生していたら以降の処理の必要なし
-  {
-    i64 res = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-    if (res) return res;
+  if (util::debug::ENABLE_DEBUG) {
+    // Imguiイベントが発生していたら以降の処理の必要なし
+    {
+      i64 res = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+      if (res) return res;
+    }
   }
 
   //ウィンドウ生成時に登録したポインタからコールバックを取得する

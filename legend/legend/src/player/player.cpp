@@ -63,7 +63,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   model_ = resource.GetModel().Get(resource_name::model::PLAYER);
 
   //スキルマネージャーの初期化
-  skill_manager_.Init(mediator_);
+  skill_manager_.Init(mediator_, this);
 
   is_hit_obstacle_ = false;
   se_interval_.Init(0.0f);
@@ -79,10 +79,12 @@ bool Player::Update() {
   //スキルのデバック用のGUI
   if (ImGui::Begin("Skill")) {
     if (ImGui::Button("Add Skill")) {
-      std::shared_ptr<skill::SkillPencil> skill =
-          std::make_shared<skill::SkillPencil>();
-      skill->Init(mediator_, this);
-      skill_manager_.AddSkill(skill);
+      if (skill_manager_.GetSkillList().size() < 5) {
+        std::shared_ptr<skill::SkillPencil> skill =
+            std::make_shared<skill::SkillPencil>();
+        skill->Init(mediator_, this);
+        skill_manager_.AddSkill(skill);
+      }
     }
   }
   ImGui::End();

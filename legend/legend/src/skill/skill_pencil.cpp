@@ -91,9 +91,9 @@ bool SkillPencil::Update() {
     return true;
   }
 
-  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
-  transform_.SetRotation(player_->GetRotation());
-  box_->SetTransform(this->transform_);
+  //transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
+  //transform_.SetRotation(player_->GetRotation());
+  //box_->SetTransform(this->transform_);
 
   return true;
 }

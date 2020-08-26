@@ -34,7 +34,6 @@ bool Boss::Init(actor::IActorMediator* mediator,
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
-  this->transform_.SetScale(this->transform_.GetScale() * 80.0f);
 
   bullet::BoundingBox::InitializeParameter params;
   params.position = this->transform_.GetPosition();

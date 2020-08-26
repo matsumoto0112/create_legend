@@ -41,10 +41,6 @@ void ExplosionPencil::Init(util::Transform transform,
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  //モデルの初期化
-  //モデルは適当に入ってる
-  model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
 }
 
 //更新
@@ -58,13 +54,9 @@ bool ExplosionPencil::Update() {
   float mass = 0.0f;
   sphere_->SetScale(radius_, mass);
   mediator_->AddCollider(sphere_);
+  sphere_->SetFlags(sphere_->GetFlags() |
+      btCollisionObject::CF_NO_CONTACT_RESPONSE);
   return true;
-}
-
-//描画
-void ExplosionPencil::Draw() {
-  if (is_destroy_) return;
-  actor::Actor::Draw();
 }
 
 //衝突判定

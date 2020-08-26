@@ -29,10 +29,6 @@ class ExplosionPencil : public actor::Actor {
    */
   bool Update();
   /**
-   * @brief •`‰æ
-   */
-  void Draw() override;
-  /**
    * @brief Õ“Ë”»’è
    */
   void OnHit(bullet::Collider* other);

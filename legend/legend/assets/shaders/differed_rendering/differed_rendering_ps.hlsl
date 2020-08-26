@@ -13,17 +13,9 @@ texture2D g_world_position : register(t1);
 texture2D g_diffuse : register(t2);
 texture2D g_shadow_map : register(t3);
 
-struct LightState {
-    float3 position;
-    float3 direction;
-    float4 color;
-    float4x4 view;
-    float4x4 proj;
-};
-ConstantBuffer<LightState> g_light_cb: register(b7);
-
 float4 main(const PSInput i) : SV_TARGET{
-    float4 world_position = g_world_position.Sample(g_sampler_warp, i.uv);
+    float4 world_position = g_world_position.Sample(g_sampler_warp, i.uv) * 1000 - 500;
+
     float4 normal_depth = g_world_normal.Sample(g_sampler_warp, i.uv);
     float3 world_normal = normal_depth.xyz * 2.0f - 1.0f;
     float4 diffuse = g_diffuse.Sample(g_sampler_warp, i.uv);
@@ -46,8 +38,8 @@ float4 main(const PSInput i) : SV_TARGET{
     float shadow_depth = g_shadow_map.Sample(g_sampler_clamp, shadow_texcoord.xy).r;
     float shadow_test = shadow_depth >= light_space_depth ? 1.0 : 0.0;
 
-    //color += diffuse * saturate(g_light_cb.color * dotNL * shadow_test);
     color += shadow_depth;
+    //color += diffuse * saturate(g_light_cb.color * dotNL * shadow_test);
 
     color.a = 1.0f;
     return color;

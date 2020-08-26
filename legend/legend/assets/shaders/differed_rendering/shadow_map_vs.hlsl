@@ -20,13 +20,15 @@ struct VSOutput {
 };
 
 struct LightState {
-    float3 position;
-    float3 direction;
-    float4 color;
     float4x4 view;
     float4x4 proj;
+    float3 position;
+    float pad0;
+    float3 direction;
+    float pad1;
+    float4 color;
 };
-ConstantBuffer<LightState> g_light_cb: register(b2);
+ConstantBuffer<LightState> g_light_cb: register(b7);
 
 VSOutput main(const VSInput v) {
     VSOutput result = (VSOutput)0;

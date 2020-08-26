@@ -13,11 +13,13 @@ legend::i32 CalcPlayerStrengthToPrintNumber(
 }
 
 struct LightState {
-  legend::math::Vector3 position;
-  legend::math::Vector3 direction;
-  legend::util::Color4 color;
   legend::math::Matrix4x4 view;
   legend::math::Matrix4x4 proj;
+  legend::math::Vector3 position;
+  float pad0;
+  legend::math::Vector3 direction;
+  float pad1;
+  legend::util::Color4 color;
 };
 legend::directx::buffer::ConstantBuffer<LightState> light_cb_;
 }  // namespace
@@ -521,27 +523,28 @@ void TurnSystem::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
+  //アクターの描画リストを作成
+  cameras_[current_camera_]->RenderStart();
+  actor_render_command_list_.Push(player_.get());
+  for (auto&& obj : static_objects_) {
+    actor_render_command_list_.Push(obj.get());
+  }
+  // for (auto&& fragment : fragments_) {
+  //  actor_render_command_list_.Push(fragment.get());
+  //}
+  // for (auto&& item_box : item_boxes_) {
+  //  actor_render_command_list_.Push(item_box.get());
+  //}
+  // enemy_manager_.Draw(&actor_render_command_list_);
+
   //シャドウマップ用描画
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::NONE, false,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
 
-  cameras_[current_camera_]->RenderStart();
-
-  actor_render_command_list_.Push(player_.get());
-  for (auto&& obj : static_objects_) {
-    actor_render_command_list_.Push(obj.get());
-  }
-  for (auto&& fragment : fragments_) {
-    actor_render_command_list_.Push(fragment.get());
-  }
-  for (auto&& item_box : item_boxes_) {
-    actor_render_command_list_.Push(item_box.get());
-  }
-  enemy_manager_.Draw(&actor_render_command_list_);
-
   LightState ls;
-  ls.position = math::Vector3(50, 80, 20);
+   ls.position = math::Vector3(0, 50, -50);
+  //ls.position = player_follow_lookat_camera_->GetPosition();
   ls.direction = -1 * ls.position.Normalized();
   ls.view = math::Matrix4x4::CreateView(ls.position, ls.position + ls.direction,
                                         math::Vector3::kUpVector);
@@ -549,7 +552,7 @@ void TurnSystem::Draw() {
   ls.color = util::Color4(1.0f, 0.0f, 1.0f, 1.0f);
   light_cb_.GetStagingRef() = ls;
   light_cb_.UpdateStaging();
-  light_cb_.RegisterHandle(device, 2);
+  light_cb_.RegisterHandle(device, 7);
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                             command_list);
   actor_render_command_list_.ShadowPass();
@@ -595,24 +598,24 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
 
-  for (auto&& graffiti : graffities_) {
-    graffiti->Draw(command_list);
-  }
+  // for (auto&& graffiti : graffities_) {
+  //  graffiti->Draw(command_list);
+  //}
 
-  ui_board_.Draw();
-  fade_.Draw();
+  // ui_board_.Draw();
+  // fade_.Draw();
 
-  //スプライトは最後に描画リストにあるものをまとめて描画する
-  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  ////スプライトは最後に描画リストにあるものをまとめて描画する
+  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 
   actor_render_command_list_.Clear();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  cameras_[current_camera_]->RenderStart();
-  search_manager_.DebugDraw(&physics_field_);
-  physics_field_.DebugDraw(cameras_[current_camera_].get());
+  // cameras_[current_camera_]->RenderStart();
+  // search_manager_.DebugDraw(&physics_field_);
+  // physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }

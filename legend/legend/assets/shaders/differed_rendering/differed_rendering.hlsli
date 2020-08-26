@@ -16,10 +16,20 @@ struct VSInput {
 struct VSOutput {
     float4 position : SV_POSITION;
     float2 uv : TEXCOORD0;
-    float4 light_pos : POSITION;
 };
 
 typedef VSOutput PSInput;
+
+struct LightState {
+    float4x4 view;
+    float4x4 proj;
+    float3 position;
+    float pad0;
+    float3 direction;
+    float pad1;
+    float4 color;
+};
+ConstantBuffer<LightState> g_light_cb: register(b7);
 
 
 #endif //! LEGEND_ASSETS_SHADERS_DIFFERED_RENDERING_DIFFERED_RENDERING_HLSLI

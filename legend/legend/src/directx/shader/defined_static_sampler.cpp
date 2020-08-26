@@ -34,10 +34,10 @@ D3D12_STATIC_SAMPLER_DESC Clamp(u32 register_id) {
   clamp_sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
   clamp_sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
   clamp_sampler.MipLODBias = 0.0f;
-  clamp_sampler.MaxAnisotropy = 1;
-  clamp_sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+  clamp_sampler.MaxAnisotropy = 16;
+  clamp_sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
   clamp_sampler.BorderColor =
-      D3D12_STATIC_BORDER_COLOR::D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
+      D3D12_STATIC_BORDER_COLOR::D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
   clamp_sampler.MinLOD = 0;
   clamp_sampler.MaxLOD = D3D12_FLOAT32_MAX;
   clamp_sampler.ShaderVisibility =

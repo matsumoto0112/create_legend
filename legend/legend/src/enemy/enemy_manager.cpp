@@ -85,9 +85,10 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
       auto next = search_manaegr->NextSearch(_collider, collisions);
       auto pPos = actor_mediator_->GetPlayer()->GetPosition();
       auto ePos = _collider->GetOwner()->GetTransform().GetPosition();
-      auto vector = next - ePos;
-      vector.y = 0;
+      next.y = 0;
       pPos.y = 0;
+      ePos.y = 0;
+      auto vector = next - ePos;
 
       auto length = math::util::Clamp(vector.Magnitude(), move_speed_min_,
                                       move_speed_max_);

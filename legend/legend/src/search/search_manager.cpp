@@ -276,8 +276,8 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
     // ƒvƒŒƒCƒ„[‚Æ‚ÌÕ“Ë‚ð–³Ž‹
     if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
       continue;
-    skill::SkillItemBox* sb =
-        dynamic_cast<skill::SkillItemBox*>(act->GetOwner());
+    skill::Skill* sb =
+        dynamic_cast<skill::Skill*>(act->GetOwner());
     if (sb) {
       continue;
     }

@@ -17,12 +17,11 @@ struct SearchCourse {
   /**
    * @brief コンストラクタ
    */
-  SearchCourse(actor::IActorMediator* _mediator, SearchAI* _baseSearch);
+  SearchCourse(SearchAI* _baseSearch);
   /**
    * @brief コンストラクタ
    */
-  SearchCourse(actor::IActorMediator* _mediator, SearchAI* _baseSearch,
-               SearchCourse* _parentSearch);
+  SearchCourse(SearchAI* _baseSearch, i32 _parentSearch);
 
   /**
    * @brief デスクトラクタ
@@ -32,37 +31,28 @@ struct SearchCourse {
   /**
    * @brief 原点取得
    */
-  SearchAI* GetBaseSeach();
+  SearchAI* GetBaseSearch();
   /**
    * @brief 探索先設定
    */
   void SetChild(std::vector<SearchCourse>& children,
-                std::vector<SearchCourse>& remove, actor::Actor* ignore);
+                std::vector<SearchCourse>& remove);
   /**
    * @brief 原点までの分岐元取得
    */
-  std::vector<SearchCourse*> GetParents();
-  /**
-   * @brief 分岐元の原点の取得
-   */
-  SearchCourse* GetMostParent();
+  std::vector<i32> GetParents(std::vector<SearchCourse>& searched);
   /**
    * @brief 分岐元の原点までの距離
    */
-  const float Length();
+  float Length(std::vector<SearchCourse>& searched);
 
  private:
-  std::vector<SearchCourse*> GetParents(std::vector<SearchCourse*> _parents);
-
-  bool OnCollision(actor::Actor* ignore, math::Vector3 start,
-                   math::Vector3 direction);
+  std::vector<i32> GetParents(std::vector<SearchCourse>& searched,
+                              std::vector<i32>& _parents);
 
  private:
   SearchAI* baseSearch_;
-  SearchCourse* parentSearch_;
-  std::vector<SearchCourse> childSearch_ = {};
-
-  actor::IActorMediator* mediator_;
+  i32 parentSearch_;
 };
 }  // namespace search
 }  // namespace legend

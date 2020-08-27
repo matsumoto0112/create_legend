@@ -25,11 +25,13 @@ class SearchManager {
 
   /**
    * @brief 初期設定
+   * @param mediator メディエイターを追加
    */
   void Initialize(actor::IActorMediator* mediator);
 
   /**
    * @brief 生成
+   * @param filepath ファイルパスを入力
    */
   void Make(std::filesystem::path filepath);
   /**
@@ -44,22 +46,28 @@ class SearchManager {
    */
   std::vector<std::string> StringSplit(const std::string& string, char border);
 
-
   /**
-   * @brief 座標追加
+   * @brief 座標から分岐点追加
+   * @param _position 座標
    */
   void Add(math::Vector3 _position);
   /**
    * @brief 座標追加
+   * @param _positions 座標
    */
   void Add(std::vector<math::Vector3> _positions);
   /**
-   * @brief 分岐追加
+   * @brief 座標から分岐点追加
+   * @param index 列番号
+   * @param branch 追加する分岐先の列番号
    */
   void SetBranch(i32 index, std::vector<i32> branch);
 
   /**
    * @brief 次の座標
+   * @param _enemy 現在稼働させる敵のコライダ
+   * @param _enemys 全体の敵のコライダ
+   * @return 次の移動先取得
    */
   math::Vector3 NextSearch(bullet::Collider* _enemy,
                            std::vector<bullet::Collider*> _enemys);
@@ -67,7 +75,9 @@ class SearchManager {
    * @brief 経路探索
    */
   void SetCourse(SearchAI* sStart, SearchAI* sEnd);
-
+  /**
+   * @brief デバッグ描画
+   */
   void DebugDraw(bullet::PhysicsField* physics_field_);
 
  private:
@@ -76,18 +86,16 @@ class SearchManager {
    */
   void ChaseCourse();
   /**
-   * @brief 次の経路
-   */
-  math::Vector3 NextCourse(math::Vector3 _position);
-  /**
-   * @brief 探索箇所ランダムで取得
-   */
-  SearchAI* GetRandomSearch(std::vector<SearchAI*> remove);
-  /**
    * @brief 近場の探索箇所を取得
    */
   SearchAI* NearSearch(math::Vector3 _position);
-
+  /**
+   * @brief 原点のポインタを取得
+   */
+  SearchAI* GetBaseSearch(SearchAI* _search);
+  /**
+   * @brief 衝突情報を取得
+   */
   bool OnCollision(math::Vector3 start, math::Vector3 direction);
 
  private:

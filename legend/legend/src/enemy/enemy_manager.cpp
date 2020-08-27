@@ -82,16 +82,25 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
       if (boss_ != nullptr) {
         collisions.emplace_back(boss_->GetCollider());
       }
-      auto next = search_manaegr->NextSearch(_collider, collisions) -
-                  _collider->GetOwner()->GetTransform().GetPosition();
-      next.y = 0;
+      auto next = search_manaegr->NextSearch(_collider, collisions);
+      auto pPos = actor_mediator_->GetPlayer()->GetPosition();
+      auto ePos = _collider->GetOwner()->GetTransform().GetPosition();
+      auto vector = next - ePos;
+      vector.y = 0;
+      pPos.y = 0;
+
+      auto length = math::util::Clamp(vector.Magnitude(), move_speed_min_,
+                                      move_speed_max_);
+      if ((next - pPos).Magnitude() < 1.0f) {
+        length = move_speed_max_;
+      }
+      vector = vector.Normalized() * length;
 
       if ((boss_ != nullptr) &&
           (_collider->GetOwner() == boss_->GetCollider()->GetOwner())) {
-        boss_->SetVelocity(next.Normalized() * move_speed_ * 3.0f);
+        boss_->SetVelocity(vector * 3.0f);
       } else {
-        enemys_[action_enemy_index_]->SetVelocity(next.Normalized() *
-                                                  move_speed_);
+        enemys_[action_enemy_index_]->SetVelocity(vector);
       }
     }
   }

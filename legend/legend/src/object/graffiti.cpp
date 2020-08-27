@@ -216,11 +216,11 @@ std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
 
   Fragment::InitializeParameter parameter;
   parameter.position =
-      math::Vector3(instance_position_.x, 2.0f, instance_position_.z);
+      math::Vector3(instance_position_.x, 1.0f, instance_position_.z);
   parameter.rotation =
       math::Quaternion::FromEular(0, rotate_y * math::util::DEG_2_RAD, 0);
   parameter.scale = math::Vector3::kUnitVector;
-  parameter.bounding_box_length = math::Vector3(0.8f, 0.5f, 0.5f);
+  parameter.bounding_box_length = math::Vector3(0.6f, 0.3f, 0.3f);
 
   is_hit_ = false;
   std::unique_ptr<Fragment> f = std::make_unique<Fragment>();

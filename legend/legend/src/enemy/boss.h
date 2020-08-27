@@ -50,10 +50,6 @@ class Boss : public actor::Actor {
    */
   bool Update();
   /**
-   * @brief ˆÚ“®
-   */
-  void Move();
-  /**
    * @brief À•W‚Ìİ’è
    */
   void SetPosition(math::Vector3 position);

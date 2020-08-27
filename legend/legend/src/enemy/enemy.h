@@ -55,10 +55,6 @@ class Enemy : public actor::Actor {
   virtual void Draw();
 
   /**
-   * @brief ˆÚ“®
-   */
-  void Move();
-  /**
    * @brief À•W‚Ìİ’è
    */
   void SetPosition(math::Vector3 position);

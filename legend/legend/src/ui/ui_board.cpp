@@ -23,6 +23,10 @@ UIComponent* UIBoard::AddComponent(std::unique_ptr<UIComponent> component) {
 void UIBoard::Draw() {
   auto& sprite_renderer = game::GameDevice::GetInstance()->GetSpriteRenderer();
   for (auto&& comp : ui_components_) {
+    if (!comp->GetEnable()) {
+      continue;
+    }
+
     comp->StackOwnItems(sprite_renderer);
   }
 }

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "src/game/game_device.h"
+#include "src/skill/skill_item_box.h"
 
 namespace legend {
 namespace search {
@@ -54,7 +55,7 @@ void SearchManager::Make(std::filesystem::path filepath) {
     }
   }
 
-  for (auto search: searchs) {
+  for (auto search : searchs) {
     SetBranch(search.index, search.indexs);
   }
 }
@@ -129,12 +130,14 @@ math::Vector3 SearchManager::NextSearch(
   auto end = mediator_->GetPlayer()->GetPosition();
   course_list_.clear();
 
+  // 衝突したら探索経路
   if (OnCollision(start, end)) {
     SetCourse(NearSearch(start), NearSearch(end));
     ChaseCourse();
+    end = (course_list_.size() <= 0 ? end : course_list_[0]->GetPosition());
   }
 
-  return (course_list_.size() <= 0 ? end : NextCourse(start));
+  return end;
 }
 
 void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
@@ -142,100 +145,92 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
   if ((sStart == nullptr) || (sEnd == nullptr)) return;
 
   auto start = SearchCourse(sStart);
-  auto searched = std::vector<SearchCourse*>{&start};
-  auto root = std::vector<SearchCourse*>{};
+  auto searched = std::vector<SearchCourse>{start};
+  auto root = std::vector<i32>{};
 
+  // 探索処理
   for (i32 i = 0; i < searched.size(); i++) {
-    auto child = SetChild(searched[i], searched);
+    // 探索先を取得
+    std::vector<SearchCourse> children = {};
+    auto branch = GetBaseSearch(searched[i].GetBaseSearch())->GetBranch();
+    for (auto b : branch) {
+      children.emplace_back(SearchCourse(GetBaseSearch(b), i));
+    }
+
+    // 削除対象に被る場合、探索先から削除
+    for (i32 s = 0; s < searched.size(); s++) {
+      for (i32 j = 0; j < children.size(); j++) {
+        auto search = GetBaseSearch(searched[s].GetBaseSearch());
+        auto child = GetBaseSearch(children[j].GetBaseSearch());
+        if (search == child) {
+          children.erase(children.begin() + j);
+          j--;
+        }
+      }
+    }
+
+    // 長さからソート
+    auto indexs = std::vector<i32>{};
+    for (i32 c_index = 0; c_index < children.size(); c_index++) {
+      bool is_size = (indexs.size() <= 0);
+      if (indexs.size() <= 0) {
+        indexs.emplace_back(c_index);
+      } else {
+        for (i32 i_index = 0; i_index < indexs.size(); i_index++) {
+          float i_length = (children[indexs[i_index]].Length(searched));
+          float c_length = children[c_index].Length(searched);
+          if (c_length < i_length) {
+            indexs.insert(indexs.begin() + i_index, c_index);
+            break;
+          } else if (i_index + 1 <= indexs.size()) {
+            indexs.emplace_back(c_index);
+            break;
+          }
+        }
+      }
+    }
 
     //*------衝突判定--------
-    for (i32 j = 0; j < child.size(); j++) {
-      auto sPos = searched[i]->GetBaseSeach()->GetPosition();
-      auto ePos = child[i]->GetBaseSeach()->GetPosition();
-      if (OnCollision(sPos, ePos)) {
-        searched.emplace_back(child[j]);
+    for (i32 j = 0; j < children.size(); j++) {
+      auto c_index = indexs[j];
+      auto sPos = searched[i].GetBaseSearch()->GetPosition();
+      auto ePos = children[c_index].GetBaseSearch()->GetPosition();
+      auto length = children[c_index].Length(searched);
+      // 衝突しなかったら探索箇所に追加
+      if (!OnCollision(sPos, ePos)) {
+        searched.emplace_back(
+            SearchCourse(GetBaseSearch(children[j].GetBaseSearch()), i));
       }
     }
     //*----------------------
 
-    std::sort(searched.begin(), searched.end(),
-              [](SearchCourse* a, SearchCourse* b) {
-                return (a->Length() < b->Length());
-              });
-
-    if (searched[i]->GetBaseSeach() == sEnd) {
-      root = searched[i]->GetParents();
+    // 最終地点と被ったらルートに追加
+    if (GetBaseSearch(searched[i].GetBaseSearch()) == GetBaseSearch(sEnd)) {
+      root = searched[i].GetParents(searched);
       break;
     }
   }
 
+  // ルートに追加されている分岐点の座標をルートに追加
   for (auto r : root) {
-    course_list_.emplace_back(r->GetBaseSeach());
+    course_list_.emplace_back(GetBaseSearch(searched[r].GetBaseSearch()));
   }
 }
 
 void SearchManager::ChaseCourse() {
   if (course_list_.size() <= 0) return;
 
-  for (i32 i = 0; i < course_list_.size(); i++) {
-    if ((course_list_.size() - 1) <= (i + 2)) break;
-
-    auto start = course_list_[i]->GetPosition();
-    auto end = course_list_[i + 2]->GetPosition();
+  // 一つ飛ばしに衝突判定を行い、衝突しなければ間の座標を省く
+  auto start = ignore_enemy_->GetOwner()->GetTransform().GetPosition();
+  for (i32 i = 1; i < course_list_.size(); i++) {
+    auto end = course_list_[i]->GetPosition();
     //*------衝突判定--------
-    if (OnCollision(start, end)) {
-      course_list_.erase(course_list_.begin() + i);
+    if (!OnCollision(start, end)) {
+      course_list_.erase(course_list_.begin() + i - 1);
       i--;
     }
     //*----------------------
   }
-}
-
-math::Vector3 SearchManager::NextCourse(math::Vector3 _position) {
-  if (course_list_.size() <= 0) return _position;
-
-  for (i32 i = 0; i < course_list_.size(); i++) {
-    auto end = course_list_[i]->GetPosition();
-    //*------衝突判定--------
-    if (OnCollision(_position, end)) {
-      if (i <= 0) {
-        return course_list_[0]->GetPosition();
-      } else {
-        return course_list_[i - 1]->GetPosition();
-      }
-    }
-    //*----------------------
-  }
-  return course_list_[0]->GetPosition();
-}
-
-std::vector<SearchCourse*> SearchManager::SetChild(
-    SearchCourse* course, std::vector<SearchCourse*> searched) {
-  return course->SetChild(searched);
-}
-
-SearchAI* SearchManager::GetRandomSearch(std::vector<SearchAI*> remove) {
-  std::vector<i32> indexs;
-
-  for (i32 i = 0; i < search_list_.size(); i++) {
-    if ((search_list_[i]->GetBranch().size() <= 0) ||
-        (std::find(remove.begin(), remove.end(), search_list_[i].get()) !=
-         remove.end())) {
-      continue;
-    }
-    indexs.emplace_back(i);
-  }
-
-  switch (indexs.size()) {
-    case 0:
-      return nullptr;
-    case 1:
-      return search_list_[0].get();
-  }
-
-  i32 index = game::GameDevice::GetInstance()->GetRandom().Range(
-      0, static_cast<i32>(indexs.size()));
-  return search_list_[indexs[index]].get();
 }
 
 SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
@@ -243,13 +238,14 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
     return nullptr;
   }
 
+  // 自身の座標に近く、間に衝突店がないものを取得
   SearchAI* result = nullptr;
   for (i32 i = 0; i < search_list_.size(); i++) {
     if ((result == nullptr) ||
         ((search_list_[i]->GetPosition() - _position).Magnitude() <
          (result->GetPosition() - _position).Magnitude())) {
       //*------衝突判定--------
-      if (OnCollision(_position, search_list_[i]->GetPosition())) {
+      if (!OnCollision(_position, search_list_[i]->GetPosition())) {
         result = search_list_[i].get();
       }
       //*----------------------
@@ -259,18 +255,33 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
   return result;
 }
 
+SearchAI* SearchManager::GetBaseSearch(SearchAI* _search) {
+  // ポインタを取得
+  for (auto& s : search_list_) {
+    if (s.get() == _search) return s.get();
+  }
+  return nullptr;
+}
+
 bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
-  // for (i32 index = 0; index < enemys_.size(); index++) {
-  // auto enemy = enemys_[index];
-  // if (enemy == ignore_enemy_) continue;
   const auto raycast = mediator_->RayCast(start, end);
   auto objs = raycast.m_collisionObjects;
+  // std::vector<skill::SkillItemBox*> skill = mediator_->GetSkillBoxs();
 
   for (i32 index = 0; index < objs.size(); index++) {
     bullet::Collider* act =
         static_cast<bullet::Collider*>(objs[index]->getUserPointer());
+    // 稼働中の敵との衝突を無視
     if (act->GetOwner() == ignore_enemy_->GetOwner()) continue;
-    return true;
+    // プレイヤーとの衝突を無視
+    if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
+      continue;
+    skill::SkillItemBox* sb =
+        dynamic_cast<skill::SkillItemBox*>(act->GetOwner());
+    if (sb) {
+      continue;
+    }
+      return true;
   }
   //}
   return false;

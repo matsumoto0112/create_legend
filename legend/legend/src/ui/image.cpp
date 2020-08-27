@@ -6,7 +6,7 @@ namespace legend {
 namespace ui {
 
 //コンストラクタ
-Image::Image() {}
+Image::Image() : UIComponent() {}
 
 //デストラクタ
 Image::~Image() {}

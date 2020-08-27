@@ -57,6 +57,8 @@ class Skill : public actor::Actor {
    */
   void RemaingRecastTurnUpdate();
 
+  void AdjustPosition(math::Vector3 adjust_position);
+
   // i32 GetModelID();
   i32 GetRemainingUsableCount();
   i32 GetRemainingRecastTurn();
@@ -68,6 +70,10 @@ class Skill : public actor::Actor {
   bool GetUseFlag();
   bool ProductionFlag();
   void RemoveCollider();
+  /**
+   * @brief スキルの演出終了判定取得
+   */
+  bool EndSkillProduction() const;
 
  protected:
   //! モデルのID

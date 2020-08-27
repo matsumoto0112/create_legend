@@ -21,11 +21,11 @@ class SkillManager {
   /**
    * @brief 初期化処理
    */
-  void Init(actor::IActorMediator *mediator);
+  void Init(actor::IActorMediator *mediator, player::Player* player);
   /**
    * @brief スキルを拾った際のメソッド
    */
-  void GetSkill(i32 skill_id, player::Player *player);
+  void GetSkill(i32 skill_id);
   /**
    * @brief スキルの獲得処理
    */
@@ -70,6 +70,10 @@ class SkillManager {
    * @brief 選択したスキルの更新
    */
   void SelectUpdate();
+  /**
+   * @brief スキル終了
+   */
+  void EndSkill();
 
  private:
   actor::IActorMediator *mediator_;
@@ -84,6 +88,8 @@ class SkillManager {
 
   //! 入力判定
   bool select_move_;
+  //! プレイヤー
+  player::Player* player_;
 };
 }  // namespace skill
 }  // namespace legend

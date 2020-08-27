@@ -12,16 +12,19 @@ legend::i32 CalcPlayerStrengthToPrintNumber(
   return static_cast<legend::i32>(str * 100);
 }
 
-struct LightState {
+struct Camera {
+  legend::math::Vector3 camera_position;
+};
+legend::directx::buffer::ConstantBuffer<Camera> camera_cb_;
+
+struct Light {
+  legend::math::Vector3 position;
+};
+struct LightCBStruct {
   legend::math::Matrix4x4 view;
   legend::math::Matrix4x4 proj;
-  legend::math::Vector3 position;
-  float pad0;
-  legend::math::Vector3 direction;
-  float pad1;
-  legend::util::Color4 color;
 };
-legend::directx::buffer::ConstantBuffer<LightState> light_cb_;
+legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
 }  // namespace
 
 namespace legend {
@@ -137,6 +140,13 @@ bool TurnSystem::Init(const std::string& stage_name) {
     comp->SetZOrder(z);
     components_.emplace_back(comp);
     input_lines_.emplace_back(split);
+
+    //敵のターンでは表示しないUIをリストに積む
+    if (w_name ==
+            util::resource::resource_names::texture::UI_POWERGAUGE_FRAME ||
+        w_name == util::resource::resource_names::texture::UI_POWERGAUGE) {
+      no_render_if_enemy_turn_uis_.emplace_back(comp);
+    }
   }
   MY_ASSERTION(
       gauges_.size() == gauge_id::MAX,
@@ -169,6 +179,12 @@ bool TurnSystem::Init(const std::string& stage_name) {
                        directx::PrimitiveTopology::TRIANGLE_LIST, L"IB");
     index_buffer_.WriteBufferResource(indices.data());
   }
+
+  camera_cb_.Init(
+      device,
+      device.GetLocalHandle(
+          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
+      L"CB");
 
   light_cb_.Init(
       device,
@@ -523,38 +539,32 @@ void TurnSystem::Draw() {
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
-  //アクターの描画リストを作成
-  cameras_[current_camera_]->RenderStart();
-  actor_render_command_list_.Push(player_.get());
-  for (auto&& obj : static_objects_) {
-    actor_render_command_list_.Push(obj.get());
-  }
-  // for (auto&& fragment : fragments_) {
-  //  actor_render_command_list_.Push(fragment.get());
-  //}
-  // for (auto&& item_box : item_boxes_) {
-  //  actor_render_command_list_.Push(item_box.get());
-  //}
-  // enemy_manager_.Draw(&actor_render_command_list_);
-
   //シャドウマップ用描画
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::NONE, false,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
 
-  LightState ls;
-   ls.position = math::Vector3(0, 50, -50);
-  //ls.position = player_follow_lookat_camera_->GetPosition();
-  ls.direction = -1 * ls.position.Normalized();
-  ls.view = math::Matrix4x4::CreateView(ls.position, ls.position + ls.direction,
-                                        math::Vector3::kUpVector);
-  ls.proj = player_follow_lookat_camera_->GetProjection();
-  ls.color = util::Color4(1.0f, 0.0f, 1.0f, 1.0f);
-  light_cb_.GetStagingRef() = ls;
+  cameras_[current_camera_]->RenderStart();
+
+  actor_render_command_list_.Push(player_.get());
+  for (auto&& obj : static_objects_) {
+    actor_render_command_list_.Push(obj.get());
+  }
+  for (auto&& fragment : fragments_) {
+    actor_render_command_list_.Push(fragment.get());
+  }
+  for (auto&& item_box : item_boxes_) {
+    actor_render_command_list_.Push(item_box.get());
+  }
+  enemy_manager_.Draw(&actor_render_command_list_);
+
+  math::Vector3 light_pos = math::Vector3(50, 80, 20);
+  light_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
+      light_pos, math::Vector3::kZeroVector, math::Vector3::kUpVector);
+  light_cb_.GetStagingRef().proj =
+      player_follow_lookat_camera_->GetProjection();
   light_cb_.UpdateStaging();
-  light_cb_.RegisterHandle(device, 7);
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
-                                                            command_list);
+  light_cb_.RegisterHandle(device, 2);
   actor_render_command_list_.ShadowPass();
 
   render_resource_manager.SetRenderTargets(
@@ -585,6 +595,10 @@ void TurnSystem::Draw() {
       device, command_list,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
 
+  camera_cb_.GetStagingRef().camera_position =
+      player_follow_lookat_camera_->GetPosition();
+  camera_cb_.UpdateStaging();
+  camera_cb_.RegisterHandle(device, 6);
   light_cb_.RegisterHandle(device, 7);
 
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
@@ -598,24 +612,30 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
 
-  // for (auto&& graffiti : graffities_) {
-  //  graffiti->Draw(command_list);
-  //}
+  for (auto&& graffiti : graffities_) {
+    graffiti->Draw(command_list);
+  }
 
-  // ui_board_.Draw();
-  // fade_.Draw();
+  const bool is_player_turn = current_mode_ == Mode::PLAYER_MOVING ||
+                              current_mode_ == Mode::PLAYER_MOVE_READY;
+  for (auto&& ui : no_render_if_enemy_turn_uis_) {
+    ui->SetEnable(is_player_turn);
+  }
 
-  ////スプライトは最後に描画リストにあるものをまとめて描画する
-  // game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+  ui_board_.Draw();
+  fade_.Draw();
+
+  //スプライトは最後に描画リストにあるものをまとめて描画する
+  game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 
   actor_render_command_list_.Clear();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
-  // cameras_[current_camera_]->RenderStart();
-  // search_manager_.DebugDraw(&physics_field_);
-  // physics_field_.DebugDraw(cameras_[current_camera_].get());
+  cameras_[current_camera_]->RenderStart();
+  search_manager_.DebugDraw(&physics_field_);
+  physics_field_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }

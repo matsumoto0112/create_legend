@@ -34,7 +34,6 @@ bool Boss::Init(actor::IActorMediator* mediator,
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
   this->transform_ = parameter.transform;
-  this->transform_.SetScale(this->transform_.GetScale() * 80.0f);
 
   bullet::BoundingBox::InitializeParameter params;
   params.position = this->transform_.GetPosition();
@@ -61,45 +60,17 @@ void Boss::Remove() { mediator_->RemoveCollider(box_); }
 
 //更新
 bool Boss::Update() {
-  // obb_.Update();
-
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  const bool is_nearly_zero_vector = GetVelocity().MagnitudeSquared() < 0.01f;
-  if (is_move_ && is_nearly_zero_vector) move_end_ = true;
-  is_move_ = (0.01f < GetVelocity().Magnitude());
-  // Move();
-
-  // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  // transform_cb_.UpdateStaging();
+  auto velocity = GetVelocity();
+  velocity.y = 0;
+  if (is_move_ && (velocity.Magnitude() < 0.01f)) {
+    move_end_ = true;
+    is_move_ = false;
+  }
 
   return true;
-}
-
-//移動
-void Boss::Move() {
-  if (!is_move_) return;
-  auto velocity = GetVelocity();
-
-  //移動距離を求める
-  float length =
-      math::util::Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
-
-  //実際に動く距離
-  float x = -velocity.x / length;
-  float z = -velocity.z / length;
-
-  ////減速計算
-  // deceleration_x_ = x / (length * length);
-  // deceleration_z_ = z / (length * length);
-
-  //移動処理
-  math::Vector3 v = math::Vector3(x, 0, z);
-  math::Vector3 position = GetPosition() + v * power_ * update_time_;
-  SetPosition(position);
-
-  // Deceleration(2);
 }
 
 void Boss::SetPosition(math::Vector3 position) {
@@ -110,6 +81,7 @@ void Boss::SetPosition(math::Vector3 position) {
 //速度の設定
 void Boss::SetVelocity(math::Vector3 velocity) {
   box_->ApplyCentralImpulse(velocity);
+  is_move_ = true;
 }
 
 void Boss::SetRotation() {
@@ -124,26 +96,8 @@ void Boss::ResetParameter() {
 
   // deceleration_x_ = deceleration_z_ = 0;
   is_move_ = false;
+  move_end_ = false;
 }
-
-////減速
-// void Enemy::Deceleration(float deceleration_rate) {
-//  float x = deceleration_x_ * deceleration_rate * update_time_;
-//  float z = deceleration_z_ * deceleration_rate * update_time_;
-//
-//  if ((x <= velocity_.x && velocity_.x <= 0) ||
-//      (0 <= velocity_.x && velocity_.x <= x)) {
-//    velocity_.x = 0;
-//  } else {
-//    velocity_.x -= x;
-//  }
-//  if ((z <= velocity_.z && velocity_.z <= 0) ||
-//      (0 <= velocity_.z && velocity_.z <= z)) {
-//    velocity_.z = 0;
-//  } else {
-//    velocity_.z -= z;
-//  }
-//}
 
 //座標の取得
 math::Vector3 Boss::GetPosition() const { return transform_.GetPosition(); }
@@ -155,7 +109,7 @@ math::Quaternion Boss::GetRotation() const { return transform_.GetRotation(); }
 
 float Boss::GetPower() const { return power_; }
 
-bool Boss::GetMoveEnd() const { return move_end_; }
+bool Boss::GetMoveEnd() const { return (!is_move_ && move_end_); }
 
 void Boss::ResetMoveEnd() { move_end_ = false; }
 

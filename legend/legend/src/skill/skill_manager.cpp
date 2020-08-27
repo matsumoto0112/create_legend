@@ -14,16 +14,18 @@ SkillManager::SkillManager() {}
 SkillManager::~SkillManager() {}
 
 //初期化
-void SkillManager::Init(actor::IActorMediator* mediator) {
+void SkillManager::Init(actor::IActorMediator* mediator,
+                        player::Player* player) {
   this->mediator_ = mediator;
+  player_ = player;
   select_ui_.Init();
   select_move_ = false;
 }
 
 //スキル取得時
-void SkillManager::GetSkill(i32 skill_id, player::Player* player) {
+void SkillManager::GetSkill(i32 skill_id) {
   std::shared_ptr<SkillPencil> skill;
-  skill->Init(mediator_, player);
+  skill->Init(mediator_, player_);
   this_turn_get_skills_.push_back(skill);
 }
 
@@ -37,8 +39,28 @@ void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
 
 //更新
 void SkillManager::Update() {
-  for (auto&& skill : skills_) {
-    skill->Update();
+  // for (auto&& skill : skills_) {
+  //  skill->Update();
+  //}
+
+  for (i32 i = 0; i < skills_.size(); i++) {
+    skills_[i]->Update();
+
+    if (skills_[i]->GetUseFlag()) continue;
+    math::Vector3 pos;
+    if (i == 0)
+      pos = math::Vector3::kUpVector;
+    else if (i == 1)
+      pos = math::Vector3::kRightVector * 1.5f;
+    else if (i == 2)
+      pos = math::Vector3::kLeftVector * 1.5f;
+    else if (i == 3)
+      pos = math::Vector3::kUpVector + math::Vector3::kRightVector;
+    else
+      pos = math::Vector3::kUpVector + math::Vector3::kLeftVector;
+    pos = math::Matrix4x4::MultiplyCoord(
+        pos, player_->GetTransform().GetRotation().ToMatrix());
+    skills_[i]->AdjustPosition(pos);
   }
 }
 
@@ -130,6 +152,8 @@ void SkillManager::RemoveSkill() {
 
 //スキルの選択
 bool SkillManager::SelectSkill() {
+  if (IsProductionNow()) return true;
+
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::LB)) {
     select_ui_.ChangeIsSelectMode();
@@ -157,7 +181,7 @@ bool SkillManager::SelectSkill() {
 
 //スキルの使用
 void SkillManager::UseSkill() {
-  if (!select_ui_.GetIsSelectMode()) return;
+  if (!select_ui_.GetIsSelectMode() || IsProductionNow()) return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
@@ -171,7 +195,18 @@ void SkillManager::UseSkill() {
 //選択したスキルの更新
 void SkillManager::SelectUpdate() {
   UseSkill();
+  EndSkill();
   RemoveSkill();
+}
+
+//スキル終了
+void SkillManager::EndSkill() {
+  for (auto&& skill : skills_) {
+    if (skill->EndSkillProduction()) {
+      select_ui_.ChangeIsSelectMode();
+      break;
+    }
+  }
 }
 
 }  // namespace skill

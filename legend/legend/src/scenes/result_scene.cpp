@@ -41,7 +41,7 @@ bool ResultScene::Initialize() {
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
-    audio.Start(resource_name::audio::RESULT_GAMEOVER, 1.0f);
+    //audio.Start(resource_name::audio::RESULT_GAMEOVER, 1.0f);
   } else {
     auto image = std::make_unique<ui::Image>();
     if (!image->Init(TextureName::RESULT_STAGECLEAR, heap_id)) {
@@ -53,7 +53,7 @@ bool ResultScene::Initialize() {
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     board_.AddComponent(std::move(image));
-    audio.Start(resource_name::audio::RESULT_STAGE_CLEAR, 1.0f);
+    //audio.Start(resource_name::audio::RESULT_STAGE_CLEAR, 1.0f);
   }
 
   {  // É^Å[Éìêîï\é¶

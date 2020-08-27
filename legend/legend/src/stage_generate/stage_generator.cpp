@@ -150,7 +150,7 @@ bool StageGenerator::GetMapActors(
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
       parameter.bouding_box_length =
-          math::Vector3(6.0f, 2.5f, 14.0f) / 4.0f * 1.25f;
+          math::Vector3(3.0f, 1.0f, 5.5f);
       bosses.push_back(parameter);
       continue;
     }

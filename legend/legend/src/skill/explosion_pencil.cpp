@@ -23,7 +23,7 @@ void ExplosionPencil::Init(util::Transform transform,
   transform_.SetPosition(transform.GetPosition());
   transform_.SetRotation(transform.GetRotation());
   transform_.SetScale(transform.GetScale());
-  explosion_power_ = 1.0f;
+  explosion_power_ = 3.0f;
   radius_ = 1.0f;
 
   bullet::BoundingSphere::InitializeParameter parameter;
@@ -41,10 +41,6 @@ void ExplosionPencil::Init(util::Transform transform,
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
-  //モデルの初期化
-  //モデルは適当に入ってる
-  model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
 }
 
 //更新
@@ -58,13 +54,9 @@ bool ExplosionPencil::Update() {
   float mass = 0.0f;
   sphere_->SetScale(radius_, mass);
   mediator_->AddCollider(sphere_);
+  sphere_->SetFlags(sphere_->GetFlags() |
+      btCollisionObject::CF_NO_CONTACT_RESPONSE);
   return true;
-}
-
-//描画
-void ExplosionPencil::Draw() {
-  if (is_destroy_) return;
-  actor::Actor::Draw();
 }
 
 //衝突判定
@@ -76,10 +68,11 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 enemy_position = enemy->GetTransform().GetPosition();
       math::Vector3 direction =
           (enemy_position - explosion_position).Normalized();
+      direction = direction * explosion_power_;
       //値は適当
-      direction.y = 1.0f;
+      direction.y = 2.0f;
 
-      enemy->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
+      enemy->GetCollider()->ApplyCentralImpulse(direction);
     }
   }
   {
@@ -89,10 +82,11 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 boss_position = boss->GetTransform().GetPosition();
       math::Vector3 direction =
           (boss_position - explosion_position).Normalized();
+      direction = direction * explosion_power_;
       //値は適当
-      direction.y = 1.0f;
+      direction.y = 2.0f;
 
-      boss->GetCollider()->ApplyCentralImpulse(direction * explosion_power_);
+      boss->GetCollider()->ApplyCentralImpulse(direction * 0.5f);
     }
   }
 }

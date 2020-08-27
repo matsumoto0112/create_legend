@@ -88,7 +88,7 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
 
       if ((boss_ != nullptr) &&
           (_collider->GetOwner() == boss_->GetCollider()->GetOwner())) {
-        boss_->SetVelocity(next.Normalized() * move_speed_ * 1.5f);
+        boss_->SetVelocity(next.Normalized() * move_speed_ * 3.0f);
       } else {
         enemys_[action_enemy_index_]->SetVelocity(next.Normalized() *
                                                   move_speed_);
@@ -218,7 +218,7 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
 //最後の敵の移動終了判定を取得
 bool EnemyManager::LastEnemyMoveEnd() const {
   //空かどうかチェック
-  if (enemys_.empty() || enemys_.size() <= 0 && boss_ == nullptr) {
+  if (enemys_.size() <= 0 && boss_ == nullptr) {
     return true;
   }
   if (action_enemy_index_ < 0) {

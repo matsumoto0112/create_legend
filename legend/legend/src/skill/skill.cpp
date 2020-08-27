@@ -22,6 +22,11 @@ void Skill::RemaingRecastTurnUpdate() {
   //カウントを更新
   remaining_recast_turn_--;
 }
+void Skill::AdjustPosition(math::Vector3 adjust_position) {
+  transform_.SetPosition(player_->GetPosition() + adjust_position);
+  transform_.SetRotation(player_->GetRotation());
+  box_->SetTransform(transform_);
+}
 // i32 Skill::GetModelID() { return model_id_; }
 
 i32 Skill::GetRemainingUsableCount() { return remaining_usable_count_; }
@@ -46,6 +51,8 @@ bool Skill::GetUseFlag() { return is_use_; }
 bool Skill::ProductionFlag() { return is_production_; }
 
 void Skill::RemoveCollider() { mediator_->RemoveCollider(box_); }
+
+bool Skill::EndSkillProduction() const { return (is_use_ && !is_production_); }
 
 }  // namespace skill
 }  // namespace legend

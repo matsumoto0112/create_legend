@@ -14,22 +14,37 @@ SkillSelectUI::SkillSelectUI() {
   is_select_mode_ = false;
   select_number_ = 0;
 
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+
   if (!skill_select_frame_.Init(
-          game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
+          resource.GetTexture().Get(
               resource_name::texture::UI_SKILL_SELECT_FRAME),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
   if (!skill_explanatory_.Init(
-          game::GameDevice::GetInstance()->GetResource().GetTexture().Get(
-              resource_name::texture::TEX),
+          resource.GetTexture().Get(resource_name::texture::TEX),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル説明画像の初期化に失敗しました。");
   }
   skill_explanatory_.SetPosition(math::Vector2(960.0f, 32.0f));
   skill_explanatory_.SetScale(math::Vector2(0.1f, 0.1f));
   skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
+
+  for (i32 i = 0; i < 5; i++) {
+    if (!skill_frame_icons_[i].Init(
+            resource.GetTexture().Get(resource_name::texture::UI_SKILL_FRAME),
+            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+      MY_LOG(L"スキルの空アイコンの初期化に失敗しました。");
+    }
+
+    skill_frame_icons_[i].SetPosition(math::Vector2(
+        icon_base_position_.x + 64.0f * i, icon_base_position_.y));
+    skill_frame_icons_[i].SetScale(icon_scale_);
+    skill_frame_icons_[i].SetRect(math::Rect(0, 0, 1, 1));
+    skill_frame_icons_[i].SetZOrder(0.8f);
+  }
 }
 
 //デストラクタ
@@ -68,7 +83,11 @@ void SkillSelectUI::Draw() {
 
   if (is_select_mode_) {
     sprite_renderer.AddDrawItems(&skill_select_frame_);
-    //sprite_renderer.AddDrawItems(&skill_explanatory_);
+    // sprite_renderer.AddDrawItems(&skill_explanatory_);
+  }
+
+  for (auto&& frame : skill_frame_icons_) {
+    sprite_renderer.AddDrawItems(&frame);
   }
 }
 

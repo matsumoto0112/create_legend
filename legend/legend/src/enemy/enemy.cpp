@@ -62,8 +62,6 @@ void Enemy::Remove() { mediator_->RemoveCollider(box_); }
 
 //更新
 bool Enemy::Update() {
-  // obb_.Update();
-
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
@@ -73,10 +71,6 @@ bool Enemy::Update() {
     move_end_ = true;
     is_move_ = false;
   }
-  // Move();
-
-  // transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  // transform_cb_.UpdateStaging();
 
   return true;
 }
@@ -96,31 +90,6 @@ void Enemy::Draw() {
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   model_->Draw(command_list);
-}
-
-//移動
-void Enemy::Move() {
-  // if (!is_move_) return;
-  // auto velocity = GetVelocity();
-  // velocity.y = 0;
-  ////移動距離を求める
-  // float length =
-  //    math::util::Sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
-
-  ////実際に動く距離
-  // float x = -velocity.x / length;
-  // float z = -velocity.z / length;
-
-  //////減速計算
-  //// deceleration_x_ = x / (length * length);
-  //// deceleration_z_ = z / (length * length);
-
-  ////移動処理
-  // math::Vector3 v = math::Vector3(x, 0, z);
-  // math::Vector3 position = GetPosition() + v * power_ * update_time_;
-  // SetPosition(position);
-
-  //// Deceleration(2);
 }
 
 void Enemy::SetPosition(math::Vector3 position) {
@@ -148,25 +117,6 @@ void Enemy::ResetParameter() {
   is_move_ = false;
   move_end_ = false;
 }
-
-////減速
-// void Enemy::Deceleration(float deceleration_rate) {
-//  float x = deceleration_x_ * deceleration_rate * update_time_;
-//  float z = deceleration_z_ * deceleration_rate * update_time_;
-//
-//  if ((x <= velocity_.x && velocity_.x <= 0) ||
-//      (0 <= velocity_.x && velocity_.x <= x)) {
-//    velocity_.x = 0;
-//  } else {
-//    velocity_.x -= x;
-//  }
-//  if ((z <= velocity_.z && velocity_.z <= 0) ||
-//      (0 <= velocity_.z && velocity_.z <= z)) {
-//    velocity_.z = 0;
-//  } else {
-//    velocity_.z -= z;
-//  }
-//}
 
 //座標の取得
 math::Vector3 Enemy::GetPosition() const { return transform_.GetPosition(); }

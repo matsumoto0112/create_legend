@@ -1,4 +1,4 @@
-#include "skill_manager.h"
+#include "src/skill/skill_manager.h"
 
 #include "src/game/game_device.h"
 #include "src/player/player.h"
@@ -46,7 +46,7 @@ void SkillManager::Update() {
   for (i32 i = 0; i < skills_.size(); i++) {
     skills_[i]->Update();
 
-    if (skills_[i]->GetUseFlag()) continue;
+    if (skills_[i]->ProductionFlag()) continue;
     math::Vector3 pos;
     if (i == 0)
       pos = math::Vector3::kUpVector;

@@ -1,4 +1,4 @@
-#include "skill.h"
+#include "src/skill/skill.h"
 
 #include "src/player/player.h"
 

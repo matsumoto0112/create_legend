@@ -1,4 +1,4 @@
-#include "skill_pencil.h"
+#include "src/skill/skill_pencil.h"
 
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
@@ -45,7 +45,7 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
 
   player_ = player;
 
-  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector * 2);
+  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector);
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3(1, 1, 1));
 

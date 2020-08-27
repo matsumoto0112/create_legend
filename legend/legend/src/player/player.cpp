@@ -303,7 +303,7 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (enemy_position - player_position).Normalized();
 
-        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f);
+        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f * strength_);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {

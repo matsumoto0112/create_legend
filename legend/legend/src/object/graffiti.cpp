@@ -179,7 +179,8 @@ void Graffiti::OnHit(bullet::Collider* other) {
       if (player->GetVelocity().Magnitude() >= can_erase_speed_) {
         const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+        float a = math::util::Abs(fmodf(remaining_graffiti_, 10.0f));
+        if (a < 1.0f || a > 9.5f) {
           //Žã‘Ì‰»
           player->UpdateStrength(-0.04f);
           is_hit_ = true;
@@ -197,7 +198,8 @@ void Graffiti::OnHit(bullet::Collider* other) {
       if (enemy->GetVelocity().Magnitude() >= can_erase_speed_) {
         const float percentage = 100.0f * update_time_;
         remaining_graffiti_ -= percentage;
-        if (math::util::Abs(fmodf(remaining_graffiti_, 10.0f)) < 1.0f) {
+        float a = math::util::Abs(fmodf(remaining_graffiti_, 10.0f));
+        if (a < 1.0f || a > 9.5f) {
           //Žã‘Ì‰»
           enemy->Weaking(0.04f);
           is_hit_ = true;

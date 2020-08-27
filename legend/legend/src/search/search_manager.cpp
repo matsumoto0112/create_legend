@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "src/game/game_device.h"
+#include "src/skill/skill_item_box.h"
 
 namespace legend {
 namespace search {
@@ -157,10 +158,10 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
     }
 
     // 削除対象に被る場合、探索先から削除
-	for (i32 s = 0; s < searched.size(); s++) {
+    for (i32 s = 0; s < searched.size(); s++) {
       for (i32 j = 0; j < children.size(); j++) {
-            auto search = GetBaseSearch(searched[s].GetBaseSearch());
-            auto child = GetBaseSearch(children[j].GetBaseSearch());
+        auto search = GetBaseSearch(searched[s].GetBaseSearch());
+        auto child = GetBaseSearch(children[j].GetBaseSearch());
         if (search == child) {
           children.erase(children.begin() + j);
           j--;
@@ -168,7 +169,7 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
       }
     }
 
-	// 長さからソート
+    // 長さからソート
     auto indexs = std::vector<i32>{};
     for (i32 c_index = 0; c_index < children.size(); c_index++) {
       bool is_size = (indexs.size() <= 0);
@@ -195,7 +196,7 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
       auto sPos = searched[i].GetBaseSearch()->GetPosition();
       auto ePos = children[c_index].GetBaseSearch()->GetPosition();
       auto length = children[c_index].Length(searched);
-	  // 衝突しなかったら探索箇所に追加
+      // 衝突しなかったら探索箇所に追加
       if (!OnCollision(sPos, ePos)) {
         searched.emplace_back(
             SearchCourse(GetBaseSearch(children[j].GetBaseSearch()), i));
@@ -203,7 +204,7 @@ void SearchManager::SetCourse(SearchAI* sStart, SearchAI* sEnd) {
     }
     //*----------------------
 
-	// 最終地点と被ったらルートに追加
+    // 最終地点と被ったらルートに追加
     if (GetBaseSearch(searched[i].GetBaseSearch()) == GetBaseSearch(sEnd)) {
       root = searched[i].GetParents(searched);
       break;
@@ -222,7 +223,6 @@ void SearchManager::ChaseCourse() {
   // 一つ飛ばしに衝突判定を行い、衝突しなければ間の座標を省く
   auto start = ignore_enemy_->GetOwner()->GetTransform().GetPosition();
   for (i32 i = 1; i < course_list_.size(); i++) {
-
     auto end = course_list_[i]->GetPosition();
     //*------衝突判定--------
     if (!OnCollision(start, end)) {
@@ -256,7 +256,7 @@ SearchAI* SearchManager::NearSearch(math::Vector3 _position) {
 }
 
 SearchAI* SearchManager::GetBaseSearch(SearchAI* _search) {
-	// ポインタを取得
+  // ポインタを取得
   for (auto& s : search_list_) {
     if (s.get() == _search) return s.get();
   }
@@ -266,16 +266,22 @@ SearchAI* SearchManager::GetBaseSearch(SearchAI* _search) {
 bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
   const auto raycast = mediator_->RayCast(start, end);
   auto objs = raycast.m_collisionObjects;
+  // std::vector<skill::SkillItemBox*> skill = mediator_->GetSkillBoxs();
 
   for (i32 index = 0; index < objs.size(); index++) {
     bullet::Collider* act =
         static_cast<bullet::Collider*>(objs[index]->getUserPointer());
-	// 稼働中の敵との衝突を無視
+    // 稼働中の敵との衝突を無視
     if (act->GetOwner() == ignore_enemy_->GetOwner()) continue;
     // プレイヤーとの衝突を無視
     if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
       continue;
-    return true;
+    skill::SkillItemBox* sb =
+        dynamic_cast<skill::SkillItemBox*>(act->GetOwner());
+    if (sb) {
+      continue;
+    }
+      return true;
   }
   //}
   return false;

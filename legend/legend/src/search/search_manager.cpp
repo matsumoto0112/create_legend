@@ -5,6 +5,7 @@
 
 #include "src/game/game_device.h"
 #include "src/skill/skill_item_box.h"
+#include "src/object/fragment.h"
 
 namespace legend {
 namespace search {
@@ -280,6 +281,11 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
         dynamic_cast<skill::Skill*>(act->GetOwner());
     if (sb) {
       continue;
+    }
+    object::Fragment* fragment =
+        dynamic_cast<object::Fragment*>(act->GetOwner());
+    if (fragment) {
+        continue;
     }
       return true;
   }

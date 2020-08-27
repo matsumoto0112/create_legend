@@ -650,7 +650,7 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
   }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_};
+      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_ + 1};
 }
 
 bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み

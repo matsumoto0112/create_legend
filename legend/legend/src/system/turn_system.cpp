@@ -48,18 +48,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
 
-  // directx::device::CommandList command_list;
-  // if (!command_list.Init(
-  //        game::GameDevice::GetInstance()->GetDevice(),
-  //        D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-  //  return false;
-  //}
-
-  // command_list.Close();
-  // game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-  //    {command_list});
-  // game::GameDevice::GetInstance()->GetDevice().WaitExecute();
-
   if (!enemy_manager_.Initilaize(this)) {
     return false;
   }
@@ -193,6 +181,25 @@ bool TurnSystem::Init(const std::string& stage_name) {
       L"L_CB");
 
   current_turn_ = 0;
+
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          game::GameDevice::GetInstance()->GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
+
+  auto& particle_command_list =
+      game::GameDevice::GetInstance()->GetParticleCommandList();
+  player_move_particle_ =
+      particle_command_list.CreateParticle<draw::particle::SmokeParticle>(
+          command_list);
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
+
   return true;
 }
 
@@ -327,6 +334,8 @@ bool TurnSystem::Update() {
   remove_item_box_list_.clear();
 
   physics_field_.Update();
+
+  player_move_particle_->GetTransformRef().SetPosition(player_->GetPosition());
 
   fade_.Update();
   if (is_scene_end_fade_start_) {
@@ -607,6 +616,9 @@ void TurnSystem::Draw() {
   vertex_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.Draw(command_list);
+
+  game::GameDevice::GetInstance()->GetParticleCommandList().RenderParticle(
+      command_list);
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,

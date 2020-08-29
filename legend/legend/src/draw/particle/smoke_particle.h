@@ -18,7 +18,7 @@ class SmokeParticle : public ParticleEmitter {
   ~SmokeParticle();
 
   bool Init(directx::device::CommandList& copy_command_list);
-  void Update(ParticleCommandList& command_list) override;
+  void Update(directx::device::CommandList& compute_command_list) override;
   void Render(directx::device::CommandList& graphics_command_list) override;
 
  private:

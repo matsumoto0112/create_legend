@@ -11,7 +11,10 @@
 [maxvertexcount(MAX_VERTEX_COUNT)]
 void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
 {
-    const float4x4 m = mul(g_world_context.view, g_world_context.projection);
+    //float4x4 mat = float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 29, 1.75, -31, 1);
+    float4x4 mat = float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -0, 1);
+    mat = mul(mat, g_world_context.view);
+    mat = mul(mat, g_world_context.projection);
 
     const float4 pos[4] =
     {
@@ -40,9 +43,12 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
     for (i = 1; i <= MAX_VERTEX_COUNT; i++)
     {
         const uint index = indices[i - 1];
-        o.position = pos[index];
-        o.position += input[0].position;
-        o.position = mul(o.position, m);
+        float4 position = pos[index];
+        position += input[0].position ;
+        position = mul(position, mat);
+
+
+        o.position = position;
         o.uv = uv[index];
         o.color = input[0].color;
         output.Append(o);

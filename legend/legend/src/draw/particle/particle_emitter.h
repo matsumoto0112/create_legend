@@ -10,7 +10,6 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
 #include "src/directx/shader/pipeline_state.h"
-#include "src/draw/particle/particle_command_list.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -58,12 +57,17 @@ class ParticleEmitter {
    * @brief 更新処理
    * @param command_list パーティクルの更新処理用のコマンドリスト
    */
-  virtual void Update(ParticleCommandList& command_list);
+  virtual void Update(directx::device::CommandList& command_list);
   /**
    * @brief 描画処理
    * @param graphics_command_list 描画処理を実行するコマンドリスト
    */
   virtual void Render(directx::device::CommandList& graphics_command_list);
+
+  void SetTransform(const util::Transform& transform) {
+    this->transform_ = transform;
+  }
+  util::Transform GetTransform() const { return transform_; }
   /**
    * @brief トランスフォームの参照を返す
    * @return

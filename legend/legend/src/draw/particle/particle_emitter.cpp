@@ -102,9 +102,8 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
 }
 
 //更新
-void ParticleEmitter::Update(ParticleCommandList& particle_command_list) {
+void ParticleEmitter::Update(directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& command_list = particle_command_list.GetCommandList();
 
   //リソースを登録していく
   device.GetHeapManager().RegisterHandle(

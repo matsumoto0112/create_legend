@@ -34,14 +34,12 @@ bool GPUParticleTest::Initialize() {
     return false;
   }
 
-  smoke_particles_.resize(5);
-  for (u32 i = 0; i < 5; i++) {
-    if (!smoke_particles_[i].Init(command_list)) {
-      return false;
-    }
-    smoke_particles_[i].GetTransformRef().SetPosition(
-        math::Vector3(i * 1.0f, 0.0f, i * 1.0f));
-  }
+  smoke_particles_.resize(1);
+  auto particle =
+      game::GameDevice::GetInstance()
+          ->GetParticleCommandList()
+          .CreateParticle<draw::particle::SmokeParticle>(command_list);
+  particle->GetTransformRef().SetPosition(math::Vector3(10.0f, 0, 0));
 
   command_list.Close();
   device.ExecuteCommandList({command_list});
@@ -50,28 +48,20 @@ bool GPUParticleTest::Initialize() {
   return true;
 }
 
-bool GPUParticleTest::Update() {
-  auto& particle_command_list =
-      game::GameDevice::GetInstance()->GetParticleCommandList();
-
-  for (auto&& p : smoke_particles_) {
-    p.Update(particle_command_list);
-  }
-
-  return true;
-}
+bool GPUParticleTest::Update() { return true; }
 
 void GPUParticleTest::Draw() {
   camera_.RenderStart();
-
   auto& command_list = game::GameDevice::GetInstance()
                            ->GetDevice()
                            .GetCurrentFrameResource()
                            ->GetCommandList();
+  game::GameDevice::GetInstance()->GetParticleCommandList().RenderParticle(
+      command_list);
 
-  for (auto&& p : smoke_particles_) {
-    p.Render(command_list);
-  }
+  // for (auto&& p : smoke_particles_) {
+  //  p.Render(command_list);
+  //}
 }
 
 void GPUParticleTest::Finalize() {}

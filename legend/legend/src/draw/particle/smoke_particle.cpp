@@ -85,8 +85,8 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   return true;
 }
 
-void SmokeParticle::Update(ParticleCommandList& command_list) {
-  ParticleEmitter::Update(command_list);
+void SmokeParticle::Update(directx::device::CommandList& compute_command_list) {
+  ParticleEmitter::Update(compute_command_list);
 }
 
 void SmokeParticle::Render(

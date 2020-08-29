@@ -11,7 +11,7 @@ GSInput main(VSInput input)
 {
     GSInput result = (GSInput)0;
 
-    result.position = float4(input.position, 1.0f);
+    result.position = float4(input.position, 0.0f);
     result.color = input.color;
     return result;
 }

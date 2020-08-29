@@ -2,6 +2,7 @@
 #define LEGEND_SKILL_SKILL_MANAGER_H_
 
 #include "src/skill/skill.h"
+#include "src/skill/skill_paste_stick.h"
 #include "src/skill/skill_pencil.h"
 #include "src/skill/skill_select_ui.h"
 #include "src/skill/skill_type.h"
@@ -21,7 +22,7 @@ class SkillManager {
   /**
    * @brief 初期化処理
    */
-  void Init(actor::IActorMediator *mediator, player::Player* player);
+  void Init(actor::IActorMediator* mediator, player::Player* player);
   /**
    * @brief スキルを拾った際のメソッド
    */
@@ -67,16 +68,14 @@ class SkillManager {
    */
   void UseSkill();
   /**
-   * @brief 選択したスキルの更新
-   */
-  void SelectUpdate();
-  /**
    * @brief スキル終了
    */
   void EndSkill();
 
+  void SetPosition(std::shared_ptr<Skill> skill, i32 skill_num);
+
  private:
-  actor::IActorMediator *mediator_;
+  actor::IActorMediator* mediator_;
   //! 所持できる最大スキル数
   i32 skill_max_count_;
   //! 所持しているスキル用リスト
@@ -90,6 +89,8 @@ class SkillManager {
   bool select_move_;
   //! プレイヤー
   player::Player* player_;
+  //! 糊
+  std::vector<SkillPaste*> pastes_;
 };
 }  // namespace skill
 }  // namespace legend

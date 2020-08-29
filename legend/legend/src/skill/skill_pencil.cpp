@@ -91,17 +91,12 @@ bool SkillPencil::Update() {
     return true;
   }
 
-  //transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
-  //transform_.SetRotation(player_->GetRotation());
-  //box_->SetTransform(this->transform_);
-
   return true;
 }
 
 //描画
 void SkillPencil::Draw() {
-  if (!is_explosion_)
-    actor::Actor::Draw();
+  if (!is_explosion_) actor::Actor::Draw();
 }
 
 //スキルの使用
@@ -113,7 +108,10 @@ void SkillPencil::Use() {
 }
 
 //発動
-void SkillPencil::Action() { is_production_ = true; }
+void SkillPencil::Action() {
+  is_production_ = true;
+  mediator_->PlayerSkillActivate();
+}
 
 //演出の更新
 void SkillPencil::ProductionUpdate() {
@@ -140,7 +138,8 @@ void SkillPencil::ProductionUpdate() {
 void SkillPencil::EndAction() {
   remaining_usable_count_--;
   is_production_ = false;
-  if (is_explosion_) explosion_pencil_.Destroy(mediator_);
+  mediator_->PlayerSkillDeactivate();
+  if (is_explosion_) explosion_pencil_->Destroy(mediator_);
   if (remaining_usable_count_ <= 0) mediator_->RemoveActor(this);
 }
 
@@ -168,7 +167,8 @@ void SkillPencil::Explosion() {
   is_explosion_ = true;
   audio.Start(resource_name::audio::SKILL_PENCIL_HIT, 1.0f);
 
-  explosion_pencil_.Init(transform_, mediator_);
+  explosion_pencil_ = std::make_shared<ExplosionPencil>();
+  explosion_pencil_->Init(transform_, mediator_);
 
   //パーティクルの再生?
 }
@@ -176,7 +176,7 @@ void SkillPencil::Explosion() {
 //爆発更新
 void SkillPencil::ExplosionUpdate() {
   //爆発中は更新
-  if (!explosion_timer_.Update()) explosion_pencil_.Update();
+  if (!explosion_timer_.Update()) explosion_pencil_->Update();
 }
 
 }  // namespace skill

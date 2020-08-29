@@ -78,10 +78,18 @@ bool Player::Update() {
 
   //スキルのデバック用のGUI
   if (ImGui::Begin("Skill")) {
-    if (ImGui::Button("Add Skill")) {
+    if (ImGui::Button("Add SkillPencil")) {
       if (skill_manager_.GetSkillList().size() < 5) {
         std::shared_ptr<skill::SkillPencil> skill =
             std::make_shared<skill::SkillPencil>();
+        skill->Init(mediator_, this);
+        skill_manager_.AddSkill(skill);
+      }
+    }
+    if (ImGui::Button("Add SkillPasteStick")) {
+      if (skill_manager_.GetSkillList().size() < 5) {
+        std::shared_ptr<skill::SkillPasteStick> skill =
+            std::make_shared<skill::SkillPasteStick>();
         skill->Init(mediator_, this);
         skill_manager_.AddSkill(skill);
       }
@@ -96,7 +104,7 @@ bool Player::Update() {
   //  box_->ApplyCentralImpulse(input_velocity_ * power_);
   //}
 
-  //if (skill_manager_.IsProductionNow()) {
+  // if (skill_manager_.IsProductionNow()) {
   //  return true;
   //}
 
@@ -376,7 +384,24 @@ void Player::OnHit(bullet::Collider* other) {
 
 void Player::SkillUpdate() {
   //スキルマネージャーの更新
-  skill_manager_.SelectUpdate();
+  skill_manager_.UseSkill();
+  skill_manager_.EndSkill();
+  skill_manager_.RemoveSkill();
+}
+
+//ターン終了時の処理
+bool Player::SkillUpdateTurnEnd() {
+  if (mediator_->GetCurrentTurn() == system::Mode::PLAYER_SKILL_AFTER_MOVED) {
+    skill_manager_.PlayerTurnEnd();
+    skill_manager_.EndSkill();
+    skill_manager_.RemoveSkill();
+  } else if (mediator_->GetCurrentTurn() == system::Mode::ENEMY_MOVE_END) {
+    skill_manager_.EnemyTurnEnd();
+    skill_manager_.EndSkill();
+    skill_manager_.RemoveSkill();
+  }
+
+  return skill_manager_.IsProductionNow();
 }
 
 }  // namespace player

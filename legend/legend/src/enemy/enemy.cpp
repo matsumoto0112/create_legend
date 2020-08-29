@@ -197,6 +197,15 @@ void Enemy::OnHit(bullet::Collider* other) {
         p->GetCollider()->ApplyCentralImpulse(direction * power_);
       }
     }
+    //å–Ç…êGÇÍÇΩ
+    {
+      skill::SkillPaste* paste =
+          dynamic_cast<skill::SkillPaste*>(other->GetOwner());
+      if (paste) {
+        //åªèÛÅAé~Ç‹ÇÈÇÊÇ§Ç…
+        GetCollider()->ApplyCentralImpulse(-0.1f * GetVelocity());
+      }
+    }
   }
   //É{ÉXÇ…êGÇÍÇΩ
   {

@@ -13,6 +13,7 @@ namespace resource {
 namespace resource_names {
 using name = const wchar_t*;
 namespace model {
+constexpr name ARROW = L"arrow.glb";
 constexpr name ENEMY = L"enemy_eraser_01.glb";
 constexpr name BOSS = L"boss_01.glb";
 constexpr name DESK = L"desk.glb";

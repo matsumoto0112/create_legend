@@ -53,6 +53,9 @@ bool Boss::Init(actor::IActorMediator* mediator,
 
   move_end_ = false;
 
+  move_type_ = (enemy::enemy_type::MoveType::Straight);
+  hit_type_ = (enemy::enemy_type::HitType::Rush);
+
   return true;
 }
 
@@ -114,29 +117,39 @@ bool Boss::GetMoveEnd() const { return (!is_move_ && move_end_); }
 void Boss::ResetMoveEnd() { move_end_ = false; }
 
 void Boss::OnHit(bullet::Collider* other) {
-  //ƒvƒŒƒCƒ„[‚ÉG‚ê‚½
-  {
-    player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
-    if (p) {
-      const math::Vector3 enemy_position = transform_.GetPosition();
-      const math::Vector3 player_position = p->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (player_position - enemy_position).Normalized();
-
-      p->GetCollider()->ApplyCentralImpulse(direction * power_);
+  system::Mode turn_mode = mediator_->GetCurrentTurn();
+  if (turn_mode == system::Mode::ENEMY_MOVING) {
+    //ƒvƒŒƒCƒ„[‚ÉG‚ê‚½
+    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+      HitAction(other);
+    }
+    //“G‚ÉG‚ê‚½
+    else if (enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+      HitAction(other);
     }
   }
-  //“G‚ÉG‚ê‚½
-  {
-    enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
-    if (e) {
-      const math::Vector3 boss_position = transform_.GetPosition();
-      const math::Vector3 enemy_position = e->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (enemy_position - boss_position).Normalized();
+}
 
-      e->GetCollider()->ApplyCentralImpulse(direction * power_);
-    }
+void Boss::HitAction(bullet::Collider* other) {
+  auto actor = other->GetOwner();
+  const math::Vector3 position = transform_.GetPosition();
+  const math::Vector3 other_position = actor->GetTransform().GetPosition();
+  const math::Vector3 direction = (other_position - position).Normalized();
+
+  auto velocity = GetVelocity();
+  switch (hit_type_) {
+    case enemy::enemy_type::HitType::Stop:
+      GetCollider()->ApplyCentralImpulse(velocity * -1.0f);
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
+    case enemy::enemy_type::HitType::Rush:
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
+    case enemy::enemy_type::HitType::Bound:
+      GetCollider()->ApplyCentralImpulse(direction * -power_ +
+                                         velocity * -2.25f);
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
   }
 }
 

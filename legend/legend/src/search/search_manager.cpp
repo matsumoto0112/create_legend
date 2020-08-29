@@ -3,9 +3,12 @@
 #include <algorithm>
 #include <iostream>
 
+#include "src/enemy/boss.h"
+#include "src/enemy/enemy.h"
+#include "src/enemy/enemy_type.h"
 #include "src/game/game_device.h"
-#include "src/skill/skill_item_box.h"
 #include "src/object/fragment.h"
+#include "src/skill/skill_item_box.h"
 
 namespace legend {
 namespace search {
@@ -267,7 +270,13 @@ SearchAI* SearchManager::GetBaseSearch(SearchAI* _search) {
 bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
   const auto raycast = mediator_->RayCast(start, end);
   auto objs = raycast.m_collisionObjects;
-  // std::vector<skill::SkillItemBox*> skill = mediator_->GetSkillBoxs();
+  enemy::enemy_type::MoveType move_type;
+  if (auto e = dynamic_cast<enemy::Enemy*>(ignore_enemy_->GetOwner())) {
+    move_type = e->GetMoveType();
+  } else if (enemy::Boss* b =
+                 dynamic_cast<enemy::Boss*>(ignore_enemy_->GetOwner())) {
+    move_type = b->GetMoveType();
+  }
 
   for (i32 index = 0; index < objs.size(); index++) {
     bullet::Collider* act =
@@ -277,17 +286,26 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
     // プレイヤーとの衝突を無視
     if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
       continue;
-    skill::Skill* sb =
-        dynamic_cast<skill::Skill*>(act->GetOwner());
+	// 敵が直進していく場合、ほかの敵との衝突を無視
+    if (move_type == enemy::enemy_type::Straight) {
+      if (auto e = dynamic_cast<enemy::Enemy*>(act->GetOwner())) {
+        continue;
+      }
+      if (auto b = dynamic_cast<enemy::Boss*>(act->GetOwner())) {
+        continue;
+      }
+    }
+	// スキルボックスとの衝突を無視
+    skill::Skill* sb = dynamic_cast<skill::Skill*>(act->GetOwner());
     if (sb) {
       continue;
     }
     object::Fragment* fragment =
         dynamic_cast<object::Fragment*>(act->GetOwner());
     if (fragment) {
-        continue;
+      continue;
     }
-      return true;
+    return true;
   }
   //}
   return false;

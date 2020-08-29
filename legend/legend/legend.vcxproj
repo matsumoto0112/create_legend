@@ -230,6 +230,7 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\enemy\enemy_type.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\search\search_manager.h" />
     <ClInclude Include="src\search\search_course.h" />

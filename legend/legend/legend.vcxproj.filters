@@ -309,6 +309,7 @@
     <ClInclude Include="src\draw\particle\particle_factory.h" />
     <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
     <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />
+    <ClInclude Include="src\enemy\enemy_type.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

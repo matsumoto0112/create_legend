@@ -55,6 +55,13 @@ bool Enemy::Init(actor::IActorMediator* mediator,
 
   move_end_ = false;
 
+  move_type_ = (enemy::enemy_type::MoveType)(
+      game::GameDevice::GetInstance()->GetRandom().Range(
+          0, enemy::enemy_type::MoveType::Move_Type_End));
+  hit_type_ = (enemy::enemy_type::HitType)(
+      game::GameDevice::GetInstance()->GetRandom().Range(
+          0, enemy::enemy_type::HitType::Hit_Type_End));
+
   return true;
 }
 
@@ -136,29 +143,36 @@ void Enemy::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
     //プレイヤーに触れた
-    {
-      player::Player* p = dynamic_cast<player::Player*>(other->GetOwner());
-      if (p) {
-        const math::Vector3 enemy_position = transform_.GetPosition();
-        const math::Vector3 player_position = p->GetTransform().GetPosition();
-        const math::Vector3 direction =
-            (player_position - enemy_position).Normalized();
-
-        p->GetCollider()->ApplyCentralImpulse(direction * power_);
-      }
+    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+      HitAction(other);
+    }
+    //ボスに触れた
+    else if (enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
+      HitAction(other);
     }
   }
-  //ボスに触れた
-  {
-    enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
-    if (b) {
-      const math::Vector3 enemy_position = transform_.GetPosition();
-      const math::Vector3 boss_position = b->GetTransform().GetPosition();
-      const math::Vector3 direction =
-          (boss_position - enemy_position).Normalized();
+}
 
-      b->GetCollider()->ApplyCentralImpulse(direction * power_);
-    }
+void Enemy::HitAction(bullet::Collider* other) {
+  auto actor = other->GetOwner();
+  const math::Vector3 position = transform_.GetPosition();
+  const math::Vector3 other_position = actor->GetTransform().GetPosition();
+  const math::Vector3 direction = (other_position - position).Normalized();
+
+  auto velocity = GetVelocity();
+  switch (hit_type_) {
+    case enemy::enemy_type::HitType::Stop:
+      GetCollider()->ApplyCentralImpulse(velocity * -1.0f);
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
+    case enemy::enemy_type::HitType::Rush:
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
+    case enemy::enemy_type::HitType::Bound:
+      GetCollider()->ApplyCentralImpulse(direction * -power_ +
+                                         velocity * -2.25f);
+      other->ApplyCentralImpulse(direction * power_ + velocity);
+      break;
   }
 }
 

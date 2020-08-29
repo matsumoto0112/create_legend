@@ -155,6 +155,12 @@ void ParticleEmitter::Render(
       .Get(texture_name_)
       ->RegisterHandle(device, directx::shader::TextureRegisterID::ALBEDO);
 
+  graphics_command_list.GetCommandList()->ResourceBarrier(
+      1, &CD3DX12_RESOURCE_BARRIER::Transition(
+             particle_uav_.Get(),
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+             D3D12_RESOURCE_STATES::
+                 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
   graphics_pipeline_state_.SetCommandList(graphics_command_list);
@@ -162,6 +168,12 @@ void ParticleEmitter::Render(
       0, 1, &vertex_buffer_view_);
   graphics_command_list.GetCommandList()->DrawInstanced(particle_max_num_, 1, 0,
                                                         0);
+  graphics_command_list.GetCommandList()->ResourceBarrier(
+      1, &CD3DX12_RESOURCE_BARRIER::Transition(
+             particle_uav_.Get(),
+             D3D12_RESOURCE_STATES::
+                 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+             D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 }
 
 }  // namespace particle

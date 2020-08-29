@@ -10,8 +10,8 @@ namespace legend {
 namespace enemy {
 namespace enemy_type {
 /**
- * @enum Enum
- * @brief キー番号
+ * @enum MoveType
+ * @brief 移動番号
  */
 enum MoveType : i32 {
   Straight = 0,  // 直線
@@ -19,14 +19,23 @@ enum MoveType : i32 {
   Move_Type_End,		 // 配列の最後
 };
 /**
- * @enum Enum
- * @brief キー番号
+ * @enum HitType
+ * @brief 衝突番号
  */
 enum HitType : i32 {
   Stop = 0,		 // 停止
   Rush = 1,		 // 突進
   Bound = 2,     // 跳弾
   Hit_Type_End,      // 配列の最後
+};
+/**
+ * @enum EffectType
+ * @brief 効果番号
+ */
+enum EffectType : i32 {
+  None = 0,      // 通常
+  Rotate = 1,       // 回転
+  Effect_Type_End,  // 配列の最後
 };
 
 }  // namespace move_type

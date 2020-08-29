@@ -97,6 +97,10 @@ class Boss : public actor::Actor {
 
   void OnHit(bullet::Collider* other);
   void HitAction(bullet::Collider* other);
+  /**
+   * @brief 強化パラメータの更新
+   */
+  void UpdateStrength(const float& weak);
 
  private:
   //! 移動中か
@@ -110,11 +114,17 @@ class Boss : public actor::Actor {
 
   //! 移動終了判定
   bool move_end_;
+  //! 弱体化状態
+  float strength_;
+  //! 弱体化下限
+  float min_strength_;
 
   //! 移動タイプ
   enemy::enemy_type::MoveType move_type_;
   //! 衝突タイプ
   enemy::enemy_type::HitType hit_type_;
+  //! 効果タイプ
+  enemy::enemy_type::EffectType effect_type_;
 
   std::shared_ptr<bullet::BoundingBox> box_;
 };

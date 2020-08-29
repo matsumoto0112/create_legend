@@ -61,6 +61,9 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   hit_type_ = (enemy::enemy_type::HitType)(
       game::GameDevice::GetInstance()->GetRandom().Range(
           0, enemy::enemy_type::HitType::Hit_Type_End));
+  effect_type_ = (enemy::enemy_type::EffectType)(
+      game::GameDevice::GetInstance()->GetRandom().Range(
+          0, enemy::enemy_type::EffectType::Effect_Type_End));
 
   return true;
 }
@@ -106,7 +109,14 @@ void Enemy::SetPosition(math::Vector3 position) {
 
 //速度の設定
 void Enemy::SetVelocity(math::Vector3 velocity) {
+  // 加速度の設定
   box_->ApplyCentralImpulse(velocity);
+  // 回転の設定
+  if (effect_type_ == enemy::enemy_type::EffectType::Rotate) {
+    auto angle = math::Vector3::kUpVector * velocity.Magnitude();
+    angle *= (game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f));
+    box_->SetAngularVelocity(angle);
+  }
   is_move_ = true;
 }
 
@@ -145,6 +155,10 @@ void Enemy::OnHit(bullet::Collider* other) {
     //プレイヤーに触れた
     if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
       HitAction(other);
+      auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
+      auto trigonometric = (std::sin(30.0f * math::util::PI * s));
+      auto strength = math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
+      other->ApplyCentralImpulse(strength);
     }
     //ボスに触れた
     else if (enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
@@ -157,27 +171,32 @@ void Enemy::HitAction(bullet::Collider* other) {
   auto actor = other->GetOwner();
   const math::Vector3 position = transform_.GetPosition();
   const math::Vector3 other_position = actor->GetTransform().GetPosition();
-  const math::Vector3 direction = (other_position - position).Normalized();
+  const math::Vector3 velocity = GetVelocity();
+  const math::Vector3 direction =
+      ((other_position - position).Normalized() + velocity.Normalized())
+          .Normalized();
 
-  auto velocity = GetVelocity();
+  auto add_power = ((strength_ + velocity.Magnitude()) / 2.0f);
   switch (hit_type_) {
+      // 衝突時、停止する処理
     case enemy::enemy_type::HitType::Stop:
       GetCollider()->ApplyCentralImpulse(velocity * -1.0f);
-      other->ApplyCentralImpulse(direction * power_ + velocity);
+      other->ApplyCentralImpulse(direction * add_power);
       break;
+      // 衝突時、突進する処理
     case enemy::enemy_type::HitType::Rush:
-      other->ApplyCentralImpulse(direction * power_ + velocity);
+      other->ApplyCentralImpulse(direction * add_power);
       break;
+      // 衝突時、跳弾する処理
     case enemy::enemy_type::HitType::Bound:
-      GetCollider()->ApplyCentralImpulse(direction * -power_ +
-                                         velocity * -2.25f);
-      other->ApplyCentralImpulse(direction * power_ + velocity);
+      GetCollider()->ApplyCentralImpulse(velocity * -2.0f);
+      other->ApplyCentralImpulse(direction * add_power);
       break;
   }
 }
 
-void Enemy::Weaking(const float& weak) {
-  strength_ -= weak;
+void Enemy::UpdateStrength(const float& weak) {
+  strength_ += weak;
   if (strength_ <= min_strength_) strength_ = min_strength_;
 }
 

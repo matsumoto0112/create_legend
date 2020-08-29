@@ -201,7 +201,7 @@ void Graffiti::OnHit(bullet::Collider* other) {
         float a = math::util::Abs(fmodf(remaining_graffiti_, 10.0f));
         if (a < 1.0f || a > 9.5f) {
           //Žã‘Ì‰»
-          enemy->Weaking(0.04f);
+          enemy->UpdateStrength(-0.04f);
           is_hit_ = true;
           SetInstancePosition(enemy->GetTransform().GetPosition(),
                               enemy->GetCollider()->GetVelocity().Normalized());

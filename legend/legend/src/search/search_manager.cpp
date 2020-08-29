@@ -296,13 +296,12 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
       }
     }
 	// スキルボックスとの衝突を無視
-    skill::Skill* sb = dynamic_cast<skill::Skill*>(act->GetOwner());
-    if (sb) {
+    if (skill::Skill* sb = dynamic_cast<skill::Skill*>(act->GetOwner())) {
       continue;
     }
-    object::Fragment* fragment =
-        dynamic_cast<object::Fragment*>(act->GetOwner());
-    if (fragment) {
+    
+    if (object::Fragment* fragment =
+            dynamic_cast<object::Fragment*>(act->GetOwner())) {
       continue;
     }
     return true;

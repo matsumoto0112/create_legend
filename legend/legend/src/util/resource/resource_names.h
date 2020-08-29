@@ -13,6 +13,7 @@ namespace resource {
 namespace resource_names {
 using name = const wchar_t*;
 namespace model {
+constexpr name ARROW = L"arrow.glb";
 constexpr name ENEMY = L"enemy_eraser_01.glb";
 constexpr name BOSS = L"boss_01.glb";
 constexpr name DESK = L"desk.glb";
@@ -133,9 +134,9 @@ constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";
 constexpr name SKILL_SELECT = L"skill_select.wav";
 
 constexpr name TITLE_DECISION = L"title_decision.wav";
-//constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
-//constexpr name RESULT_GAMEOVER = L"free_2.wav";
-//constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
+// constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
+// constexpr name RESULT_GAMEOVER = L"free_2.wav";
+// constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
 constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
 
 constexpr name BGM_MAIN = L"BGM_main.wav";

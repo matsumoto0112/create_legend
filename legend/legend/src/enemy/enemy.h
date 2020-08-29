@@ -103,9 +103,9 @@ class Enemy : public actor::Actor {
   void OnHit(bullet::Collider* other);
   void HitAction(bullet::Collider* other);
   /**
-   * @brief 弱体化
+   * @brief 強化パラメータの更新
    */
-  void Weaking(const float& weak);
+  void UpdateStrength(const float& weak);
 
  private:
   //! 移動中か
@@ -128,6 +128,8 @@ class Enemy : public actor::Actor {
   enemy::enemy_type::MoveType move_type_;
   //! 衝突タイプ
   enemy::enemy_type::HitType hit_type_;
+  //! 効果タイプ
+  enemy::enemy_type::EffectType effect_type_;
 
   std::shared_ptr<bullet::BoundingBox> box_;
 };

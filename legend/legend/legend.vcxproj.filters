@@ -131,6 +131,8 @@
     <ClCompile Include="src\scenes\fade_in_out.cpp" />
     <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\scenes\result_scene.cpp" />
+    <ClCompile Include="src\skill\skill_paste_stick.cpp" />
+    <ClCompile Include="src\skill\skill_paste.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -311,6 +313,8 @@
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\scenes\result_scene.h" />
     <ClInclude Include="src\enemy\enemy_type.h" />
+    <ClInclude Include="src\skill\skill_paste_stick.h" />
+    <ClInclude Include="src\skill\skill_paste.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

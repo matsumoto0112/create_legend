@@ -35,7 +35,6 @@ void ExplosionPencil::Init(util::Transform transform,
   sphere_->SetFlags(sphere_->GetFlags() |
                     btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator->AddCollider(sphere_);
-  is_destroy_ = false;
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -53,7 +52,7 @@ bool ExplosionPencil::Update() {
   sphere_->SetScale(radius_, mass);
   mediator_->AddCollider(sphere_);
   sphere_->SetFlags(sphere_->GetFlags() |
-      btCollisionObject::CF_NO_CONTACT_RESPONSE);
+                    btCollisionObject::CF_NO_CONTACT_RESPONSE);
   return true;
 }
 
@@ -91,7 +90,6 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
 
 //íœ
 void ExplosionPencil::Destroy(actor::IActorMediator* mediator) {
-  is_destroy_ = true;
   mediator->RemoveCollider(sphere_);
   mediator->RemoveActor(this);
 }

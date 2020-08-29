@@ -39,28 +39,16 @@ void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
 
 //更新
 void SkillManager::Update() {
-  // for (auto&& skill : skills_) {
-  //  skill->Update();
-  //}
+  i32 i = 0;
+  for (auto&& skill : skills_) {
+    skill->Update();
+    if (skill->ProductionFlag()) {
+      i++;
+      continue;
+    }
 
-  for (i32 i = 0; i < skills_.size(); i++) {
-    skills_[i]->Update();
-
-    if (skills_[i]->ProductionFlag()) continue;
-    math::Vector3 pos;
-    if (i == 0)
-      pos = math::Vector3::kUpVector;
-    else if (i == 1)
-      pos = math::Vector3::kRightVector * 1.5f;
-    else if (i == 2)
-      pos = math::Vector3::kLeftVector * 1.5f;
-    else if (i == 3)
-      pos = math::Vector3::kUpVector + math::Vector3::kRightVector;
-    else
-      pos = math::Vector3::kUpVector + math::Vector3::kLeftVector;
-    pos = math::Matrix4x4::MultiplyCoord(
-        pos, player_->GetTransform().GetRotation().ToMatrix());
-    skills_[i]->AdjustPosition(pos);
+    SetPosition(skill, i);
+    i++;
   }
 }
 
@@ -81,7 +69,7 @@ void SkillManager::PlayerTurnEnd() {
 
   //プレイヤーの行動後に終わるスキルの更新処理
   for (auto&& skill : skills_) {
-    if (!skill->GetUseFlag()) continue;
+    if (!skill->EndSkillProduction()) continue;
     if (skill->GetEndTiming() != SkillEffectEndTiming::PLAYER_TURN_END)
       continue;
     skill->EndAction();
@@ -94,13 +82,17 @@ void SkillManager::PlayerTurnEnd() {
       continue;
     skill->Action();
   }
-
   //今はない
 }
 
 //エネミー行動後の処理
 void SkillManager::EnemyTurnEnd() {
   //エネミーの行動が終わった際に更新される内容
+  for (auto&& skill : skills_) {
+    if (!skill->EndSkillProduction()) continue;
+    if (skill->GetEndTiming() != SkillEffectEndTiming::ENEMY_TURN_END) continue;
+    skill->EndAction();
+  }
 
   //エネミー行動後に発動するスキルの発動
   for (auto&& skill : skills_) {
@@ -189,24 +181,40 @@ void SkillManager::UseSkill() {
   if (input.GetGamepad()->GetButtonDown(input::joy_code::A)) {
     skills_[skill_num]->Use();
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
+    if (skills_[skill_num]->GetActivetionTiming() !=
+        SkillActivationTiming::NOW) {
+      select_ui_.ChangeIsSelectMode();
+    }
   }
-}
-
-//選択したスキルの更新
-void SkillManager::SelectUpdate() {
-  UseSkill();
-  EndSkill();
-  RemoveSkill();
 }
 
 //スキル終了
 void SkillManager::EndSkill() {
   for (auto&& skill : skills_) {
     if (skill->EndSkillProduction()) {
-      select_ui_.ChangeIsSelectMode();
+      if (skill->GetActivetionTiming() == SkillActivationTiming::NOW) {
+        select_ui_.ChangeIsSelectMode();
+      }
       break;
     }
   }
+}
+
+void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
+  math::Vector3 pos;
+  if (skill_num == 0)
+    pos = math::Vector3::kUpVector;
+  else if (skill_num == 1)
+    pos = math::Vector3::kRightVector * 1.5f;
+  else if (skill_num == 2)
+    pos = math::Vector3::kLeftVector * 1.5f;
+  else if (skill_num == 3)
+    pos = math::Vector3::kUpVector + math::Vector3::kRightVector;
+  else
+    pos = math::Vector3::kUpVector + math::Vector3::kLeftVector;
+  pos = math::Matrix4x4::MultiplyCoord(
+      pos, player_->GetTransform().GetRotation().ToMatrix());
+  skill->AdjustPosition(pos);
 }
 
 }  // namespace skill

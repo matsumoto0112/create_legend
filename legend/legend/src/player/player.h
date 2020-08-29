@@ -135,8 +135,14 @@ class Player : public actor::Actor {
   void OnHit(bullet::Collider* other);
 
   bullet::Collider* GetCollider() const { return box_.get(); }
-
+  /**
+   * @brief スキルの更新処理
+   */
   void SkillUpdate();
+  /**
+   * @brief ターン終了時のスキルの更新処理
+   */
+  bool SkillUpdateTurnEnd();
 
  private:
   //! 速度

@@ -391,6 +391,10 @@ bool TurnSystem::WaitEnemyMoveStart() {
 }
 
 bool TurnSystem::PlayerSkillAfterMoved() {
+  if (player_->SkillUpdateTurnEnd()) {
+    return true;
+  }
+
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
@@ -412,6 +416,10 @@ bool TurnSystem::EnemyMove() {
 
 //“G‚ÌˆÚ“®I—¹Žžˆ—
 bool TurnSystem::EnemyMoveEnd() {
+  if (player_->SkillUpdateTurnEnd()) {
+    return true;
+  }
+
   AddCurrentTurn();
 
   if (!GenerateActors()) {

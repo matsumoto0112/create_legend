@@ -128,6 +128,15 @@ void Boss::OnHit(bullet::Collider* other) {
       HitAction(other);
     }
   }
+  //å–Ç…êGÇÍÇΩ
+  {
+    skill::SkillPaste* paste =
+        dynamic_cast<skill::SkillPaste*>(other->GetOwner());
+    if (paste) {
+      //åªèÛÅAé~Ç‹ÇÈÇÊÇ§Ç…
+      GetCollider()->ApplyCentralImpulse(-0.1f * GetVelocity());
+    }
+  }
 }
 
 void Boss::HitAction(bullet::Collider* other) {

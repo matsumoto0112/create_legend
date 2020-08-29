@@ -1,26 +1,23 @@
-#ifndef LEGEND_SKILL_SKILL_PENCIL_H_
-#define LEGEND_SKILL_SKILL_PENCIL_H_
+#ifndef LEGEND_SKILL_SKILL_PASTE_STICK_H_
+#define LEGEND_SKILL_SKILL_PASTE_STICK_H_
 
-#include "src/bullet/bounding_sphere.h"
-#include "src/skill/explosion_pencil.h"
 #include "src/skill/skill.h"
-#include "src/util/timer.h"
+#include "src/skill/skill_paste.h"
 
 namespace legend {
 namespace skill {
-
-class SkillPencil : public Skill {
+class SkillPasteStick : public Skill {
   using Parent = Skill;
 
  public:
   /**
    * @brief コンストラクタ
    */
-  SkillPencil();
+  SkillPasteStick();
   /**
    * @brief デストラクタ
    */
-  ~SkillPencil();
+  virtual ~SkillPasteStick();
   /**
    * @brief 初期化
    */
@@ -49,28 +46,14 @@ class SkillPencil : public Skill {
    * @brief 終了
    */
   void EndAction() override;
-  /**
-   * @brief 衝突判定
-   */
-  void OnHit(bullet::Collider* other);
-  /**
-   * @brief 爆発開始
-   */
-  void Explosion();
-  /**
-   * @brief 爆発更新
-   */
-  void ExplosionUpdate();
 
  private:
-  //! タイマー
-  util::CountDownTimer explosion_timer_;
-  //! 爆発クラス
-  std::shared_ptr<ExplosionPencil> explosion_pencil_;
-  //! 爆発中か
-  bool is_explosion_;
+  //! 糊
+  std::vector<std::shared_ptr<SkillPaste>> pastes_;
+  //! 生成数
+  i32 instance_count_;
 };
-
 }  // namespace skill
 }  // namespace legend
-#endif  //! LEGEND_SKILL_SKILL_PENCIL_H_
+
+#endif  //! LEGEND_SKILL_SKILL_PASTE_STICK_H_

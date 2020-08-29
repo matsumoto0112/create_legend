@@ -177,6 +177,8 @@
     <ClCompile Include="src\skill\skill.cpp" />
     <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\skill_manager.cpp" />
+    <ClCompile Include="src\skill\skill_paste.cpp" />
+    <ClCompile Include="src\skill\skill_paste_stick.cpp" />
     <ClCompile Include="src\skill\skill_pencil.cpp" />
     <ClCompile Include="src\skill\skill_select_ui.cpp" />
     <ClCompile Include="src\stage_generate\stage_generator.cpp" />
@@ -349,6 +351,8 @@
     <ClInclude Include="src\skill\skill.h" />
     <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\skill_manager.h" />
+    <ClInclude Include="src\skill\skill_paste.h" />
+    <ClInclude Include="src\skill\skill_paste_stick.h" />
     <ClInclude Include="src\skill\skill_pencil.h" />
     <ClInclude Include="src\skill\skill_select_ui.h" />
     <ClInclude Include="src\skill\skill_type.h" />

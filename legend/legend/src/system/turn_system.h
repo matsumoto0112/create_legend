@@ -16,7 +16,6 @@
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/draw/particle/smoke_particle.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"

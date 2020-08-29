@@ -2,6 +2,7 @@
 
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/draw/particle/particle_factory.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
@@ -68,22 +69,9 @@ bool Player::Init(actor::IActorMediator* mediator,
   is_hit_obstacle_ = false;
   se_interval_.Init(0.0f);
 
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          game::GameDevice::GetInstance()->GetDevice(),
-          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return false;
-  }
   player_move_particle_ =
-      game::GameDevice::GetInstance()
-          ->GetParticleCommandList()
-          .CreateParticle<draw::particle::SmokeParticle>(command_list);
+      draw::particle::particle_factory::CreatePlayerMoveParticle();
   player_move_particle_->SetEmitEnable(false);
-
-  command_list.Close();
-  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-      {command_list});
-  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 
   ResetParameter();
 

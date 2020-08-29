@@ -68,7 +68,7 @@ namespace vertex_shader {
 constexpr name SPRITE = L"sprite_vs.cso";
 constexpr name GRAFFITI = L"graffiti_vs.cso";
 constexpr name MODEL_VIEW = L"model_view_vs.cso";
-constexpr name GPU_PARTICLE = L"gpu_particle_vs.cso";
+constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_vs.cso";
 constexpr name OBB = L"obb_vs.cso";
 constexpr name GAUGE = L"ui_gauge_vs.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_vs.cso";
@@ -81,7 +81,7 @@ namespace pixel_shader {
 constexpr name SPRITE = L"sprite_ps.cso";
 constexpr name GRAFFITI = L"graffiti_ps.cso";
 constexpr name MODEL_VIEW = L"model_view_ps.cso";
-constexpr name GPU_PARTICLE = L"gpu_particle_ps.cso";
+constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_ps.cso";
 constexpr name OBB = L"obb_ps.cso";
 constexpr name GAUGE = L"ui_gauge_ps.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_ps.cso";
@@ -90,18 +90,18 @@ constexpr name DIFFERED_RENDERING = L"differed_rendering_ps";
 }  // namespace pixel_shader
 
 namespace geometry_shader {
-constexpr name GPU_PARTICLE = L"gpu_particle_gs.cso";
+constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_gs.cso";
 }  // namespace geometry_shader
 
 namespace compute_shader {
-constexpr name GPU_PARTICLE = L"gpu_particle_cs.cso";
+constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_cs.cso";
 }  // namespace compute_shader
 
 namespace pipeline {
 constexpr name SPRITE = L"sprite";
 constexpr name GRAFFITI = L"graffiti";
 constexpr name MODEL_VIEW = L"model_view";
-constexpr name GPU_PARTICLE = L"gpu_particle";
+constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle";
 constexpr name OBB = L"obb";
 constexpr name GAUGE = L"gauge";
 constexpr name QUARTER_GAUGE = L"quarter_gauge";
@@ -133,9 +133,9 @@ constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";
 constexpr name SKILL_SELECT = L"skill_select.wav";
 
 constexpr name TITLE_DECISION = L"title_decision.wav";
-//constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
-//constexpr name RESULT_GAMEOVER = L"free_2.wav";
-//constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
+// constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
+// constexpr name RESULT_GAMEOVER = L"free_2.wav";
+// constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
 constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
 
 constexpr name BGM_MAIN = L"BGM_main.wav";

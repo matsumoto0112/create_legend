@@ -89,6 +89,7 @@
     <ClCompile Include="src\bullet\physics_field.cpp" />
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
+    <ClCompile Include="src\draw\particle\particle_factory.cpp" />
     <ClCompile Include="src\enemy\boss.cpp" />
     <ClCompile Include="src\camera\camera.cpp" />
     <ClCompile Include="src\camera\follow_camera.cpp" />
@@ -122,7 +123,6 @@
     <ClCompile Include="src\draw\model.cpp" />
     <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
-    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
     <ClCompile Include="src\draw\sprite_2d.cpp" />
     <ClCompile Include="src\draw\sprite_renderer.cpp" />
     <ClCompile Include="src\draw\texture_char.cpp" />
@@ -161,7 +161,6 @@
     <ClCompile Include="src\primitive\box.cpp" />
     <ClCompile Include="src\primitive\line.cpp" />
     <ClCompile Include="src\primitive\primitive.cpp" />
-    <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
@@ -216,7 +215,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
-    <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
     <ClInclude Include="src\bullet\bounding_sphere.h" />
@@ -226,6 +226,7 @@
     <ClInclude Include="src\bullet\shape_type.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
+    <ClInclude Include="src\draw\particle\particle_factory.h" />
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
@@ -278,7 +279,6 @@
     <ClInclude Include="src\draw\model.h" />
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
     <ClInclude Include="src\draw\particle\particle_command_list.h" />
-    <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\draw\sprite_2d.h" />
     <ClInclude Include="src\draw\sprite_renderer.h" />
     <ClInclude Include="src\draw\texture_char.h" />
@@ -330,7 +330,6 @@
     <ClInclude Include="src\primitive\box.h" />
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\primitive\primitive.h" />
-    <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\skill_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
@@ -406,11 +405,10 @@
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
-    <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\util\util.hlsli" />
     <None Include="packages.config" />
-    <None Include="src\.clang-format" />
+    <None Include=".clang-format" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\bullet\bullet_debug_draw_ps.hlsl">
@@ -465,6 +463,26 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_cs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_gs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -494,22 +512,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_vs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\particle\gpu_particle_cs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\particle\gpu_particle_gs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\particle\gpu_particle_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="assets\shaders\particle\gpu_particle_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

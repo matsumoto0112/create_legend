@@ -37,8 +37,9 @@ class ParticleCommandList {
   bool Init(directx::device::IDirectXAccessor& accessor, u32 frame_count);
 
   template <class T, class... Args>
-  std::shared_ptr<T> CreateParticle(directx::device::CommandList& command_list,
-                                    Args... args);
+  std::shared_ptr<T> CreateParticle(
+      directx::device::CommandList& command_list,
+      const ParticleEmitter::ParticleConstData& const_data, Args... args);
 
   /**
    * @brief パーティクルの更新
@@ -69,8 +70,9 @@ class ParticleCommandList {
 };
 template <class T, class... Args>
 inline std::shared_ptr<T> ParticleCommandList::CreateParticle(
-    directx::device::CommandList& command_list, Args... args) {
-  auto res = std::make_shared<T>();
+    directx::device::CommandList& command_list,
+    const ParticleEmitter::ParticleConstData& const_data, Args... args) {
+  auto res = std::make_shared<T>(const_data);
   res->Init(command_list, args...);
   particle_emitters_.emplace_back(res);
   return res;

@@ -6,7 +6,7 @@
  * @brief パーティクルエミッター基底クラス定義
  */
 
-#include "assets/shaders/particle/gpu_particle_test.h"
+#include "assets/shaders/gpu_particle/gpu_particle.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
@@ -30,6 +30,15 @@ class ParticleEmitter {
       directx::buffer::ConstantBuffer<shader::gpu_particle::ParticleInfo>;
 
  public:
+  struct ParticleConstData {
+    u32 particle_max_size;
+    u32 particle_structure_size;
+    u32 dispatch_x;
+    u32 dispatch_y;
+    std::wstring name;
+  };
+
+ public:
   /**
    * @brief コンストラクタ
    * @param particle_max_size パーティクルの最大数
@@ -38,8 +47,7 @@ class ParticleEmitter {
    * @param dispatch_y 作業スレッドグループ数(Y)
    * @param name パーティクル名
    */
-  ParticleEmitter(u32 particle_max_size, u32 particle_structure_size,
-                  u32 dispatch_x, u32 dispatch_y, const std::wstring& name);
+  ParticleEmitter(const ParticleConstData& const_data);
   /**
    * @brief デストラクタ
    */
@@ -53,9 +61,9 @@ class ParticleEmitter {
    * @return 初期化に成功したらtrueを返す
    */
   virtual bool Init(directx::device::CommandList& command_list,
-                    const void* data,
-                    D3D12_GRAPHICS_PIPELINE_STATE_DESC graphics_desc,
-                    D3D12_COMPUTE_PIPELINE_STATE_DESC compute_desc);
+                    const void* data, const std::wstring& texture_name,
+                    const D3D12_GRAPHICS_PIPELINE_STATE_DESC& graphics_desc,
+                    const D3D12_COMPUTE_PIPELINE_STATE_DESC& compute_desc);
   /**
    * @brief 更新処理
    * @param command_list パーティクルの更新処理用のコマンドリスト
@@ -109,6 +117,7 @@ class ParticleEmitter {
   TransformConstantBuffer transform_cb_;
   shader::gpu_particle::ParticleInfo info_;
   ParticleInfoConstantBuffer info_cb_;
+  std::wstring texture_name_;
 
   //! パーティクルデータのUAV兼頂点バッファ
   ComPtr<ID3D12Resource> particle_uav_;

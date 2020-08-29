@@ -8,15 +8,12 @@ namespace legend {
 namespace draw {
 namespace particle {
 
-//コンストラクタ
-ParticleEmitter::ParticleEmitter(u32 particle_max_size,
-                                 u32 particle_structure_size, u32 dispatch_x,
-                                 u32 dispatch_y, const std::wstring& name)
-    : particle_max_num_(particle_max_size),
-      particle_structure_size_(particle_structure_size),
-      dispatch_x_(dispatch_x),
-      dispatch_y_(dispatch_y),
-      name_(name),
+ParticleEmitter::ParticleEmitter(const ParticleConstData& const_data)
+    : particle_max_num_(const_data.particle_max_size),
+      particle_structure_size_(const_data.particle_structure_size),
+      dispatch_x_(const_data.dispatch_x),
+      dispatch_y_(const_data.dispatch_y),
+      name_(const_data.name),
       enable_update_(true),
       enable_render_(true),
       reset_particle_(false),
@@ -26,12 +23,15 @@ ParticleEmitter::ParticleEmitter(u32 particle_max_size,
 ParticleEmitter::~ParticleEmitter() {}
 
 //初期化
-bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
-                           const void* data,
-                           D3D12_GRAPHICS_PIPELINE_STATE_DESC graphics_desc,
-                           D3D12_COMPUTE_PIPELINE_STATE_DESC compute_desc) {
+bool ParticleEmitter::Init(
+    directx::device::CommandList& command_list, const void* data,
+    const std::wstring& texture_name,
+    const D3D12_GRAPHICS_PIPELINE_STATE_DESC& graphics_desc,
+    const D3D12_COMPUTE_PIPELINE_STATE_DESC& compute_desc) {
   using directx::directx_helper::Failed;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+
+  this->texture_name_ = texture_name;
 
   constexpr auto HEAP_ID =
       directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID;
@@ -73,9 +73,9 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   D3D12_SUBRESOURCE_DATA sub_resource = {};
   sub_resource.pData = data;
   sub_resource.RowPitch = sub_resource.SlicePitch = size;
-  UpdateSubresources(copy_command_list.GetCommandList(), particle_uav_.Get(),
+  UpdateSubresources(command_list.GetCommandList(), particle_uav_.Get(),
                      particle_uav_upload_.Get(), 0, 0, 1, &sub_resource);
-  copy_command_list.GetCommandList()->ResourceBarrier(
+  command_list.GetCommandList()->ResourceBarrier(
       1, &CD3DX12_RESOURCE_BARRIER::Transition(
              particle_uav_.Get(),
              D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
@@ -149,6 +149,12 @@ void ParticleEmitter::Render(
 
   transform_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+  game::GameDevice::GetInstance()
+      ->GetResource()
+      .GetTexture()
+      .Get(texture_name_)
+      ->RegisterHandle(device, directx::shader::TextureRegisterID::ALBEDO);
+
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(
       device, graphics_command_list);
   graphics_pipeline_state_.SetCommandList(graphics_command_list);

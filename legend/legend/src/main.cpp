@@ -157,7 +157,6 @@ class MyApp final : public device::Application {
           scenes::SceneType::SOUND_TEST,
           scenes::SceneType::SPRITE_TEST,
           scenes::SceneType::MAIN_SCENE_1,
-          scenes::SceneType::GPU_PARTICLE_TEST,
           scenes::SceneType::SKILL_TEST,
       };
       for (auto&& scene : SCENES) {

@@ -15,8 +15,9 @@ namespace draw {
 namespace particle {
 
 SmokeParticle::SmokeParticle()
-    : ParticleEmitter(PARTICLE_NUM, sizeof(Particle), DISPATCH_X, DISPATCH_Y,
-                      L"SmokeParticle") {}
+    : ParticleEmitter(PARTICLE_NUM, sizeof(shader::gpu_particle::Particle),
+                      shader::gpu_particle::DISPATCH_X,
+                      shader::gpu_particle::DISPATCH_Y, L"SmokeParticle") {}
 
 SmokeParticle::~SmokeParticle() {}
 
@@ -25,7 +26,7 @@ bool SmokeParticle::Init(directx::device::CommandList& copy_command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  std::vector<Particle> particles(PARTICLE_NUM);
+  std::vector<shader::gpu_particle::Particle> particles(PARTICLE_NUM);
 
   auto SetVertexShader = [&](directx::shader::GraphicsPipelineStateDesc& desc) {
     constexpr auto name =

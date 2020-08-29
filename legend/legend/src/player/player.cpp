@@ -68,6 +68,25 @@ bool Player::Init(actor::IActorMediator* mediator,
   is_hit_obstacle_ = false;
   se_interval_.Init(0.0f);
 
+  directx::device::CommandList command_list;
+  if (!command_list.Init(
+          game::GameDevice::GetInstance()->GetDevice(),
+          D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+    return false;
+  }
+  player_move_particle_ =
+      game::GameDevice::GetInstance()
+          ->GetParticleCommandList()
+          .CreateParticle<draw::particle::SmokeParticle>(command_list);
+  player_move_particle_->SetEmitEnable(false);
+
+  command_list.Close();
+  game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
+      {command_list});
+  game::GameDevice::GetInstance()->GetDevice().WaitExecute();
+
+  ResetParameter();
+
   return true;
 }
 
@@ -96,7 +115,7 @@ bool Player::Update() {
   //  box_->ApplyCentralImpulse(input_velocity_ * power_);
   //}
 
-  //if (skill_manager_.IsProductionNow()) {
+  // if (skill_manager_.IsProductionNow()) {
   //  return true;
   //}
 
@@ -106,8 +125,25 @@ bool Player::Update() {
   //  mediator_->PlayerMoveStartEvent();
   //}
 
+  auto ParticleUpdate = [&]() {
+    const math::Vector3 MOVE_PARTICLE_OFFSET{0.0f, -0.75f, -3.0f};
+    const math::Vector3 move_particle_position =
+        transform_.GetPosition() +
+        transform_.GetRotation() * MOVE_PARTICLE_OFFSET;
+    player_move_particle_->GetTransformRef().SetPosition(
+        move_particle_position);
+    const math::Vector3 velocity = GetVelocity();
+    const math::Vector3 velocity_xz{velocity.x, 0.0f, velocity.z};
+    const bool emit_enable = velocity_xz.Magnitude() > 0.2f;
+    player_move_particle_->SetEmitEnable(emit_enable);
+  };
+
+  ParticleUpdate();
+
   if (GetMoveEnd()) {
+    player_move_particle_->SetEmitEnable(false);
     ResetParameter();
+
     mediator_->PlayerMoveEndEvent();
   }
   return true;
@@ -185,6 +221,9 @@ void Player::CheckImpulse() {
 
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
+    player_move_particle_->ResetParticle();
+    player_move_particle_->SetEmitEnable(true);
+
     mediator_->PlayerMoveStartEvent();
     audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }
@@ -303,7 +342,8 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (enemy_position - player_position).Normalized();
 
-        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f * strength_);
+        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
+                                              strength_);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {

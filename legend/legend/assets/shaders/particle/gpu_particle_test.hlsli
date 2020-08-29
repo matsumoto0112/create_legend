@@ -29,7 +29,7 @@ struct VSOutput
 };
 
 typedef VSOutput GSInput;
-    
+
 struct GSOutput
 {
     float4 position : SV_POSITION;
@@ -38,5 +38,7 @@ struct GSOutput
 };
 
 typedef GSOutput PSInput;
+
+ConstantBuffer<ParticleInfo> g_particle_info : register(b5);
 
 #endif //! LEGEND_ASSETS_SHADERS_PARTICLE_GPU_PARTICLE_TEST_HLSLI_

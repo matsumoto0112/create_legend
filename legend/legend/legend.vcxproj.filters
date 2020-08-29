@@ -320,7 +320,6 @@
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
-    <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
     <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\util\util.hlsli" />
@@ -341,8 +340,6 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
-    <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
-    <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_vs.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl" />
     <FxCompile Include="assets\shaders\particle\gpu_particle_cs.hlsl" />

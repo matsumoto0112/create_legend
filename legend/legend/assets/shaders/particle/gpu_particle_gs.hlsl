@@ -37,9 +37,9 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> output)
     };
 
     float4x4 world = float4x4(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
+        0.1, 0, 0, 0,
+        0, 0.1, 0, 0,
+        0, 0, 0.1, 0,
         position.x, position.y, position.z, 1);
     float4x4 view = g_world_context.view;
     float4x4 projection = g_world_context.projection;

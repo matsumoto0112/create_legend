@@ -23,7 +23,8 @@ class SmokeParticle : public ParticleEmitter {
 
  private:
   static constexpr u32 PARTICLE_NUM =
-      THREAD_X * THREAD_Y * DISPATCH_X * DISPATCH_Y;
+      shader::gpu_particle::THREAD_X * shader::gpu_particle::THREAD_Y *
+      shader::gpu_particle::DISPATCH_X * shader::gpu_particle::DISPATCH_Y;
 };
 
 }  // namespace particle

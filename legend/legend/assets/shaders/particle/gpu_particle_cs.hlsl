@@ -97,7 +97,6 @@ void ResetParticle(uint addr, uint index)
     const float vx = RandomRange(-1.0, 1.0, u, seed++);
     const float vy = RandomRange(1.0, 3.0, u, seed++);
     const float vz = RandomRange(-1.0, 1.0, u, seed++);
-    //const float3 velocity = float3(0, 0, 0);
     const float3 velocity = float3(vx, vy, vz);
     SetVelocity(addr, velocity);
 
@@ -125,7 +124,13 @@ void main(const CSInput input)
     const uint addr = index * PARTICLE_SIZE;
 
     float lifetime = GetLifeTime(addr);
-    if (lifetime <= 0.0)
+
+    //パーティクルのリセットフラグが立っている
+    if (g_particle_info.reset && g_particle_info.emit_enable) {
+        ResetParticle(addr, index);
+    }
+    //生存時間が過ぎて、新しいパーティクルの生成フラグが立っている
+    else if (lifetime <= 0.0 && g_particle_info.emit_enable)
     {
         ResetParticle(addr, index);
     }

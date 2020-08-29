@@ -6,6 +6,7 @@
  * @brief パーティクルエミッター基底クラス定義
  */
 
+#include "assets/shaders/particle/gpu_particle_test.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
@@ -25,6 +26,8 @@ class ParticleEmitter {
   using TransformStruct = directx::buffer::constant_buffer_structure::Transform;
   using TransformConstantBuffer =
       directx::buffer::ConstantBuffer<TransformStruct>;
+  using ParticleInfoConstantBuffer =
+      directx::buffer::ConstantBuffer<shader::gpu_particle::ParticleInfo>;
 
  public:
   /**
@@ -70,9 +73,17 @@ class ParticleEmitter {
   util::Transform GetTransform() const { return transform_; }
   /**
    * @brief トランスフォームの参照を返す
-   * @return
    */
   util::Transform& GetTransformRef() { return transform_; }
+
+  void SetEnableUpdate(bool enable_update) {
+    this->enable_update_ = enable_update;
+  }
+  void SetEnableRender(bool enable_render) {
+    this->enable_render_ = enable_render;
+  }
+  void ResetParticle() { this->reset_particle_ = true; }
+  void SetEmitEnable(bool emit_enable) { this->emit_enable_ = emit_enable; }
 
  protected:
   //! パーティクル名
@@ -96,6 +107,8 @@ class ParticleEmitter {
   util::Transform transform_;
   //! トランスフォームコンスタントバッファ
   TransformConstantBuffer transform_cb_;
+  shader::gpu_particle::ParticleInfo info_;
+  ParticleInfoConstantBuffer info_cb_;
 
   //! パーティクルデータのUAV兼頂点バッファ
   ComPtr<ID3D12Resource> particle_uav_;
@@ -105,6 +118,11 @@ class ParticleEmitter {
   directx::descriptor_heap::DescriptorHandle handle_;
   //! 頂点バッファビュー
   D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
+
+  bool enable_update_;
+  bool enable_render_;
+  bool reset_particle_;
+  bool emit_enable_;
 };
 
 }  // namespace particle

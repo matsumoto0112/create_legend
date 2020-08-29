@@ -36,26 +36,23 @@ class ParticleCommandList {
    */
   bool Init(directx::device::IDirectXAccessor& accessor, u32 frame_count);
 
-  template <class T>
-  std::shared_ptr<T> CreateParticle(directx::device::CommandList& command_list);
+  template <class T, class... Args>
+  std::shared_ptr<T> CreateParticle(directx::device::CommandList& command_list,
+                                    Args... args);
 
+  /**
+   * @brief パーティクルの更新
+   */
   void UpdateParticles();
+  /**
+   * @brief パーティクルの描画
+   */
   void RenderParticle(directx::device::CommandList& render_command_list);
   /**
    * @brief フレーム開始時処理
    * @param device DirectXデバイス
    */
   void BeginFrame(directx::device::DirectXDevice& device);
-  ///**
-  // * @brief コマンドリストの実行処理
-  // */
-  // void Execute();
-  ///**
-  // * @brief コマンドリストを取得する
-  // */
-  // directx::device::CommandList& GetCommandList() {
-  //  return current_frame_resource_->GetCommandList();
-  //}
 
  private:
   std::vector<std::shared_ptr<ParticleEmitter>> particle_emitters_;
@@ -70,11 +67,11 @@ class ParticleCommandList {
   //! フェンス値
   u64 fence_value_;
 };
-template <class T>
+template <class T, class... Args>
 inline std::shared_ptr<T> ParticleCommandList::CreateParticle(
-    directx::device::CommandList& command_list) {
+    directx::device::CommandList& command_list, Args... args) {
   auto res = std::make_shared<T>();
-  res->Init(command_list);
+  res->Init(command_list, args...);
   particle_emitters_.emplace_back(res);
   return res;
 }

@@ -238,7 +238,6 @@ class TurnSystem : public actor::IActorMediator {
   bool is_scene_end_fade_start_;
 
   actor::ActorRenderCommandList actor_render_command_list_;
-  std::shared_ptr<draw::particle::SmokeParticle> player_move_particle_;
 
  private:
   // UIのリアルタイム修正用パラメータ

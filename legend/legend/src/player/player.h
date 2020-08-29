@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/draw/particle/smoke_particle.h"
 #include "src/skill/skill_manager.h"
 
 namespace legend {
@@ -186,6 +187,8 @@ class Player : public actor::Actor {
   bool is_hit_obstacle_;
 
   util::CountDownTimer se_interval_;
+
+  std::shared_ptr<draw::particle::SmokeParticle> player_move_particle_;
 };
 
 }  // namespace player

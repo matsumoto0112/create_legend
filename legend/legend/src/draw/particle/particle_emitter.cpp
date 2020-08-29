@@ -16,7 +16,11 @@ ParticleEmitter::ParticleEmitter(u32 particle_max_size,
       particle_structure_size_(particle_structure_size),
       dispatch_x_(dispatch_x),
       dispatch_y_(dispatch_y),
-      name_(name) {}
+      name_(name),
+      enable_update_(true),
+      enable_render_(true),
+      reset_particle_(false),
+      emit_enable_(true) {}
 
 //デストラクタ
 ParticleEmitter::~ParticleEmitter() {}
@@ -29,11 +33,14 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
   using directx::directx_helper::Failed;
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
-  //コンスタントバッファの初期化
-  const directx::descriptor_heap::DescriptorHandle transform_handle =
-      device.GetLocalHandle(
-          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID);
-  if (!transform_cb_.Init(device, transform_handle, name_ + L"Transform")) {
+  constexpr auto HEAP_ID =
+      directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID;
+  if (!transform_cb_.Init(device, device.GetLocalHandle(HEAP_ID),
+                          name_ + L"Transform")) {
+    return false;
+  }
+  if (!info_cb_.Init(device, device.GetLocalHandle(HEAP_ID),
+                     name_ + L"_ParticleInfo")) {
     return false;
   }
 
@@ -103,6 +110,10 @@ bool ParticleEmitter::Init(directx::device::CommandList& copy_command_list,
 
 //更新
 void ParticleEmitter::Update(directx::device::CommandList& command_list) {
+  if (!enable_update_) {
+    return;
+  }
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //リソースを登録していく
@@ -113,8 +124,15 @@ void ParticleEmitter::Update(directx::device::CommandList& command_list) {
   transform_cb_.UpdateStaging();
   transform_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+  info_cb_.GetStagingRef().reset = reset_particle_;
+  info_cb_.GetStagingRef().emit_enable = emit_enable_;
+  info_cb_.UpdateStaging();
+  info_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::PARTICLE_INFO);
   device.GetHeapManager().SetHeapTableToComputeCommandList(device,
                                                            command_list);
+
+  reset_particle_ = false;
 
   compute_pipeline_state_.SetCommandList(command_list);
   // CSの実行
@@ -124,6 +142,9 @@ void ParticleEmitter::Update(directx::device::CommandList& command_list) {
 //描画
 void ParticleEmitter::Render(
     directx::device::CommandList& graphics_command_list) {
+  if (!enable_render_) {
+    return;
+  }
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   transform_cb_.RegisterHandle(

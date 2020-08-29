@@ -30,8 +30,7 @@
     </Link>
     <CopyFileToFolders />
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\assets $(OutDir)\assets /I /Y /D /S /EXCLUDE:$(SolutionDir)\properties\xcopy-excludelist.txt
-xcopy $(ProjectDir)\config $(OutDir)\config /I /Y /D /S</Command>
+      <Command>xcopy $(ProjectDir)\assets $(OutDir)\assets /I /Y /D /S /EXCLUDE:$(SolutionDir)\properties\xcopy-excludelist.txt</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(OutDir)assets\shaders\%(Filename).cso</ObjectFileOutput>

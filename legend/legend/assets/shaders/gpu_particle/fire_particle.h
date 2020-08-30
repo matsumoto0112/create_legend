@@ -1,8 +1,8 @@
-#ifndef LEGEND_ASSETS_SHADERS_GPU_PARTICLE_PLAYER_MOVE_PARTICLE_H
-#define LEGEND_ASSETS_SHADERS_GPU_PARTICLE_PLAYER_MOVE_PARTICLE_H
+#ifndef LEGEND_ASSETS_SHADERS_GPU_PARTICLE_FIRE_PARTICLE_H
+#define LEGEND_ASSETS_SHADERS_GPU_PARTICLE_FIRE_PARTICLE_H
 
 /**
- * @file player_move_particle.h
+ * @file fire_particle.h
  * @brief
  */
 
@@ -12,7 +12,7 @@
 namespace legend {
 namespace shaders {
 namespace gpu_particle {
-namespace player_move_particle {
+namespace fire_particle {
 #endif  //! HLSL
 
 static const uint THREAD_X = 64;
@@ -25,6 +25,7 @@ struct Particle {
   float lifetime;
   Vector3 velocity;
   Vector3 position;
+  Vector3 scale;
   Color4 color;
 };
 
@@ -34,11 +35,13 @@ struct VSInput {
   float lifetime : IN_LIFETIME;
   float3 velocity : IN_VELOCITY;
   float3 position : POSITION;
+  float3 scale : SCALE;
   float4 color : COLOR;
 };
 
 struct VSOutput {
   float4 position : SV_POSITION;
+  float3 scale : SCALE;
   float4 color : COLOR;
 };
 
@@ -54,8 +57,8 @@ typedef GSOutput PSInput;
 #else
 }  // namespace player_move_particle
 }  // namespace gpu_particle
-}  // namespace shaders
+}  // namespace shader
 }  // namespace legend
 #endif
 
-#endif  //! LEGEND_ASSETS_SHADERS_GPU_PARTICLE_PLAYER_MOVE_PARTICLE_H
+#endif  //! LEGEND_ASSETS_SHADERS_GPU_PARTICLE_FIRE_PARTICLE_H

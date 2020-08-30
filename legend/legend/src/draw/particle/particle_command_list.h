@@ -57,6 +57,7 @@ class ParticleCommandList {
 
  private:
   std::vector<std::shared_ptr<ParticleEmitter>> particle_emitters_;
+  std::vector<std::shared_ptr<ParticleEmitter>> add_particle_list_;
   //! フレームリソース
   std::vector<directx::FrameResource> frame_resources_;
   //! 現在フレームのリソース
@@ -74,7 +75,7 @@ inline std::shared_ptr<T> ParticleCommandList::CreateParticle(
     const ParticleEmitter::ParticleConstData& const_data, Args... args) {
   auto res = std::make_shared<T>(const_data);
   res->Init(command_list, args...);
-  particle_emitters_.emplace_back(res);
+  add_particle_list_.emplace_back(res);
   return res;
 }
 

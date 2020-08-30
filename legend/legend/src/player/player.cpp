@@ -23,7 +23,7 @@ namespace resource_name = util::resource::resource_names;
 Player::Player() : Parent(L"Player") {}
 
 //デストラクタ
-Player::~Player() {}
+Player::~Player() { player_move_particle_->Delete(); }
 
 //初期化
 bool Player::Init(actor::IActorMediator* mediator,
@@ -149,7 +149,7 @@ bool Player::Update() {
   };
 
   ParticleUpdate();
-
+  obstacle_hit_timer_.Update();
   if (GetMoveEnd()) {
     player_move_particle_->SetEmitEnable(false);
     ResetParameter();
@@ -395,11 +395,11 @@ void Player::OnHit(bullet::Collider* other) {
           dynamic_cast<object::Obstacle*>(other->GetOwner());
       if (obstacle) {
         if (!is_hit_obstacle_) {
+          obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
           is_hit_obstacle_ = true;
           audio.Start(resource_name::audio::PLAYER_OBSTACLE_HIT, 0.8f);
+          CreateFireParticle();
         }
-      } else {
-        is_hit_obstacle_ = false;
       }
     }
   }
@@ -450,6 +450,11 @@ bool Player::SkillUpdateTurnEnd() {
   }
 
   return skill_manager_.IsProductionNow();
+}
+
+void Player::CreateFireParticle() {
+  auto fire = draw::particle::particle_factory::CreateFireParticle();
+  fire->SetTransform(GetTransform());
 }
 
 }  // namespace player

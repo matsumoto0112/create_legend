@@ -54,6 +54,11 @@ void ParticleCommandList::UpdateParticles() {
     particle->Update(current_frame_resource_->GetCommandList());
   }
 
+  particle_emitters_.erase(
+      std::remove_if(particle_emitters_.begin(), particle_emitters_.end(),
+                     [](auto&& p) { return p->StandDeleteFlag(); }),
+      particle_emitters_.end());
+
   current_frame_resource_->GetCommandList().Close();
   ID3D12CommandList* command_lists[] = {
       current_frame_resource_->GetCommandList().GetCommandList()};
@@ -71,6 +76,10 @@ void ParticleCommandList::RenderParticle(
   for (auto&& particle : particle_emitters_) {
     particle->Render(render_command_list);
   }
+
+  std::copy(add_particle_list_.begin(), add_particle_list_.end(),
+            std::back_inserter(particle_emitters_));
+  add_particle_list_.clear();
 }
 
 //フレーム開始時
@@ -104,20 +113,6 @@ void ParticleCommandList::BeginFrame(directx::device::DirectXDevice& device) {
   device.GetHeapManager().SetHeapTableToComputeCommandList(
       device, current_frame_resource_->GetCommandList());
 }
-//
-//// CSの実行
-// void ParticleCommandList::Execute() {
-//  current_frame_resource_->GetCommandList().Close();
-//  ID3D12CommandList* command_lists[] = {
-//      current_frame_resource_->GetCommandList().GetCommandList()};
-//  command_queue_->ExecuteCommandLists(1, command_lists);
-//
-//  const UINT64 fence_to_wait_for = fence_value_;
-//  if (Failed(command_queue_->Signal(fence_.Get(), fence_to_wait_for))) {
-//    return;
-//  }
-//  fence_value_++;
-//}
 
 }  // namespace particle
 }  // namespace draw

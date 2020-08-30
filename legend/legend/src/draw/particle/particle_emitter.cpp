@@ -17,7 +17,8 @@ ParticleEmitter::ParticleEmitter(const ParticleConstData& const_data)
       enable_update_(true),
       enable_render_(true),
       reset_particle_(false),
-      emit_enable_(true) {}
+      emit_enable_(true),
+      delete_(false) {}
 
 //デストラクタ
 ParticleEmitter::~ParticleEmitter() {}
@@ -110,7 +111,12 @@ bool ParticleEmitter::Init(
 
 //更新
 void ParticleEmitter::Update(directx::device::CommandList& command_list) {
+  delete_timer_.Update();
+  delete_wait_timer_.Update();
   if (!enable_update_) {
+    return;
+  }
+  if (delete_) {
     return;
   }
 
@@ -174,6 +180,17 @@ void ParticleEmitter::Render(
              D3D12_RESOURCE_STATES::
                  D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
              D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+}
+
+void ParticleEmitter::Delete() {
+  enable_render_ = false;
+  enable_update_ = false;
+  emit_enable_ = false;
+  delete_wait_timer_.Init(0.1f, [&]() { delete_ = true; });
+}
+
+void ParticleEmitter::Delete(float second) {
+  delete_timer_.Init(second, [&]() { Delete(); });
 }
 
 }  // namespace particle

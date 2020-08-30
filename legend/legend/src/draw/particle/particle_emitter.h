@@ -11,6 +11,7 @@
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
 #include "src/directx/shader/pipeline_state.h"
+#include "src/util/timer.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -92,6 +93,9 @@ class ParticleEmitter {
   }
   void ResetParticle() { this->reset_particle_ = true; }
   void SetEmitEnable(bool emit_enable) { this->emit_enable_ = emit_enable; }
+  void Delete();
+  void Delete(float second);
+  bool StandDeleteFlag() const { return delete_; }
 
  protected:
   //! パーティクル名
@@ -132,6 +136,11 @@ class ParticleEmitter {
   bool enable_render_;
   bool reset_particle_;
   bool emit_enable_;
+  bool delete_;
+  //! 削除前に待機させる用のタイマー
+  //! すぐ削除するとcomputeshader起動中に削除される恐れがあるため、少し遅らせる用のタイマー
+  util::CountDownTimer delete_wait_timer_;
+  util::CountDownTimer delete_timer_;
 };
 
 }  // namespace particle

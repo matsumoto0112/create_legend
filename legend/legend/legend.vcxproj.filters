@@ -316,6 +316,7 @@
     <ClInclude Include="src\skill\skill_paste_stick.h" />
     <ClInclude Include="src\skill\skill_paste.h" />
     <ClInclude Include="src\player\player_move_direction_model.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\fire_particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -362,6 +363,9 @@
     <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_gs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_ps.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\fire_particle_cs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\fire_particle_vs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\fire_particle_gs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />

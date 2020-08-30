@@ -76,6 +76,7 @@ constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_vs.cso";
 constexpr name DIFFERED_RENDERING_PRE = L"differed_rendering_pre_vs";
 constexpr name DIFFERED_RENDERING = L"differed_rendering_vs";
 constexpr name SHADOW_MAP = L"shadow_map_vs";
+constexpr name FIRE_PARTICLE = L"fire_particle_vs.cso";
 }  // namespace vertex_shader
 
 namespace pixel_shader {
@@ -83,6 +84,7 @@ constexpr name SPRITE = L"sprite_ps.cso";
 constexpr name GRAFFITI = L"graffiti_ps.cso";
 constexpr name MODEL_VIEW = L"model_view_ps.cso";
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_ps.cso";
+constexpr name FIRE_PARTICLE = L"player_move_particle_ps.cso";
 constexpr name OBB = L"obb_ps.cso";
 constexpr name GAUGE = L"ui_gauge_ps.cso";
 constexpr name QUARTER_GAUGE = L"ui_quarter_gauge_ps.cso";
@@ -92,10 +94,12 @@ constexpr name DIFFERED_RENDERING = L"differed_rendering_ps";
 
 namespace geometry_shader {
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_gs.cso";
+constexpr name FIRE_PARTICLE = L"fire_particle_gs.cso";
 }  // namespace geometry_shader
 
 namespace compute_shader {
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_cs.cso";
+constexpr name FIRE_PARTICLE = L"fire_particle_cs.cso";
 }  // namespace compute_shader
 
 namespace pipeline {

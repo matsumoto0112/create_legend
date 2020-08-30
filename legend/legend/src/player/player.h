@@ -146,6 +146,8 @@ class Player : public actor::Actor {
    */
   bool SkillUpdateTurnEnd();
 
+  void CreateFireParticle();
+
  private:
   //! ë¨ìx
   math::Vector3 velocity_;
@@ -192,6 +194,7 @@ class Player : public actor::Actor {
 
   //! è·äQï®Ç…è’ìÀÇµÇΩÇ©
   bool is_hit_obstacle_;
+  util::CountDownTimer obstacle_hit_timer_;
 
   util::CountDownTimer se_interval_;
 

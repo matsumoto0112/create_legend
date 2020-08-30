@@ -16,7 +16,6 @@ enum class SceneType {
   SPRITE_TEST,
   INPUT_TEST,
   MAIN_SCENE_1,
-  GPU_PARTICLE_TEST,
   SKILL_TEST,
 };
 

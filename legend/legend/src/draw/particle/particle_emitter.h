@@ -6,11 +6,11 @@
  * @brief パーティクルエミッター基底クラス定義
  */
 
+#include "assets/shaders/gpu_particle/gpu_particle.h"
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
 #include "src/directx/device/command_list.h"
 #include "src/directx/shader/pipeline_state.h"
-#include "src/draw/particle/particle_command_list.h"
 #include "src/util/transform.h"
 
 namespace legend {
@@ -26,6 +26,17 @@ class ParticleEmitter {
   using TransformStruct = directx::buffer::constant_buffer_structure::Transform;
   using TransformConstantBuffer =
       directx::buffer::ConstantBuffer<TransformStruct>;
+  using ParticleInfoConstantBuffer =
+      directx::buffer::ConstantBuffer<shader::gpu_particle::ParticleInfo>;
+
+ public:
+  struct ParticleConstData {
+    u32 particle_max_size;
+    u32 particle_structure_size;
+    u32 dispatch_x;
+    u32 dispatch_y;
+    std::wstring name;
+  };
 
  public:
   /**
@@ -36,8 +47,7 @@ class ParticleEmitter {
    * @param dispatch_y 作業スレッドグループ数(Y)
    * @param name パーティクル名
    */
-  ParticleEmitter(u32 particle_max_size, u32 particle_structure_size,
-                  u32 dispatch_x, u32 dispatch_y, const std::wstring& name);
+  ParticleEmitter(const ParticleConstData& const_data);
   /**
    * @brief デストラクタ
    */
@@ -51,24 +61,37 @@ class ParticleEmitter {
    * @return 初期化に成功したらtrueを返す
    */
   virtual bool Init(directx::device::CommandList& command_list,
-                    const void* data,
-                    D3D12_GRAPHICS_PIPELINE_STATE_DESC graphics_desc,
-                    D3D12_COMPUTE_PIPELINE_STATE_DESC compute_desc);
+                    const void* data, const std::wstring& texture_name,
+                    const D3D12_GRAPHICS_PIPELINE_STATE_DESC& graphics_desc,
+                    const D3D12_COMPUTE_PIPELINE_STATE_DESC& compute_desc);
   /**
    * @brief 更新処理
    * @param command_list パーティクルの更新処理用のコマンドリスト
    */
-  virtual void Update(ParticleCommandList& command_list);
+  virtual void Update(directx::device::CommandList& command_list);
   /**
    * @brief 描画処理
    * @param graphics_command_list 描画処理を実行するコマンドリスト
    */
   virtual void Render(directx::device::CommandList& graphics_command_list);
+
+  void SetTransform(const util::Transform& transform) {
+    this->transform_ = transform;
+  }
+  util::Transform GetTransform() const { return transform_; }
   /**
    * @brief トランスフォームの参照を返す
-   * @return
    */
   util::Transform& GetTransformRef() { return transform_; }
+
+  void SetEnableUpdate(bool enable_update) {
+    this->enable_update_ = enable_update;
+  }
+  void SetEnableRender(bool enable_render) {
+    this->enable_render_ = enable_render;
+  }
+  void ResetParticle() { this->reset_particle_ = true; }
+  void SetEmitEnable(bool emit_enable) { this->emit_enable_ = emit_enable; }
 
  protected:
   //! パーティクル名
@@ -92,6 +115,9 @@ class ParticleEmitter {
   util::Transform transform_;
   //! トランスフォームコンスタントバッファ
   TransformConstantBuffer transform_cb_;
+  shader::gpu_particle::ParticleInfo info_;
+  ParticleInfoConstantBuffer info_cb_;
+  std::wstring texture_name_;
 
   //! パーティクルデータのUAV兼頂点バッファ
   ComPtr<ID3D12Resource> particle_uav_;
@@ -101,6 +127,11 @@ class ParticleEmitter {
   directx::descriptor_heap::DescriptorHandle handle_;
   //! 頂点バッファビュー
   D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_;
+
+  bool enable_update_;
+  bool enable_render_;
+  bool reset_particle_;
+  bool emit_enable_;
 };
 
 }  // namespace particle

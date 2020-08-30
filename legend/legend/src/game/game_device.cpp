@@ -100,7 +100,7 @@ bool GameDevice::BeginFrame() {
 }
 
 bool GameDevice::MidFrame() {
-  particle_command_list_.Execute();
+  particle_command_list_.UpdateParticles();
   return true;
 }
 

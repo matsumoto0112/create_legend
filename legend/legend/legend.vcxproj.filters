@@ -92,8 +92,6 @@
     <ClCompile Include="src\enemy\enemy_manager.cpp" />
     <ClCompile Include="src\object\obstacle.cpp" />
     <ClCompile Include="src\draw\particle\particle_emitter.cpp" />
-    <ClCompile Include="src\draw\particle\smoke_particle.cpp" />
-    <ClCompile Include="src\scenes\debugscene\gpu_particle_test.cpp" />
     <ClCompile Include="src\directx\shader\compute_pipeline_state_desc.cpp" />
     <ClCompile Include="src\directx\shader\pipeline_state.cpp" />
     <ClCompile Include="src\draw\particle\particle_command_list.cpp" />
@@ -134,6 +132,7 @@
     <ClCompile Include="src\skill\skill_paste_stick.cpp" />
     <ClCompile Include="src\skill\skill_paste.cpp" />
     <ClCompile Include="src\player\player_move_direction_model.cpp" />
+    <ClCompile Include="src\draw\particle\particle_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -263,10 +262,7 @@
     <ClInclude Include="src\primitive\line.h" />
     <ClInclude Include="src\directx\shader\graphics_pipeline_state_desc.h" />
     <ClInclude Include="src\object\obstacle.h" />
-    <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
-    <ClInclude Include="src\draw\particle\smoke_particle.h" />
     <ClInclude Include="src\draw\particle\particle_emitter.h" />
-    <ClInclude Include="src\scenes\debugscene\gpu_particle_test.h" />
     <ClInclude Include="src\directx\shader\geometry_shader.h" />
     <ClInclude Include="src\directx\shader\compute_pipeline_state_desc.h" />
     <ClInclude Include="src\directx\shader\compute_shader.h" />
@@ -313,13 +309,15 @@
     <ClInclude Include="src\bullet\shape_type.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\scenes\result_scene.h" />
+    <ClInclude Include="src\draw\particle\particle_factory.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />
     <ClInclude Include="src\enemy\enemy_type.h" />
     <ClInclude Include="src\skill\skill_paste_stick.h" />
     <ClInclude Include="src\skill\skill_paste.h" />
     <ClInclude Include="src\player\player_move_direction_model.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\.clang-format" />
     <None Include="packages.config" />
     <None Include="assets\shaders\modelview\model_view.hlsli" />
     <None Include="assets\shaders\draw2d\sprite.hlsli" />
@@ -327,15 +325,14 @@
     <None Include="assets\shaders\physics\obb.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test.hlsli" />
     <None Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp.hlsli" />
-    <None Include="assets\shaders\particle\simple_particle.hlsli" />
     <None Include="assets\shaders\graffiti\graffiti.hlsli" />
-    <None Include="assets\shaders\particle\gpu_particle_test.hlsli" />
     <None Include="assets\shaders\util\util.hlsli" />
     <None Include="assets\shaders\draw2d\ui_gauge.hlsli" />
     <None Include="assets\shaders\draw2d\ui_quarter_gauge.hlsli" />
     <None Include="assets\shaders\bullet\bullet_debug_draw.hlsli" />
     <None Include="assets\shaders\differed_rendering\differed_rendering_pre.hlsli" />
     <None Include="assets\shaders\differed_rendering\differed_rendering.hlsli" />
+    <None Include=".clang-format" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -348,14 +345,8 @@
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_ps.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_vs.hlsl" />
     <FxCompile Include="assets\shaders\multi_render_target_test\multi_render_target_test_pp_ps.hlsl" />
-    <FxCompile Include="assets\shaders\particle\simple_particle_vs.hlsl" />
-    <FxCompile Include="assets\shaders\particle\simple_particle_ps.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_vs.hlsl" />
     <FxCompile Include="assets\shaders\graffiti\graffiti_ps.hlsl" />
-    <FxCompile Include="assets\shaders\particle\gpu_particle_cs.hlsl" />
-    <FxCompile Include="assets\shaders\particle\gpu_particle_vs.hlsl" />
-    <FxCompile Include="assets\shaders\particle\gpu_particle_gs.hlsl" />
-    <FxCompile Include="assets\shaders\particle\gpu_particle_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\ui_gauge_vs.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\ui_gauge_ps.hlsl" />
     <FxCompile Include="assets\shaders\draw2d\ui_quarter_gauge_vs.hlsl" />
@@ -367,6 +358,10 @@
     <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_vs.hlsl" />
     <FxCompile Include="assets\shaders\differed_rendering\differed_rendering_ps.hlsl" />
     <FxCompile Include="assets\shaders\differed_rendering\shadow_map_vs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_cs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_vs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_gs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\player_move_particle_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\stage\bbbb.txt" />

@@ -20,6 +20,7 @@ enum Enum : u32 {
   UV_RECT = 3,          //! UVî•ñ
   COLOR = 4,            //! Fî•ñ
   GAUGE_PARAMETER = 5,  //! UI‚ÌƒQ[ƒWî•ñ
+  PARTICLE_INFO = 5,
 };
 }  // namespace ConstantBufferRegisterID
 

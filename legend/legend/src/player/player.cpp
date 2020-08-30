@@ -2,6 +2,7 @@
 
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/draw/particle/particle_factory.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
@@ -71,6 +72,11 @@ bool Player::Init(actor::IActorMediator* mediator,
   if (!move_direction_.Init()) {
     return false;
   }
+  player_move_particle_ =
+      draw::particle::particle_factory::CreatePlayerMoveParticle();
+  player_move_particle_->SetEmitEnable(false);
+
+  ResetParameter();
 
   return true;
 }
@@ -129,9 +135,25 @@ bool Player::Update() {
         math::Quaternion::FromEular(0, angle + deg_180, 0));
   };
   UpdateMoveDirectionModel();
+  auto ParticleUpdate = [&]() {
+    const math::Vector3 MOVE_PARTICLE_OFFSET{0.0f, -0.75f, -3.0f};
+    const math::Vector3 move_particle_position =
+        transform_.GetPosition() +
+        transform_.GetRotation() * MOVE_PARTICLE_OFFSET;
+    player_move_particle_->GetTransformRef().SetPosition(
+        move_particle_position);
+    const math::Vector3 velocity = GetVelocity();
+    const math::Vector3 velocity_xz{velocity.x, 0.0f, velocity.z};
+    const bool emit_enable = velocity_xz.Magnitude() > 0.2f;
+    player_move_particle_->SetEmitEnable(emit_enable);
+  };
+
+  ParticleUpdate();
 
   if (GetMoveEnd()) {
+    player_move_particle_->SetEmitEnable(false);
     ResetParameter();
+
     mediator_->PlayerMoveEndEvent();
   }
   return true;
@@ -215,6 +237,9 @@ void Player::CheckImpulse() {
 
     auto vel = vector.Normalized() * power_ * impulse_;
     box_->ApplyCentralImpulse(vel);
+    player_move_particle_->ResetParticle();
+    player_move_particle_->SetEmitEnable(true);
+
     mediator_->PlayerMoveStartEvent();
     audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }

@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/draw/particle/particle_emitter.h"
 #include "src/player/player_move_direction_model.h"
 #include "src/skill/skill_manager.h"
 
@@ -195,6 +196,7 @@ class Player : public actor::Actor {
   util::CountDownTimer se_interval_;
 
   PlayerMoveDirectionModel move_direction_;
+  std::shared_ptr<draw::particle::ParticleEmitter> player_move_particle_;
 };
 
 }  // namespace player

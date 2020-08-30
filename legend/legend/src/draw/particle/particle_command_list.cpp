@@ -49,6 +49,30 @@ bool ParticleCommandList::Init(directx::device::IDirectXAccessor& accessor,
   return true;
 }
 
+void ParticleCommandList::UpdateParticles() {
+  for (auto&& particle : particle_emitters_) {
+    particle->Update(current_frame_resource_->GetCommandList());
+  }
+
+  current_frame_resource_->GetCommandList().Close();
+  ID3D12CommandList* command_lists[] = {
+      current_frame_resource_->GetCommandList().GetCommandList()};
+  command_queue_->ExecuteCommandLists(1, command_lists);
+
+  const UINT64 fence_to_wait_for = fence_value_;
+  if (Failed(command_queue_->Signal(fence_.Get(), fence_to_wait_for))) {
+    return;
+  }
+  fence_value_++;
+}
+
+void ParticleCommandList::RenderParticle(
+    directx::device::CommandList& render_command_list) {
+  for (auto&& particle : particle_emitters_) {
+    particle->Render(render_command_list);
+  }
+}
+
 //フレーム開始時
 void ParticleCommandList::BeginFrame(directx::device::DirectXDevice& device) {
   current_frame_resource_ =
@@ -80,20 +104,20 @@ void ParticleCommandList::BeginFrame(directx::device::DirectXDevice& device) {
   device.GetHeapManager().SetHeapTableToComputeCommandList(
       device, current_frame_resource_->GetCommandList());
 }
-
-// CSの実行
-void ParticleCommandList::Execute() {
-  current_frame_resource_->GetCommandList().Close();
-  ID3D12CommandList* command_lists[] = {
-      current_frame_resource_->GetCommandList().GetCommandList()};
-  command_queue_->ExecuteCommandLists(1, command_lists);
-
-  const UINT64 fence_to_wait_for = fence_value_;
-  if (Failed(command_queue_->Signal(fence_.Get(), fence_to_wait_for))) {
-    return;
-  }
-  fence_value_++;
-}
+//
+//// CSの実行
+// void ParticleCommandList::Execute() {
+//  current_frame_resource_->GetCommandList().Close();
+//  ID3D12CommandList* command_lists[] = {
+//      current_frame_resource_->GetCommandList().GetCommandList()};
+//  command_queue_->ExecuteCommandLists(1, command_lists);
+//
+//  const UINT64 fence_to_wait_for = fence_value_;
+//  if (Failed(command_queue_->Signal(fence_.Get(), fence_to_wait_for))) {
+//    return;
+//  }
+//  fence_value_++;
+//}
 
 }  // namespace particle
 }  // namespace draw

@@ -133,6 +133,7 @@
     <ClCompile Include="src\scenes\result_scene.cpp" />
     <ClCompile Include="src\skill\skill_paste_stick.cpp" />
     <ClCompile Include="src\skill\skill_paste.cpp" />
+    <ClCompile Include="src\player\player_move_direction_model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="src\enemy\enemy_type.h" />
     <ClInclude Include="src\skill\skill_paste_stick.h" />
     <ClInclude Include="src\skill\skill_paste.h" />
+    <ClInclude Include="src\player\player_move_direction_model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\.clang-format" />

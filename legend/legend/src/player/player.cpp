@@ -68,6 +68,10 @@ bool Player::Init(actor::IActorMediator* mediator,
   is_hit_obstacle_ = false;
   se_interval_.Init(0.0f);
 
+  if (!move_direction_.Init()) {
+    return false;
+  }
+
   return true;
 }
 
@@ -114,6 +118,18 @@ bool Player::Update() {
   //  mediator_->PlayerMoveStartEvent();
   //}
 
+  auto UpdateMoveDirectionModel = [&]() {
+    const float angle = math::util::Atan2(input_velocity_.x, input_velocity_.z);
+    const math::Vector3 direction_offset =
+        math::Quaternion::FromEular(0, angle, 0) *
+        math::Vector3(0.0f, 0.0f, 7.5f);
+    const float deg_180 = math::util::DEG_2_RAD * 180.0f;
+    move_direction_.SetPosition(transform_.GetPosition() + direction_offset);
+    move_direction_.SetRotation(
+        math::Quaternion::FromEular(0, angle + deg_180, 0));
+  };
+  UpdateMoveDirectionModel();
+
   if (GetMoveEnd()) {
     ResetParameter();
     mediator_->PlayerMoveEndEvent();
@@ -124,6 +140,12 @@ bool Player::Update() {
 void Player::Draw() {
   //プレイヤーの描画
   actor::Actor::Draw();
+
+  const bool visible_move_direction = input_velocity_.Magnitude() > 0.0f;
+  if (visible_move_direction) {
+    move_direction_.Draw();
+  }
+
   //スキルマネージャーの描画
   skill_manager_.Draw();
 }
@@ -311,7 +333,8 @@ void Player::OnHit(bullet::Collider* other) {
         const math::Vector3 direction =
             (enemy_position - player_position).Normalized();
 
-        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f * strength_);
+        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
+                                              strength_);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {

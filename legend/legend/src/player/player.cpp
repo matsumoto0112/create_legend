@@ -125,14 +125,16 @@ bool Player::Update() {
   //}
 
   auto UpdateMoveDirectionModel = [&]() {
-    const float angle = math::util::Atan2(input_velocity_.x, input_velocity_.z);
+    auto Rad = [](float deg) { return deg * math::util::DEG_2_RAD; };
+    //ƒJƒƒ‰‚ÌŠp“x‚Æ“ü—Í‚Ì•ûŒü‚É‰ž‚¶‚½‰ñ“]‚ð‚©‚¯‚é‚½‚ß‚ÌŠp“x‚ðŒvŽZ‚·‚é
+    const float angle = -(mediator_->GetMainCameraThetaAngle() + Rad(90.0f)) +
+                        math::util::Atan2(input_velocity_.x, input_velocity_.z);
     const math::Vector3 direction_offset =
-        math::Quaternion::FromEular(0, angle, 0) *
-        math::Vector3(0.0f, 0.0f, 7.5f);
-    const float deg_180 = math::util::DEG_2_RAD * 180.0f;
+        math::Quaternion::FromEular(0, angle, 0) * math::Vector3(0, 0, 7.5f);
     move_direction_.SetPosition(transform_.GetPosition() + direction_offset);
-    move_direction_.SetRotation(
-        math::Quaternion::FromEular(0, angle + deg_180, 0));
+    const math::Quaternion direction_rotation =
+        math::Quaternion::FromEular(0.0f, angle + Rad(180.0f), 0.0f);
+    move_direction_.SetRotation(direction_rotation);
   };
   UpdateMoveDirectionModel();
   auto ParticleUpdate = [&]() {

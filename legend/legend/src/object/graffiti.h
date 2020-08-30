@@ -59,7 +59,7 @@ class Graffiti : public actor::Actor {
    * @brief 描画処理
    * @param command_list コマンドリスト
    */
-  void Draw(directx::device::CommandList& command_list);
+  void Draw() override;
   /**
    * @brief 落書きの残量の取得
    */

@@ -8,23 +8,23 @@
 
 #include <set>
 
-#include "src/actor/actor_mediator.h"
-#include "src/actor/actor_render_command_list.h"
-#include "src/bullet/physics_field.h"
+//#include "src/actor/actor_mediator.h"
+//#include "src/actor/actor_render_command_list.h"
+//#include "src/bullet/physics_field.h"
 #include "src/camera/follow_camera.h"
 #include "src/camera/lookat_target_camera.h"
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-#include "src/enemy/enemy_manager.h"
-#include "src/object/desk.h"
-#include "src/object/fragment.h"
-#include "src/object/graffiti.h"
-#include "src/player/player.h"
+//#include "src/enemy/enemy_manager.h"
+//#include "src/object/desk.h"
+//#include "src/object/fragment.h"
+//#include "src/object/graffiti.h"
+//#include "src/player/player.h"
 #include "src/scenes/fade_in_out.h"
-#include "src/search/search_manager.h"
-#include "src/skill/skill_item_box.h"
-#include "src/stage_generate/stage_generator.h"
+//#include "src/search/search_manager.h"
+//#include "src/skill/skill_item_box.h"
+//#include "src/stage_generate/stage_generator.h"
 #include "src/system/game_data.h"
 #include "src/system/mode.h"
 #include "src/ui/gauge.h"
@@ -32,6 +32,7 @@
 #include "src/ui/number.h"
 #include "src/ui/ui_board.h"
 #include "src/util/timer.h"
+#include "src/actor/actor_manager.h"
 
 namespace legend {
 namespace system {
@@ -67,7 +68,7 @@ enum Enum { DIGIT_3, DIGIT_2, DIGIT_1, MAX };
  * @class TurnSystem
  * @brief ターン数管理クラス
  */
-class TurnSystem : public actor::IActorMediator {
+class TurnSystem/* : public actor::IActorMediator*/ {
  public:
   /**
    * @brief コンストラクタ
@@ -102,47 +103,47 @@ class TurnSystem : public actor::IActorMediator {
    * @brief ゲーム結果を取得する
    */
   system::GameDataStorage::GameData GetResult() const;
-  /**
-   * @brief プレイヤーの移動開始時イベント
-   */
-  virtual void PlayerMoveStartEvent() override;
-  /**
-   * @brief プレイヤーの移動終了時イベント
-   */
-  virtual void PlayerMoveEndEvent() override;
-  /**
-   * @brief プレイヤーのスキル発動開始時イベント
-   */
-  virtual void PlayerSkillActivate() override;
-  /**
-   * @brief プレイヤーのスキル発動終了時イベント
-   */
-  virtual void PlayerSkillDeactivate() override;
-  /**
-   * @brief プレイヤーを取得する
-   */
-  virtual player::Player* GetPlayer() override;
-  /**
-   * @brief 敵をシーンから取得する
-   */
-  virtual std::vector<enemy::Enemy*> GetEnemies() override;
-  virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) override;
-  virtual void RemoveCollider(
-      std::shared_ptr<bullet::Collider> collider) override;
-  virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
-      const math::Vector3& start, const math::Vector3& end) const override;
-  virtual void RemoveActor(actor::Actor* actor) override;
-  virtual float GetMainCameraThetaAngle() const override;
-  /**
-   * @brief 現在のターン状況を取得する
-   */
-  Mode GetCurrentTurn() const override { return current_mode_; }
+  ///**
+  // * @brief プレイヤーの移動開始時イベント
+  // */
+  //virtual void PlayerMoveStartEvent() override;
+  ///**
+  // * @brief プレイヤーの移動終了時イベント
+  // */
+  //virtual void PlayerMoveEndEvent() override;
+  ///**
+  // * @brief プレイヤーのスキル発動開始時イベント
+  // */
+  //virtual void PlayerSkillActivate() override;
+  ///**
+  // * @brief プレイヤーのスキル発動終了時イベント
+  // */
+  //virtual void PlayerSkillDeactivate() override;
+  ///**
+  // * @brief プレイヤーを取得する
+  // */
+  //virtual player::Player* GetPlayer() override;
+  ///**
+  // * @brief 敵をシーンから取得する
+  // */
+  //virtual std::vector<enemy::Enemy*> GetEnemies() override;
+  //virtual void AddCollider(std::shared_ptr<bullet::Collider> collider) override;
+  //virtual void RemoveCollider(
+  //    std::shared_ptr<bullet::Collider> collider) override;
+  //virtual btCollisionWorld::AllHitsRayResultCallback RayCast(
+  //    const math::Vector3& start, const math::Vector3& end) const override;
+  //virtual void RemoveActor(actor::Actor* actor) override;
+  //virtual float GetMainCameraThetaAngle() const override;
+  ///**
+  // * @brief 現在のターン状況を取得する
+  // */
+  //Mode GetCurrentTurn() const override { return current_mode_; }
 
  private:
-  /**
-   * @brief 各アクターの生成
-   */
-  bool GenerateActors();
+  ///**
+  // * @brief 各アクターの生成
+  // */
+  //bool GenerateActors();
   /**
    * @brief ターン数の増加
    */
@@ -178,41 +179,45 @@ class TurnSystem : public actor::IActorMediator {
    * @brief カメラの初期化
    */
   bool InitCameras();
-  /**
-   * @brief 消しカスの追加
-   */
-  void AddFragment(std::unique_ptr<object::Fragment> fragment);
+  ///**
+  // * @brief 消しカスの追加
+  // */
+  //void AddFragment(std::unique_ptr<object::Fragment> fragment);
   /**
    * @brief カメラの更新
    */
   void UpdateCamera();
 
  private:
-  bullet::PhysicsField physics_field_;
+  //bullet::PhysicsField physics_field_;
   //! 現在ターン数
   i32 current_turn_;
   //! 現在のプレイ状態
   Mode current_mode_;
+
+  //! アクター管理クラス
+  actor::ActorManager actor_manager_;
+
   //! ステージ生成
-  stage_generate::StageGenerator stage_generator_;
+  //stage_generate::StageGenerator stage_generator_;
   ////! メインカメラ
   // camera::FollowCamera main_camera_;
   //! プレイヤー
-  std::unique_ptr<player::Player> player_;
+  //std::unique_ptr<player::Player> player_;
 
-  std::vector<std::unique_ptr<actor::Actor>> static_objects_;
-  //! 落書き
-  std::vector<std::unique_ptr<object::Graffiti>> graffities_;
-  //! 消しカス
-  std::vector<std::unique_ptr<object::Fragment>> fragments_;
-  //! 敵管理
-  enemy::EnemyManager enemy_manager_;
-  //! 分岐管理
-  search::SearchManager search_manager_;
+  //std::vector<std::unique_ptr<actor::Actor>> static_objects_;
+  ////! 落書き
+  //std::vector<std::unique_ptr<object::Graffiti>> graffities_;
+  ////! 消しカス
+  //std::vector<std::unique_ptr<object::Fragment>> fragments_;
+  ////! 敵管理
+  //enemy::EnemyManager enemy_manager_;
+  ////! 分岐管理
+  //search::SearchManager search_manager_;
   //! タイマー
   util::CountDownTimer countdown_timer_;
-  //! スキルアイテムボックス
-  std::vector<std::unique_ptr<skill::SkillItemBox>> item_boxes_;
+  ////! スキルアイテムボックス
+  //std::vector<std::unique_ptr<skill::SkillItemBox>> item_boxes_;
 
   //! 使用するカメラ
   std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
@@ -229,14 +234,14 @@ class TurnSystem : public actor::IActorMediator {
   std::vector<ui::Number*> numbers_;
   std::vector<ui::UIComponent*> no_render_if_enemy_turn_uis_;
 
-  std::set<object::Graffiti*> remove_graffiti_list_;
-  std::set<object::Fragment*> remove_fragment_list_;
-  std::set<skill::SkillItemBox*> remove_item_box_list_;
+  //std::set<object::Graffiti*> remove_graffiti_list_;
+  //std::set<object::Fragment*> remove_fragment_list_;
+  //std::set<skill::SkillItemBox*> remove_item_box_list_;
   scenes::FadeInOut fade_;
   bool is_scene_all_end_;
   bool is_scene_end_fade_start_;
 
-  actor::ActorRenderCommandList actor_render_command_list_;
+  ////actor::ActorRenderCommandList actor_render_command_list_;
 
  private:
   // UIのリアルタイム修正用パラメータ

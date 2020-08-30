@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\actor\actor.cpp" />
+    <ClCompile Include="src\actor\actor_manager.cpp" />
     <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\bullet\bounding_box.cpp" />
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
@@ -217,6 +218,7 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\actor\actor_manager.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
     <ClInclude Include="src\bullet\bounding_sphere.h" />

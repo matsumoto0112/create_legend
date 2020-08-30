@@ -42,7 +42,7 @@ class IActorMediator {
   /**
    * @brief プレイヤーを取得する
    */
-  virtual player::Player* GetPlayer() = 0;
+  virtual player::Player* GetPlayer() const = 0;
   /**
    * @brief 敵をシーンから取得する
    */
@@ -74,6 +74,8 @@ class IActorMediator {
    * @brief 現在のターン状況を取得する
    */
   virtual system::Mode GetCurrentTurn() const = 0;
+
+  virtual void AddHitStopTime(float time) = 0;
 };
 
 }  // namespace actor

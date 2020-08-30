@@ -36,49 +36,16 @@ TurnSystem::TurnSystem()
     : current_turn_(0), current_camera_(camera_mode::Sub1) {}
 
 //デストラクタ
-TurnSystem::~TurnSystem() { static_objects_.clear(); }
+TurnSystem::~TurnSystem() { /*static_objects_.clear();*/
+}
 
 //初期化
 bool TurnSystem::Init(const std::string& stage_name) {
-  //ステージデータの拡張子は.txt
-  auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
-                    (stage_name + ".txt");
-
-  if (!physics_field_.Init()) {
-    return false;
-  }
-
-  // directx::device::CommandList command_list;
-  // if (!command_list.Init(
-  //        game::GameDevice::GetInstance()->GetDevice(),
-  //        D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-  //  return false;
-  //}
-
-  // command_list.Close();
-  // game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-  //    {command_list});
-  // game::GameDevice::GetInstance()->GetDevice().WaitExecute();
-
-  if (!enemy_manager_.Initilaize(this)) {
-    return false;
-  }
-  stage_generator_.LoadStringStageData(stage_path, stage_name);
-  if (!GenerateActors()) {
-    return false;
-  }
+  //アクター管理クラスの初期化
+  actor_manager_.Init(stage_name, player_follow_lookat_camera_);
 
   if (!InitCameras()) {
     return false;
-  }
-
-  {
-    search_manager_.Initialize(this);
-
-    //探索データの拡張子は.txt
-    auto search_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
-                       (stage_name + "_searchData" + ".txt");
-    search_manager_.Make(search_path);
   }
 
   // UI情報を取得
@@ -198,22 +165,10 @@ bool TurnSystem::Init(const std::string& stage_name) {
 
 bool TurnSystem::Update() {
   countdown_timer_.Update();
-  player_->Update();
-  enemy_manager_.DestroyUpdate();
-  UpdateCamera();
 
-  for (auto&& graf : graffities_) {
-    if (graf->GetIsHit()) {
-      AddFragment(graf->InstanceFragment());
-    }
-    graf->Update();
-  }
-  for (auto&& fragment : fragments_) {
-    fragment->Update();
-  }
-  for (auto&& item_box : item_boxes_) {
-    item_box->Update();
-  }
+  actor_manager_.Update();
+
+  UpdateCamera();
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
       {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
@@ -285,7 +240,8 @@ bool TurnSystem::Update() {
 
   {
     //プレイヤーの強化状態をUI数値に変換する
-    const i32 str = CalcPlayerStrengthToPrintNumber(*player_);
+    const i32 str =
+        CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer());
     numbers_[number_id::DIGIT_3]->SetNumber(str / 100);
     numbers_[number_id::DIGIT_2]->SetNumber(str / 10 % 10);
     numbers_[number_id::DIGIT_1]->SetNumber(str % 10);
@@ -297,36 +253,8 @@ bool TurnSystem::Update() {
         math::util::Clamp((str * 0.01f) - 2.0f, 0.0f, 1.0f));
   }
 
-  gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(player_->GetImpulse());
-
-  graffities_.erase(
-      std::remove_if(graffities_.begin(), graffities_.end(),
-                     [&](auto& it) {
-                       return remove_graffiti_list_.find(it.get()) !=
-                              remove_graffiti_list_.end();
-                     }),
-      graffities_.end());
-  remove_graffiti_list_.clear();
-
-  fragments_.erase(
-      std::remove_if(fragments_.begin(), fragments_.end(),
-                     [&](auto& it) {
-                       return remove_fragment_list_.find(it.get()) !=
-                              remove_fragment_list_.end();
-                     }),
-      fragments_.end());
-  remove_fragment_list_.clear();
-
-  item_boxes_.erase(
-      std::remove_if(item_boxes_.begin(), item_boxes_.end(),
-                     [&](auto& it) {
-                       return remove_item_box_list_.find(it.get()) !=
-                              remove_item_box_list_.end();
-                     }),
-      item_boxes_.end());
-  remove_item_box_list_.clear();
-
-  physics_field_.Update();
+  gauges_[gauge_id::PLAYER_CHARGE_POWER]->SetValue(
+      actor_manager_.GetPlayer()->GetImpulse());
 
   fade_.Update();
   if (is_scene_end_fade_start_) {
@@ -334,11 +262,11 @@ bool TurnSystem::Update() {
       is_scene_all_end_ = true;
     }
   } else {
-    if (player_->GetPlayerDeathFlag()) {
+    if (actor_manager_.GetPlayer()->GetPlayerDeathFlag()) {
       is_scene_end_fade_start_ = true;
       fade_.StartFadeOut(1.0f);
     }
-    if (enemy_manager_.IsGameClear()) {
+    if (actor_manager_.IsGameClear()) {
       is_scene_end_fade_start_ = true;
       fade_.StartFadeOut(1.0f);
     }
@@ -351,7 +279,7 @@ bool TurnSystem::Update() {
 bool TurnSystem::PlayerMoveReady() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
   if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
-      !player_->GetSkillSelect()) {
+      !actor_manager_.GetPlayer()->GetSkillSelect()) {
     if (current_camera_ == camera_mode::Main) {
       current_camera_ = camera_mode::Sub1;
     } else if (current_camera_ == camera_mode::Sub1) {
@@ -362,10 +290,10 @@ bool TurnSystem::PlayerMoveReady() {
   //メインカメラの状態じゃないと移動できないようにする
   if (current_camera_ == camera_mode::Main) {
     //プレイヤーの速度更新は入力を受け取って処理する
-    if (!player_->GetSkillSelect())
-      player_->CheckImpulse();
+    if (!actor_manager_.GetPlayer()->GetSkillSelect())
+      actor_manager_.GetPlayer()->CheckImpulse();
     else
-      player_->SkillUpdate();
+      actor_manager_.GetPlayer()->SkillUpdate();
   } else {
     //それ以外の時はプレイヤーの移動入力状態を無力化する必要がある
   }
@@ -377,14 +305,12 @@ bool TurnSystem::PlayerMoveReady() {
 bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::WaitEnemyMoveStart() {
-  if (enemy_manager_.GetEnemiesSize() == 0) {
+  if (actor_manager_.GetEnemiesSize() == 0) {
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;
   }
-  for (auto&& velocity : enemy_manager_.GetVelocities()) {
-    if (velocity != math::Vector3::kZeroVector) {
-      return true;
-    }
+  if (!actor_manager_.IsAllEnemeyStop()) {
+    return true;
   }
   current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
   return true;
@@ -400,12 +326,10 @@ bool TurnSystem::PlayerSkillAfterMoved() {
 
 //敵の移動処理
 bool TurnSystem::EnemyMove() {
-  enemy_manager_.Update(&search_manager_);
-  enemy_manager_.SetPlayer(player_->GetCollider());
-  if (enemy_manager_.LastEnemyMoveEnd()) {
+  actor_manager_.EnemyManagerUpdate();
+  if (actor_manager_.GetEnemyManager()->LastEnemyMoveEnd()) {
     current_mode_ = Mode::ENEMY_MOVE_END;
-    enemy_manager_.ResetEnemyMove();
-    // AddCurrentTurn();
+    actor_manager_.GetEnemyManager()->ResetEnemyMove();
   }
   return true;
 }
@@ -414,17 +338,9 @@ bool TurnSystem::EnemyMove() {
 bool TurnSystem::EnemyMoveEnd() {
   AddCurrentTurn();
 
-  if (!GenerateActors()) {
+  if (!actor_manager_.GenerateActors(current_turn_)) {
     return false;
   }
-  // for (auto&& enemy_parameter :
-  //     stage_generator_.GetEnemyParameters(current_turn_)) {
-  //  enemy_manager_.Add(enemy_parameter);
-  //}
-  // for (auto&& boss_parameter :
-  //     stage_generator_.GetBossParameters(current_turn_)) {
-  //  enemy_manager_.Add(boss_parameter);
-  //}
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
@@ -443,8 +359,8 @@ bool TurnSystem::InitCameras() {
     const math::Quaternion camera_rotation =
         math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
     auto main_camera = std::make_unique<camera::LookAtTargetCamera>();
-    if (!main_camera->Init(L"MainCamera", player_.get(), 20.0f, 30.0f,
-                           math::util::DEG_2_RAD * 50.0f, aspect_ratio,
+    if (!main_camera->Init(L"MainCamera", actor_manager_.GetPlayer(), 20.0f,
+                           30.0f, math::util::DEG_2_RAD * 50.0f, aspect_ratio,
                            math::Vector3::kUpVector, 0.1f, 300.0f)) {
       return false;
     }
@@ -474,11 +390,6 @@ bool TurnSystem::InitCameras() {
   return true;
 }
 
-void legend::system::TurnSystem::AddFragment(
-    std::unique_ptr<object::Fragment> fragment) {
-  fragments_.emplace_back(std::move(fragment));
-}
-
 void TurnSystem::UpdateCamera() {
   //メインカメラの回転処理
   auto& input = game::GameDevice::GetInstance()->GetInput();
@@ -497,42 +408,12 @@ void TurnSystem::UpdateCamera() {
   if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
           cameras_[camera_mode::Sub1].get());
       camera) {
-    const math::Vector3 player_position = player_->GetPosition();
+    const math::Vector3 player_position =
+        actor_manager_.GetPlayer()->GetPosition();
     camera->SetPosition(math::Vector3(
         player_position.x, camera->GetPosition().y, player_position.z));
   }
 }
-
-float legend::system::TurnSystem::GetMainCameraThetaAngle() const {
-  return player_follow_lookat_camera_->GetTheta();
-}
-
-void legend::system::TurnSystem::RemoveActor(actor::Actor* actor) {
-  if (auto g = dynamic_cast<object::Graffiti*>(actor); g) {
-    remove_graffiti_list_.emplace(g);
-  }
-  if (auto fragment = dynamic_cast<object::Fragment*>(actor); fragment) {
-    remove_fragment_list_.emplace(fragment);
-  }
-  if (auto item_box = dynamic_cast<skill::SkillItemBox*>(actor); item_box) {
-    remove_item_box_list_.emplace(item_box);
-  }
-}
-
-void legend::system::TurnSystem::RemoveCollider(
-    std::shared_ptr<bullet::Collider> collider) {
-  physics_field_.RemoveCollision(collider);
-}
-
-void TurnSystem::AddCollider(std::shared_ptr<bullet::Collider> collider) {
-  physics_field_.AddCollision(collider);
-}
-
-btCollisionWorld::AllHitsRayResultCallback legend::system::TurnSystem::RayCast(
-    const math::Vector3& start, const math::Vector3& end) const {
-  return physics_field_.RayCast(start, end);
-}
-
 //描画
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -544,35 +425,8 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::NONE, false,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
 
-  cameras_[current_camera_]->RenderStart();
+  actor_manager_.DrawDifferedRenderingObject(cameras_[current_camera_].get(), command_list);
 
-  actor_render_command_list_.Push(player_.get());
-  for (auto&& obj : static_objects_) {
-    actor_render_command_list_.Push(obj.get());
-  }
-  for (auto&& fragment : fragments_) {
-    actor_render_command_list_.Push(fragment.get());
-  }
-  for (auto&& item_box : item_boxes_) {
-    actor_render_command_list_.Push(item_box.get());
-  }
-  enemy_manager_.Draw(&actor_render_command_list_);
-
-  math::Vector3 light_pos = math::Vector3(50, 80, 20);
-  light_cb_.GetStagingRef().view = math::Matrix4x4::CreateView(
-      light_pos, math::Vector3::kZeroVector, math::Vector3::kUpVector);
-  light_cb_.GetStagingRef().proj =
-      player_follow_lookat_camera_->GetProjection();
-  light_cb_.UpdateStaging();
-  light_cb_.RegisterHandle(device, 2);
-  actor_render_command_list_.ShadowPass();
-
-  render_resource_manager.SetRenderTargets(
-      command_list,
-      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-  cameras_[current_camera_]->RenderStart();
-  actor_render_command_list_.RenderPass();
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
@@ -612,9 +466,8 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
 
-  for (auto&& graffiti : graffities_) {
-    graffiti->Draw(command_list);
-  }
+  actor_manager_.DrawAlphaObject(command_list);
+  actor_manager_.Draw2D(command_list);
 
   const bool is_player_turn = current_mode_ == Mode::PLAYER_MOVING ||
                               current_mode_ == Mode::PLAYER_MOVE_READY;
@@ -627,15 +480,12 @@ void TurnSystem::Draw() {
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
-
-  actor_render_command_list_.Clear();
 }
 
 //デバッグ描画
 void TurnSystem::DebugDraw() {
   cameras_[current_camera_]->RenderStart();
-  search_manager_.DebugDraw(&physics_field_);
-  physics_field_.DebugDraw(cameras_[current_camera_].get());
+  actor_manager_.DebugDraw(cameras_[current_camera_].get());
 }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
@@ -643,127 +493,20 @@ bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
 system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
     const {
   const system::GameDataStorage::GameEndType end_type = [&]() {
-    if (enemy_manager_.IsGameClear())
+    if (actor_manager_.IsGameClear())
       return system::GameDataStorage::GameEndType::BOSS_KILLED;
     else
       return system::GameDataStorage::GameEndType::PLAYER_DEAD;
   }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
-      end_type, CalcPlayerStrengthToPrintNumber(*player_), current_turn_ + 1};
+      end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()), current_turn_ + 1};
 }
-
-bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
-  {
-    player::Player::InitializeParameter player;
-    std::vector<object::Desk::InitializeParameter> desks;
-    std::vector<object::Obstacle::InitializeParameter> obstacles;
-    std::vector<object::GraffitiInitializeParameter> graffities;
-    std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
-    std::vector<enemy::Enemy::InitializeParameter> enemys;
-    std::vector<enemy::Boss::InitializeParameter> bosses;
-    if (!stage_generator_.GetMapActors(current_turn_, player, desks, obstacles,
-                                       graffities, item_boxes, enemys,
-                                       bosses)) {
-      return false;
-    }
-
-    if (!player_) {
-      player_ = std::make_unique<player::Player>();
-      if (!player_->Init(this, player)) {
-        return false;
-      }
-    }
-    for (auto&& param : desks) {
-      auto obj = std::make_unique<object::Desk>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& param : obstacles) {
-      auto obj = std::make_unique<object::Obstacle>();
-      if (!obj->Init(this, param)) {
-        return false;
-      }
-      static_objects_.emplace_back(std::move(obj));
-    }
-    directx::device::CommandList command_list;
-    if (!command_list.Init(
-            game::GameDevice::GetInstance()->GetDevice(),
-            D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-      return false;
-    }
-
-    for (auto&& param : graffities) {
-      auto graf = std::make_unique<object::Graffiti>();
-      if (!graf->Init(this, param, command_list)) {
-        return false;
-      }
-      graffities_.emplace_back(std::move(graf));
-    }
-
-    command_list.Close();
-    game::GameDevice::GetInstance()->GetDevice().ExecuteCommandList(
-        {command_list});
-    game::GameDevice::GetInstance()->GetDevice().WaitExecute();
-
-    for (auto&& param : item_boxes) {
-      auto obj = std::make_unique<skill::SkillItemBox>();
-      std::shared_ptr<skill::Skill> skill =
-          std::make_shared<skill::SkillPencil>();
-      if (!obj->Init(this, param, skill)) {
-        return false;
-      }
-      item_boxes_.emplace_back(std::move(obj));
-    }
-
-    for (auto&& enemy_parameter : enemys) {
-      enemy_manager_.Add(enemy_parameter);
-    }
-
-    for (auto&& boss_parameter : bosses) {
-      enemy_manager_.Add(boss_parameter);
-    }
-  }
-
-  return true;
-}
-
 //ターン数の増加
 void TurnSystem::AddCurrentTurn() { current_turn_++; }
 
 //現在のターン数を取得
 i32 TurnSystem::GetCurrentTurn() { return current_turn_; }
-
-//プレイヤーの移動開始時処理
-void TurnSystem::PlayerMoveStartEvent() {
-  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  current_mode_ = Mode::PLAYER_MOVING;
-  current_camera_ = camera_mode::Sub1;
-}
-
-//プレイヤーの移動終了時処理
-void TurnSystem::PlayerMoveEndEvent() {
-  // 0.1秒後にモードを切り替える
-  countdown_timer_.Init(0.1f, [&]() {
-    current_mode_ = Mode::PLAYER_MOVE_END;
-    current_camera_ = camera_mode::Main;
-  });
-}
-
-//プレイヤーのスキル発動時処理
-void TurnSystem::PlayerSkillActivate() {}
-
-//プレイヤーのスキル発動終了時処理
-void TurnSystem::PlayerSkillDeactivate() {}
-
-player::Player* TurnSystem::GetPlayer() { return player_.get(); }
-
-std::vector<enemy::Enemy*> TurnSystem::GetEnemies() {
-  return enemy_manager_.GetEnemyPointers();
-}
 
 }  // namespace system
 }  // namespace legend

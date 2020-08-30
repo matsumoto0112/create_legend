@@ -27,6 +27,7 @@ constexpr name STATIONERY_05 = L"stationery_05.glb";
 constexpr name OBSTACLE = L"field_object_01.glb";
 constexpr name GRAFFITI = L"graffiti_01.glb";
 constexpr name BACK_FIELD_01 = L"back_field_01.glb";
+constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
 }  // namespace model
 
 namespace texture {

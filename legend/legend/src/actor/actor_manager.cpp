@@ -216,11 +216,11 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
     }
 
     for (auto&& enemy_parameter : enemys) {
-      enemy_manager_.Add(enemy_parameter);
+      enemy_manager_.AddEnemy(enemy_parameter);
     }
 
     for (auto&& boss_parameter : bosses) {
-      enemy_manager_.Add(boss_parameter);
+      enemy_manager_.AddBoss(boss_parameter);
     }
   }
 

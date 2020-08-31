@@ -3,6 +3,7 @@
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/alpha_blend_desc.h"
 #include "src/directx/shader/shader_register_id.h"
+#include "src/draw/particle/particle_factory.h"
 #include "src/game/game_device.h"
 #include "src/object/graffiti.h"
 #include "src/player/player.h"
@@ -48,10 +49,17 @@ bool EnemyActor::Init(actor::IActorMediator* mediator,
 
   move_end_ = false;
 
+  enemy_move_particle_ =
+      draw::particle::particle_factory::CreateEnemyMoveParticle();
+  enemy_move_particle_->SetEmitEnable(false);
+
   return true;
 }
 
-void EnemyActor::Remove() { mediator_->RemoveCollider(box_); }
+void EnemyActor::Remove() {
+  mediator_->RemoveCollider(box_);
+  enemy_move_particle_->Delete();
+}
 
 //XV
 bool EnemyActor::Update() {
@@ -64,6 +72,20 @@ bool EnemyActor::Update() {
     move_end_ = true;
     is_move_ = false;
   }
+
+  auto ParticleUpdate = [&]() {
+    const math::Vector3 MOVE_PARTICLE_OFFSET = GetVelocity().Normalized() * -3;
+    const math::Vector3 move_particle_position =
+        transform_.GetPosition() + MOVE_PARTICLE_OFFSET;
+    enemy_move_particle_->GetTransformRef().SetPosition(move_particle_position);
+    const math::Vector3 velocity = GetVelocity();
+    const math::Vector3 velocity_xz{velocity.x, 0.0f, velocity.z};
+    const bool emit_enable = is_move_ ? velocity_xz.Magnitude() > 0.6f
+                                      : math::util::Abs(velocity.y) > 1.0f;
+    enemy_move_particle_->SetEmitEnable(emit_enable);
+  };
+
+  ParticleUpdate();
 
   return true;
 }

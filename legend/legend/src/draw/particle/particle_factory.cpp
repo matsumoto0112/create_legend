@@ -95,6 +95,10 @@ std::shared_ptr<draw::particle::ParticleEmitter> CreatePlayerMoveParticle() {
   return res;
 }
 
+std::shared_ptr<draw::particle::ParticleEmitter> CreateEnemyMoveParticle() {
+  return CreatePlayerMoveParticle();
+}
+
 std::shared_ptr<draw::particle::ParticleEmitter> CreateFireParticle() {
   using directx::directx_helper::Failed;
   using namespace shaders::gpu_particle::fire_particle;

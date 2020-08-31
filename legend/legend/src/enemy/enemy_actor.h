@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/draw/particle/particle_emitter.h"
 #include "src/enemy/enemy_ai.h"
 #include "src/enemy/enemy_type.h"
 #include "src/util/transform.h"
@@ -132,6 +133,7 @@ class EnemyActor : public actor::Actor {
   enemy::EnemyAI enemy_ai_;
 
   std::shared_ptr<bullet::BoundingBox> box_;
+  std::shared_ptr<draw::particle::ParticleEmitter> enemy_move_particle_;
 };
 
 }  // namespace enemy

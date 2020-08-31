@@ -285,11 +285,15 @@ float ActorManager::GetMainCameraThetaAngle() const {
   return turn_system_->GetPlayerFollowLookatCamera()->GetTheta();
 }
 
-system::Mode ActorManager::GetCurrentTurn() const { return system::Mode(); }
+system::Mode ActorManager::GetCurrentTurn() const { 
+    return turn_system_->GetCurrentMode();
+}
 
-void legend::actor::ActorManager::AddStopTime(float time) {
+void ActorManager::AddStopTime(float time) {
   hit_stop_time_ += time;
 }
+
+void ActorManager::SetStopTime(float time) { hit_stop_time_ = time; }
 
 }  // namespace actor
 }  // namespace legend

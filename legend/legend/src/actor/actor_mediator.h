@@ -82,6 +82,10 @@ class IActorMediator {
    */
   virtual void AddStopTime(float time) = 0;
   /**
+   * @brief ストップ時間を設定
+   */
+  virtual void SetStopTime(float time) = 0;
+  /**
    * @brief 生成した消しカスを登録する
    */
   virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) = 0;

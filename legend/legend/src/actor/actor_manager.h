@@ -114,6 +114,10 @@ class ActorManager : public actor::IActorMediator {
    * @brief ’â~ŠÔ‚ğ’Ç‰Á‚·‚é
    */
   virtual void AddStopTime(float time) override;
+  /**
+   * @brief ’â~ŠÔ‚ğw’è‚·‚é
+   */
+  virtual void SetStopTime(float time) override;
 
   virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) override;
 

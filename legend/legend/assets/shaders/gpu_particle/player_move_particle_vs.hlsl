@@ -17,6 +17,7 @@ GSInput main(VSInput input) {
 
   result.position = float4(input.position, 0.0f);
   result.color = input.color;
+  if (input.lifetime < 0.0) result.color *= 0;
   return result;
 }
 

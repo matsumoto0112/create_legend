@@ -138,10 +138,10 @@ bool Player::Update() {
   };
   UpdateMoveDirectionModel();
   auto ParticleUpdate = [&]() {
-    const math::Vector3 MOVE_PARTICLE_OFFSET{0.0f, -0.75f, -3.0f};
+    // const math::Vector3 MOVE_PARTICLE_OFFSET{ 0.0f, -0.75f, -3.0f };
+    const math::Vector3 MOVE_PARTICLE_OFFSET = GetVelocity().Normalized() * -3;
     const math::Vector3 move_particle_position =
-        transform_.GetPosition() +
-        transform_.GetRotation() * MOVE_PARTICLE_OFFSET;
+        transform_.GetPosition() + MOVE_PARTICLE_OFFSET;
     player_move_particle_->GetTransformRef().SetPosition(
         move_particle_position);
     const math::Vector3 velocity = GetVelocity();
@@ -400,7 +400,7 @@ void Player::OnHit(bullet::Collider* other) {
           obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
           is_hit_obstacle_ = true;
           audio.Start(resource_name::audio::PLAYER_OBSTACLE_HIT, 0.8f);
-          CreateFireParticle();
+          CreateFireParticle(GetTransform());
         }
       }
     }
@@ -454,9 +454,9 @@ bool Player::SkillUpdateTurnEnd() {
   return skill_manager_.IsProductionNow();
 }
 
-void Player::CreateFireParticle() {
+void Player::CreateFireParticle(const util::Transform& transform) {
   auto fire = draw::particle::particle_factory::CreateFireParticle();
-  fire->SetTransform(GetTransform());
+  fire->SetTransform(transform);
 }
 
 }  // namespace player

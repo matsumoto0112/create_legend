@@ -32,6 +32,12 @@ constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
 
 namespace texture {
 constexpr name FADE_IMAGE = L"fade_image.png";
+constexpr name PARTICLE_SMOKE_1 = L"Particle_smoke_1.png";
+constexpr name PARTICLE_SMOKE_2 = L"Particle_smoke_2.png";
+constexpr name PARTICLE_SMOKE_3 = L"Particle_smoke_3.png";
+constexpr name PARTICLE_SPARKING_1 = L"Particle_sparking_1.png";
+constexpr name PARTICLE_SPARKING_2 = L"Particle_sparking_2.png";
+constexpr name PARTICLE_SPARKING_3 = L"Particle_sparking_3.png";
 constexpr name RESULT_GAMEOVER = L"Result_gameOver.png";
 constexpr name RESULT_PLAYERPOWER_TEXT_1 = L"Result_playerPower_text_1.png";
 constexpr name RESULT_PLAYERPOWER_TEXT_2 = L"Result_playerPower_text_2.png";

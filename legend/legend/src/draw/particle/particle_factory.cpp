@@ -28,6 +28,10 @@ std::shared_ptr<draw::particle::ParticleEmitter> CreatePlayerMoveParticle() {
 
   std::vector<shaders::gpu_particle::player_move_particle::Particle> particles(
       PARTICLE_MAX_NUM);
+  // for (u32 i = 0; i < PARTICLE_MAX_NUM; i++) {
+  //  //particles[i].lifetime =
+  //  //    game::GameDevice::GetInstance()->GetRandom().Range(10.0f, 30.0f);
+  //}
 
   auto SetVertexShader = [&](directx::shader::GraphicsPipelineStateDesc& desc) {
     constexpr auto name =
@@ -84,7 +88,8 @@ std::shared_ptr<draw::particle::ParticleEmitter> CreatePlayerMoveParticle() {
 
   auto res = particle_com_list.CreateParticle<draw::particle::ParticleEmitter>(
       device.GetCurrentFrameResource()->GetCommandList(), const_data,
-      particles.data(), util::resource::resource_names::texture::TEX,
+      particles.data(),
+      util::resource::resource_names::texture::PARTICLE_SMOKE_3,
       graphics_pso_desc, compute_pso_desc);
 
   return res;
@@ -160,9 +165,10 @@ std::shared_ptr<draw::particle::ParticleEmitter> CreateFireParticle() {
 
   auto res = particle_com_list.CreateParticle<draw::particle::ParticleEmitter>(
       device.GetCurrentFrameResource()->GetCommandList(), const_data,
-      particles.data(), util::resource::resource_names::texture::TITLE_LOGO,
+      particles.data(),
+      util::resource::resource_names::texture::PARTICLE_SPARKING_3,
       graphics_pso_desc, compute_pso_desc);
-  res->Delete(3.0f);
+  res->Delete(0.5f);
 
   return res;
 }

@@ -17,8 +17,8 @@ namespace player_move_particle {
 
 static const uint THREAD_X = 64;
 static const uint THREAD_Y = 1;
-static const uint DISPATCH_X = 1;
-static const uint DISPATCH_Y = 1;
+static const uint DISPATCH_X = 4;
+static const uint DISPATCH_Y = 2;
 
 struct Particle {
   uint seed;

@@ -35,7 +35,7 @@
       0, 1, 2, 0, 2, 3,
   };
 
-  const float scale = 0.5;
+  const float scale = 1.0;
   float4x4 world = float4x4(scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0,
                             position.x, position.y, position.z, 1);
   float4x4 view = g_world_context.view;

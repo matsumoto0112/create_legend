@@ -146,7 +146,7 @@ class Player : public actor::Actor {
    */
   bool SkillUpdateTurnEnd();
 
-  void CreateFireParticle();
+  void CreateFireParticle(const util::Transform& transform);
 
  private:
   //! ‘¬“x

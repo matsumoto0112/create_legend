@@ -126,6 +126,11 @@ bool Graffiti::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  if (is_hit_) {
+      mediator_->AddFragment(InstanceFragment());
+      is_hit_ = false;
+  }
+
   if (is_erase_) {
     if (delete_time_.Update()) {
       if (box_) {

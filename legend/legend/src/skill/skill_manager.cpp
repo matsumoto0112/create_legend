@@ -215,9 +215,11 @@ void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
   else if (skill_num == 2)
     pos = math::Vector3::kLeftVector * 1.5f;
   else if (skill_num == 3)
-    pos = math::Vector3::kUpVector + math::Vector3::kRightVector;
+    pos = math::Vector3::kUpVector + math::Vector3::kRightVector +
+          math::Vector3::kBackwardVector;
   else
-    pos = math::Vector3::kUpVector + math::Vector3::kLeftVector;
+    pos = math::Vector3::kUpVector + math::Vector3::kLeftVector +
+          math::Vector3::kBackwardVector;
   pos = math::Matrix4x4::MultiplyCoord(
       pos, player_->GetTransform().GetRotation().ToMatrix());
   skill->AdjustPosition(pos);

@@ -17,7 +17,7 @@ PlayerUI::PlayerUI() {
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"プレイヤー画像の初期化に失敗しました。");
   }
-  player_sprite_.SetPosition(math::Vector2(120.0f, 120.0f));
+  player_sprite_.SetPosition(math::Vector2(125.0f, 130.0f));
   player_sprite_.SetScale(math::Vector2::kUnitVector);
   player_sprite_.SetRect(math::Rect(0, 0, 1, 1));
   player_sprite_.SetZOrder(0.5f);
@@ -51,24 +51,26 @@ void PlayerUI::Update() {
     float width = sprite.GetContentSize().x;
     float height = sprite.GetContentSize().y;
     if (i == 0) {
-      pos -= (math::Vector2::kUpVector * 20.0f);
+      pos +=
+          (math::Vector2(0, -height) * 0.2f) - (math::Vector2(width, 0) * 0.1f);
       z_order = 0.43f;
     } else if (i == 1) {
-      pos += (math::Vector2::kLeftVector * 30.0f) -
-             (math::Vector2::kUpVector * 5.0f);
+      pos += (math::Vector2(-width, 0) * 0.25f) -
+             (math::Vector2(0, height) * 0.05f);
       z_order = 0.55f;
     } else if (i == 2) {
-      pos += (math::Vector2::kRightVector * 20.0f) +
-             (math::Vector2::kUpVector * 5.0f);
+      pos +=
+          (math::Vector2(width, 0) * 0.25f) + (math::Vector2(0, height) * 0.1f);
       z_order = 0.45f;
     } else if (i == 3) {
-      pos -= (math::Vector2::kUpVector * 15.0f) +
-             (math::Vector2::kLeftVector * 20.0f);
-      z_order = 0.4f;
-    } else {
-      pos -= (math::Vector2::kUpVector * 25.0f) +
-             (math::Vector2::kRightVector * 20.0f);
+      pos +=
+          (math::Vector2(0, -height) * 0.4f) - (math::Vector2(width, 0) * 0.1f);
       z_order = 0.48f;
+
+    } else {
+      pos +=
+          (math::Vector2(0, -height) * 0.3f) + (math::Vector2(width, 0) * 0.2f);
+      z_order = 0.4f;
     }
 
     sprite.SetPosition(pos);

@@ -368,7 +368,7 @@ bool TurnSystem::InitCameras() {
     auto main_camera = std::make_unique<camera::LookAtTargetCamera>();
     if (!main_camera->Init(L"MainCamera", actor_manager_.GetPlayer(), 20.0f,
                            30.0f, math::util::DEG_2_RAD * 50.0f, aspect_ratio,
-                           math::Vector3::kUpVector, 0.1f, 300.0f)) {
+                           math::Vector3::kUpVector, 0.1f, 1000.0f)) {
       return false;
     }
 

@@ -28,40 +28,23 @@ bool Boss::Init(actor::IActorMediator* mediator,
     model_ =
         resource.GetModel().Get(util::resource::resource_names::model::BOSS);
 
-    move_type_ = (enemy::enemy_type::MoveType::Straight);
-    hit_type_ = (enemy::enemy_type::HitType::Rush);
-    effect_type_ = (enemy::enemy_type::EffectType::Rotate);
+    enemy_ai_.move_type_ = (enemy::enemy_type::MoveType::Straight);
+    enemy_ai_.hit_type_ = (enemy::enemy_type::HitType::Rush);
+    enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType::Rotate);
 
     return true;
   }
   return false;
 }
 
-//更新
-bool Boss::Update() {
-  update_time_ =
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-
-  auto velocity = GetVelocity();
-  velocity.y = 0;
-  if (is_move_ && (velocity.Magnitude() < 0.01f)) {
-    move_end_ = true;
-    is_move_ = false;
-  }
-
-  return true;
-}
-
 //速度の設定
 void Boss::SetVelocity(math::Vector3 velocity) {
-  // 加速度の設定
-  box_->ApplyCentralImpulse(velocity);
+  auto ai_type = enemy::EnemyAIType::None;
   // 回転の設定
-  if (effect_type_ == enemy::enemy_type::EffectType::Rotate) {
-    auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-    angle *= (game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f));
-    box_->SetAngularVelocity(angle);
+  if (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate) {
+    ai_type = enemy::EnemyAIType::Boss_Rotate;
   }
+  enemy_ai_.Action(ai_type, velocity, box_.get());
   is_move_ = true;
 }
 

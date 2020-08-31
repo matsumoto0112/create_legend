@@ -1,5 +1,7 @@
 #include "actor_manager.h"
 
+#include "src/system/turn_system.h"
+
 namespace legend {
 namespace actor {
 //コンストラクタ
@@ -8,10 +10,9 @@ ActorManager::ActorManager() {}
 //デストラクタ
 ActorManager::~ActorManager() { static_actors_.clear(); }
 
-bool ActorManager::Init(
-    const std::string& stage_name,
-    camera::LookAtTargetCamera* player_follow_lookat_camera) {
-  player_follow_lookat_camera_ = player_follow_lookat_camera;
+bool ActorManager::Init(const std::string& stage_name,
+                        system::TurnSystem* turn_system) {
+  turn_system_ = turn_system;
 
   hit_stop_time_ = 0.0f;
 
@@ -51,6 +52,7 @@ bool ActorManager::Update() {
                            ->GetFPSCounter()
                            .GetDeltaSeconds<float>();
     hit_stop_time_ -= delta_time;
+    return true;
   }
   hit_stop_time_ = 0.0f;
 
@@ -120,22 +122,21 @@ void ActorManager::DrawAlphaObject(directx::device::CommandList& command_list) {
 
 void ActorManager::Draw2D(directx::device::CommandList& command_list) {}
 
+void ActorManager::DrawEnd() { actor_render_command_list_.Clear(); }
+
 void ActorManager::DebugDraw(camera::Camera* camera) {
   search_manager_.DebugDraw(&physics_field_);
   physics_field_.DebugDraw(camera);
 }
 
 void ActorManager::PlayerMoveStartEvent() {
-  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  *current_mode_ = system::Mode::PLAYER_MOVING;
-  *current_camera_ = 1;
+  turn_system_->SetTurnMode(system::Mode::PLAYER_MOVING);
+  turn_system_->SetCameraMode(system::camera_mode::Sub1);
 }
 
 void ActorManager::PlayerMoveEndEvent() {
-  // 0.1秒後にモードを切り替える
-    //countdown_timer_.Init(0.1f, [&]() {
-    //    *current_mode_ = system::Mode::PLAYER_MOVE_END;
-    //    *current_camera_ = 0; }
+  turn_system_->SetTurnMode(system::Mode::PLAYER_MOVE_END);
+  turn_system_->SetCameraMode(system::camera_mode::Main);
 }
 
 void ActorManager::PlayerSkillActivate() {}
@@ -281,12 +282,12 @@ void ActorManager::RemoveActor(actor::Actor* actor) {
 }
 
 float ActorManager::GetMainCameraThetaAngle() const {
-  return player_follow_lookat_camera_->GetTheta();
+  return turn_system_->GetPlayerFollowLookatCamera()->GetTheta();
 }
 
 system::Mode ActorManager::GetCurrentTurn() const { return system::Mode(); }
 
-void legend::actor::ActorManager::AddHitStopTime(float time) {
+void legend::actor::ActorManager::AddStopTime(float time) {
   hit_stop_time_ += time;
 }
 

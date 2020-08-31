@@ -42,7 +42,7 @@ TurnSystem::~TurnSystem() { /*static_objects_.clear();*/
 //初期化
 bool TurnSystem::Init(const std::string& stage_name) {
   //アクター管理クラスの初期化
-  actor_manager_.Init(stage_name, player_follow_lookat_camera_);
+  actor_manager_.Init(stage_name, this);
 
   if (!InitCameras()) {
     return false;
@@ -164,7 +164,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
 }
 
 bool TurnSystem::Update() {
-  countdown_timer_.Update();
 
   actor_manager_.Update();
 
@@ -480,6 +479,8 @@ void TurnSystem::Draw() {
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
+
+  actor_manager_.DrawEnd();
 }
 
 //デバッグ描画
@@ -501,6 +502,18 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::GameData{
       end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()), current_turn_ + 1};
+}
+void TurnSystem::SetTurnMode(Mode mode)
+{
+    current_mode_ = mode;
+}
+void TurnSystem::SetCameraMode(camera_mode::Enum mode)
+{
+    current_camera_ = mode;
+}
+camera::LookAtTargetCamera* TurnSystem::GetPlayerFollowLookatCamera()
+{
+    return player_follow_lookat_camera_;
 }
 //ターン数の増加
 void TurnSystem::AddCurrentTurn() { current_turn_++; }

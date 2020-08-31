@@ -16,6 +16,9 @@ class Player;
 namespace enemy {
 class Enemy;
 }  // namespace enemy
+namespace object {
+class Fragment;
+}
 }  // namespace legend
 
 namespace legend {
@@ -74,8 +77,14 @@ class IActorMediator {
    * @brief 現在のターン状況を取得する
    */
   virtual system::Mode GetCurrentTurn() const = 0;
-
-  virtual void AddHitStopTime(float time) = 0;
+  /**
+   * @brief ストップ時間を追加する
+   */
+  virtual void AddStopTime(float time) = 0;
+  /**
+   * @brief 生成した消しカスを登録する
+   */
+  virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) = 0;
 };
 
 }  // namespace actor

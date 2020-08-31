@@ -5,6 +5,7 @@
 #include "src/actor/actor_mediator.h"
 #include "src/actor/actor_render_command_list.h"
 #include "src/bullet/physics_field.h"
+#include "src/camera/lookat_target_camera.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"
@@ -14,9 +15,11 @@
 #include "src/skill/skill_item_box.h"
 #include "src/stage_generate/stage_generator.h"
 #include "src/system/mode.h"
-#include "src/camera/lookat_target_camera.h"
 
 namespace legend {
+namespace system {
+class TurnSystem;
+}  // namespace system
 namespace actor {
 
 class ActorManager : public actor::IActorMediator {
@@ -33,7 +36,8 @@ class ActorManager : public actor::IActorMediator {
    * @brief 初期化
    * @param stage_name ステージ名
    */
-  bool Init(const std::string& stage_name, camera::LookAtTargetCamera* player_follow_lookat_camera_);
+  bool Init(const std::string& stage_name,
+      system::TurnSystem* turn_system_);
   /**
    * @brief 更新処理
    */
@@ -41,11 +45,11 @@ class ActorManager : public actor::IActorMediator {
   /**
    * @brief 描画処理
    */
-  //void Draw(camera::Camera* camera);
-
-  void DrawDifferedRenderingObject(camera::Camera* camera, directx::device::CommandList& command_list);
+  void DrawDifferedRenderingObject(camera::Camera* camera,
+                                   directx::device::CommandList& command_list);
   void DrawAlphaObject(directx::device::CommandList& command_list);
   void Draw2D(directx::device::CommandList& command_list);
+  void DrawEnd();
 
   /**
    * @brief デバッグ描画
@@ -106,15 +110,18 @@ class ActorManager : public actor::IActorMediator {
    * @brief 現在のターン状況を取得する
    */
   system::Mode GetCurrentTurn() const override;
+  /**
+   * @brief 停止時間を追加する
+   */
+  virtual void AddStopTime(float time) override;
 
-  virtual void AddHitStopTime(float time) override;
+  virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) override;
 
  private:
   /**
    * @brief 消しカスの追加
    */
-  void AddFragment(std::unique_ptr<object::Fragment> fragment);
-
+  //void AddFragment(std::unique_ptr<object::Fragment> fragment);
 
  private:
   bullet::PhysicsField physics_field_;
@@ -136,12 +143,9 @@ class ActorManager : public actor::IActorMediator {
 
   actor::ActorRenderCommandList actor_render_command_list_;
 
-  //! プレイヤーを追尾し、操作で回転できるカメラへのポインタ
-  camera::LookAtTargetCamera* player_follow_lookat_camera_;
-  //! 現在使用しているカメラのポインタ
-  i32 *current_camera_;
-  //! 現在のプレイ状態のポインタ
-  system::Mode *current_mode_;
+  //ターンシステムのポインタ
+  system::TurnSystem* turn_system_;
+
   //! タイマー
   util::CountDownTimer countdown_timer_;
 

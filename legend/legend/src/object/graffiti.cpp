@@ -277,6 +277,8 @@ void Graffiti::SetInstancePosition(math::Vector3 position,
 
   instance_position_ += math::Matrix4x4::MultiplyCoord(
       pos, math::Matrix4x4::CreateRotationY(-theta));
+
+
 }
 
 }  // namespace object

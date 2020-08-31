@@ -113,6 +113,8 @@ class EnemyActor : public actor::Actor {
    */
   void UpdateStrength(const float& weak);
 
+  void CreateFireParticle(const util::Transform& transform);
+
  protected:
   //! ˆÚ“®’†‚©
   bool is_move_;
@@ -134,6 +136,10 @@ class EnemyActor : public actor::Actor {
 
   std::shared_ptr<bullet::BoundingBox> box_;
   std::shared_ptr<draw::particle::ParticleEmitter> enemy_move_particle_;
+
+  //! áŠQ•¨‚ÉÕ“Ë‚µ‚½‚©
+  bool is_hit_obstacle_;
+  util::CountDownTimer obstacle_hit_timer_;
 };
 
 }  // namespace enemy

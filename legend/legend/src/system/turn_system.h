@@ -145,6 +145,14 @@ class TurnSystem/* : public actor::IActorMediator*/ {
    * @brief 敵の移動終了時処理
    */
   bool EnemyMoveEnd();
+  /**
+   * @brief 敵の移動終了時処理
+   */
+  bool EnemyMoveProducing();
+  /**
+   * @brief ボスの移動終了時処理
+   */
+  bool BossMoveProducing();
 
   /**
    * @brief カメラの初期化

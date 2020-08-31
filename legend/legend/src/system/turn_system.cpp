@@ -168,7 +168,7 @@ bool TurnSystem::Update() {
   if (ImGui::Begin("TurnSystem")) {
     ImGui::Text("CurrntTurn : %d", current_turn_);
     if (ImGui::Button("AddTurn")) {
-      //AddCurrentTurn();
+      // AddCurrentTurn();
       current_mode_ = Mode::ENEMY_MOVE_END;
     }
   }
@@ -186,6 +186,8 @@ bool TurnSystem::Update() {
        [&]() { return PlayerSkillAfterMoved(); }},
       {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
+      {Mode::ENEMY_PRODUCTION, [&]() { return EnemyMoveProducing(); }},
+      {Mode::BOSS_PRODUCTION, [&]() { return BossMoveProducing(); }},
   };
   if (!switcher.at(current_mode_)()) {
     return false;
@@ -353,16 +355,36 @@ bool TurnSystem::EnemyMoveEnd() {
     return true;
   }
 
+  //ƒ^[ƒ“‚ÌXV
   AddCurrentTurn();
 
+  //“G‚Ì¶¬
   if (!actor_manager_.GenerateActors(current_turn_)) {
     return false;
   }
 
-  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
+  //“G‚ª‘¶Ý‚µ‚Ä‚¢‚é‚©
+  if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
+    current_mode_ = Mode::PLAYER_MOVE_READY;
+    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+    audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
+    return true;
+  }
 
+  return true;
+}
+
+bool TurnSystem::EnemyMoveProducing() {
+  if (actor_manager_.IsAllEnemeyStop()) {
+    current_mode_ = Mode::PLAYER_MOVE_READY;
+  }
+
+  return true;
+}
+
+bool TurnSystem::BossMoveProducing() {
   current_mode_ = Mode::PLAYER_MOVE_READY;
+
   return true;
 }
 

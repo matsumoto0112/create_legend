@@ -19,6 +19,8 @@ enum class Mode {
   PLAYER_SKILL_AFTER_MOVED,  //! プレイヤーの移動終了後スキル発動処理Ak
   ENEMY_MOVING,              //! 敵の移動中
   ENEMY_MOVE_END,            //! 敵の移動終了
+  ENEMY_PRODUCTION,          //! 敵の出現演出中
+  BOSS_PRODUCTION,           //! ボスの出現演出中
 };
 
 }  // namespace system

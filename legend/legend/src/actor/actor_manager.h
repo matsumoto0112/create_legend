@@ -73,6 +73,7 @@ class ActorManager : public actor::IActorMediator {
   bool IsAllEnemeyStop();
   enemy::EnemyManager* GetEnemyManager();
   void EnemyManagerUpdate();
+  bool IsBossGenerated();
 
  public:
   /**
@@ -153,7 +154,11 @@ class ActorManager : public actor::IActorMediator {
   //! タイマー
   util::CountDownTimer countdown_timer_;
 
+  //停止させる時間
   float hit_stop_time_;
+
+  //ボスが生成された後かどうか
+  bool is_boss_generated_;
 };
 
 }  // namespace actor

@@ -15,6 +15,7 @@ bool ActorManager::Init(const std::string& stage_name,
   turn_system_ = turn_system;
 
   hit_stop_time_ = 0.0f;
+  is_boss_generated_ = false;
 
   //ステージデータの拡張子は.txt
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
@@ -217,10 +218,14 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
 
     for (auto&& enemy_parameter : enemys) {
       enemy_manager_.AddEnemy(enemy_parameter);
+      turn_system_->SetTurnMode(system::Mode::ENEMY_PRODUCTION);
     }
 
     for (auto&& boss_parameter : bosses) {
       enemy_manager_.AddBoss(boss_parameter);
+      is_boss_generated_ = true;
+      turn_system_->SetTurnMode(system::Mode::ENEMY_PRODUCTION);
+      //turn_system_->SetTurnMode(system::Mode::BOSS_PRODUCTION);
     }
   }
 
@@ -250,6 +255,11 @@ enemy::EnemyManager* legend::actor::ActorManager::GetEnemyManager() {
 void legend::actor::ActorManager::EnemyManagerUpdate() {
   enemy_manager_.Update(&search_manager_);
   enemy_manager_.SetPlayer(player_->GetCollider());
+}
+
+bool legend::actor::ActorManager::IsBossGenerated()
+{
+    return is_boss_generated_;
 }
 
 std::vector<enemy::Enemy*> ActorManager::GetEnemies() {

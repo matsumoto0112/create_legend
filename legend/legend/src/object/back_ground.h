@@ -11,7 +11,19 @@
 
 namespace legend {
 namespace object {
+namespace bg_type {
+enum Enum {
+  LEFT,
+  RIGHT,
+  FORWARD,
+  BACK,
+  FLOOR,
+  // CEIL,
+  MAX
+};
+}  // namespace bg_type
 class BackGround {
+ private:
  public:
   BackGround();
   ~BackGround();
@@ -19,9 +31,10 @@ class BackGround {
   void Draw();
 
  private:
-  directx::buffer::ConstantBuffer<
-      directx::buffer::constant_buffer_structure::Transform>
-      transform_cb_;
+  std::array<directx::buffer::ConstantBuffer<
+                 directx::buffer::constant_buffer_structure::Transform>,
+             bg_type::MAX>
+      transform_cbs_;
 };
 
 }  // namespace object

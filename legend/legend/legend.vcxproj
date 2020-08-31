@@ -193,6 +193,7 @@
     <ClCompile Include="src\ui\gauge.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
     <ClCompile Include="src\ui\number.cpp" />
+    <ClCompile Include="src\ui\player_ui.cpp" />
     <ClCompile Include="src\ui\quarter_gauge.cpp" />
     <ClCompile Include="src\ui\ui_board.cpp" />
     <ClCompile Include="src\util\byte_reader.cpp" />
@@ -375,6 +376,7 @@
     <ClInclude Include="src\ui\gauge.h" />
     <ClInclude Include="src\ui\image.h" />
     <ClInclude Include="src\ui\number.h" />
+    <ClInclude Include="src\ui\player_ui.h" />
     <ClInclude Include="src\ui\quarter_gauge.h" />
     <ClInclude Include="src\ui\ui_board.h" />
     <ClInclude Include="src\ui\ui_component.h" />

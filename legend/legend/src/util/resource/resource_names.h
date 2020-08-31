@@ -31,6 +31,12 @@ constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
 constexpr name ITEM_PLANE_01 = L"item_plane_01.glb";
 constexpr name ITEM_PLANE_02 = L"item_plane_02.glb";
 constexpr name GLUE_PLANE = L"glue_plane.glb";
+constexpr name CLASSROOM_BACKWALL = L"classroom_backwall.glb";
+constexpr name CLASSROOM_CEILING = L"classroom_ceiling.glb";
+constexpr name CLASSROOM_FLOOR = L"classroom_floor.glb";
+constexpr name CLASSROOM_FORWARDWALL = L"classroom_forwardwall.glb";
+constexpr name CLASSROOM_LEFTWALL = L"classroom_leftwall.glb";
+constexpr name CLASSROOM_RIGHTWALL = L"classroom_rightwall.glb";
 }  // namespace model
 
 namespace texture {

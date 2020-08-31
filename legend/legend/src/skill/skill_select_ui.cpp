@@ -1,4 +1,4 @@
-#include "skill_select_ui.h"
+#include "src/skill/skill_select_ui.h"
 
 #include "src/game/game_device.h"
 #include "src/util/resource/resource_names.h"
@@ -24,12 +24,13 @@ SkillSelectUI::SkillSelectUI() {
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
   if (!skill_explanatory_.Init(
-          resource.GetTexture().Get(resource_name::texture::TEX),
+          resource.GetTexture().Get(
+              resource_name::texture::UI_SKILL_EXPLANATION),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル説明画像の初期化に失敗しました。");
   }
   skill_explanatory_.SetPosition(math::Vector2(960.0f, 32.0f));
-  skill_explanatory_.SetScale(math::Vector2(0.1f, 0.1f));
+  skill_explanatory_.SetScale(math::Vector2::kUnitVector);
   skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
 
   for (i32 i = 0; i < 5; i++) {
@@ -50,28 +51,14 @@ SkillSelectUI::SkillSelectUI() {
 //デストラクタ
 SkillSelectUI::~SkillSelectUI() {}
 
-void SkillSelectUI::Init() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return;
-  }
-
-  if (!command_list.Close()) {
-    return;
-  }
-  device.ExecuteCommandList({command_list});
-  device.WaitExecute();
-}
+void SkillSelectUI::Init() {}
 
 //更新
 void SkillSelectUI::Update() {}
 
 //描画
 void SkillSelectUI::Draw() {
-  legend::draw::SpriteRenderer& sprite_renderer =
+  draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
   for (auto&& sprite : skill_icons_) {
     sprite_renderer.AddDrawItems(&sprite);

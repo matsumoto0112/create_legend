@@ -28,47 +28,19 @@ bool Enemy::Init(actor::IActorMediator* mediator,
     model_ =
         resource.GetModel().Get(util::resource::resource_names::model::ENEMY);
 
-    move_type_ = (enemy::enemy_type::MoveType)(
+    enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
         game::GameDevice::GetInstance()->GetRandom().Range(
             0, enemy::enemy_type::MoveType::Move_Type_End));
-    hit_type_ = (enemy::enemy_type::HitType)(
+    enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(
         game::GameDevice::GetInstance()->GetRandom().Range(
             0, enemy::enemy_type::HitType::Hit_Type_End));
-    effect_type_ = (enemy::enemy_type::EffectType)(
+    enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
         game::GameDevice::GetInstance()->GetRandom().Range(
             0, enemy::enemy_type::EffectType::Effect_Type_End));
 
     return true;
   }
   return false;
-}
-
-//更新
-bool Enemy::Update() {
-  update_time_ =
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-
-  auto velocity = GetVelocity();
-  velocity.y = 0;
-  if (is_move_ && (velocity.Magnitude() < 0.01f)) {
-    move_end_ = true;
-    is_move_ = false;
-  }
-
-  return true;
-}
-
-//速度の設定
-void Enemy::SetVelocity(math::Vector3 velocity) {
-  // 加速度の設定
-  box_->ApplyCentralImpulse(velocity);
-  // 回転の設定
-  if (effect_type_ == enemy::enemy_type::EffectType::Rotate) {
-    auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-    angle *= (game::GameDevice::GetInstance()->GetRandom().Range(-0.3f, 0.3f));
-    box_->SetAngularVelocity(angle);
-  }
-  is_move_ = true;
 }
 
 void Enemy::OnHit(bullet::Collider* other) {

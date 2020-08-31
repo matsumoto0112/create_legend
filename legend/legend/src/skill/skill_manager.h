@@ -6,6 +6,7 @@
 #include "src/skill/skill_pencil.h"
 #include "src/skill/skill_select_ui.h"
 #include "src/skill/skill_type.h"
+#include "src/ui/player_ui.h"
 
 namespace legend {
 namespace skill {
@@ -91,6 +92,8 @@ class SkillManager {
   player::Player* player_;
   //! ŒÐ
   std::vector<SkillPaste*> pastes_;
+
+  ui::PlayerUI player_ui_;
 };
 }  // namespace skill
 }  // namespace legend

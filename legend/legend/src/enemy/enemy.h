@@ -31,14 +31,6 @@ class Enemy : public enemy::EnemyActor {
    */
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
-  /**
-   * @brief XV
-   */
-  virtual bool Update();
-  /**
-   * @brief ˆÚ“®—Ê‚Ìİ’è
-   */
-  void SetVelocity(math::Vector3 velocity);
 
   virtual void OnHit(bullet::Collider* other);
 };

@@ -316,12 +316,12 @@ bool TurnSystem::WaitEnemyMoveStart() {
 }
 
 bool TurnSystem::PlayerSkillAfterMoved() {
-  // if (player_->SkillUpdateTurnEnd()) {
-  //  return true;
-  //}
+   if (actor_manager_.GetPlayer()->SkillUpdateTurnEnd()) {
+    return true;
+  }
 
-  // auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  // audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
+   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
   current_mode_ = Mode::ENEMY_MOVING;
   return true;
@@ -339,18 +339,18 @@ bool TurnSystem::EnemyMove() {
 
 //“G‚ÌˆÚ“®I—¹Žžˆ—
 bool TurnSystem::EnemyMoveEnd() {
-  // if (player_->SkillUpdateTurnEnd()) {
-  //  return true;
-  //}
+   if (actor_manager_.GetPlayer()->SkillUpdateTurnEnd()) {
+    return true;
+  }
 
-  // AddCurrentTurn();
+   AddCurrentTurn();
 
-  // if (!actor_manager_.GenerateActors(current_turn_)) {
-  //  return false;
-  //}
+   if (!actor_manager_.GenerateActors(current_turn_)) {
+    return false;
+  }
 
-  // auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  // audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
+   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
 
   current_mode_ = Mode::PLAYER_MOVE_READY;
   return true;

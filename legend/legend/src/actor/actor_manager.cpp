@@ -145,6 +145,11 @@ void ActorManager::PlayerSkillDeactivate() {}
 
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }
 
+void ActorManager::SetStopTime(float time)
+{
+    hit_stop_time_ = time;
+}
+
 void ActorManager::AddFragment(std::unique_ptr<object::Fragment> fragment) {
   alpha_actors_.emplace_back(std::move(fragment));
 }

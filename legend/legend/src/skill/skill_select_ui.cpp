@@ -1,4 +1,4 @@
-#include "skill_select_ui.h"
+#include "src/skill/skill_select_ui.h"
 
 #include "src/game/game_device.h"
 #include "src/util/resource/resource_names.h"
@@ -24,12 +24,12 @@ SkillSelectUI::SkillSelectUI() {
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
   if (!skill_explanatory_.Init(
-          resource.GetTexture().Get(resource_name::texture::TEX),
+          resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"ÉXÉLÉãê‡ñæâÊëúÇÃèâä˙âªÇ…é∏îsÇµÇ‹ÇµÇΩÅB");
   }
   skill_explanatory_.SetPosition(math::Vector2(960.0f, 32.0f));
-  skill_explanatory_.SetScale(math::Vector2(0.1f, 0.1f));
+  skill_explanatory_.SetScale(math::Vector2::kUnitVector);
   skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
 
   for (i32 i = 0; i < 5; i++) {
@@ -71,7 +71,7 @@ void SkillSelectUI::Update() {}
 
 //ï`âÊ
 void SkillSelectUI::Draw() {
-  legend::draw::SpriteRenderer& sprite_renderer =
+  draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
   for (auto&& sprite : skill_icons_) {
     sprite_renderer.AddDrawItems(&sprite);

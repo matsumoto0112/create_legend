@@ -20,6 +20,7 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   player_ = player;
   select_ui_.Init();
   select_move_ = false;
+  player_ui_.Init();
 }
 
 //スキル取得時
@@ -33,6 +34,7 @@ void SkillManager::GetSkill(i32 skill_id) {
 void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
   skills_.push_back(skill);
   select_ui_.AddSkill(skill.get());
+  player_ui_.AddEquipmentUI(skill.get());
 }
 
 // void SkillManager::AddSkill() { select_ui_.AddSkill(); }
@@ -50,6 +52,8 @@ void SkillManager::Update() {
     SetPosition(skill, i);
     i++;
   }
+
+  player_ui_.Update();
 }
 
 //プレイヤー行動後の処理
@@ -114,6 +118,7 @@ void SkillManager::Draw() {
     skill->Draw();
   }
   select_ui_.Draw();
+  player_ui_.Draw();
 }
 
 //演出中か
@@ -137,6 +142,7 @@ void SkillManager::RemoveSkill() {
     skills_[i]->RemoveCollider();
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
+    player_ui_.RemoveEquipmentUI(i);
     i--;
     select_ui_.SelectSkillNumber(0);
   }

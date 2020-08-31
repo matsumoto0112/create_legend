@@ -64,6 +64,10 @@ bool SkillPasteStick::Init(actor::IActorMediator* mediator,
   skill_icon_texture_ =
       resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_2);
 
+  //装備用テクスチャ設定
+  equipment_texture_ =
+      resource.GetTexture().Get(resource_name::texture::UI_PLAYERFORM_SKILL_2);
+
   return true;
 }
 

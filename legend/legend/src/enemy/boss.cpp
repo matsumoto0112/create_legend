@@ -15,10 +15,7 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-Boss::Boss() : Parent(L"Boss") {
-  is_move_ = false;
-  // deceleration_x_ = deceleration_z_ = 0;
-}
+Boss::Boss() { is_move_ = false; }
 
 //デストラクタ
 Boss::~Boss() {}
@@ -26,41 +23,19 @@ Boss::~Boss() {}
 //初期化
 bool Boss::Init(actor::IActorMediator* mediator,
                 const InitializeParameter& parameter) {
-  if (!Parent::Init(mediator)) return false;
-  // if (!obb_.Initialize(device)) {
-  //  return false;
-  //}
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  if (enemy::EnemyActor::Init(mediator, parameter)) {
+    auto& resource = game::GameDevice::GetInstance()->GetResource();
+    model_ =
+        resource.GetModel().Get(util::resource::resource_names::model::BOSS);
 
-  this->transform_ = parameter.transform;
+    move_type_ = (enemy::enemy_type::MoveType::Straight);
+    hit_type_ = (enemy::enemy_type::HitType::Rush);
+    effect_type_ = (enemy::enemy_type::EffectType::Rotate);
 
-  bullet::BoundingBox::InitializeParameter params;
-  params.position = this->transform_.GetPosition();
-  params.rotation = this->transform_.GetRotation();
-  params.scale = parameter.bouding_box_length;
-  params.mass = parameter.mass;
-  params.friction = parameter.friction;
-  params.restitution = parameter.restitution;
-  box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
-  mediator_->AddCollider(box_);
-
-  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
-  transform_cb_.UpdateStaging();
-
-  model_ = resource.GetModel().Get(util::resource::resource_names::model::BOSS);
-
-  move_end_ = false;
-
-  move_type_ = (enemy::enemy_type::MoveType::Straight);
-  hit_type_ = (enemy::enemy_type::HitType::Rush);
-  effect_type_ = (enemy::enemy_type::EffectType::Rotate);
-
-  return true;
+    return true;
+  }
+  return false;
 }
-
-void Boss::Remove() { mediator_->RemoveCollider(box_); }
 
 //更新
 bool Boss::Update() {
@@ -77,11 +52,6 @@ bool Boss::Update() {
   return true;
 }
 
-void Boss::SetPosition(math::Vector3 position) {
-  transform_.SetPosition(position);
-  // collision_.SetPosition(position);
-}
-
 //速度の設定
 void Boss::SetVelocity(math::Vector3 velocity) {
   // 加速度の設定
@@ -95,95 +65,15 @@ void Boss::SetVelocity(math::Vector3 velocity) {
   is_move_ = true;
 }
 
-void Boss::SetRotation() {
-  math::Quaternion rotation = transform_.GetRotation();
-  rotation.y += GetVelocity().x;
-  transform_.SetRotation(rotation);
-}
-
-//移動に必要なパラメータを初期化
-void Boss::ResetParameter() {
-  if (GetVelocity().Magnitude() != 0.0f) return;
-
-  // deceleration_x_ = deceleration_z_ = 0;
-  is_move_ = false;
-  move_end_ = false;
-}
-
-//座標の取得
-math::Vector3 Boss::GetPosition() const { return transform_.GetPosition(); }
-
-//移動量の取得
-math::Vector3 Boss::GetVelocity() const { return box_->GetVelocity(); }
-
-math::Quaternion Boss::GetRotation() const { return transform_.GetRotation(); }
-
-float Boss::GetPower() const { return power_; }
-
-bool Boss::GetMoveEnd() const { return (!is_move_ && move_end_); }
-
-void Boss::ResetMoveEnd() { move_end_ = false; }
-
 void Boss::OnHit(bullet::Collider* other) {
+  enemy::EnemyActor::OnHit(other);
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
-    //プレイヤーに触れた
-    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
-      HitAction(other);
-      auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
-      auto trigonometric = (std::sin(30.0f * math::util::PI * s));
-      auto strength =
-          math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
-      other->ApplyCentralImpulse(strength);
-    }
     //敵に触れた
-    else if (enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+    if (enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
       HitAction(other);
     }
   }
-  //糊に触れた
-  {
-    skill::SkillPaste* paste =
-        dynamic_cast<skill::SkillPaste*>(other->GetOwner());
-    if (paste) {
-      //現状、止まるように
-      GetCollider()->ApplyCentralImpulse(-0.1f * GetVelocity());
-    }
-  }
 }
-
-void Boss::HitAction(bullet::Collider* other) {
-  auto actor = other->GetOwner();
-  const math::Vector3 position = transform_.GetPosition();
-  const math::Vector3 other_position = actor->GetTransform().GetPosition();
-  const math::Vector3 velocity = GetVelocity();
-  const math::Vector3 direction =
-      ((other_position - position).Normalized() + velocity.Normalized())
-          .Normalized();
-
-  auto add_power = ((strength_ + velocity.Magnitude()) / 2.0f);
-  switch (hit_type_) {
-      // 衝突時、停止する処理
-    case enemy::enemy_type::HitType::Stop:
-      GetCollider()->ApplyCentralImpulse(velocity * -1.0f);
-      other->ApplyCentralImpulse(direction * add_power);
-      break;
-      // 衝突時、突進する処理
-    case enemy::enemy_type::HitType::Rush:
-      other->ApplyCentralImpulse(direction * add_power);
-      break;
-      // 衝突時、跳弾する処理
-    case enemy::enemy_type::HitType::Bound:
-      GetCollider()->ApplyCentralImpulse(velocity * -2.0f);
-      other->ApplyCentralImpulse(direction * add_power);
-      break;
-  }
-}
-
-void Boss::UpdateStrength(const float& weak) {
-  strength_ += weak;
-  if (strength_ <= min_strength_) strength_ = min_strength_;
-}
-
 }  // namespace enemy
 }  // namespace legend

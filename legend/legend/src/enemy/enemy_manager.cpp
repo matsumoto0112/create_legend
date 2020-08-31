@@ -114,27 +114,23 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   }
 }
 
-void EnemyManager::Add(const Enemy::InitializeParameter& paramater) {
+void EnemyManager::AddEnemy(const EnemyActor::InitializeParameter& paramater) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
   }
 
   auto enemy = std::make_unique<Enemy>();
   enemy->Init(actor_mediator_, paramater);
-  // physics_field.AddEnemy(enemy->GetCollisionRef());
-
   enemys_.emplace_back(std::move(enemy));
-  // SetPosition(enemys_[enemys_.size() - 1].get());
 }
 
-void EnemyManager::Add(const Boss::InitializeParameter& paramater) {
+void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
   if (boss_ != nullptr || is_game_clear_) {
     return;
   }
 
   boss_ = std::make_unique<Boss>();
   boss_->Init(actor_mediator_, paramater);
-  // physics_field.AddEnemy(boss_->GetCollisionRef());
 }
 
 void EnemyManager::DestroyUpdate() {

@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\enemy\enemy_actor.cpp" />
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\bullet\bounding_box.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="assets\shaders\gpu_particle\fire_particle.h" />
     <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
     <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />
+    <ClInclude Include="src\enemy\enemy_actor.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
     <ClInclude Include="src\bullet\bounding_sphere.h" />
@@ -234,6 +236,7 @@
     <ClInclude Include="src\enemy\boss.h" />
     <ClInclude Include="src\camera\camera.h" />
     <ClInclude Include="src\camera\follow_camera.h" />
+    <ClInclude Include="src\enemy\enemy_ai.h" />
     <ClInclude Include="src\enemy\enemy_type.h" />
     <ClInclude Include="src\player\player_move_direction_model.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />

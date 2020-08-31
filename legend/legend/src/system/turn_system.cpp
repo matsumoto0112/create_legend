@@ -720,11 +720,11 @@ bool legend::system::TurnSystem::GenerateActors() {  //ステージデータの読み込み
     }
 
     for (auto&& enemy_parameter : enemys) {
-      enemy_manager_.Add(enemy_parameter);
+      enemy_manager_.AddEnemy(enemy_parameter);
     }
 
     for (auto&& boss_parameter : bosses) {
-      enemy_manager_.Add(boss_parameter);
+      enemy_manager_.AddBoss(boss_parameter);
     }
   }
 

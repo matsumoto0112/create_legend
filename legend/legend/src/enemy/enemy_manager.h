@@ -5,6 +5,7 @@
 
 #include "src/actor/actor_mediator.h"
 #include "src/actor/actor_render_command_list.h"
+#include "src/enemy/enemy_actor.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/player/player.h"
@@ -45,11 +46,11 @@ class EnemyManager {
   /**
    * @brief “G‚ğ’Ç‰Á
    */
-  void Add(const Enemy::InitializeParameter& paramater);
+  void AddEnemy(const EnemyActor::InitializeParameter& paramater);
   /**
    * @brief ƒ{ƒX‚ğ’Ç‰Á
    */
-  void Add(const Boss::InitializeParameter& paramater);
+  void AddBoss(const EnemyActor::InitializeParameter& paramater);
   /**
    * @brief íœˆ—
    */

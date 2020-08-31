@@ -3,6 +3,7 @@
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/draw/particle/particle_factory.h"
+#include "src/enemy/enemy_actor.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
@@ -353,35 +354,16 @@ void Player::OnHit(bullet::Collider* other) {
   if (turn_mode == system::Mode::PLAYER_MOVING) {
     //敵に触れた
     {
-      enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner());
-      if (e) {
+      enemy::EnemyActor* ea =
+          dynamic_cast<enemy::EnemyActor*>(other->GetOwner());
+      if (ea) {
         const math::Vector3 player_position = transform_.GetPosition();
-        const math::Vector3 enemy_position = e->GetTransform().GetPosition();
+        const math::Vector3 enemy_position = ea->GetTransform().GetPosition();
         const math::Vector3 direction =
             (enemy_position - player_position).Normalized();
 
-        e->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
+        ea->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
                                               strength_);
-        std::wstring file;
-        //ヒット時の速度の大きさでSE音を適用
-        if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
-          file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
-        } else {
-          file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
-        }
-        audio.Start(file, 1.0f);
-      }
-    }
-    //ボスに触れた
-    {
-      enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner());
-      if (b) {
-        const math::Vector3 player_position = transform_.GetPosition();
-        const math::Vector3 boss_position = b->GetTransform().GetPosition();
-        const math::Vector3 direction =
-            (boss_position - player_position).Normalized();
-
-        b->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f);
         std::wstring file;
         //ヒット時の速度の大きさでSE音を適用
         if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {

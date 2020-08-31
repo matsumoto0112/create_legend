@@ -112,6 +112,7 @@ class TurnSystem/* : public actor::IActorMediator*/ {
    */
   void SetCameraMode(camera_mode::Enum mode);
   camera::LookAtTargetCamera* GetPlayerFollowLookatCamera();
+  Mode GetCurrentMode();
 
  private:
   /**

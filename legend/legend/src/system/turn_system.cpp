@@ -522,6 +522,10 @@ void TurnSystem::SetCameraMode(camera_mode::Enum mode) {
 camera::LookAtTargetCamera* TurnSystem::GetPlayerFollowLookatCamera() {
   return player_follow_lookat_camera_;
 }
+Mode TurnSystem::GetCurrentMode()
+{
+    return current_mode_;
+}
 //ƒ^[ƒ“”‚Ì‘‰Á
 void TurnSystem::AddCurrentTurn() { current_turn_++; }
 

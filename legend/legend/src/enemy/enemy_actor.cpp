@@ -6,6 +6,7 @@
 #include "src/draw/particle/particle_factory.h"
 #include "src/game/game_device.h"
 #include "src/object/graffiti.h"
+#include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/util/path.h"
 #include "src/util/resource/pixel_shader.h"
@@ -86,6 +87,7 @@ bool EnemyActor::Update() {
   };
 
   ParticleUpdate();
+  obstacle_hit_timer_.Update();
 
   return true;
 }
@@ -169,6 +171,7 @@ void EnemyActor::OnHit(bullet::Collider* other) {
       auto strength =
           math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
       other->ApplyCentralImpulse(strength);
+      CreateFireParticle(GetTransform());
     }
   }
   //å–Ç…êGÇÍÇΩ
@@ -178,6 +181,18 @@ void EnemyActor::OnHit(bullet::Collider* other) {
     if (paste) {
       //åªèÛÅAé~Ç‹ÇÈÇÊÇ§Ç…
       GetCollider()->ApplyCentralImpulse(-0.1f * GetVelocity());
+    }
+  }
+  //è·äQï®Ç…êGÇÍÇΩ
+  {
+    object::Obstacle* obstacle =
+        dynamic_cast<object::Obstacle*>(other->GetOwner());
+    if (obstacle) {
+      if (!is_hit_obstacle_) {
+        obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
+        is_hit_obstacle_ = true;
+        CreateFireParticle(GetTransform());
+      }
     }
   }
 }
@@ -215,5 +230,9 @@ void EnemyActor::UpdateStrength(const float& weak) {
   if (strength_ <= min_strength_) strength_ = min_strength_;
 }
 
+void EnemyActor::CreateFireParticle(const util::Transform& transform) {
+  auto fire = draw::particle::particle_factory::CreateFireParticle();
+  fire->SetTransform(transform);
+}
 }  // namespace enemy
 }  // namespace legend

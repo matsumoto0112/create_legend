@@ -381,6 +381,7 @@ void Player::OnHit(bullet::Collider* other) {
           }
           audio.Start(file, 1.0f);
         }
+        CreateFireParticle(GetTransform());
       }
     }
     {

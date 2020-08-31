@@ -24,7 +24,8 @@ SkillSelectUI::SkillSelectUI() {
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
   if (!skill_explanatory_.Init(
-          resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION),
+          resource.GetTexture().Get(
+              resource_name::texture::UI_SKILL_EXPLANATION),
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"スキル説明画像の初期化に失敗しました。");
   }
@@ -50,21 +51,7 @@ SkillSelectUI::SkillSelectUI() {
 //デストラクタ
 SkillSelectUI::~SkillSelectUI() {}
 
-void SkillSelectUI::Init() {
-  auto& device = game::GameDevice::GetInstance()->GetDevice();
-
-  directx::device::CommandList command_list;
-  if (!command_list.Init(
-          device, D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)) {
-    return;
-  }
-
-  if (!command_list.Close()) {
-    return;
-  }
-  device.ExecuteCommandList({command_list});
-  device.WaitExecute();
-}
+void SkillSelectUI::Init() {}
 
 //更新
 void SkillSelectUI::Update() {}

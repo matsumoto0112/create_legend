@@ -378,6 +378,7 @@ void Player::OnHit(bullet::Collider* other) {
             file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
           } else {
             file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
+            mediator_->SetStopTime(0.25f);
           }
           audio.Start(file, 1.0f);
         }

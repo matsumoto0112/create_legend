@@ -145,11 +145,6 @@ void ActorManager::PlayerSkillDeactivate() {}
 
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }
 
-void ActorManager::SetStopTime(float time)
-{
-    hit_stop_time_ = time;
-}
-
 void ActorManager::AddFragment(std::unique_ptr<object::Fragment> fragment) {
   alpha_actors_.emplace_back(std::move(fragment));
 }
@@ -292,9 +287,11 @@ float ActorManager::GetMainCameraThetaAngle() const {
 
 system::Mode ActorManager::GetCurrentTurn() const { return system::Mode(); }
 
-void legend::actor::ActorManager::AddStopTime(float time) {
+void ActorManager::AddStopTime(float time) {
   hit_stop_time_ += time;
 }
+
+void ActorManager::SetStopTime(float time) { hit_stop_time_ = time; }
 
 }  // namespace actor
 }  // namespace legend

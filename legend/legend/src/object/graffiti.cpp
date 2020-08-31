@@ -126,6 +126,11 @@ bool Graffiti::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  if (is_hit_) {
+      mediator_->AddFragment(InstanceFragment());
+      is_hit_ = false;
+  }
+
   if (is_erase_) {
     if (delete_time_.Update()) {
       if (box_) {
@@ -140,13 +145,14 @@ bool Graffiti::Update() {
 }
 
 //•`‰æ
-void Graffiti::Draw(directx::device::CommandList& command_list) {
+void Graffiti::Draw() {
   if (is_erase_) return;
 
-  UpdateTexture(command_list);
-
   auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
+
+  UpdateTexture(command_list);
 
   resource.GetPipeline()
       .Get(util::resource::resource_names::pipeline::GRAFFITI)
@@ -276,6 +282,8 @@ void Graffiti::SetInstancePosition(math::Vector3 position,
 
   instance_position_ += math::Matrix4x4::MultiplyCoord(
       pos, math::Matrix4x4::CreateRotationY(-theta));
+
+
 }
 
 }  // namespace object

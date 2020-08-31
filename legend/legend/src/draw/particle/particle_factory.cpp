@@ -28,10 +28,6 @@ std::shared_ptr<draw::particle::ParticleEmitter> CreatePlayerMoveParticle() {
 
   std::vector<shaders::gpu_particle::player_move_particle::Particle> particles(
       PARTICLE_MAX_NUM);
-  // for (u32 i = 0; i < PARTICLE_MAX_NUM; i++) {
-  //  //particles[i].lifetime =
-  //  //    game::GameDevice::GetInstance()->GetRandom().Range(10.0f, 30.0f);
-  //}
 
   auto SetVertexShader = [&](directx::shader::GraphicsPipelineStateDesc& desc) {
     constexpr auto name =

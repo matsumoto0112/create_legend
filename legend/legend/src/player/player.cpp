@@ -242,7 +242,7 @@ void Player::CheckImpulse() {
     box_->ApplyCentralImpulse(vel);
     player_move_particle_->ResetParticle();
     player_move_particle_->SetEmitEnable(true);
-
+    input_velocity_ = math::Vector3::kZeroVector;
     mediator_->PlayerMoveStartEvent();
     audio.Start(resource_name::audio::PLAYER_SNAP, 0.8f);
   }

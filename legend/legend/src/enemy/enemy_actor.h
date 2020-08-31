@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/enemy/enemy_ai.h"
 #include "src/enemy/enemy_type.h"
 #include "src/util/transform.h"
 
@@ -89,6 +90,10 @@ class EnemyActor : public actor::Actor {
    */
   float GetPower() const;
   /**
+   * @brief 移動に加える力の取得
+   */
+  float GetStrength() const;
+  /**
    * @brief 移動終了判定の取得
    */
   bool GetMoveEnd() const;
@@ -97,7 +102,7 @@ class EnemyActor : public actor::Actor {
    */
   void ResetMoveEnd();
 
-  enemy::enemy_type::MoveType GetMoveType() { return move_type_; };
+  enemy::enemy_type::MoveType GetMoveType() { return enemy_ai_.move_type_; };
   bullet::BoundingBox* GetCollider() const { return box_.get(); }
 
   virtual void OnHit(bullet::Collider* other);
@@ -124,12 +129,7 @@ class EnemyActor : public actor::Actor {
   //! 弱体化下限
   float min_strength_;
 
-  //! 移動タイプ
-  enemy::enemy_type::MoveType move_type_;
-  //! 衝突タイプ
-  enemy::enemy_type::HitType hit_type_;
-  //! 効果タイプ
-  enemy::enemy_type::EffectType effect_type_;
+  enemy::EnemyAI enemy_ai_;
 
   std::shared_ptr<bullet::BoundingBox> box_;
 };

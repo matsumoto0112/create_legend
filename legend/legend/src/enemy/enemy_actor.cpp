@@ -14,17 +14,14 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-EnemyActor::EnemyActor()
-    : Parent(L"EnemyActor") {
-  is_move_ = false;
-}
+EnemyActor::EnemyActor() : Parent(L"EnemyActor") { is_move_ = false; }
 
 //デストラクタ
 EnemyActor::~EnemyActor() {}
 
 //初期化
 bool EnemyActor::Init(actor::IActorMediator* mediator,
-                 const InitializeParameter& parameter) {
+                      const InitializeParameter& parameter) {
   if (!Parent::Init(mediator)) {
     return false;
   }
@@ -95,14 +92,12 @@ void EnemyActor::SetPosition(math::Vector3 position) {
 
 //速度の設定
 void EnemyActor::SetVelocity(math::Vector3 velocity) {
-  // 加速度の設定
-  box_->ApplyCentralImpulse(velocity);
+  auto ai_type = enemy::EnemyAIType::None;
   // 回転の設定
-  if (effect_type_ == enemy::enemy_type::EffectType::Rotate) {
-    auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-    angle *= (game::GameDevice::GetInstance()->GetRandom().Range(-0.5f, 0.5f));
-    box_->SetAngularVelocity(angle);
+  if (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate) {
+    ai_type = enemy::EnemyAIType::Enemy_Rotate;
   }
+  enemy_ai_.Action(ai_type, velocity, box_.get());
   is_move_ = true;
 }
 
@@ -134,6 +129,8 @@ math::Quaternion EnemyActor::GetRotation() const {
 }
 
 float EnemyActor::GetPower() const { return power_; }
+
+float EnemyActor::GetStrength() const { return strength_; }
 
 bool EnemyActor::GetMoveEnd() const { return (!is_move_ && move_end_); }
 
@@ -173,7 +170,7 @@ void EnemyActor::HitAction(bullet::Collider* other) {
           .Normalized();
 
   auto add_power = ((strength_ + velocity.Magnitude()) / 2.0f);
-  switch (hit_type_) {
+  switch (enemy_ai_.hit_type_) {
       // 衝突時、停止する処理
     case enemy::enemy_type::HitType::Stop:
       GetCollider()->ApplyCentralImpulse(velocity * -1.0f);

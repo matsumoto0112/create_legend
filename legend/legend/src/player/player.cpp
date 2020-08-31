@@ -3,9 +3,9 @@
 #include "src/bullet/bullet_helper.h"
 #include "src/directx/shader/shader_register_id.h"
 #include "src/draw/particle/particle_factory.h"
-#include "src/enemy/enemy_actor.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
+#include "src/enemy/enemy_actor.h"
 #include "src/game/game_device.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"
@@ -363,15 +363,24 @@ void Player::OnHit(bullet::Collider* other) {
             (enemy_position - player_position).Normalized();
 
         ea->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
-                                              strength_);
-        std::wstring file;
+                                               strength_);
+
+        auto s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
+        auto trigonometric = (std::sin(30.0f * math::util::PI * s));
+        auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
+                        trigonometric;
+        other->ApplyCentralImpulse(addPower);
+
         //ヒット時の速度の大きさでSE音を適用
-        if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
-          file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
-        } else {
-          file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
+        {
+          std::wstring file;
+          if (GetCollider()->GetVelocity().Magnitude() < 25.0f) {
+            file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
+          } else {
+            file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
+          }
+          audio.Start(file, 1.0f);
         }
-        audio.Start(file, 1.0f);
       }
     }
     {

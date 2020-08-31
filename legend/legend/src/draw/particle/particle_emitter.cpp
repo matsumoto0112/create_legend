@@ -172,6 +172,9 @@ void ParticleEmitter::Render(
   graphics_pipeline_state_.SetCommandList(graphics_command_list);
   graphics_command_list.GetCommandList()->IASetVertexBuffers(
       0, 1, &vertex_buffer_view_);
+  graphics_command_list.GetCommandList()->IASetPrimitiveTopology(
+      D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+
   graphics_command_list.GetCommandList()->DrawInstanced(particle_max_num_, 1, 0,
                                                         0);
   graphics_command_list.GetCommandList()->ResourceBarrier(

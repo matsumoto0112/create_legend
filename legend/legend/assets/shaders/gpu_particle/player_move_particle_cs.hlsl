@@ -67,7 +67,7 @@ void ResetParticle(uint addr, uint index) {
   const float u = (float)index / AddrMax();
   uint seed = GetSeed(addr);
 
-  const float lifetime = RandomRange(0.5, 1.0, u, seed++);
+  const float lifetime = RandomRange(-1.0, 1.0, u, seed++);
   SetLifeTime(addr, lifetime);
 
   const float px = RandomRange(-1.0, 1.0, u, seed++);

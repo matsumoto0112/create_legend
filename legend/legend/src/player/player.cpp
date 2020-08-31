@@ -139,7 +139,6 @@ bool Player::Update() {
   };
   UpdateMoveDirectionModel();
   auto ParticleUpdate = [&]() {
-    // const math::Vector3 MOVE_PARTICLE_OFFSET{ 0.0f, -0.75f, -3.0f };
     const math::Vector3 MOVE_PARTICLE_OFFSET = GetVelocity().Normalized() * -3;
     const math::Vector3 move_particle_position =
         transform_.GetPosition() + MOVE_PARTICLE_OFFSET;
@@ -147,7 +146,8 @@ bool Player::Update() {
         move_particle_position);
     const math::Vector3 velocity = GetVelocity();
     const math::Vector3 velocity_xz{velocity.x, 0.0f, velocity.z};
-    const bool emit_enable = velocity_xz.Magnitude() > 0.2f;
+    const bool emit_enable = is_move_ ? velocity_xz.Magnitude() > 0.6f
+                                      : math::util::Abs(velocity.y) > 1.0f;
     player_move_particle_->SetEmitEnable(emit_enable);
   };
 

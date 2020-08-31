@@ -133,6 +133,7 @@
     <ClCompile Include="src\skill\skill_paste.cpp" />
     <ClCompile Include="src\player\player_move_direction_model.cpp" />
     <ClCompile Include="src\draw\particle\particle_factory.cpp" />
+    <ClCompile Include="src\object\back_ground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -317,6 +318,7 @@
     <ClInclude Include="src\skill\skill_paste.h" />
     <ClInclude Include="src\player\player_move_direction_model.h" />
     <ClInclude Include="assets\shaders\gpu_particle\fire_particle.h" />
+    <ClInclude Include="src\object\back_ground.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -7,6 +7,7 @@
  */
 
 #include "src/actor/actor.h"
+#include "src/object/back_ground.h"
 
 namespace legend {
 namespace actor {
@@ -23,6 +24,7 @@ class ActorRenderCommandList {
 
  private:
   std::vector<Actor*> actor_list_;
+  object::BackGround back_ground_;
 };
 
 }  // namespace actor

@@ -6,7 +6,7 @@
 
 namespace legend {
 namespace actor {
-ActorRenderCommandList::ActorRenderCommandList() {}
+ActorRenderCommandList::ActorRenderCommandList() { back_ground_.Init(); }
 
 ActorRenderCommandList::~ActorRenderCommandList() {}
 
@@ -35,6 +35,7 @@ void ActorRenderCommandList::ShadowPass() {
 }
 
 void ActorRenderCommandList::RenderPass() {
+  back_ground_.Draw();
   for (auto&& a : actor_list_) {
     a->Draw();
   }

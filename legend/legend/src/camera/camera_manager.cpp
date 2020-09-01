@@ -24,6 +24,7 @@ bool CameraManager::Init(
     actor::IActorMediator* mediator,
     const std::vector<stage_generate::CameraGenerateInfo>& infos) {
   actor_mediator_ = mediator;
+  type_ = Type::Type_C;
 
   const math::IntVector2 screen_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
@@ -98,9 +99,9 @@ void CameraManager::UpdateCamera() {
       math::Vector3(player_position.x, birds_eye_view_camera_->GetPosition().y,
                     player_position.z));
 
-  if (input.GetKeyboard()->GetKeyDown(input::key_code::C)) {
-    type_ = static_cast<Type>((type_ + 1) % Type::MAX);
-  }
+  // if (input.GetKeyboard()->GetKeyDown(input::key_code::C)) {
+  //  type_ = static_cast<Type>((type_ + 1) % Type::MAX);
+  //}
 }
 
 void CameraManager::SetCameraMode(camera_mode::Enum camera_mode) {

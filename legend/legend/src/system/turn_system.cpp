@@ -428,7 +428,7 @@ void TurnSystem::Draw() {
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   actor_manager_.DrawAlphaObject(command_list);
   actor_manager_.Draw2D(command_list);

@@ -64,10 +64,9 @@ bool PhysicsField::Update() {
   float delta_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
-  //テスト用
-  // for (auto&& collider : colliders_) {
-  //    collider->SetAngularVelocity(btVector3(0, 0, 0));
-  //}
+  for (auto&& col : colliders_) {
+      col->Update();
+  }
 
   if (world_) {
     world_->stepSimulation(delta_time, 1);
@@ -76,7 +75,6 @@ bool PhysicsField::Update() {
   for (auto&& col : colliders_) {
     col->UpdateOwnerTransform();
   }
-  // world_->rayTest(btVector3(0, 15, 0), btVector3(0, -5, 0), )
 
   return true;
 }

@@ -35,7 +35,10 @@ BoundingBox::~BoundingBox() {
   }
 }
 
-bool BoundingBox::Update() { return true; }
+bool BoundingBox::Update() {
+  Collider::Update();
+  return true;
+}
 void BoundingBox::SetScale(math::Vector3 scale) {
   //—§•û‘Ì‚Éİ’è
   shape_ = std::make_shared<btBoxShape>(helper::TobtVector3(scale));

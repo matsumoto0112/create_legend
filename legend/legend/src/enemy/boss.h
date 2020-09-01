@@ -2,10 +2,10 @@
 #define LEGEND_ENEMY_BOSS_H_
 
 //#include "src/actor/actor.h"
-#include "src/enemy/enemy_actor.h"
 #include "src/bullet/bounding_box.h"
-#include "src/util/transform.h"
+#include "src/enemy/enemy_actor.h"
 #include "src/enemy/enemy_type.h"
+#include "src/util/transform.h"
 
 namespace legend {
 namespace enemy {
@@ -31,12 +31,18 @@ class Boss : public enemy::EnemyActor {
    */
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
+  virtual bool Update();
   /**
    * @brief à⁄ìÆó ÇÃê›íË
    */
   void SetVelocity(math::Vector3 velocity);
 
   virtual void OnHit(bullet::Collider* other);
+
+ private:
+  std::unique_ptr < std::function<bool()>> special_action_ = {};
+  float rotate_speed_ = 10.0f;
+  bool is_rotate_ = false;
 };
 
 }  // namespace enemy

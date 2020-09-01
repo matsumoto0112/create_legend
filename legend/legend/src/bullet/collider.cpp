@@ -53,6 +53,8 @@ struct MyCollisionCallback : public btCollisionWorld::ContactResultCallback {
                             : colObj0Wrap->getCollisionObject();
     ContactPoints.push_back(ct_point);
 
+    
+
     return 0;  //ñﬂÇËílÇ…à”ñ°Ç»ÇµÅ@åƒÇ‘ë§Ç™égÇ¡ÇƒÇ¢Ç»Ç¢
   }
 };
@@ -69,7 +71,10 @@ Collider::~Collider() {
     rigid_body_->setCollisionShape(nullptr);
   }
 }
-bool Collider::Update() { return true; }
+bool Collider::Update() {
+  hit_positions_.clear();
+  return true;
+}
 
 void Collider::InitBox(const BoxInitializeParameter& parameter) {
   //óßï˚ëÃÇ…ê›íË
@@ -162,6 +167,8 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
   for (auto&& b : ct_points) {
     Collider* other = static_cast<Collider*>(b.pHitObj->getUserPointer());
     hit_object_list.emplace(other);
+
+    hit_positions_.emplace(other, b.HitPos);
   }
 
   for (auto&& a : hit_object_list) {
@@ -195,6 +202,12 @@ void Collider::OnHit(Collider* other) {
 int Collider::GetFlags() const { return rigid_body_->getCollisionFlags(); }
 
 void Collider::SetFlags(int flags) { rigid_body_->setCollisionFlags(flags); }
+
+std::map<Collider*, btVector3> Collider::GetHitPositions()
+{
+    return hit_positions_;
+}
+
 
 }  // namespace bullet
 }  // namespace legend

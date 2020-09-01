@@ -63,6 +63,14 @@ class Collider : public btActionInterface {
    */
   math::Vector3 GetAngularVelocity();
   /**
+   * @brief À•W‚Ìæ“¾
+   */
+  math::Vector3 GetPosition();
+  /**
+   * @brief À•W‚Ìæ“¾
+   */
+  math::Quaternion GetQuaternion();
+  /**
    * @brief ‰ñ“]ˆÚ“®—Ê‚Ìw’è
    */
   void SetAngularVelocity(const math::Vector3& velocity);

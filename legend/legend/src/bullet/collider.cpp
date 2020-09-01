@@ -148,6 +148,16 @@ math::Vector3 Collider::GetAngularVelocity() {
   return math::Vector3::kZeroVector;
 }
 
+math::Vector3 Collider::GetPosition()
+{
+    return helper::ToVector3(rigid_body_->getWorldTransform().getOrigin());
+}
+
+math::Quaternion Collider::GetQuaternion()
+{
+    return helper::ToQuaternion(rigid_body_->getWorldTransform().getRotation());
+}
+
 void Collider::SetAngularVelocity(const math::Vector3& velocity) {
   if (rigid_body_ == nullptr) {
     return;

@@ -18,15 +18,12 @@
     <ClCompile Include="src\libs\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\audio\audio_source.cpp" />
-    <ClCompile Include="src\main_hiraoka.cpp" />
-    <ClCompile Include="src\main_matsumoto.cpp" />
     <ClCompile Include="src\input\keyboard.cpp" />
     <ClCompile Include="src\input\mouse.cpp" />
     <ClCompile Include="src\util\loader\texture_loader.cpp" />
     <ClCompile Include="src\util\loader\glb_loader.cpp" />
     <ClCompile Include="src\game\game_device.cpp" />
     <ClCompile Include="src\audio\audio_manager.cpp" />
-    <ClCompile Include="src\main_murayama.cpp" />
     <ClCompile Include="src\input\game_pad.cpp" />
     <ClCompile Include="src\input\input_manager.cpp" />
     <ClCompile Include="src\math\vector_4.cpp" />
@@ -326,6 +323,7 @@
     <ClInclude Include="src\enemy\enemy_actor.h" />
     <ClInclude Include="src\enemy\enemy_ai.h" />
     <ClInclude Include="src\ui\player_ui.h" />
+    <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

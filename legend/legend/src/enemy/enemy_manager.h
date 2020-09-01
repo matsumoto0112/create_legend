@@ -74,18 +74,10 @@ class EnemyManager {
    * @brief 最後の敵を取得
    */
   Enemy* GetLastEnemy() const;
-  ///**
-  // * @brief obbの座標を基に座標更新
-  // */
-  // void SetPosition(system::PhysicsField& physics_field);
   /**
    * @brief 敵の数を取得
    */
   i32 GetEnemiesSize() const;
-  ///**
-  // * @brief obbの速度を基に速度更新
-  // */
-  // void SetVelocity(system::PhysicsField& physics_field);
   /**
    * @brief 敵の行動を初期化
    */
@@ -98,6 +90,10 @@ class EnemyManager {
    * @brief 最後の敵の移動終了判定の取得
    */
   bool LastEnemyMoveEnd() const;
+  /**
+   * @brief ボスの取得
+   */
+  enemy::Boss* GetBoss() const { return boss_.get(); };
   /**
    * @brief 最後の敵の移動終了判定の取得
    */

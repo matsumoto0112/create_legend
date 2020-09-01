@@ -15,7 +15,12 @@ namespace search {
 
 SearchManager::SearchManager() {}
 
-SearchManager::~SearchManager() {}
+SearchManager::~SearchManager() {
+  auto searchCount = search_list_.size();
+  for (i32 i = 0; i < searchCount; i++) {
+    search_list_.erase(search_list_.begin());
+  }
+}
 
 void SearchManager::Initialize(actor::IActorMediator* mediator) {
   mediator_ = mediator;

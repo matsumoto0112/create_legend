@@ -37,6 +37,10 @@ bool Enemy::Init(actor::IActorMediator* mediator,
     enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
         game::GameDevice::GetInstance()->GetRandom().Range(
             0, enemy::enemy_type::EffectType::Effect_Type_End));
+    enemy_ai_.ai_type_ =
+        (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate)
+            ? enemy::EnemyAIType::Enemy_Rotate
+            : enemy::EnemyAIType::None;
 
     return true;
   }

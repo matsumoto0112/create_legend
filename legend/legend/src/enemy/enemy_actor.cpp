@@ -16,7 +16,10 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-EnemyActor::EnemyActor() : Parent(L"EnemyActor") { is_move_ = false; }
+EnemyActor::EnemyActor() : Parent(L"EnemyActor") { 
+	is_move_ = false;
+  enemy_ai_.Init();
+}
 
 //デストラクタ
 EnemyActor::~EnemyActor() {}
@@ -69,7 +72,9 @@ bool EnemyActor::Update() {
 
   auto velocity = GetVelocity();
   velocity.y = 0;
-  if (is_move_ && (velocity.Magnitude() < 0.01f)) {
+  auto angluar = box_->GetAngularVelocity();
+  if (is_move_ && (velocity.Magnitude() < 0.01f) &&
+      (angluar.Magnitude() < 0.01f)) {
     move_end_ = true;
     is_move_ = false;
   }
@@ -116,12 +121,7 @@ void EnemyActor::SetPosition(math::Vector3 position) {
 
 //速度の設定
 void EnemyActor::SetVelocity(math::Vector3 velocity) {
-  auto ai_type = enemy::EnemyAIType::None;
-  // 回転の設定
-  if (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate) {
-    ai_type = enemy::EnemyAIType::Enemy_Rotate;
-  }
-  enemy_ai_.Action(ai_type, velocity, box_.get());
+  enemy_ai_.Action(velocity, box_.get());
   is_move_ = true;
 }
 
@@ -172,8 +172,8 @@ void EnemyActor::OnHit(bullet::Collider* other) {
           math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
       MY_LOG(L"%f", s);
       other->ApplyCentralImpulse(strength);
-      CreateFireParticle(bullet::helper::ToVector3(
-          GetCollider()->GetHitPositions().at(other)));
+      CreateFireParticle(
+          GetCollider()->GetHitPositions().at(other));
     }
   }
   //糊に触れた
@@ -193,8 +193,8 @@ void EnemyActor::OnHit(bullet::Collider* other) {
       if (!is_hit_obstacle_) {
         obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
         is_hit_obstacle_ = true;
-        CreateFireParticle(bullet::helper::ToVector3(
-            GetCollider()->GetHitPositions().at(other)));
+        CreateFireParticle(
+            GetCollider()->GetHitPositions().at(other));
       }
     }
   }

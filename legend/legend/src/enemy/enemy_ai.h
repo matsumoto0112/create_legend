@@ -11,22 +11,40 @@ namespace enemy {
 enum EnemyAIType : i32 {
   None,
   Enemy_Rotate,
-  Boss_Rotate,
-  // Forword,
+  Boss_Rotate_Stand,
+  Boss_Rotate_Move,
 };
 
 struct EnemyAI {
   //! 移動タイプ
-  enemy::enemy_type::MoveType move_type_;
+  enemy_type::MoveType move_type_;
   //! 衝突タイプ
-  enemy::enemy_type::HitType hit_type_;
+  enemy_type::HitType hit_type_;
   //! 効果タイプ
-  enemy::enemy_type::EffectType effect_type_;
+  enemy_type::EffectType effect_type_;
+
+  EnemyAIType ai_type_;
 
  public:
-  void Action(EnemyAIType ai_type, math::Vector3 velocity, bullet::BoundingBox* box) {
-    auto value = enemy_ai_[ai_type];
+  void Init() {
+    move_type_ = enemy_type::MoveType::Detour;
+    hit_type_ = enemy_type::HitType::Rush;
+    effect_type_ = enemy_type::EffectType::None;
+
+	ai_type_ = EnemyAIType::None;
+  }
+
+  void Action(math::Vector3 velocity, bullet::BoundingBox* box) {
+    auto value = enemy_ai_[ai_type_];
     value(velocity, box);
+    switch (ai_type_) {
+      case EnemyAIType::Boss_Rotate_Stand:
+        ai_type_ = EnemyAIType::Boss_Rotate_Move;
+        break;
+      case EnemyAIType::Boss_Rotate_Move:
+        ai_type_ = EnemyAIType::Boss_Rotate_Stand;
+        break;
+    }
   }
 
  private:
@@ -48,7 +66,13 @@ struct EnemyAI {
                  -0.3f, 0.3f));
              box->SetAngularVelocity(angle);
            }},
-          {EnemyAIType::Boss_Rotate,
+          {EnemyAIType::Boss_Rotate_Stand,
+           [&](math::Vector3 velocity, bullet::BoundingBox* box) {
+             //// 回転の設定
+             //auto angle = math::Vector3::kUpVector * velocity.Magnitude();
+             //box->SetAngularVelocity(angle);
+           }},
+          {EnemyAIType::Boss_Rotate_Move,
            [&](math::Vector3 velocity, bullet::BoundingBox* box) {
              // 加速度の設定
              box->ApplyCentralImpulse(velocity);

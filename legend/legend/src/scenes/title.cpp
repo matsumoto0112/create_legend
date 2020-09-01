@@ -129,16 +129,16 @@ bool Title::Update() {
     //  return;
     //}
     //決定キーでフェードを開始し、シーンを終了する
-    if (input.GetCommand(input::input_code::Decide)) {
-      fade_.StartFadeOut(1.0f);
-      is_scene_end_ = true;
-      audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
-      current_phase_ = Phase::END;
-    } else if (input.GetHorizontal() > 0.0f) {
-      stage_select_move_direction_ = StageSelectMoveDirection::RIGHT;
-    } else if (input.GetHorizontal() < 0.0f) {
-      stage_select_move_direction_ = StageSelectMoveDirection::LEFT;
-    }
+    // if (input.GetCommand(input::input_code::Decide)) {
+    fade_.StartFadeOut(1.0f);
+    is_scene_end_ = true;
+    audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
+    current_phase_ = Phase::END;
+    //}
+    // else if (input.GetHorizontal() > 0.0f) {
+    //      stage_select_move_direction_ = StageSelectMoveDirection::RIGHT;
+    //    } else if (input.GetHorizontal() < 0.0f) {
+    //      stage_select_move_direction_ = StageSelectMoveDirection::LEFT;
   };
 
   auto UpdateFade = [&]() {
@@ -166,7 +166,7 @@ bool Title::Update() {
 
   fade_.Update();
   return true;
-}
+}  // namespace scenes
 
 //描画
 void Title::Draw() {

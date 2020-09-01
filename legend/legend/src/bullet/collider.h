@@ -112,7 +112,7 @@ class Collider : public btActionInterface {
 
   btCollisionShape* GetShape() const { return shape_.get(); }
 
-  std::map<Collider*, btVector3> GetHitPositions();
+  std::map<Collider*, math::Vector3> GetHitPositions();
 
  protected:
   actor::Actor* owner_;
@@ -121,7 +121,7 @@ class Collider : public btActionInterface {
   btVector3 inertia_;
   std::shared_ptr<btRigidBody> rigid_body_;
   CollisionCallback callback_;
-  std::map<Collider*, btVector3> hit_positions_;
+  std::map<Collider*, math::Vector3> hit_positions_;
 };
 }  // namespace bullet
 }  // namespace legend

@@ -53,8 +53,6 @@ struct MyCollisionCallback : public btCollisionWorld::ContactResultCallback {
                             : colObj0Wrap->getCollisionObject();
     ContactPoints.push_back(ct_point);
 
-    
-
     return 0;  //–ß‚è’l‚ÉˆÓ–¡‚È‚µ@ŒÄ‚Ô‘¤‚ªŽg‚Á‚Ä‚¢‚È‚¢
   }
 };
@@ -148,14 +146,12 @@ math::Vector3 Collider::GetAngularVelocity() {
   return math::Vector3::kZeroVector;
 }
 
-math::Vector3 Collider::GetPosition()
-{
-    return helper::ToVector3(rigid_body_->getWorldTransform().getOrigin());
+math::Vector3 Collider::GetPosition() {
+  return helper::ToVector3(rigid_body_->getWorldTransform().getOrigin());
 }
 
-math::Quaternion Collider::GetQuaternion()
-{
-    return helper::ToQuaternion(rigid_body_->getWorldTransform().getRotation());
+math::Quaternion Collider::GetQuaternion() {
+  return helper::ToQuaternion(rigid_body_->getWorldTransform().getRotation());
 }
 
 void Collider::SetAngularVelocity(const math::Vector3& velocity) {
@@ -178,7 +174,7 @@ void Collider::updateAction(btCollisionWorld* collisionWorld,
     Collider* other = static_cast<Collider*>(b.pHitObj->getUserPointer());
     hit_object_list.emplace(other);
 
-    hit_positions_.emplace(other, b.HitPos);
+    hit_positions_.emplace(other, helper::ToVector3(b.HitPos));
   }
 
   for (auto&& a : hit_object_list) {
@@ -213,11 +209,9 @@ int Collider::GetFlags() const { return rigid_body_->getCollisionFlags(); }
 
 void Collider::SetFlags(int flags) { rigid_body_->setCollisionFlags(flags); }
 
-std::map<Collider*, btVector3> Collider::GetHitPositions()
-{
-    return hit_positions_;
+std::map<Collider*, math::Vector3> Collider::GetHitPositions() {
+  return hit_positions_;
 }
-
 
 }  // namespace bullet
 }  // namespace legend

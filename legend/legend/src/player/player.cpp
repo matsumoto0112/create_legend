@@ -382,8 +382,7 @@ void Player::OnHit(bullet::Collider* other) {
           }
           audio.Start(file, 1.0f);
         }
-        CreateFireParticle(bullet::helper::ToVector3(
-            GetCollider()->GetHitPositions().at(other)));
+        CreateFireParticle(GetCollider()->GetHitPositions().at(other));
       }
     }
     {
@@ -394,8 +393,7 @@ void Player::OnHit(bullet::Collider* other) {
           obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
           is_hit_obstacle_ = true;
           audio.Start(resource_name::audio::PLAYER_OBSTACLE_HIT, 0.8f);
-          CreateFireParticle(bullet::helper::ToVector3(
-              GetCollider()->GetHitPositions().at(other)));
+          CreateFireParticle(GetCollider()->GetHitPositions().at(other));
         }
       }
     }
@@ -453,9 +451,7 @@ void Player::CreateFireParticle(const util::Transform& transform) {
   fire->SetTransform(transform);
 }
 
-void Player::EquipmentUpdate() {
-  skill_manager_.EquipmentProductionUpdate();
-}
+void Player::EquipmentUpdate() { skill_manager_.EquipmentProductionUpdate(); }
 
 }  // namespace player
 }  // namespace legend

@@ -171,8 +171,8 @@ void EnemyActor::OnHit(bullet::Collider* other) {
       auto strength =
           math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
       other->ApplyCentralImpulse(strength);
-      CreateFireParticle(bullet::helper::ToVector3(
-          GetCollider()->GetHitPositions().at(other)));
+      CreateFireParticle(
+          GetCollider()->GetHitPositions().at(other));
     }
   }
   //ŒÐ‚ÉG‚ê‚½
@@ -192,8 +192,8 @@ void EnemyActor::OnHit(bullet::Collider* other) {
       if (!is_hit_obstacle_) {
         obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
         is_hit_obstacle_ = true;
-        CreateFireParticle(bullet::helper::ToVector3(
-            GetCollider()->GetHitPositions().at(other)));
+        CreateFireParticle(
+            GetCollider()->GetHitPositions().at(other));
       }
     }
   }

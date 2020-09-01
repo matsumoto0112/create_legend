@@ -63,6 +63,14 @@ class Collider : public btActionInterface {
    */
   math::Vector3 GetAngularVelocity();
   /**
+   * @brief À•W‚Ìæ“¾
+   */
+  math::Vector3 GetPosition();
+  /**
+   * @brief À•W‚Ìæ“¾
+   */
+  math::Quaternion GetQuaternion();
+  /**
    * @brief ‰ñ“]ˆÚ“®—Ê‚Ìw’è
    */
   void SetAngularVelocity(const math::Vector3& velocity);
@@ -104,7 +112,7 @@ class Collider : public btActionInterface {
 
   btCollisionShape* GetShape() const { return shape_.get(); }
 
-  std::map<Collider*, btVector3> GetHitPositions();
+  std::map<Collider*, math::Vector3> GetHitPositions();
 
  protected:
   actor::Actor* owner_;
@@ -113,7 +121,7 @@ class Collider : public btActionInterface {
   btVector3 inertia_;
   std::shared_ptr<btRigidBody> rigid_body_;
   CollisionCallback callback_;
-  std::map<Collider*, btVector3> hit_positions_;
+  std::map<Collider*, math::Vector3> hit_positions_;
 };
 }  // namespace bullet
 }  // namespace legend

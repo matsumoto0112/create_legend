@@ -1,5 +1,6 @@
 #include "skill_item_box.h"
 
+#include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
@@ -43,7 +44,9 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
+      util::resource::resource_names::model::ITEM_CAPSULE_01);
+
+  skill_icon_model_ = parameter.skill_icon_model;
 
   return true;
 }
@@ -51,18 +54,39 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 //XV
 bool SkillItemBox::Update() {
   if (is_dead_) {
+    // box_->ApplyCentralImpulse(math::Vector3(0, 1, 0) *
+    //                          game::GameDevice::GetInstance()
+    //                              ->GetFPSCounter()
+    //                              .GetDeltaSeconds<float>());
+
+    // if (GetTransform().GetPosition().y > 100.0f) {
     if (delete_time_.Update()) {
       if (box_) mediator_->RemoveCollider(box_);
       mediator_->RemoveActor(this);
+      return true;
     }
+    //}
   }
 
   return true;
 }
 //•`‰æ
 void SkillItemBox::Draw() {
+  // if (GetTransform().GetPosition().y > 100.0f) return;
   if (is_dead_) return;
   Parent::Draw();
+
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  resource.GetPipeline().Get(PIPELINE_NAME)->SetCommandList(command_list);
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+
+  skill_icon_model_->Draw(command_list);
 }
 
 //€–S”»’è‚Ì•ÏX

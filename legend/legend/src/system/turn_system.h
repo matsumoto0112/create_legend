@@ -113,6 +113,10 @@ class TurnSystem/* : public actor::IActorMediator*/ {
   void SetCameraMode(camera_mode::Enum mode);
   camera::LookAtTargetCamera* GetPlayerFollowLookatCamera();
   Mode GetCurrentMode();
+  /**
+   * @brief 1つ前のターン状態を取得
+   */
+  Mode GetBeforeMode();
 
  private:
   /**
@@ -133,10 +137,16 @@ class TurnSystem/* : public actor::IActorMediator*/ {
   bool PlayerMoving();
 
   bool WaitEnemyMoveStart();
+
   /**
    * @brief プレイヤーの移動終了後のスキル発動処理
    */
   bool PlayerSkillAfterMoved();
+  /**
+   * @brief スキル追加演出処理
+   */
+  bool AddSkill();
+
   /**
    * @brief 敵の移動処理
    */
@@ -160,6 +170,8 @@ class TurnSystem/* : public actor::IActorMediator*/ {
   i32 current_turn_;
   //! 現在のプレイ状態
   Mode current_mode_;
+  //! 1つ前のプレイ状態
+  Mode before_mode_;
 
   //! アクター管理クラス
   actor::ActorManager actor_manager_;

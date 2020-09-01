@@ -378,7 +378,7 @@ void Player::OnHit(bullet::Collider* other) {
             file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
           } else {
             file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
-            //mediator_->SetStopTime(0.25f);
+            // mediator_->SetStopTime(0.25f);
           }
           audio.Start(file, 1.0f);
         }
@@ -406,8 +406,7 @@ void Player::OnHit(bullet::Collider* other) {
       if (!skill_item->GetIsDead()) {
         skill_item->ChangeDead();
         std::shared_ptr<skill::Skill> skill = skill_item->GetSkill();
-        skill->Init(mediator_, this);
-        skill_manager_.AddSkill(skill);
+        skill_manager_.GetSkill(skill);
         audio.Start(resource_name::audio::PLAYER_GET_STATIONERY, 1.0f);
       }
     }
@@ -450,6 +449,10 @@ bool Player::SkillUpdateTurnEnd() {
 void Player::CreateFireParticle(const util::Transform& transform) {
   auto fire = draw::particle::particle_factory::CreateFireParticle();
   fire->SetTransform(transform);
+}
+
+void Player::EquipmentUpdate() {
+  skill_manager_.EquipmentProductionUpdate();
 }
 
 }  // namespace player

@@ -43,6 +43,10 @@ class IActorMediator {
    */
   virtual void PlayerSkillDeactivate() = 0;
   /**
+   * @brief プレイヤーのスキル装備演出終了時イベント
+   */
+  virtual void PlayerCompleteEquipment() = 0;
+  /**
    * @brief プレイヤーを取得する
    */
   virtual player::Player* GetPlayer() const = 0;
@@ -77,6 +81,10 @@ class IActorMediator {
    * @brief 現在のターン状況を取得する
    */
   virtual system::Mode GetCurrentTurn() const = 0;
+  /**
+   * @brief 1つ前のターン状況を取得する
+   */
+  virtual system::Mode GetBeforeTurn() const = 0;
   /**
    * @brief ストップ時間を追加する
    */

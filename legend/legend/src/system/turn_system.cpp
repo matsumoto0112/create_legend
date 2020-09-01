@@ -168,7 +168,7 @@ bool TurnSystem::Update() {
   if (ImGui::Begin("TurnSystem")) {
     ImGui::Text("CurrntTurn : %d", current_turn_);
     if (ImGui::Button("AddTurn")) {
-      //AddCurrentTurn();
+      // AddCurrentTurn();
       current_mode_ = Mode::ENEMY_MOVE_END;
     }
   }
@@ -186,6 +186,7 @@ bool TurnSystem::Update() {
        [&]() { return PlayerSkillAfterMoved(); }},
       {Mode::ENEMY_MOVING, [&]() { return EnemyMove(); }},
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
+      {Mode::PLAYER_ADD_SKILL, [&]() { return AddSkill(); }},
   };
   if (!switcher.at(current_mode_)()) {
     return false;
@@ -315,12 +316,14 @@ bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::WaitEnemyMoveStart() {
   if (actor_manager_.GetEnemiesSize() == 0) {
+    before_mode_ = current_mode_;
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;
   }
   if (!actor_manager_.IsAllEnemeyStop()) {
     return true;
   }
+  before_mode_ = current_mode_;
   current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
   return true;
 }
@@ -333,7 +336,13 @@ bool TurnSystem::PlayerSkillAfterMoved() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
-  current_mode_ = Mode::ENEMY_MOVING;
+  before_mode_ = current_mode_;
+  current_mode_ = Mode::PLAYER_ADD_SKILL;
+  return true;
+}
+
+bool TurnSystem::AddSkill() {
+  actor_manager_.GetPlayer()->EquipmentUpdate();
   return true;
 }
 
@@ -341,6 +350,7 @@ bool TurnSystem::PlayerSkillAfterMoved() {
 bool TurnSystem::EnemyMove() {
   actor_manager_.EnemyManagerUpdate();
   if (actor_manager_.GetEnemyManager()->LastEnemyMoveEnd()) {
+    before_mode_ = current_mode_;
     current_mode_ = Mode::ENEMY_MOVE_END;
     actor_manager_.GetEnemyManager()->ResetEnemyMove();
   }
@@ -362,7 +372,8 @@ bool TurnSystem::EnemyMoveEnd() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
 
-  current_mode_ = Mode::PLAYER_MOVE_READY;
+  before_mode_ = current_mode_;
+  current_mode_ = Mode::PLAYER_ADD_SKILL;
   return true;
 }
 
@@ -525,7 +536,12 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
       end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()),
       current_turn_ + 1};
 }
-void TurnSystem::SetTurnMode(Mode mode) { current_mode_ = mode; }
+
+void TurnSystem::SetTurnMode(Mode mode) {
+  before_mode_ = current_mode_;
+  current_mode_ = mode;
+}
+
 void TurnSystem::SetCameraMode(camera_mode::Enum mode) {
   current_camera_ = mode;
 }
@@ -533,6 +549,8 @@ camera::LookAtTargetCamera* TurnSystem::GetPlayerFollowLookatCamera() {
   return player_follow_lookat_camera_;
 }
 Mode TurnSystem::GetCurrentMode() { return current_mode_; }
+
+Mode TurnSystem::GetBeforeMode() { return before_mode_; }
 //É^Å[ÉìêîÇÃëùâ¡
 void TurnSystem::AddCurrentTurn() { current_turn_++; }
 

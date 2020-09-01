@@ -4,6 +4,7 @@
 
 #include <sstream>
 
+#include "src/util/resource/resource_names.h"
 #include "src\\stdafx.h"
 
 namespace legend {
@@ -18,7 +19,6 @@ StageGenerator::~StageGenerator() {}
 //ファイルの読み込み処理
 std::vector<std::string> StageGenerator::LoadStringStageData(
     std::filesystem::path filepath, const std::string map_name) {
-
   //ファイルパスからテキストデータを読み込み
   std::ifstream ifstream(filepath);
   std::vector<std::string> indexs;
@@ -98,8 +98,7 @@ bool StageGenerator::GetMapActors(
       parameter.position = transform.GetPosition();
       parameter.rotation = transform.GetRotation();
       parameter.model_id = 0;
-      parameter.bounding_box_length =
-          math::Vector3(4.5f, 2.5f, 10.0f);
+      parameter.bounding_box_length = math::Vector3(4.5f, 2.5f, 10.0f);
       obstacles.emplace_back(parameter);
 
       continue;
@@ -122,13 +121,17 @@ bool StageGenerator::GetMapActors(
         (i32)String_2_Float(infomation[15]) == turn_count) {
       skill::SkillItemBox::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(0.5f, 0.5f, 5.0f);
+      parameter.bounding_box_length = math::Vector3(4, 4, 4);
+      auto& resource = game::GameDevice::GetInstance()->GetResource();
+      parameter.skill_icon_model = resource.GetModel().Get(
+          util::resource::resource_names::model::ITEM_PLANE_01);
       itemboxes.emplace_back(parameter);
       continue;
     }
 
     //敵の生成
-    if (infomation[0] == "enemy" && (int)String_2_Float(infomation[15]) == turn_count) {
+    if (infomation[0] == "enemy" &&
+        (int)String_2_Float(infomation[15]) == turn_count) {
       enemy::Enemy::InitializeParameter parameter;
 
       parameter.transform = transform;
@@ -140,8 +143,8 @@ bool StageGenerator::GetMapActors(
     }
 
     //ボスの生成
-    if (infomation[0] == "boss"&& (int)String_2_Float(infomation[15]) == turn_count) {
-
+    if (infomation[0] == "boss" &&
+        (int)String_2_Float(infomation[15]) == turn_count) {
       enemy::Boss::InitializeParameter parameter;
       math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
 
@@ -149,8 +152,7 @@ bool StageGenerator::GetMapActors(
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
-      parameter.bouding_box_length =
-          math::Vector3(3.0f, 1.0f, 5.5f);
+      parameter.bouding_box_length = math::Vector3(3.0f, 1.0f, 5.5f);
       bosses.push_back(parameter);
       continue;
     }

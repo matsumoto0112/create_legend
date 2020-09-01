@@ -92,6 +92,10 @@ class ActorManager : public actor::IActorMediator {
    */
   virtual void PlayerSkillDeactivate() override;
   /**
+   * @brief プレイヤーのスキル装備演出終了時イベント
+   */
+  virtual void PlayerCompleteEquipment() override;
+  /**
    * @brief プレイヤーを取得する
    */
   virtual player::Player* GetPlayer() const override;
@@ -110,6 +114,10 @@ class ActorManager : public actor::IActorMediator {
    * @brief 現在のターン状況を取得する
    */
   system::Mode GetCurrentTurn() const override;
+  /**
+   * @brief 1つ前のターン状況を取得する
+   */
+  system::Mode GetBeforeTurn() const override;
   /**
    * @brief 停止時間を追加する
    */

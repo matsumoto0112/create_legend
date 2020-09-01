@@ -19,6 +19,7 @@ class SkillItemBox : public actor::Actor {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bounding_box_length;
+    std::shared_ptr<draw::Model> skill_icon_model;
   };
 
  public:
@@ -70,6 +71,8 @@ class SkillItemBox : public actor::Actor {
   util::CountDownTimer delete_time_;
   //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
+  //! スキル内容のアイコンモデル
+  std::shared_ptr<draw::Model> skill_icon_model_;
 };
 
 }  // namespace skill

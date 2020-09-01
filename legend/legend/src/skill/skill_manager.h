@@ -10,6 +10,12 @@
 
 namespace legend {
 namespace skill {
+enum class Mode {
+  NONE,
+  RISE_PLAYER,
+  FALL_PLAYER,
+};
+
 class SkillManager {
  public:
   /**
@@ -27,7 +33,7 @@ class SkillManager {
   /**
    * @brief スキルを拾った際のメソッド
    */
-  void GetSkill(i32 skill_id);
+  void GetSkill(std::shared_ptr<Skill> skill);
   /**
    * @brief スキルの獲得処理
    */
@@ -36,6 +42,10 @@ class SkillManager {
    * @brief 更新処理
    */
   void Update();
+  /**
+   * @brief 装備更新処理
+   */
+  void EquipmentProductionUpdate();
   /**
    * @brief プレイヤーの行動後に1度だけ呼ばれるメソッド
    */
@@ -72,8 +82,14 @@ class SkillManager {
    * @brief スキル終了
    */
   void EndSkill();
-
+  /**
+   * @brief スキルの座標設定
+   */
   void SetPosition(std::shared_ptr<Skill> skill, i32 skill_num);
+  /**
+   * @brief スキル装備の演出中を取得
+   */
+  bool GetEquipmentProduction() const;
 
  private:
   actor::IActorMediator* mediator_;
@@ -92,8 +108,13 @@ class SkillManager {
   player::Player* player_;
   //! 糊
   std::vector<SkillPaste*> pastes_;
-
+  //! 装備状態UI
   ui::PlayerUI player_ui_;
+
+  Mode current_mode_;
+  //! 装備演出中か
+  bool is_equipment_production_;
+  bool complete_eqquipment_;
 };
 }  // namespace skill
 }  // namespace legend

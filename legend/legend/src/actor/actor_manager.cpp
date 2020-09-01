@@ -143,6 +143,13 @@ void ActorManager::PlayerSkillActivate() {}
 
 void ActorManager::PlayerSkillDeactivate() {}
 
+void ActorManager::PlayerCompleteEquipment() {
+  if (GetBeforeTurn() == system::Mode::PLAYER_SKILL_AFTER_MOVED)
+    turn_system_->SetTurnMode(system::Mode::ENEMY_MOVING);
+  else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END)
+    turn_system_->SetTurnMode(system::Mode::PLAYER_MOVE_READY);
+}
+
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }
 
 void ActorManager::AddFragment(std::unique_ptr<object::Fragment> fragment) {
@@ -285,13 +292,15 @@ float ActorManager::GetMainCameraThetaAngle() const {
   return turn_system_->GetPlayerFollowLookatCamera()->GetTheta();
 }
 
-system::Mode ActorManager::GetCurrentTurn() const { 
-    return turn_system_->GetCurrentMode();
+system::Mode ActorManager::GetCurrentTurn() const {
+  return turn_system_->GetCurrentMode();
 }
 
-void ActorManager::AddStopTime(float time) {
-  hit_stop_time_ += time;
+system::Mode legend::actor::ActorManager::GetBeforeTurn() const {
+  return turn_system_->GetBeforeMode();
 }
+
+void ActorManager::AddStopTime(float time) { hit_stop_time_ += time; }
 
 void ActorManager::SetStopTime(float time) { hit_stop_time_ = time; }
 

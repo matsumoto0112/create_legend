@@ -29,7 +29,7 @@ SkillSelectUI::SkillSelectUI() {
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
     MY_LOG(L"ƒXƒLƒ‹à–¾‰æ‘œ‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B");
   }
-  skill_explanatory_.SetPosition(math::Vector2(960.0f, 32.0f));
+  skill_explanatory_.SetPosition(math::Vector2(896.0f, 32.0f));
   skill_explanatory_.SetScale(math::Vector2::kUnitVector);
   skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
 
@@ -70,7 +70,7 @@ void SkillSelectUI::Draw() {
 
   if (is_select_mode_) {
     sprite_renderer.AddDrawItems(&skill_select_frame_);
-    // sprite_renderer.AddDrawItems(&skill_explanatory_);
+    sprite_renderer.AddDrawItems(&skill_explanatory_);
   }
 
   for (auto&& frame : skill_frame_icons_) {

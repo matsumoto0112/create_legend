@@ -13,14 +13,15 @@ namespace system {
  * @brief ゲームモード列挙
  */
 enum class Mode {
-  PLAYER_MOVE_READY,         //! プレイヤーの移動準備
-  PLAYER_MOVING,             //! プレイヤーの移動中
-  PLAYER_MOVE_END,           //! プレイヤーの移動終了
+  PLAYER_MOVE_READY,  //! プレイヤーの移動準備
+  PLAYER_MOVING,      //! プレイヤーの移動中
+  PLAYER_MOVE_END,    //! プレイヤーの移動終了
   PLAYER_SKILL_AFTER_MOVED,  //! プレイヤーの移動終了後スキル発動処理Ak
   ENEMY_MOVING,              //! 敵の移動中
   ENEMY_MOVE_END,            //! 敵の移動終了
-  ENEMY_PRODUCTION,          //! 敵の出現演出中
-  BOSS_PRODUCTION,           //! ボスの出現演出中
+  ENEMY_PRODUCTION,  //! 敵の出現演出中
+  BOSS_PRODUCTION,   //! ボスの出現演出中
+  PLAYER_ADD_SKILL,  //! プレイヤーのスキル装備演出状態
 };
 
 }  // namespace system

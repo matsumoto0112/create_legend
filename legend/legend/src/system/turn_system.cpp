@@ -181,6 +181,7 @@ bool TurnSystem::Update() {
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
       {Mode::ENEMY_PRODUCTION, [&]() { return EnemyMoveProducing(); }},
       {Mode::BOSS_PRODUCTION, [&]() { return BossMoveProducing(); }},
+      {Mode::PLAYER_ADD_SKILL, [&]() { return AddSkill(); }},
   };
   if (!switcher.at(current_mode_)()) {
     return false;
@@ -305,12 +306,14 @@ bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::WaitEnemyMoveStart() {
   if (actor_manager_.GetEnemiesSize() == 0) {
+    before_mode_ = current_mode_;
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;
   }
   if (!actor_manager_.IsAllEnemeyStop()) {
     return true;
   }
+  before_mode_ = current_mode_;
   current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
   return true;
 }
@@ -323,7 +326,13 @@ bool TurnSystem::PlayerSkillAfterMoved() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
-  current_mode_ = Mode::ENEMY_MOVING;
+  before_mode_ = current_mode_;
+  current_mode_ = Mode::PLAYER_ADD_SKILL;
+  return true;
+}
+
+bool TurnSystem::AddSkill() {
+  actor_manager_.GetPlayer()->EquipmentUpdate();
   return true;
 }
 
@@ -331,6 +340,7 @@ bool TurnSystem::PlayerSkillAfterMoved() {
 bool TurnSystem::EnemyMove() {
   actor_manager_.EnemyManagerUpdate();
   if (actor_manager_.GetEnemyManager()->LastEnemyMoveEnd()) {
+    before_mode_ = current_mode_;
     current_mode_ = Mode::ENEMY_MOVE_END;
     actor_manager_.GetEnemyManager()->ResetEnemyMove();
   }
@@ -359,6 +369,8 @@ bool TurnSystem::EnemyMoveEnd() {
     return true;
   }
 
+  before_mode_ = current_mode_;
+  current_mode_ = Mode::PLAYER_ADD_SKILL;
   return true;
 }
 
@@ -466,9 +478,15 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
       end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()),
       current_turn_ + 1};
 }
-void TurnSystem::SetTurnMode(Mode mode) { current_mode_ = mode; }
+
+void TurnSystem::SetTurnMode(Mode mode) {
+  before_mode_ = current_mode_;
+  current_mode_ = mode;
+}
 
 Mode TurnSystem::GetCurrentMode() { return current_mode_; }
+
+Mode TurnSystem::GetBeforeMode() { return before_mode_; }
 //ƒ^[ƒ“”‚Ì‘‰Á
 void TurnSystem::AddCurrentTurn() { current_turn_++; }
 

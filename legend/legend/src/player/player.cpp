@@ -378,11 +378,12 @@ void Player::OnHit(bullet::Collider* other) {
             file = resource_name::audio::PLAYER_ENEMY_HIT_SMALL;
           } else {
             file = resource_name::audio::PLAYER_ENEMY_HIT_BIG;
-            //mediator_->SetStopTime(0.25f);
+            // mediator_->SetStopTime(0.25f);
           }
           audio.Start(file, 1.0f);
         }
-        CreateFireParticle(GetTransform());
+        CreateFireParticle(bullet::helper::ToVector3(
+            GetCollider()->GetHitPositions().at(other)));
       }
     }
     {
@@ -393,7 +394,8 @@ void Player::OnHit(bullet::Collider* other) {
           obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
           is_hit_obstacle_ = true;
           audio.Start(resource_name::audio::PLAYER_OBSTACLE_HIT, 0.8f);
-          CreateFireParticle(GetTransform());
+          CreateFireParticle(bullet::helper::ToVector3(
+              GetCollider()->GetHitPositions().at(other)));
         }
       }
     }

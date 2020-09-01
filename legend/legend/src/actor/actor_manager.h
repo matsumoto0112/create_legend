@@ -6,7 +6,6 @@
 #include "src/actor/actor_render_command_list.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/camera_manager.h"
-#include "src/camera/lookat_target_camera.h"
 #include "src/enemy/enemy_manager.h"
 #include "src/object/desk.h"
 #include "src/object/fragment.h"

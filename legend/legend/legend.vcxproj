@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\camera\camera_manager.cpp" />
+    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\enemy\enemy_actor.cpp" />
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\actor\actor_manager.cpp" />
@@ -90,7 +91,7 @@
     <ClCompile Include="src\bullet\bounding_sphere.cpp" />
     <ClCompile Include="src\bullet\collider.cpp" />
     <ClCompile Include="src\bullet\physics_field.cpp" />
-    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
+    <ClCompile Include="src\camera\lookat_follow_target_camera.cpp" />
     <ClCompile Include="src\directx\bullet_debug_draw.cpp" />
     <ClCompile Include="src\draw\particle\particle_factory.cpp" />
     <ClCompile Include="src\enemy\boss.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\actor\actor_manager.h" />
     <ClInclude Include="src\camera\camera_manager.h" />
+    <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\enemy\enemy_actor.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />
@@ -234,7 +236,7 @@
     <ClInclude Include="src\bullet\collider.h" />
     <ClInclude Include="src\bullet\physics_field.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
-    <ClInclude Include="src\camera\lookat_target_camera.h" />
+    <ClInclude Include="src\camera\lookat_follow_target_camera.h" />
     <ClInclude Include="src\directx\bullet_debug_draw.h" />
     <ClInclude Include="src\draw\particle\particle_factory.h" />
     <ClInclude Include="src\enemy\boss.h" />
@@ -366,6 +368,7 @@
     <ClInclude Include="src\skill\skill_pencil.h" />
     <ClInclude Include="src\skill\skill_select_ui.h" />
     <ClInclude Include="src\skill\skill_type.h" />
+    <ClInclude Include="src\stage_generate\camera_generate_info.h" />
     <ClInclude Include="src\stage_generate\stage_generator.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\actor\actor_mediator.h" />

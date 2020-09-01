@@ -44,7 +44,7 @@ bool ActorManager::Init(const std::string& stage_name,
                      (stage_name + "_searchData" + ".txt");
   search_manager_.Make(search_path);
 
-  if (!camera_manager_.Init(this)) {
+  if (!camera_manager_.Init(this, stage_generator_.GetCameraGenerateInfos())) {
     return false;
   }
 
@@ -139,7 +139,7 @@ void ActorManager::DebugDraw() {
 
 void ActorManager::PlayerMoveStartEvent() {
   turn_system_->SetTurnMode(system::Mode::PLAYER_MOVING);
-  camera_manager_.SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
+  camera_manager_.SetCameraMode(camera::camera_mode::FREE);
 }
 
 void ActorManager::PlayerMoveEndEvent() {
@@ -298,7 +298,7 @@ void ActorManager::RemoveActor(actor::Actor* actor) {
 }
 
 float ActorManager::GetMainCameraThetaAngle() const {
-    return camera_manager_.GetPlayerLookatCamera()->GetTheta();
+  return camera_manager_.GetPlayerLookatCamera()->GetTheta();
 }
 
 system::Mode ActorManager::GetCurrentTurn() const {

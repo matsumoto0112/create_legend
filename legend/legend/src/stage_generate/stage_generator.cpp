@@ -18,7 +18,6 @@ StageGenerator::~StageGenerator() {}
 //ファイルの読み込み処理
 std::vector<std::string> StageGenerator::LoadStringStageData(
     std::filesystem::path filepath, const std::string map_name) {
-
   //ファイルパスからテキストデータを読み込み
   std::ifstream ifstream(filepath);
   std::vector<std::string> indexs;
@@ -98,8 +97,7 @@ bool StageGenerator::GetMapActors(
       parameter.position = transform.GetPosition();
       parameter.rotation = transform.GetRotation();
       parameter.model_id = 0;
-      parameter.bounding_box_length =
-          math::Vector3(4.5f, 2.5f, 10.0f);
+      parameter.bounding_box_length = math::Vector3(4.5f, 2.5f, 10.0f);
       obstacles.emplace_back(parameter);
 
       continue;
@@ -128,7 +126,8 @@ bool StageGenerator::GetMapActors(
     }
 
     //敵の生成
-    if (infomation[0] == "enemy" && (int)String_2_Float(infomation[15]) == turn_count) {
+    if (infomation[0] == "enemy" &&
+        (int)String_2_Float(infomation[15]) == turn_count) {
       enemy::Enemy::InitializeParameter parameter;
 
       parameter.transform = transform;
@@ -140,8 +139,8 @@ bool StageGenerator::GetMapActors(
     }
 
     //ボスの生成
-    if (infomation[0] == "boss"&& (int)String_2_Float(infomation[15]) == turn_count) {
-
+    if (infomation[0] == "boss" &&
+        (int)String_2_Float(infomation[15]) == turn_count) {
       enemy::Boss::InitializeParameter parameter;
       math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
 
@@ -149,8 +148,7 @@ bool StageGenerator::GetMapActors(
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
-      parameter.bouding_box_length =
-          math::Vector3(3.0f, 1.0f, 5.5f);
+      parameter.bouding_box_length = math::Vector3(3.0f, 1.0f, 5.5f);
       bosses.push_back(parameter);
       continue;
     }
@@ -234,13 +232,30 @@ std::vector<enemy::Boss::InitializeParameter> StageGenerator::GetBossParameters(
   return boss_parameters;
 }
 
-float StageGenerator::String_2_Float(const std::string& string) {
+std::vector<CameraGenerateInfo> StageGenerator::GetCameraGenerateInfos() const {
+  std::vector<CameraGenerateInfo> res;
+  for (auto&& index : indexs_) {
+    //文字列を分割
+    std::vector<std::string> infomation = StringSplit(index, ',');
+    if (infomation[0] != "camera") continue;
+
+    //とりあえず座標だけ
+    CameraGenerateInfo info;
+    info.position =
+        String_2_Vector3(infomation[1], infomation[2], infomation[3]);
+    res.emplace_back(info);
+  }
+
+  return res;
+}
+
+float StageGenerator::String_2_Float(const std::string& string) const {
   return std::stof(string.c_str());
 }
 
 math::Vector3 StageGenerator::String_2_Vector3(const std::string& x,
                                                const std::string& y,
-                                               const std::string& z) {
+                                               const std::string& z) const {
   float fx = String_2_Float(x);
   float fy = String_2_Float(y);
   float fz = String_2_Float(z);
@@ -252,7 +267,7 @@ util::Transform StageGenerator::String_2_Transform(
     const std::string& posx, const std::string& posy, const std::string& posz,
     const std::string& eularx, const std::string& eulary,
     const std::string& eularz, const std::string& sclaex,
-    const std::string& sclaey, const std::string& sclaez) {
+    const std::string& sclaey, const std::string& sclaez) const {
   //各要素をVector3へ
   math::Vector3 position = String_2_Vector3(posx, posy, posz);
   math::Vector3 eular =
@@ -263,7 +278,7 @@ util::Transform StageGenerator::String_2_Transform(
 }
 
 std::vector<std::string> StageGenerator::StringSplit(const std::string& string,
-                                                     char border) {
+                                                     char border) const {
   std::vector<std::string> elements;
   std::stringstream ss(string);
   std::string item;

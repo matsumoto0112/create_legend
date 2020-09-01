@@ -1,6 +1,5 @@
 #include "src/system/turn_system.h"
 
-#include "src/camera/lookat_target_camera.h"
 #include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
 #include "src/util/resource/resource_names.h"

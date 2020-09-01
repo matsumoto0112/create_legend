@@ -7,6 +7,7 @@
 #include "src/object/obstacle.h"
 #include "src/player/player.h"
 #include "src/skill/skill_item_box.h"
+#include "src/stage_generate/camera_generate_info.h"
 
 namespace legend {
 namespace stage_generate {
@@ -30,7 +31,8 @@ class StageGenerator {
    * @brief テキストの読み込み処理
    * @return 処理が正しく終了したら読み込まれた内容(string)を返す
    */
-  std::vector<std::string> LoadStringStageData(std::filesystem::path filepath, const std::string map_name);
+  std::vector<std::string> LoadStringStageData(std::filesystem::path filepath,
+                                               const std::string map_name);
   /**
    * @brief ステージの設定処理
    * @return 処理が正しく終了したらtrueを返す
@@ -50,20 +52,22 @@ class StageGenerator {
   std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
       const i32 turn_count);
 
+  std::vector<CameraGenerateInfo> GetCameraGenerateInfos() const;
+
  private:
   /**
    * @brief Stringをfloatに変換する
    * @paramstrings 元文字列
    * @return 変換されたfloat
    */
-  float String_2_Float(const std::string& string);
+  float String_2_Float(const std::string& string) const;
   /**
    * @brief StringをVector3に変換する
    * @param x,y,z 元文字列
    * @return 変換されたVector3
    */
   math::Vector3 String_2_Vector3(const std::string& x, const std::string& y,
-                                 const std::string& z);
+                                 const std::string& z) const;
   /**
    * @brief StringをVector3に変換する
    * @param x,y,z 元文字列
@@ -73,13 +77,14 @@ class StageGenerator {
       const std::string& posx, const std::string& posy, const std::string& posz,
       const std::string& eularx, const std::string& eulary,
       const std::string& eularz, const std::string& sclaex,
-      const std::string& sclaey, const std::string& sclaez);
+      const std::string& sclaey, const std::string& sclaez) const;
   /**
    * @brief StringをStringのリストへ変換
    * @param x,y,z 元文字列
    * @return 変換されたStringのリスト
    */
-  std::vector<std::string> StringSplit(const std::string& string, char border);
+  std::vector<std::string> StringSplit(const std::string& string,
+                                       char border) const;
 
  private:
   std::vector<std::string> indexs_;

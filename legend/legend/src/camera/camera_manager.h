@@ -7,8 +7,10 @@
  */
 
 #include "src/actor/actor_mediator.h"
+#include "src/camera/lookat_follow_target_camera.h"
 #include "src/camera/lookat_target_camera.h"
 #include "src/camera/perspective_camera.h"
+#include "src/stage_generate/camera_generate_info.h"
 
 namespace legend {
 namespace camera {
@@ -36,8 +38,10 @@ class CameraManager {
   /**
    * @brief 初期化
    * @param mediator アクター仲介オブジェクト
+   * @param infos フリーカメラの生成情報リスト
    */
-  bool Init(actor::IActorMediator* mediator);
+  bool Init(actor::IActorMediator* mediator,
+            const std::vector<stage_generate::CameraGenerateInfo>& infos);
   /**
    * @brief カメラの更新処理
    */
@@ -57,7 +61,7 @@ class CameraManager {
   /**
    * @brief プレイヤーを注視するカメラを取得する
    */
-  camera::LookAtTargetCamera* GetPlayerLookatCamera() const {
+  camera::LookatFollowTargetCamera* GetPlayerLookatCamera() const {
     return player_lookat_camera_.get();
   }
   /**
@@ -71,9 +75,11 @@ class CameraManager {
   //! 現在のカメラのモード
   camera_mode::Enum current_camera_mode_;
   //! プレイヤーを注視するカメラ
-  std::unique_ptr<camera::LookAtTargetCamera> player_lookat_camera_;
+  std::unique_ptr<camera::LookatFollowTargetCamera> player_lookat_camera_;
   //! 俯瞰視点のカメラ
   std::unique_ptr<camera::PerspectiveCamera> birds_eye_view_camera_;
+  //! フリーカメラ
+  std::vector<std::unique_ptr<LookatTargetCamera>> free_cameras_;
 };
 
 }  // namespace camera

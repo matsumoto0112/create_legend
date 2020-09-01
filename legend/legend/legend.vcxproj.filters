@@ -122,7 +122,6 @@
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\explosion_pencil.cpp" />
-    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\scenes\fade_in_out.cpp" />
     <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\scenes\result_scene.cpp" />
@@ -135,6 +134,8 @@
     <ClCompile Include="src\enemy\enemy_actor.cpp" />
     <ClCompile Include="src\ui\player_ui.cpp" />
     <ClCompile Include="src\camera\camera_manager.cpp" />
+    <ClCompile Include="src\camera\lookat_follow_target_camera.cpp" />
+    <ClCompile Include="src\camera\lookat_target_camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -306,7 +307,6 @@
     <ClInclude Include="src\system\game_data.h" />
     <ClInclude Include="src\skill\skill_item_box.h" />
     <ClInclude Include="src\skill\explosion_pencil.h" />
-    <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
@@ -326,6 +326,9 @@
     <ClInclude Include="src\ui\player_ui.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\camera\camera_manager.h" />
+    <ClInclude Include="src\stage_generate\camera_generate_info.h" />
+    <ClInclude Include="src\camera\lookat_follow_target_camera.h" />
+    <ClInclude Include="src\camera\lookat_target_camera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera\camera_manager.cpp" />
     <ClCompile Include="src\enemy\enemy_actor.cpp" />
     <ClCompile Include="src\actor\actor.cpp" />
     <ClCompile Include="src\actor\actor_manager.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
     <ClInclude Include="src\actor\actor_manager.h" />
+    <ClInclude Include="src\camera\camera_manager.h" />
     <ClInclude Include="src\enemy\enemy_actor.h" />
     <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\bullet\bounding_box.h" />

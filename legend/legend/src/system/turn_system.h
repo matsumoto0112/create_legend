@@ -25,6 +25,7 @@
 //#include "src/search/search_manager.h"
 //#include "src/skill/skill_item_box.h"
 //#include "src/stage_generate/stage_generator.h"
+#include "src/actor/actor_manager.h"
 #include "src/system/game_data.h"
 #include "src/system/mode.h"
 #include "src/ui/gauge.h"
@@ -32,7 +33,6 @@
 #include "src/ui/number.h"
 #include "src/ui/ui_board.h"
 #include "src/util/timer.h"
-#include "src/actor/actor_manager.h"
 
 namespace legend {
 namespace system {
@@ -68,7 +68,7 @@ enum Enum { DIGIT_3, DIGIT_2, DIGIT_1, MAX };
  * @class TurnSystem
  * @brief ターン数管理クラス
  */
-class TurnSystem/* : public actor::IActorMediator*/ {
+class TurnSystem /* : public actor::IActorMediator*/ {
  public:
   /**
    * @brief コンストラクタ
@@ -107,11 +107,6 @@ class TurnSystem/* : public actor::IActorMediator*/ {
    * @brief ターンのモードを設定する
    */
   void SetTurnMode(Mode mode);
-  /**
-   * @brief カメラのモードを設定する
-   */
-  void SetCameraMode(camera_mode::Enum mode);
-  camera::LookAtTargetCamera* GetPlayerFollowLookatCamera();
   Mode GetCurrentMode();
 
  private:
@@ -154,15 +149,6 @@ class TurnSystem/* : public actor::IActorMediator*/ {
    */
   bool BossMoveProducing();
 
-  /**
-   * @brief カメラの初期化
-   */
-  bool InitCameras();
-  /**
-   * @brief カメラの更新
-   */
-  void UpdateCamera();
-
  private:
   //! 現在ターン数
   i32 current_turn_;
@@ -171,13 +157,6 @@ class TurnSystem/* : public actor::IActorMediator*/ {
 
   //! アクター管理クラス
   actor::ActorManager actor_manager_;
-
-  //! 使用するカメラ
-  std::array<std::unique_ptr<camera::Camera>, camera_mode::COUNT> cameras_;
-  //! プレイヤーを追尾し、操作で回転できるカメラへのポインタ
-  camera::LookAtTargetCamera* player_follow_lookat_camera_;
-  //! 現在使用しているカメラ
-  camera_mode::Enum current_camera_;
 
   //! UI表示ボード
   ui::UIBoard ui_board_;

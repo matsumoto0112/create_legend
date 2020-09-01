@@ -134,6 +134,7 @@
     <ClCompile Include="src\actor\actor_manager.cpp" />
     <ClCompile Include="src\enemy\enemy_actor.cpp" />
     <ClCompile Include="src\ui\player_ui.cpp" />
+    <ClCompile Include="src\camera\camera_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -324,6 +325,7 @@
     <ClInclude Include="src\enemy\enemy_ai.h" />
     <ClInclude Include="src\ui\player_ui.h" />
     <ClInclude Include="assets\shaders\particle\gpu_particle_test.h" />
+    <ClInclude Include="src\camera\camera_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

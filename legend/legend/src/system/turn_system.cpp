@@ -32,8 +32,7 @@ namespace system {
 namespace audio_name = util::resource::resource_names::audio;
 
 //コンストラクタ
-TurnSystem::TurnSystem()
-    : current_turn_(0), current_camera_(camera_mode::Sub1) {}
+TurnSystem::TurnSystem() : current_turn_(0) {}
 
 //デストラクタ
 TurnSystem::~TurnSystem() { /*static_objects_.clear();*/
@@ -43,10 +42,6 @@ TurnSystem::~TurnSystem() { /*static_objects_.clear();*/
 bool TurnSystem::Init(const std::string& stage_name) {
   //アクター管理クラスの初期化
   actor_manager_.Init(stage_name, this);
-
-  if (!InitCameras()) {
-    return false;
-  }
 
   // UI情報を取得
   std::vector<u8> data =
@@ -177,7 +172,6 @@ bool TurnSystem::Update() {
 
   actor_manager_.Update();
 
-  UpdateCamera();
   const std::unordered_map<Mode, std::function<bool()>> switcher = {
       {Mode::PLAYER_MOVE_READY, [&]() { return PlayerMoveReady(); }},
       {Mode::PLAYER_MOVING, [&]() { return PlayerMoving(); }},
@@ -192,16 +186,6 @@ bool TurnSystem::Update() {
   if (!switcher.at(current_mode_)()) {
     return false;
   }
-
-  if (ImGui::Begin("Camera")) {
-    if (ImGui::Button("Main")) {
-      current_camera_ = camera_mode::Main;
-    }
-    if (ImGui::Button("Sub1")) {
-      current_camera_ = camera_mode::Sub1;
-    }
-  }
-  ImGui::End();
 
   if (ImGui::Begin("UI")) {
     const u32 size = static_cast<u32>(components_.size());
@@ -289,17 +273,22 @@ bool TurnSystem::Update() {
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
+  auto& camera_manager = actor_manager_.GetCameraManager();
   if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
       !actor_manager_.GetPlayer()->GetSkillSelect()) {
-    if (current_camera_ == camera_mode::Main) {
-      current_camera_ = camera_mode::Sub1;
-    } else if (current_camera_ == camera_mode::Sub1) {
-      current_camera_ = camera_mode::Main;
-    }
+    auto SwitchCamera = [&]() {
+      if (camera_manager.GetCameraMode() ==
+          camera::camera_mode::PLAYER_LOOKAT) {
+        camera_manager.SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
+      } else {
+        camera_manager.SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
+      }
+    };
+    SwitchCamera();
   }
 
   //メインカメラの状態じゃないと移動できないようにする
-  if (current_camera_ == camera_mode::Main) {
+  if (camera_manager.GetCameraMode() == camera::camera_mode::PLAYER_LOOKAT) {
     //プレイヤーの速度更新は入力を受け取って処理する
     if (!actor_manager_.GetPlayer()->GetSkillSelect())
       actor_manager_.GetPlayer()->CheckImpulse();
@@ -388,71 +377,6 @@ bool TurnSystem::BossMoveProducing() {
   return true;
 }
 
-//カメラの初期化
-bool TurnSystem::InitCameras() {
-  const math::IntVector2 screen_size =
-      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-  const float aspect_ratio = screen_size.x * 1.0f / screen_size.y;
-
-  auto InitMainCamera = [&]() {
-    const math::Quaternion camera_rotation =
-        math::Quaternion::FromEular(math::util::DEG_2_RAD * 45.0f, 0.0f, 0.0f);
-    auto main_camera = std::make_unique<camera::LookAtTargetCamera>();
-    if (!main_camera->Init(L"MainCamera", actor_manager_.GetPlayer(), 20.0f,
-                           30.0f, math::util::DEG_2_RAD * 50.0f, aspect_ratio,
-                           math::Vector3::kUpVector, 0.1f, 1000.0f)) {
-      return false;
-    }
-
-    player_follow_lookat_camera_ = main_camera.get();
-    cameras_[camera_mode::Main] = std::move(main_camera);
-    return true;
-  };
-
-  auto InitSub1Camera = [&]() {
-    auto camera = std::make_unique<camera::PerspectiveCamera>();
-    if (!camera->Init(L"Sub1Camera", math::Vector3(0.0f, 100.0f, 0.0f),
-                      math::Quaternion::FromEular(90.0f * math::util::DEG_2_RAD,
-                                                  0.0f, 0.0f),
-                      50.0f * math::util::DEG_2_RAD, aspect_ratio,
-                      math::Vector3::kForwardVector, 0.1f, 300.0f)) {
-      return false;
-    }
-
-    cameras_[camera_mode::Sub1] = std::move(camera);
-    return true;
-  };
-
-  if (!InitMainCamera()) return false;
-  if (!InitSub1Camera()) return false;
-  current_camera_ = camera_mode::Main;
-  return true;
-}
-
-void TurnSystem::UpdateCamera() {
-  //メインカメラの回転処理
-  auto& input = game::GameDevice::GetInstance()->GetInput();
-  float theta = player_follow_lookat_camera_->GetTheta();
-
-  const float delta_time =
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-
-  //右コントローラの入力を取得する
-  const math::Vector2 right_input = input.GetGamepad()->GetStickRight();
-  constexpr float POWER = 1.0f;
-  theta += right_input.x * POWER * delta_time;
-  player_follow_lookat_camera_->SetTheta(theta);
-
-  //サブカメラ1はプレイヤーの頭上を移動する
-  if (auto camera = dynamic_cast<camera::PerspectiveCamera*>(
-          cameras_[camera_mode::Sub1].get());
-      camera) {
-    const math::Vector3 player_position =
-        actor_manager_.GetPlayer()->GetPosition();
-    camera->SetPosition(math::Vector3(
-        player_position.x, camera->GetPosition().y, player_position.z));
-  }
-}
 //描画
 void TurnSystem::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
@@ -464,8 +388,7 @@ void TurnSystem::Draw() {
       command_list, directx::render_target::RenderTargetID::NONE, false,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
 
-  actor_manager_.DrawDifferedRenderingObject(cameras_[current_camera_].get(),
-                                             command_list);
+  actor_manager_.DrawDifferedRenderingObject(command_list);
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
@@ -488,10 +411,10 @@ void TurnSystem::Draw() {
       device, command_list,
       directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
 
-  camera_cb_.GetStagingRef().camera_position =
-      player_follow_lookat_camera_->GetPosition();
-  camera_cb_.UpdateStaging();
-  camera_cb_.RegisterHandle(device, 6);
+  // camera_cb_.GetStagingRef().camera_position =
+  //    camera_manager_.GetCurrentCamera()->GetPosition();
+  // camera_cb_.UpdateStaging();
+  // camera_cb_.RegisterHandle(device, 6);
   light_cb_.RegisterHandle(device, 7);
 
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
@@ -527,10 +450,7 @@ void TurnSystem::Draw() {
 }
 
 //デバッグ描画
-void TurnSystem::DebugDraw() {
-  cameras_[current_camera_]->RenderStart();
-  actor_manager_.DebugDraw(cameras_[current_camera_].get());
-}
+void TurnSystem::DebugDraw() { actor_manager_.DebugDraw(); }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
 
@@ -548,12 +468,7 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
       current_turn_ + 1};
 }
 void TurnSystem::SetTurnMode(Mode mode) { current_mode_ = mode; }
-void TurnSystem::SetCameraMode(camera_mode::Enum mode) {
-  current_camera_ = mode;
-}
-camera::LookAtTargetCamera* TurnSystem::GetPlayerFollowLookatCamera() {
-  return player_follow_lookat_camera_;
-}
+
 Mode TurnSystem::GetCurrentMode() { return current_mode_; }
 //ターン数の増加
 void TurnSystem::AddCurrentTurn() { current_turn_++; }

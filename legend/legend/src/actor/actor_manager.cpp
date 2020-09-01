@@ -44,6 +44,10 @@ bool ActorManager::Init(const std::string& stage_name,
                      (stage_name + "_searchData" + ".txt");
   search_manager_.Make(search_path);
 
+  if (!camera_manager_.Init(this)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -89,11 +93,13 @@ bool ActorManager::Update() {
 
   physics_field_.Update();
 
+  camera_manager_.UpdateCamera();
+
   return true;
 }
 
 void ActorManager::DrawDifferedRenderingObject(
-    camera::Camera* camera, directx::device::CommandList& command_list) {
+    directx::device::CommandList& command_list) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& render_resource_manager = device.GetRenderResourceManager();
 
@@ -101,7 +107,7 @@ void ActorManager::DrawDifferedRenderingObject(
       command_list,
       directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, true,
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-  camera->RenderStart();
+  camera_manager_.RenderStart();
 
   actor_render_command_list_.Push(player_.get());
   for (auto&& obj : static_actors_) {
@@ -125,19 +131,20 @@ void ActorManager::Draw2D(directx::device::CommandList& command_list) {}
 
 void ActorManager::DrawEnd() { actor_render_command_list_.Clear(); }
 
-void ActorManager::DebugDraw(camera::Camera* camera) {
+void ActorManager::DebugDraw() {
+  camera_manager_.RenderStart();
   search_manager_.DebugDraw(&physics_field_);
-  physics_field_.DebugDraw(camera);
+  physics_field_.DebugDraw(camera_manager_.GetCurrentCamera());
 }
 
 void ActorManager::PlayerMoveStartEvent() {
   turn_system_->SetTurnMode(system::Mode::PLAYER_MOVING);
-  turn_system_->SetCameraMode(system::camera_mode::Sub1);
+  camera_manager_.SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
 }
 
 void ActorManager::PlayerMoveEndEvent() {
   turn_system_->SetTurnMode(system::Mode::PLAYER_MOVE_END);
-  turn_system_->SetCameraMode(system::camera_mode::Main);
+  camera_manager_.SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
 }
 
 void ActorManager::PlayerSkillActivate() {}
@@ -225,7 +232,7 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
       enemy_manager_.AddBoss(boss_parameter);
       is_boss_generated_ = true;
       turn_system_->SetTurnMode(system::Mode::ENEMY_PRODUCTION);
-      //turn_system_->SetTurnMode(system::Mode::BOSS_PRODUCTION);
+      // turn_system_->SetTurnMode(system::Mode::BOSS_PRODUCTION);
     }
   }
 
@@ -257,9 +264,8 @@ void legend::actor::ActorManager::EnemyManagerUpdate() {
   enemy_manager_.SetPlayer(player_->GetCollider());
 }
 
-bool legend::actor::ActorManager::IsBossGenerated()
-{
-    return is_boss_generated_;
+bool legend::actor::ActorManager::IsBossGenerated() {
+  return is_boss_generated_;
 }
 
 std::vector<enemy::Enemy*> ActorManager::GetEnemies() {
@@ -292,16 +298,14 @@ void ActorManager::RemoveActor(actor::Actor* actor) {
 }
 
 float ActorManager::GetMainCameraThetaAngle() const {
-  return turn_system_->GetPlayerFollowLookatCamera()->GetTheta();
+    return camera_manager_.GetPlayerLookatCamera()->GetTheta();
 }
 
-system::Mode ActorManager::GetCurrentTurn() const { 
-    return turn_system_->GetCurrentMode();
+system::Mode ActorManager::GetCurrentTurn() const {
+  return turn_system_->GetCurrentMode();
 }
 
-void ActorManager::AddStopTime(float time) {
-  hit_stop_time_ += time;
-}
+void ActorManager::AddStopTime(float time) { hit_stop_time_ += time; }
 
 void ActorManager::SetStopTime(float time) { hit_stop_time_ = time; }
 

@@ -54,26 +54,27 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 //XV
 bool SkillItemBox::Update() {
   if (is_dead_) {
-    // box_->ApplyCentralImpulse(math::Vector3(0, 1, 0) *
-    //                          game::GameDevice::GetInstance()
-    //                              ->GetFPSCounter()
-    //                              .GetDeltaSeconds<float>());
+    //ã‹ó‚É”ò‚Î‚·
+    util::Transform transform = transform_;
+    transform.SetPosition(transform.GetPosition() + math::Vector3::kUpVector);
+    box_->SetTransform(transform);
 
-    // if (GetTransform().GetPosition().y > 100.0f) {
-    if (delete_time_.Update()) {
-      if (box_) mediator_->RemoveCollider(box_);
-      mediator_->RemoveActor(this);
-      return true;
+    //ˆê’è‚Ì‚‚³‚Ü‚Ås‚Á‚½‚çíœ€”õ
+    if (transform_.GetPosition().y > 100.0f) {
+      if (delete_time_.Update()) {
+        if (box_) mediator_->RemoveCollider(box_);
+        mediator_->RemoveActor(this);
+        return true;
+      }
     }
-    //}
   }
 
   return true;
 }
 //•`‰æ
 void SkillItemBox::Draw() {
-  // if (GetTransform().GetPosition().y > 100.0f) return;
-  if (is_dead_) return;
+  //ˆê’è‚Ì‚‚³‚Ü‚Ås‚Á‚½‚ç•`‰æ‚µ‚È‚¢
+  if (transform_.GetPosition().y > 100.0f) return;
   Parent::Draw();
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();

@@ -65,15 +65,17 @@ void SkillManager::EquipmentProductionUpdate() {
   }
 
   //装備追加を終えてなければ上昇状態に切り替え
-  if (!complete_eqquipment_) current_mode_ = Mode::RISE_PLAYER;
+  if (!complete_eqquipment_) {
+    player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
+    current_mode_ = Mode::RISE_PLAYER;
+  }
 
   //現在の所持スキル数が所持限界数以下であれば追加
   if (skills_.size() < skill_max_count_) {
     //上昇
     if (current_mode_ == Mode::RISE_PLAYER) {
-      player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
       //一定の高さまで行ったら装備を追加
-      if (player_->GetTransform().GetPosition().y >= 10.0f) {
+      if (player_->GetTransform().GetPosition().y >= 30.0f) {
         if (!complete_eqquipment_) {
           for (auto&& skill : this_turn_get_skills_) {
             AddSkill(skill);
@@ -82,11 +84,12 @@ void SkillManager::EquipmentProductionUpdate() {
         }
         //下降状態に切り替え
         current_mode_ = Mode::FALL_PLAYER;
+        player_->GetCollider()->ApplyCentralImpulse(
+            player_->GetCollider()->GetVelocity() * -1);
       }
     }
     //下降
     if (current_mode_ == Mode::FALL_PLAYER) {
-      player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, -1, 0));
       //一定の高さまで行ったらターンを切り替える
       if (player_->GetTransform().GetPosition().y <= 1.8f) {
         current_mode_ = Mode::NONE;

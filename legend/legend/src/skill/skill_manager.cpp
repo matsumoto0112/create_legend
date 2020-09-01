@@ -21,11 +21,14 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   select_ui_.Init();
   select_move_ = false;
   player_ui_.Init();
+  skill_max_count_ = 5;
+  current_mode_ = Mode::NONE;
+  is_equipment_production_ = false;
+  complete_eqquipment_ = false;
 }
 
 //スキル取得時
-void SkillManager::GetSkill(i32 skill_id) {
-  std::shared_ptr<SkillPencil> skill;
+void SkillManager::GetSkill(std::shared_ptr<Skill> skill) {
   skill->Init(mediator_, player_);
   this_turn_get_skills_.push_back(skill);
 }
@@ -36,8 +39,6 @@ void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
   select_ui_.AddSkill(skill.get());
   player_ui_.AddEquipmentUI(skill.get());
 }
-
-// void SkillManager::AddSkill() { select_ui_.AddSkill(); }
 
 //更新
 void SkillManager::Update() {
@@ -56,21 +57,52 @@ void SkillManager::Update() {
   player_ui_.Update();
 }
 
-//プレイヤー行動後の処理
-void SkillManager::PlayerTurnEnd() {
-  //全て所持しようとした場合にあふれるかどうか
-  if (skills_.size() + this_turn_get_skills_.size() <= skill_max_count_) {
-    for (auto&& skill : this_turn_get_skills_) {
-      AddSkill(skill);
+void SkillManager::EquipmentProductionUpdate() {
+  //このターンに何も取っていなければターンを切り替える
+  if (this_turn_get_skills_.empty()) {
+    mediator_->PlayerCompleteEquipment();
+    return;
+  }
+
+  //装備追加を終えてなければ上昇状態に切り替え
+  if (!complete_eqquipment_) {
+    player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
+    current_mode_ = Mode::RISE_PLAYER;
+  }
+
+  //現在の所持スキル数が所持限界数以下であれば追加
+  if (skills_.size() < skill_max_count_) {
+    //上昇
+    if (current_mode_ == Mode::RISE_PLAYER) {
+      //一定の高さまで行ったら装備を追加
+      if (player_->GetTransform().GetPosition().y >= 30.0f) {
+        if (!complete_eqquipment_) {
+          for (auto&& skill : this_turn_get_skills_) {
+            AddSkill(skill);
+          }
+          complete_eqquipment_ = true;
+        }
+        //下降状態に切り替え
+        current_mode_ = Mode::FALL_PLAYER;
+        player_->GetCollider()->ApplyCentralImpulse(
+            player_->GetCollider()->GetVelocity() * -1);
+      }
+    }
+    //下降
+    if (current_mode_ == Mode::FALL_PLAYER) {
+      //一定の高さまで行ったらターンを切り替える
+      if (player_->GetTransform().GetPosition().y <= 1.8f) {
+        current_mode_ = Mode::NONE;
+        mediator_->PlayerCompleteEquipment();
+        this_turn_get_skills_.clear();
+        complete_eqquipment_ = false;
+      }
     }
   }
-  //溢れる場合
-  else {
-    //現状無視?
-  }
+}
 
-  this_turn_get_skills_.clear();
-
+//プレイヤー行動後の処理
+void SkillManager::PlayerTurnEnd() {
   //プレイヤーの行動後に終わるスキルの更新処理
   for (auto&& skill : skills_) {
     if (!skill->EndSkillProduction()) continue;
@@ -224,6 +256,5 @@ void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
       pos, player_->GetTransform().GetRotation().ToMatrix());
   skill->AdjustPosition(pos);
 }
-
 }  // namespace skill
 }  // namespace legend

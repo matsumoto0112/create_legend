@@ -148,6 +148,8 @@ class Player : public actor::Actor {
 
   void CreateFireParticle(const util::Transform& transform);
 
+  void EquipmentUpdate();
+
  private:
   //! ‘¬“x
   math::Vector3 velocity_;

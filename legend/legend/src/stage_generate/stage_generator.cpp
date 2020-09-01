@@ -4,6 +4,7 @@
 
 #include <sstream>
 
+#include "src/util/resource/resource_names.h"
 #include "src\\stdafx.h"
 
 namespace legend {
@@ -120,7 +121,10 @@ bool StageGenerator::GetMapActors(
         (i32)String_2_Float(infomation[15]) == turn_count) {
       skill::SkillItemBox::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(0.5f, 0.5f, 5.0f);
+      parameter.bounding_box_length = math::Vector3(4, 4, 4);
+      auto& resource = game::GameDevice::GetInstance()->GetResource();
+      parameter.skill_icon_model = resource.GetModel().Get(
+          util::resource::resource_names::model::ITEM_PLANE_01);
       itemboxes.emplace_back(parameter);
       continue;
     }

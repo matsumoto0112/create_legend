@@ -1,5 +1,6 @@
 #include "skill_item_box.h"
 
+#include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
@@ -43,7 +44,9 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   model_ = resource.GetModel().Get(
-      util::resource::resource_names::model::STATIONERY_01);
+      util::resource::resource_names::model::ITEM_CAPSULE_01);
+
+  skill_icon_model_ = parameter.skill_icon_model;
 
   return true;
 }
@@ -51,9 +54,18 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 //更新
 bool SkillItemBox::Update() {
   if (is_dead_) {
-    if (delete_time_.Update()) {
-      if (box_) mediator_->RemoveCollider(box_);
-      mediator_->RemoveActor(this);
+    //上空に飛ばす
+    util::Transform transform = transform_;
+    transform.SetPosition(transform.GetPosition() + math::Vector3::kUpVector);
+    box_->SetTransform(transform);
+
+    //一定の高さまで行ったら削除準備
+    if (transform_.GetPosition().y > 100.0f) {
+      if (delete_time_.Update()) {
+        if (box_) mediator_->RemoveCollider(box_);
+        mediator_->RemoveActor(this);
+        return true;
+      }
     }
   }
 
@@ -61,8 +73,21 @@ bool SkillItemBox::Update() {
 }
 //描画
 void SkillItemBox::Draw() {
-  if (is_dead_) return;
+  //一定の高さまで行ったら描画しない
+  if (transform_.GetPosition().y > 100.0f) return;
   Parent::Draw();
+
+  auto& device = game::GameDevice::GetInstance()->GetDevice();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
+  resource.GetPipeline().Get(PIPELINE_NAME)->SetCommandList(command_list);
+
+  transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
+  transform_cb_.UpdateStaging();
+  transform_cb_.RegisterHandle(
+      device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
+
+  skill_icon_model_->Draw(command_list);
 }
 
 //死亡判定の変更

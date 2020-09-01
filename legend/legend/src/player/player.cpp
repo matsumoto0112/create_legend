@@ -365,6 +365,12 @@ void Player::OnHit(bullet::Collider* other) {
         ea->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
                                                strength_);
 
+        if (auto* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
+
+			auto v = GetVelocity().Magnitude(); 
+          b->UpdateStrength(v * strength_ * -0.005f);
+        }
+
         auto s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
         auto trigonometric = (std::sin(30.0f * math::util::PI * s));
         auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *

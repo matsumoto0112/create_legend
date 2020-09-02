@@ -15,7 +15,10 @@ MainScene1::~MainScene1() {}
 
 //‰Šú‰»
 bool MainScene1::Initialize() {
-  if (!turn_system_.Init("Test_01")) {
+  const auto play_stage_data =
+      system::GameDataStorage::GetInstance()->GetPlayStageData();
+
+  if (!turn_system_.Init(play_stage_data.stage_name)) {
     return false;
   }
 
@@ -34,7 +37,7 @@ bool MainScene1::Update() {
 
   if (turn_system_.IsGameEnd()) {
     const auto data = turn_system_.GetResult();
-    system::GameDataStorage::GetInstance()->Set(data);
+    system::GameDataStorage::GetInstance()->SetResultData(data);
     scene_change_->ChangeScene(SceneType::GAMEOVER);
   }
   return true;

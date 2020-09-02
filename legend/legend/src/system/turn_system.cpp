@@ -465,7 +465,7 @@ void TurnSystem::DebugDraw() { actor_manager_.DebugDraw(); }
 
 bool legend::system::TurnSystem::IsGameEnd() const { return is_scene_all_end_; }
 
-system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
+system::GameDataStorage::ResultData legend::system::TurnSystem::GetResult()
     const {
   const system::GameDataStorage::GameEndType end_type = [&]() {
     if (actor_manager_.IsGameClear())
@@ -474,7 +474,7 @@ system::GameDataStorage::GameData legend::system::TurnSystem::GetResult()
       return system::GameDataStorage::GameEndType::PLAYER_DEAD;
   }();
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
-  return system::GameDataStorage::GameData{
+  return system::GameDataStorage::ResultData{
       end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()),
       current_turn_ + 1};
 }

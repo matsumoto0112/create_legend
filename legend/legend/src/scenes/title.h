@@ -35,6 +35,11 @@ class Title : public Scene {
         : component(comp), base_x(base_x), next_x(next_x){};
   };
 
+  struct Stage {
+    std::string stage_name;
+    const wchar_t* stage_image_name;
+  };
+
  public:
   /**
    * @brief コンストラクタ
@@ -56,6 +61,10 @@ class Title : public Scene {
   void Finalize() override;
 
  private:
+  static const std::vector<Stage> STAGE_LIST;
+  static constexpr float STAGE_ITEM_MOVE_TIME = 0.5f;
+
+ private:
   i32 bgm_key_;
   ui::UIBoard board_;
   FadeInOut fade_;
@@ -65,10 +74,8 @@ class Title : public Scene {
   std::vector<ui::UIComponent*> title_images_;
   std::vector<StageImageInfo> stage_images_;
   StageSelectMoveDirection stage_select_move_direction_;
-  static constexpr i32 MAX_STAGE_ITEM_COUNT = 5;
   util::ModInt current_select_stage_item_id_;
   util::CountDownTimer stage_move_select_timer_;
-  static constexpr float STAGE_ITEM_MOVE_TIME = 0.5f;
 };
 
 }  // namespace scenes

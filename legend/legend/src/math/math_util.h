@@ -148,6 +148,18 @@ inline float Round(float value, i32 digit = 0) {
   return res / p;
 }
 
+/**
+ * @brief 補間
+ * @param a パラメータ1
+ * @param b パラメータ2
+ * @param t 補間係数 0~1にクランプされて使用される
+ * @return aとbを補間係数tで補間された値を返す
+ */
+inline constexpr float Lerp(float a, float b, float t) {
+  t = Clamp(t, 0.0f, 1.0f);
+  return b * t + a * (1.0f - t);
+}
+
 }  // namespace util
 }  // namespace math
 }  // namespace legend

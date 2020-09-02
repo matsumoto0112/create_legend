@@ -357,22 +357,23 @@ void Player::OnHit(bullet::Collider* other) {
       enemy::EnemyActor* ea =
           dynamic_cast<enemy::EnemyActor*>(other->GetOwner());
       if (ea) {
-        const math::Vector3 player_position = transform_.GetPosition();
-        const math::Vector3 enemy_position = ea->GetTransform().GetPosition();
+        const math::Vector3 position = transform_.GetPosition();
+        const math::Vector3 other_position = ea->GetTransform().GetPosition();
+        const math::Vector3 velocity = GetVelocity();
         const math::Vector3 direction =
-            (enemy_position - player_position).Normalized();
+            ((other_position - position).Normalized() + velocity.Normalized())
+                .Normalized();
 
-        ea->GetCollider()->ApplyCentralImpulse(direction * power_ * 0.5f *
-                                               strength_);
+        ea->GetCollider()->ApplyCentralImpulse(
+            direction * ((strength_ + velocity.Magnitude()) / 2.0f));
 
         if (auto* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
-
-			auto v = GetVelocity().Magnitude(); 
+          auto v = GetVelocity().Magnitude();
           b->UpdateStrength(v * strength_ * -0.005f);
         }
 
         auto s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
-        auto trigonometric = (std::sin(30.0f * math::util::PI * s));
+        auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
         auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
                         trigonometric;
         other->ApplyCentralImpulse(addPower);

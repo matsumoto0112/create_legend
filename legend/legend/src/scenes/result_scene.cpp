@@ -21,8 +21,8 @@ bool ResultScene::Initialize() {
 
   const auto window_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-  const system::GameDataStorage::GameData data =
-      system::GameDataStorage::GetInstance()->Get();
+  const system::GameDataStorage::ResultData data =
+      system::GameDataStorage::GetInstance()->GetResultData();
   const auto heap_id =
       directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
 

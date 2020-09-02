@@ -101,7 +101,7 @@ class TurnSystem /* : public actor::IActorMediator*/ {
   /**
    * @brief ゲーム結果を取得する
    */
-  system::GameDataStorage::GameData GetResult() const;
+  system::GameDataStorage::ResultData GetResult() const;
   /**
    * @brief ターンのモードを設定する
    */

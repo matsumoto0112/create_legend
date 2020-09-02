@@ -1,26 +1,38 @@
 #include "src/scenes/title.h"
 
 #include "src/game/game_device.h"
+#include "src/system/game_data.h"
 #include "src/ui/image.h"
 #include "src/util/resource/resource_names.h"
 
 namespace {
-constexpr const wchar_t* STAGE_LIST[] = {
-    legend::util::resource::resource_names::texture::RESULT_GAMEOVER,
-    legend::util::resource::resource_names::texture::TITLE_LOGO,
-    legend::util::resource::resource_names::texture::RESULT_PLAYERPOWER_TEXT_1,
-    legend::util::resource::resource_names::texture::RESULT_PLAYERPOWER_TEXT_2,
-    legend::util::resource::resource_names::texture::RESULT_STAGECLEAR,
-};
-
-constexpr float Lerp(float a, float b, float t) {
-  t = legend::math::util::Clamp(t, 0.0f, 1.0f);
-  return b * t + a * (1.0f - t);
-}
+namespace TextureName = legend::util::resource::resource_names::texture;
 }  // namespace
 
 namespace legend {
 namespace scenes {
+const std::vector<Title::Stage> Title::STAGE_LIST = {
+    {
+        "Test_01",
+        TextureName::RESULT_GAMEOVER,
+    },
+    {
+        "Test_01",
+        TextureName::RESULT_PLAYERPOWER_TEXT_2,
+    },
+    {
+        "Test_01",
+        TextureName::RESULT_TOTALTURN_TEXT_1,
+    },
+    {
+        "Test_01",
+        TextureName::RESULT_STAGECLEAR,
+    },
+    {
+        "Test_01",
+        TextureName::RESULT_TOTALTURN_TEXT_2,
+    },
+};
 
 //コンストラクタ
 Title::Title(ISceneChange* scene_change) : Scene(scene_change) {}
@@ -29,7 +41,9 @@ Title::Title(ISceneChange* scene_change) : Scene(scene_change) {}
 bool Title::Initialize() {
   current_phase_ = Phase::TITLE;
   stage_select_move_direction_ = StageSelectMoveDirection::NONE;
-  current_select_stage_item_id_ = util::ModInt(0, MAX_STAGE_ITEM_COUNT);
+
+  const i32 stage_num = static_cast<i32>(STAGE_LIST.size());
+  current_select_stage_item_id_ = util::ModInt(0, stage_num);
 
   game::GameDevice::GetInstance()->GetDevice().GetHeapManager().ResetLocalHeap(
       directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
@@ -73,11 +87,11 @@ bool Title::Initialize() {
   }
 
   {
-    const u64 size = _countof(STAGE_LIST);
-    for (u64 i = 0; i < size; i++) {
+    constexpr auto HEAP_ID =
+        directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
+    for (u64 i = 0; i < stage_num; i++) {
       auto image = std::make_unique<ui::Image>();
-      if (!image->Init(STAGE_LIST[i], directx::descriptor_heap::heap_parameter::
-                                          LocalHeapID::ONE_PLAY)) {
+      if (!image->Init(STAGE_LIST[i].stage_image_name, HEAP_ID)) {
         return false;
       }
       //画面の中心に置いたときのx座標
@@ -129,7 +143,7 @@ bool Title::Update() {
   auto UpdateStageItems = [&](float t) {
     for (auto&& st : stage_images_) {
       const math::Vector2 prev_pos = st.component->GetPosition();
-      const float x = Lerp(st.prev_x, st.next_x, t) + st.base_x;
+      const float x = math::util::Lerp(st.prev_x, st.next_x, t) + st.base_x;
       st.component->SetPosition(math::Vector2(x, prev_pos.y));
     }
   };
@@ -138,7 +152,8 @@ bool Title::Update() {
     const auto screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     stage_move_select_timer_.Init(STAGE_ITEM_MOVE_TIME);
-    for (i32 i = 0; i < MAX_STAGE_ITEM_COUNT; i++) {
+    const i32 size = static_cast<i32>(stage_images_.size());
+    for (i32 i = 0; i < size; i++) {
       auto& st = stage_images_[i];
       st.prev_x = st.next_x;
       st.next_x =
@@ -169,6 +184,8 @@ bool Title::Update() {
       is_scene_end_ = true;
       audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
       current_phase_ = Phase::END;
+      system::GameDataStorage::GetInstance()->SetPlayStageData(
+          {STAGE_LIST[current_select_stage_item_id_.Get()].stage_name});
     } else if (const bool input_right = input.GetHorizontal() > 0.0f;
                input_right) {
       current_select_stage_item_id_++;

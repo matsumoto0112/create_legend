@@ -379,7 +379,7 @@ void Player::OnHit(bullet::Collider* other) {
         }
 
         auto s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
-        auto trigonometric = (std::sin(30.0f * math::util::PI * s));
+        auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
         auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
                         trigonometric;
         other->ApplyCentralImpulse(addPower);

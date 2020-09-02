@@ -149,6 +149,14 @@ bool Player::Update() {
     const bool emit_enable = is_move_ ? velocity_xz.Magnitude() > 0.6f
                                       : math::util::Abs(velocity.y) > 1.0f;
     player_move_particle_->SetEmitEnable(emit_enable);
+
+    if (math::util::Abs(velocity.y) > 0.5f) {
+      player_move_particle_->SetTextureName(
+          util::resource::resource_names::texture::PARTICLE_FALLLOCUS_1);
+    } else {
+      player_move_particle_->SetTextureName(
+          util::resource::resource_names::texture::PARTICLE_SMOKE_3);
+    }
   };
 
   ParticleUpdate();
@@ -366,8 +374,7 @@ void Player::OnHit(bullet::Collider* other) {
                                                strength_);
 
         if (auto* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
-
-			auto v = GetVelocity().Magnitude(); 
+          auto v = GetVelocity().Magnitude();
           b->UpdateStrength(v * strength_ * -0.005f);
         }
 

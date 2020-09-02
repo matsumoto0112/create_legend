@@ -185,6 +185,10 @@ void ParticleEmitter::Render(
              D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 }
 
+void ParticleEmitter::SetTextureName(std::wstring_view view) {
+  texture_name_ = view;
+}
+
 void ParticleEmitter::Delete() {
   enable_render_ = false;
   enable_update_ = false;

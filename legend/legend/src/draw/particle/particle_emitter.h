@@ -85,6 +85,8 @@ class ParticleEmitter {
    */
   util::Transform& GetTransformRef() { return transform_; }
 
+  void SetTextureName(std::wstring_view view);
+
   void SetEnableUpdate(bool enable_update) {
     this->enable_update_ = enable_update;
   }

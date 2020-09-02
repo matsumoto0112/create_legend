@@ -72,9 +72,10 @@ void ResetParticle(uint addr, uint index) {
 
   SetLifeTime(addr, lifetime);
 
-  const float px = RandomRange(-1.0, 1.0, u, seed++);
+  const float offset = 0.5;
+  const float px = RandomRange(-0.5, 0.5, u, seed++);
   const float py = 0.0;
-  const float pz = RandomRange(-1.0, 1.0, u, seed++);
+  const float pz = RandomRange(-0.5, 0.5, u, seed++);
   const float3 pos = g_transform.world._m30_m31_m32 + float3(px, py, pz);
   SetPosition(addr, pos);
 
@@ -84,7 +85,7 @@ void ResetParticle(uint addr, uint index) {
   const float3 velocity = float3(vx, vy, vz);
   SetVelocity(addr, velocity);
 
-  const uint3 rgb = uint3(192, 192, 192);
+  const uint3 rgb = uint3(192, 192, 128);
   SetColor(addr, float4(rgb / 255.0, 0.2));
   SetSeed(addr, seed);
 }

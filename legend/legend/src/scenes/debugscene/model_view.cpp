@@ -17,7 +17,7 @@ legend::primitive::Line line_;
 }  // namespace
 
 namespace {
-constexpr legend::u32 OBJ_NUM = 1;
+constexpr legend::u32 OBJ_NUM = 100;
 }  // namespace
 
 namespace legend {
@@ -52,7 +52,7 @@ bool ModelView::Initialize() {
     transform_cb_[i].UpdateStaging();
   }
   {
-    const math::Vector3 pos = math::Vector3(0.0f, 0.5f, -0.5f);
+    const math::Vector3 pos = math::Vector3(0.0f, 50.0f, -50.0f);
     const math::Quaternion rot =
         math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;
@@ -98,7 +98,7 @@ void ModelView::Draw() {
     transform_cb_[i].RegisterHandle(
         device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
     resource.GetModel()
-        .Get(util::resource::resource_names::model::DESK)
+        .Get(util::resource::resource_names::model::ARROW)
         ->Draw(command_list);
   }
 

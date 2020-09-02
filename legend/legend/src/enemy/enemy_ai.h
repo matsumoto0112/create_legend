@@ -12,6 +12,7 @@ enum EnemyAIType : i32 {
   None,
   Enemy_Rotate,
   Boss_Rotate_Stand,
+  Boss_Rush_Move,
   Boss_Rotate_Move,
 };
 
@@ -39,7 +40,10 @@ struct EnemyAI {
     value(velocity, box);
     switch (ai_type_) {
       case EnemyAIType::Boss_Rotate_Stand:
-        ai_type_ = EnemyAIType::Boss_Rotate_Move;
+        ai_type_ = EnemyAIType::Boss_Rush_Move;
+        break;
+      case EnemyAIType::Boss_Rush_Move:
+        ai_type_ = EnemyAIType::Boss_Rotate_Stand;
         break;
       case EnemyAIType::Boss_Rotate_Move:
         ai_type_ = EnemyAIType::Boss_Rotate_Stand;
@@ -72,6 +76,11 @@ struct EnemyAI {
              //auto angle = math::Vector3::kUpVector * velocity.Magnitude();
              //box->SetAngularVelocity(angle);
            }},
+          {EnemyAIType::Boss_Rush_Move,
+           [&](math::Vector3 velocity, bullet::BoundingBox* box) {
+             // ‰Á‘¬“x‚ÌÝ’è
+             box->ApplyCentralImpulse(velocity);
+           }},
           {EnemyAIType::Boss_Rotate_Move,
            [&](math::Vector3 velocity, bullet::BoundingBox* box) {
              // ‰Á‘¬“x‚ÌÝ’è
@@ -82,13 +91,6 @@ struct EnemyAI {
                  -0.75f, 0.75f));
              box->SetAngularVelocity(angle);
            }},
-          //{EnemyAIType::Forword,
-          // [&](math::Vector3& velocity, bullet::BoundingBox* box) {
-          //   auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-          //   angle *= (game::GameDevice::GetInstance()->GetRandom().Range(
-          //       -0.3f, 0.3f));
-          //   box->SetAngularVelocity(angle);
-          // }},
   };  //!< s“®”»’è
 };
 }  // namespace enemy

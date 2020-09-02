@@ -161,21 +161,21 @@ bool EnemyActor::GetMoveEnd() const { return (!is_move_ && move_end_); }
 void EnemyActor::ResetMoveEnd() { move_end_ = false; }
 
 void EnemyActor::OnHit(bullet::Collider* other) {
-  system::Mode turn_mode = mediator_->GetCurrentTurn();
-  if (turn_mode == system::Mode::ENEMY_MOVING) {
-    //プレイヤーに触れた
-    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
-      HitAction(other);
-      auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
-      auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
-      auto strength =
-          math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
-      MY_LOG(L"%f", s);
-      other->ApplyCentralImpulse(strength);
-      CreateFireParticle(
-          GetCollider()->GetHitPositions().at(other));
-    }
-  }
+  //system::Mode turn_mode = mediator_->GetCurrentTurn();
+  //if (turn_mode == system::Mode::ENEMY_MOVING) {
+  //  //プレイヤーに触れた
+  //  if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+  //    HitAction(other);
+  //    auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
+  //    auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
+  //    auto strength =
+  //        math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
+  //    other->ApplyCentralImpulse(strength);
+  //    CreateFireParticle(
+  //        GetCollider()->GetHitPositions().at(other));
+  //  }
+  //}
+
   //糊に触れた
   {
     skill::SkillPaste* paste =

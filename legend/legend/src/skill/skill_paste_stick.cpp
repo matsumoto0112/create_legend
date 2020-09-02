@@ -130,7 +130,7 @@ void SkillPasteStick::ProductionUpdate() {
     }
 
     position += player_->GetTransform().GetPosition();
-    position.y = 1.0f;
+    position.y = 1.01f;
     std::shared_ptr<SkillPaste> paste = std::make_shared<SkillPaste>();
     paste->Init(position, mediator_);
     pastes_.emplace_back(std::move(paste));

@@ -329,6 +329,7 @@
     <ClInclude Include="src\stage_generate\camera_generate_info.h" />
     <ClInclude Include="src\camera\lookat_follow_target_camera.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
+    <ClInclude Include="src\util\mod_int.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -390,6 +390,7 @@
     <ClInclude Include="src\util\loader\archive_loader.h" />
     <ClInclude Include="src\util\loader\font_loader.h" />
     <ClInclude Include="src\util\loader\glb_loader.h" />
+    <ClInclude Include="src\util\mod_int.h" />
     <ClInclude Include="src\util\path.h" />
     <ClInclude Include="src\util\pipeline_initializer.h" />
     <ClInclude Include="src\util\random.h" />

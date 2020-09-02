@@ -7,8 +7,16 @@
 namespace {
 constexpr const wchar_t* STAGE_LIST[] = {
     legend::util::resource::resource_names::texture::RESULT_GAMEOVER,
+    legend::util::resource::resource_names::texture::TITLE_LOGO,
+    legend::util::resource::resource_names::texture::RESULT_PLAYERPOWER_TEXT_1,
+    legend::util::resource::resource_names::texture::RESULT_PLAYERPOWER_TEXT_2,
     legend::util::resource::resource_names::texture::RESULT_STAGECLEAR,
 };
+
+constexpr float Lerp(float a, float b, float t) {
+  t = legend::math::util::Clamp(t, 0.0f, 1.0f);
+  return b * t + a * (1.0f - t);
+}
 }  // namespace
 
 namespace legend {
@@ -21,6 +29,7 @@ Title::Title(ISceneChange* scene_change) : Scene(scene_change) {}
 bool Title::Initialize() {
   current_phase_ = Phase::TITLE;
   stage_select_move_direction_ = StageSelectMoveDirection::NONE;
+  current_select_stage_item_id_ = util::ModInt(0, MAX_STAGE_ITEM_COUNT);
 
   game::GameDevice::GetInstance()->GetDevice().GetHeapManager().ResetLocalHeap(
       directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
@@ -30,6 +39,8 @@ bool Title::Initialize() {
   bgm_key_ =
       audio.Start(util::resource::resource_names::audio::BGM_TITLE, 1.0f, true);
 
+  const auto screen_size =
+      game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
   {
     auto image = std::make_unique<ui::Image>();
     if (!image->Init(
@@ -37,9 +48,6 @@ bool Title::Initialize() {
             directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       return false;
     }
-
-    const auto screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     const float x =
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
     const float y = image->GetSprite().GetContentSize().y * 0.5f;
@@ -55,9 +63,6 @@ bool Title::Initialize() {
             directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       return false;
     }
-
-    const auto screen_size =
-        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     const float x =
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
     const float y = image->GetSprite().GetContentSize().y * 0.5f + 400.0f;
@@ -75,18 +80,18 @@ bool Title::Initialize() {
                                           LocalHeapID::ONE_PLAY)) {
         return false;
       }
-
-      const auto screen_size =
-          game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+      //画面の中心に置いたときのx座標
       const float base_x =
           screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
+      //画像の座標は基底の位置からスクリーン座標分ずらす
       const float x = base_x + screen_size.x * i;
       const float y = image->GetSprite().GetContentSize().y * 0.5f + 200.0f;
       image->SetPosition(math::Vector2(x, y));
       image->SetZOrder(0.2f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
-      stage_images_.emplace_back(comp, base_x);
+      stage_images_.emplace_back(comp, base_x,
+                                 static_cast<float>(i) * screen_size.x);
     }
   }
 
@@ -116,29 +121,65 @@ bool Title::Update() {
     }
   };
 
+  auto GetLerpT = [&]() {
+    return 1.0f -
+           (stage_move_select_timer_.CurrentTime() / STAGE_ITEM_MOVE_TIME);
+  };
+
+  auto UpdateStageItems = [&](float t) {
+    for (auto&& st : stage_images_) {
+      const math::Vector2 prev_pos = st.component->GetPosition();
+      const float x = Lerp(st.prev_x, st.next_x, t) + st.base_x;
+      st.component->SetPosition(math::Vector2(x, prev_pos.y));
+    }
+  };
+
+  auto SetupStageUpdate = [&]() {
+    const auto screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    stage_move_select_timer_.Init(STAGE_ITEM_MOVE_TIME);
+    for (i32 i = 0; i < MAX_STAGE_ITEM_COUNT; i++) {
+      auto& st = stage_images_[i];
+      st.prev_x = st.next_x;
+      st.next_x =
+          screen_size.x * 1.0f * (i - current_select_stage_item_id_.Get());
+    }
+  };
+
   auto UpdateStageSelect = [&]() {
-    // if (stage_select_move_direction_ == StageSelectMoveDirection::LEFT) {
-    //  stage_select_move_direction_ = StageSelectMoveDirection::NONE;
-    //  return;
-    //} else if (stage_select_move_direction_ ==
-    //           StageSelectMoveDirection::RIGHT) {
-    //  for (auto&& im : stage_images_) {
-    //    const float base_x = im.base_x;
-    //  }
-    //  stage_select_move_direction_ = StageSelectMoveDirection::NONE;
-    //  return;
-    //}
+    const auto screen_size =
+        game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
+    const bool stage_image_moving =
+        stage_select_move_direction_ == StageSelectMoveDirection::LEFT ||
+        stage_select_move_direction_ == StageSelectMoveDirection::RIGHT;
+
+    if (stage_image_moving) {
+      if (stage_move_select_timer_.Update()) {
+        stage_select_move_direction_ = StageSelectMoveDirection::NONE;
+      }
+      UpdateStageItems(GetLerpT());
+
+      return;
+    }
+
     //決定キーでフェードを開始し、シーンを終了する
-    // if (input.GetCommand(input::input_code::Decide)) {
-    fade_.StartFadeOut(1.0f);
-    is_scene_end_ = true;
-    audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
-    current_phase_ = Phase::END;
-    //}
-    // else if (input.GetHorizontal() > 0.0f) {
-    //      stage_select_move_direction_ = StageSelectMoveDirection::RIGHT;
-    //    } else if (input.GetHorizontal() < 0.0f) {
-    //      stage_select_move_direction_ = StageSelectMoveDirection::LEFT;
+    if (const bool input_decide = input.GetCommand(input::input_code::Decide);
+        input_decide) {
+      fade_.StartFadeOut(1.0f);
+      is_scene_end_ = true;
+      audio.Start(util::resource::resource_names::audio::TITLE_DECISION, 1.0f);
+      current_phase_ = Phase::END;
+    } else if (const bool input_right = input.GetHorizontal() > 0.0f;
+               input_right) {
+      current_select_stage_item_id_++;
+      stage_select_move_direction_ = StageSelectMoveDirection::RIGHT;
+      SetupStageUpdate();
+    } else if (const bool input_left = input.GetHorizontal() < 0.0f;
+               input_left) {
+      current_select_stage_item_id_--;
+      stage_select_move_direction_ = StageSelectMoveDirection::LEFT;
+      SetupStageUpdate();
+    }
   };
 
   auto UpdateFade = [&]() {
@@ -166,7 +207,7 @@ bool Title::Update() {
 
   fade_.Update();
   return true;
-}  // namespace scenes
+}
 
 //描画
 void Title::Draw() {

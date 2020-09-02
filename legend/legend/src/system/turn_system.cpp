@@ -363,7 +363,8 @@ bool TurnSystem::EnemyMoveEnd() {
 
   //“G‚ª‘¶Ý‚µ‚Ä‚¢‚é‚©
   if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
-    current_mode_ = Mode::PLAYER_MOVE_READY;
+    before_mode_ = current_mode_;
+    current_mode_ = Mode::PLAYER_ADD_SKILL;
     auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
     audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
     return true;

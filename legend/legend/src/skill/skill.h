@@ -56,8 +56,14 @@ class Skill : public actor::Actor {
    * @brief 再使用までのターン数の更新
    */
   void RemaingRecastTurnUpdate();
-
-  void AdjustPosition(math::Vector3 adjust_position);
+  /**
+   * @brief 装備スキル順に位置を調整
+   */
+  void AdjustPosition(math::Vector3 position);
+  /**
+   * @brief 選択中のスキルの位置を変更
+   */
+  void ChangePosition(math::Vector3 position);
 
   // i32 GetModelID();
   i32 GetRemainingUsableCount();
@@ -108,6 +114,7 @@ class Skill : public actor::Actor {
   bool is_production_;
   //! プレイヤー
   const player::Player* player_;
+  //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
 };
 

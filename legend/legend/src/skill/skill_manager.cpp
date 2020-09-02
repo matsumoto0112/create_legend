@@ -25,6 +25,9 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   current_mode_ = Mode::NONE;
   is_equipment_production_ = false;
   complete_eqquipment_ = false;
+  something_skill_use_ = false;
+  select_skill_number_ = 0;
+  previous_select_number_ = 0;
 }
 
 //スキル取得時
@@ -35,7 +38,11 @@ void SkillManager::GetSkill(std::shared_ptr<Skill> skill) {
 
 //スキルの獲得
 void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
+  //最大所持数でなければ追加
+  if (skills_.size() >= skill_max_count_) return;
+
   skills_.push_back(skill);
+  SetPosition(skill, static_cast<i32>(skills_.size() - 1));
   select_ui_.AddSkill(skill.get());
   player_ui_.AddEquipmentUI(skill.get());
 }
@@ -50,7 +57,7 @@ void SkillManager::Update() {
       continue;
     }
 
-    SetPosition(skill, i);
+    if (!select_ui_.GetIsSelectMode()) SetPosition(skill, i);
     i++;
   }
 
@@ -58,8 +65,10 @@ void SkillManager::Update() {
 }
 
 void SkillManager::EquipmentProductionUpdate() {
-  //このターンに何も取っていなければターンを切り替える
-  if (this_turn_get_skills_.empty()) {
+  //このターンに何も取っていない又は、所持スキル数が最大なら、ターンを切り替える
+  if (this_turn_get_skills_.empty() ||
+      (skills_.size() >= skill_max_count_ && !complete_eqquipment_)) {
+    something_skill_use_ = false;
     mediator_->PlayerCompleteEquipment();
     return;
   }
@@ -70,33 +79,31 @@ void SkillManager::EquipmentProductionUpdate() {
     current_mode_ = Mode::RISE_PLAYER;
   }
 
-  //現在の所持スキル数が所持限界数以下であれば追加
-  if (skills_.size() < skill_max_count_) {
-    //上昇
-    if (current_mode_ == Mode::RISE_PLAYER) {
-      //一定の高さまで行ったら装備を追加
-      if (player_->GetTransform().GetPosition().y >= 30.0f) {
-        if (!complete_eqquipment_) {
-          for (auto&& skill : this_turn_get_skills_) {
-            AddSkill(skill);
-          }
-          complete_eqquipment_ = true;
+  //上昇
+  if (current_mode_ == Mode::RISE_PLAYER) {
+    //一定の高さまで行ったら装備を追加
+    if (player_->GetTransform().GetPosition().y >= 30.0f) {
+      if (!complete_eqquipment_) {
+        for (auto&& skill : this_turn_get_skills_) {
+          AddSkill(skill);
         }
-        //下降状態に切り替え
-        current_mode_ = Mode::FALL_PLAYER;
-        player_->GetCollider()->ApplyCentralImpulse(
-            player_->GetCollider()->GetVelocity() * -1);
+        complete_eqquipment_ = true;
       }
+      //下降状態に切り替え
+      current_mode_ = Mode::FALL_PLAYER;
+      player_->GetCollider()->ApplyCentralImpulse(
+          player_->GetCollider()->GetVelocity() * -1);
     }
-    //下降
-    if (current_mode_ == Mode::FALL_PLAYER) {
-      //一定の高さまで行ったらターンを切り替える
-      if (player_->GetTransform().GetPosition().y <= 1.8f) {
-        current_mode_ = Mode::NONE;
-        mediator_->PlayerCompleteEquipment();
-        this_turn_get_skills_.clear();
-        complete_eqquipment_ = false;
-      }
+  }
+  //下降
+  if (current_mode_ == Mode::FALL_PLAYER) {
+    //一定の高さまで行ったらターンを切り替える
+    if (player_->GetTransform().GetPosition().y <= 1.8f) {
+      current_mode_ = Mode::NONE;
+      something_skill_use_ = false;
+      mediator_->PlayerCompleteEquipment();
+      complete_eqquipment_ = false;
+      this_turn_get_skills_.clear();
     }
   }
 }
@@ -190,34 +197,45 @@ bool SkillManager::SelectSkill() {
   }
 
   if (select_ui_.GetIsSelectMode()) {
-    i32 number = select_ui_.GetSkillNumber();
     //移動判定を1回だけにする
     if (input.GetGamepad()->GetStickLeft().x >= 0.8f && !select_move_) {
-      number++;
+      select_skill_number_++;
+      if (select_skill_number_ >= skills_.size()) select_skill_number_ = 0;
       select_move_ = true;
     } else if (input.GetGamepad()->GetStickLeft().x <= -0.8f && !select_move_) {
-      number--;
+      select_skill_number_--;
+      if (select_skill_number_ < 0)
+        select_skill_number_ = static_cast<i32>(skills_.size() - 1);
       select_move_ = true;
     }
     if (input.GetGamepad()->GetStickLeft().x > -0.8f &&
         input.GetGamepad()->GetStickLeft().x < 0.8f)
       select_move_ = false;
-    select_ui_.SelectSkillNumber(number);
+    //選択中の番号に合わせて表示関係を更新
+    select_ui_.SelectSkillNumber(select_skill_number_);
+    SetPositionSelectSkill(select_skill_number_);
     return true;
   } else {
+    previous_select_number_ = 0;
     return false;
   }
 }
 
 //スキルの使用
 void SkillManager::UseSkill() {
-  if (!select_ui_.GetIsSelectMode() || IsProductionNow()) return;
+  //選択中、演出中、そのターンにスキルを使用済でなければ使用できる
+  if (!select_ui_.GetIsSelectMode() || IsProductionNow() ||
+      something_skill_use_)
+    return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   i32 skill_num = select_ui_.GetSkillNumber();
   if (input.GetGamepad()->GetButtonDown(input::joy_code::A)) {
     skills_[skill_num]->Use();
+    something_skill_use_ = true;
+    select_skill_number_ = 0;
+    previous_select_number_ = 0;
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
     if (skills_[skill_num]->GetActivetionTiming() !=
         SkillActivationTiming::NOW) {
@@ -255,6 +273,19 @@ void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
   pos = math::Matrix4x4::MultiplyCoord(
       pos, player_->GetTransform().GetRotation().ToMatrix());
   skill->AdjustPosition(pos);
+}
+
+void SkillManager::SetPositionSelectSkill(i32 skill_num) {
+  if (skill_num == previous_select_number_) return;
+
+  const math::Vector3 skill1_pos =
+      skills_[previous_select_number_]->GetTransform().GetPosition();
+  const math::Vector3 skill2_pos =
+      skills_[skill_num]->GetTransform().GetPosition();
+  skills_[previous_select_number_]->ChangePosition(skill2_pos);
+  skills_[skill_num]->ChangePosition(skill1_pos);
+
+  previous_select_number_ = skill_num;
 }
 }  // namespace skill
 }  // namespace legend

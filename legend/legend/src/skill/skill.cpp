@@ -22,12 +22,18 @@ void Skill::RemaingRecastTurnUpdate() {
   //カウントを更新
   remaining_recast_turn_--;
 }
-void Skill::AdjustPosition(math::Vector3 adjust_position) {
-  transform_.SetPosition(player_->GetPosition() + adjust_position);
+void Skill::AdjustPosition(math::Vector3 position) {
+  transform_.SetPosition(player_->GetPosition() + position);
   transform_.SetRotation(player_->GetRotation());
   box_->SetTransform(transform_);
 }
 // i32 Skill::GetModelID() { return model_id_; }
+
+void Skill::ChangePosition(math::Vector3 position) {
+  transform_.SetPosition(position);
+  transform_.SetRotation(player_->GetRotation());
+  box_->SetTransform(transform_);
+}
 
 i32 Skill::GetRemainingUsableCount() { return remaining_usable_count_; }
 

@@ -87,9 +87,9 @@ class SkillManager {
    */
   void SetPosition(std::shared_ptr<Skill> skill, i32 skill_num);
   /**
-   * @brief スキル装備の演出中を取得
+   * @brief 選択中スキルの座標設定
    */
-  bool GetEquipmentProduction() const;
+  void SetPositionSelectSkill(i32 skill_num);
 
  private:
   actor::IActorMediator* mediator_;
@@ -114,7 +114,13 @@ class SkillManager {
   Mode current_mode_;
   //! 装備演出中か
   bool is_equipment_production_;
+  //! 装備し終えたか
   bool complete_eqquipment_;
+  //! 何かスキルを使ったか
+  bool something_skill_use_;
+  //! 選択番号
+  i32 select_skill_number_;
+  i32 previous_select_number_;
 };
 }  // namespace skill
 }  // namespace legend

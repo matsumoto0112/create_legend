@@ -41,6 +41,8 @@ constexpr name CLASSROOM_RIGHTWALL = L"classroom_rightwall.glb";
 
 namespace texture {
 constexpr name FADE_IMAGE = L"fade_image.png";
+constexpr name PARTICLE_FALLLOCUS_1 = L"Particle_fallLocus_1.png";
+constexpr name PARTICLE_FALLLOCUS_2 = L"Particle_fallLocus_2.png";
 constexpr name PARTICLE_SMOKE_1 = L"Particle_smoke_1.png";
 constexpr name PARTICLE_SMOKE_2 = L"Particle_smoke_2.png";
 constexpr name PARTICLE_SMOKE_3 = L"Particle_smoke_3.png";
@@ -53,6 +55,9 @@ constexpr name RESULT_PLAYERPOWER_TEXT_2 = L"Result_playerPower_text_2.png";
 constexpr name RESULT_STAGECLEAR = L"Result_stageClear.png";
 constexpr name RESULT_TOTALTURN_TEXT_1 = L"Result_totalTurn_text_1.png";
 constexpr name RESULT_TOTALTURN_TEXT_2 = L"Result_totalTurn_text_2.png";
+constexpr name STAGESELECT_ARROW_LEFT = L"StageSelect_arrow_left.png";
+constexpr name STAGESELECT_ARROW_RIGHT = L"StageSelect_arrow_right.png";
+constexpr name STAGESELECT_STAGE_FRAME = L"StageSelect_stage_frame.png";
 constexpr name TEX = L"tex.png";
 constexpr name TITLE_LOGO = L"TItle_logo.png";
 constexpr name TITLE_PUSHBUTTON_GUIDE = L"Title_pushButton_guide.png";

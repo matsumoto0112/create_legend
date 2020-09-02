@@ -127,9 +127,7 @@ constexpr bool IsInRange(T value, T min, T max) {
  * @return ƒNƒ‰ƒ“ƒv‚³‚ê‚½’l
  */
 constexpr float Clamp(float t, float min, float max) {
-  if (t < min) t = min;
-  if (t > max) t = max;
-  return t;
+  return std::clamp(t, min, max);
 }
 
 /**

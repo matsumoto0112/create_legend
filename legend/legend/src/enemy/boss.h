@@ -39,10 +39,16 @@ class Boss : public enemy::EnemyActor {
 
   virtual void OnHit(bullet::Collider* other);
 
+  void Boss_Rotate_Stand();
+  void Boss_Rush_Move();
+
  private:
   std::unique_ptr < std::function<bool()>> special_action_ = {};
-  float rotate_speed_ = 10.0f;
+  float rotate_speed_ = 15.0f;
+  const float rotate_time_ = 1.0f;
+  float rotate_timer_ = 0.0f;
   bool is_rotate_ = false;
+  bool is_rush_ = false;
 };
 
 }  // namespace enemy

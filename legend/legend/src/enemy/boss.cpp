@@ -58,36 +58,25 @@ bool Boss::Init(actor::IActorMediator* mediator,
 
 bool Boss::Update() {
   enemy::EnemyActor::Update();
-  if (is_rotate_) {
-    auto vector =
-        (mediator_->GetPlayer()->GetPosition() - GetPosition()).Normalized();
-    vector.y = 0;
-    vector.Normalized();
-
-    auto q = CreateLookAt(vector);
-    auto speed = (rotate_speed_ - box_->GetAngularVelocity().Magnitude());
-    box_->SetAngularVelocity(math::Vector3::kUpVector * q.w * speed);
-
-    auto f = ((GetTransform().GetRotation() * math::Vector3::kForwardVector)
-                  .Normalized());
-    f.y = 0;
-    f.Normalized();
-
-    is_move_ = true;
-
-    if (0.975f < Vector3::Dot(vector, f)) {
-          box_->SetAngularVelocity(math::Vector3::kZeroVector);
-      is_rotate_ = false;
-      is_move_ = false;
-    }
-  }
+  Boss_Rotate_Stand();
+  Boss_Rush_Move();
   return true;
 }
 
 //ë¨ìxÇÃê›íË
 void Boss::SetVelocity(math::Vector3 velocity) {
-  if (enemy_ai_.ai_type_ == enemy::EnemyAIType::Boss_Rotate_Stand) {
-    is_rotate_ = true;
+  switch (enemy_ai_.ai_type_) {
+    case enemy::EnemyAIType::Boss_Rotate_Stand:
+      is_rotate_ = true;
+      rotate_timer_ = rotate_time_;
+      break;
+    case enemy::EnemyAIType::Boss_Rush_Move:
+      auto power = velocity.Magnitude();
+      velocity = (GetTransform().GetRotation() * math::Vector3::kForwardVector);
+      velocity.y = 0.0f;
+      velocity = velocity.Normalized() * power;
+      is_rush_ = true;
+      break;
   }
   enemy_ai_.Action(velocity, box_.get());
   is_move_ = true;
@@ -97,10 +86,66 @@ void Boss::OnHit(bullet::Collider* other) {
   enemy::EnemyActor::OnHit(other);
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
+    //ÉvÉåÉCÉÑÅ[Ç…êGÇÍÇΩ
+    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+      HitAction(other);
+      auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
+      auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
+      auto strength =
+          math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
+      other->ApplyCentralImpulse(strength);
+      CreateFireParticle(GetCollider()->GetHitPositions().at(other));
+    }
     //ìGÇ…êGÇÍÇΩ
     if (enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
       HitAction(other);
     }
+  }
+}
+
+void Boss::Boss_Rotate_Stand() {
+  if (is_rotate_) {
+    auto vector =
+        (mediator_->GetPlayer()->GetPosition() - GetPosition()).Normalized();
+    vector.y = 0;
+    vector.Normalized();
+
+    auto q = CreateLookAt(vector);
+    // auto speed = (rotate_speed_ - box_->GetAngularVelocity().Magnitude());
+    box_->SetAngularVelocity(math::Vector3::kUpVector * q.w * rotate_speed_);
+
+    auto f = ((GetTransform().GetRotation() * math::Vector3::kForwardVector)
+                  .Normalized());
+    f.y = 0;
+    f.Normalized();
+
+    is_move_ = true;
+
+	rotate_timer_ = math::util::Clamp(rotate_timer_ - update_time_, 0.0f,rotate_time_);
+	if (0.0f < rotate_timer_) return;
+    if (0.975f < Vector3::Dot(vector, f)) {
+      box_->SetAngularVelocity(math::Vector3::kZeroVector);
+      is_rotate_ = false;
+      is_move_ = false;
+    }
+  }
+}
+void Boss::Boss_Rush_Move() {
+  if (is_rush_) {
+    auto position = GetPosition();
+    auto direction = GetVelocity().Normalized();
+    direction.y = 0;
+    direction = direction.Normalized();
+
+    auto point = position + direction * 30.0f;
+    const auto raycast =
+        mediator_->RayCast(point, point + math::Vector3::kDownVector * 10.0f);
+    auto objs = raycast.m_collisionObjects;
+
+    if (objs.size() <= 0) {
+      box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() * -0.5f);
+    }
+    is_rush_ = is_move_;
   }
 }
 }  // namespace enemy

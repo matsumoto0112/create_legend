@@ -142,10 +142,6 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
     return;
   }
 
-  if (select_number < 0)
-    select_number = static_cast<i32>(skill_icons_.size() - 1);
-  if (select_number >= skill_icons_.size()) select_number = 0;
-
   if (select_number_ == select_number) return;
   select_number_ = select_number;
 

@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+#include "src/draw/particle/particle_emitter.h"
 #include "src/skill/skill.h"
 #include "src/util/timer.h"
 
@@ -73,6 +74,10 @@ class SkillItemBox : public actor::Actor {
   std::shared_ptr<bullet::BoundingBox> box_;
   //! スキル内容のアイコンモデル
   std::shared_ptr<draw::Model> skill_icon_model_;
+  //! 移動パーティクル
+  std::shared_ptr<draw::particle::ParticleEmitter> move_particle_;
+  //! 速度
+  math::Vector3 velocity_;
 };
 
 }  // namespace skill

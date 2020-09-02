@@ -1,6 +1,7 @@
 #include "skill_item_box.h"
 
 #include "src/directx/shader/shader_register_id.h"
+#include "src/draw/particle/particle_factory.h"
 #include "src/game/game_device.h"
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
@@ -11,7 +12,7 @@ namespace skill {
 SkillItemBox::SkillItemBox() : Parent(L"ItemBox") {}
 
 //デストラクタ
-SkillItemBox::~SkillItemBox() {}
+SkillItemBox::~SkillItemBox() { move_particle_->Delete(); }
 
 //初期化
 bool SkillItemBox::Init(actor::IActorMediator* mediator,
@@ -48,6 +49,12 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   skill_icon_model_ = parameter.skill_icon_model;
 
+  velocity_ = math::Vector3::kUpVector;
+
+  move_particle_ = draw::particle::particle_factory::CreatePlayerMoveParticle();
+  move_particle_->GetTransform().SetPosition(transform_.GetPosition());
+  move_particle_->SetEmitEnable(false);
+
   return true;
 }
 
@@ -56,12 +63,23 @@ bool SkillItemBox::Update() {
   if (is_dead_) {
     //上空に飛ばす
     util::Transform transform = transform_;
-    transform.SetPosition(transform.GetPosition() + math::Vector3::kUpVector);
+    transform.SetPosition(transform.GetPosition() + velocity_);
     box_->SetTransform(transform);
 
-    //一定の高さまで行ったら削除準備
-    if (transform_.GetPosition().y > 100.0f) {
+    auto ParticleUpdate = [&]() {
+      const math::Vector3 MOVE_PARTICLE_OFFSET = velocity_.Normalized() * -3;
+      const math::Vector3 move_particle_position =
+          transform_.GetPosition() + MOVE_PARTICLE_OFFSET;
+      move_particle_->GetTransformRef().SetPosition(move_particle_position);
+      move_particle_->SetEmitEnable(true);
+    };
+
+    ParticleUpdate();
+
+    //一定の高さまで行ったら削除
+    if (transform_.GetPosition().y > 50.0f) {
       if (delete_time_.Update()) {
+        move_particle_->Delete();
         if (box_) mediator_->RemoveCollider(box_);
         mediator_->RemoveActor(this);
         return true;

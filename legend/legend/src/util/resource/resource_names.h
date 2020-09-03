@@ -87,6 +87,8 @@ constexpr name UI_SKILL_ICON_3 = L"UI_skill_icon_3.png";
 constexpr name UI_SKILL_ICON_4 = L"UI_skill_icon_4.png";
 constexpr name UI_SKILL_ICON_5 = L"UI_skill_icon_5.png";
 constexpr name UI_SKILL_SELECT_FRAME = L"UI_skill_select_frame.png";
+constexpr name UI_TURNCHANGE_ENEMY = L"UI_turnChange_enemy.png";
+constexpr name UI_TURNCHANGE_PLAYER = L"UI_turnChange_player.png";
 }  // namespace texture
 
 namespace vertex_shader {

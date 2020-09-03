@@ -189,6 +189,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\system\turn_system.cpp" />
+    <ClCompile Include="src\turn_change\turn_change.cpp" />
     <ClCompile Include="src\ui\gauge.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
     <ClCompile Include="src\ui\number.cpp" />
@@ -375,6 +376,7 @@
     <ClInclude Include="src\system\game_data.h" />
     <ClInclude Include="src\system\mode.h" />
     <ClInclude Include="src\system\turn_system.h" />
+    <ClInclude Include="src\turn_change\turn_change.h" />
     <ClInclude Include="src\ui\gauge.h" />
     <ClInclude Include="src\ui\image.h" />
     <ClInclude Include="src\ui\number.h" />

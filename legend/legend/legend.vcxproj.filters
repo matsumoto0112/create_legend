@@ -136,6 +136,7 @@
     <ClCompile Include="src\camera\camera_manager.cpp" />
     <ClCompile Include="src\camera\lookat_follow_target_camera.cpp" />
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
+    <ClCompile Include="src\turn_change\turn_change.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -330,6 +331,7 @@
     <ClInclude Include="src\camera\lookat_follow_target_camera.h" />
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\util\mod_int.h" />
+    <ClInclude Include="src\turn_change\turn_change.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

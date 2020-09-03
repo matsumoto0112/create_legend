@@ -42,6 +42,9 @@ bool TurnSystem::Init(const std::string& stage_name) {
   //アクター管理クラスの初期化
   actor_manager_.Init(stage_name, this);
 
+  //ターン変更演出用クラス
+  turn_change_.Init(this);
+
   // UI情報を取得
   std::vector<u8> data =
       game::GameDevice::GetInstance()->GetResource().GetArchiveLoader().Load(
@@ -182,7 +185,7 @@ bool TurnSystem::Update() {
       {Mode::ENEMY_PRODUCTION, [&]() { return EnemyMoveProducing(); }},
       {Mode::BOSS_PRODUCTION, [&]() { return BossMoveProducing(); }},
       {Mode::PLAYER_ADD_SKILL, [&]() { return AddSkill(); }},
-  };
+      {Mode::TURN_CHANGE, [&]() { return turn_change_.Update(); }}};
   if (!switcher.at(current_mode_)()) {
     return false;
   }
@@ -365,8 +368,6 @@ bool TurnSystem::EnemyMoveEnd() {
   if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
     before_mode_ = current_mode_;
     current_mode_ = Mode::PLAYER_ADD_SKILL;
-    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-    audio.Start(audio_name::ENEMY_TURN_END, 1.0f);
     return true;
   }
 
@@ -377,16 +378,26 @@ bool TurnSystem::EnemyMoveEnd() {
 
 bool TurnSystem::EnemyMoveProducing() {
   if (actor_manager_.IsAllEnemeyStop()) {
-    current_mode_ = Mode::PLAYER_MOVE_READY;
+    ToPlayerTurn();
   }
 
   return true;
 }
 
 bool TurnSystem::BossMoveProducing() {
-  current_mode_ = Mode::PLAYER_MOVE_READY;
+  ToPlayerTurn();
 
   return true;
+}
+
+bool TurnSystem::ToPlayerTurn() {
+  current_mode_ = Mode::TURN_CHANGE;
+  return turn_change_.ChangeStart(Mode::PLAYER_MOVE_READY);
+}
+
+bool TurnSystem::ToEnemyTurn() {
+  current_mode_ = Mode::TURN_CHANGE;
+  return turn_change_.ChangeStart(Mode::ENEMY_MOVING);
 }
 
 //描画
@@ -454,6 +465,7 @@ void TurnSystem::Draw() {
 
   ui_board_.Draw();
   fade_.Draw();
+  turn_change_.Draw();
 
   //スプライトは最後に描画リストにあるものをまとめて描画する
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);

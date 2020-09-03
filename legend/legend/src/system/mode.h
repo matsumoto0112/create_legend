@@ -22,6 +22,7 @@ enum class Mode {
   ENEMY_PRODUCTION,  //! 敵の出現演出中
   BOSS_PRODUCTION,   //! ボスの出現演出中
   PLAYER_ADD_SKILL,  //! プレイヤーのスキル装備演出状態
+  TURN_CHANGE,       //! ターン変更演出中
 };
 
 }  // namespace system

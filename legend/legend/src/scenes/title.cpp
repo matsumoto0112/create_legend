@@ -14,23 +14,15 @@ namespace scenes {
 const std::vector<Title::Stage> Title::STAGE_LIST = {
     {
         "Test_01",
-        TextureName::RESULT_GAMEOVER,
+        TextureName::STAGESELECT_STAGE_FRAME,
     },
     {
         "Test_01",
-        TextureName::RESULT_PLAYERPOWER_TEXT_2,
+        TextureName::STAGESELECT_STAGE_FRAME,
     },
     {
         "Test_01",
-        TextureName::RESULT_TOTALTURN_TEXT_1,
-    },
-    {
-        "Test_01",
-        TextureName::RESULT_STAGECLEAR,
-    },
-    {
-        "Test_01",
-        TextureName::RESULT_TOTALTURN_TEXT_2,
+        TextureName::STAGESELECT_STAGE_FRAME,
     },
 };
 
@@ -53,13 +45,13 @@ bool Title::Initialize() {
   bgm_key_ =
       audio.Start(util::resource::resource_names::audio::BGM_TITLE, 1.0f, true);
 
+  constexpr auto HEAP_ID =
+      directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
   const auto screen_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
   {
     auto image = std::make_unique<ui::Image>();
-    if (!image->Init(
-            util::resource::resource_names::texture::TITLE_LOGO,
-            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
+    if (!image->Init(TextureName::TITLE_LOGO, HEAP_ID)) {
       return false;
     }
     const float x =
@@ -72,9 +64,7 @@ bool Title::Initialize() {
   }
   {
     auto image = std::make_unique<ui::Image>();
-    if (!image->Init(
-            util::resource::resource_names::texture::TITLE_PUSHBUTTON_GUIDE,
-            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
+    if (!image->Init(TextureName::TITLE_PUSHBUTTON_GUIDE, HEAP_ID)) {
       return false;
     }
     const float x =
@@ -87,8 +77,6 @@ bool Title::Initialize() {
   }
 
   {
-    constexpr auto HEAP_ID =
-        directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
     for (u64 i = 0; i < stage_num; i++) {
       auto image = std::make_unique<ui::Image>();
       if (!image->Init(STAGE_LIST[i].stage_image_name, HEAP_ID)) {
@@ -99,13 +87,43 @@ bool Title::Initialize() {
           screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
       //画像の座標は基底の位置からスクリーン座標分ずらす
       const float x = base_x + screen_size.x * i;
-      const float y = image->GetSprite().GetContentSize().y * 0.5f + 200.0f;
+      const float y =
+          screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
       image->SetZOrder(0.2f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
-      stage_images_.emplace_back(comp, base_x,
-                                 static_cast<float>(i) * screen_size.x);
+      stage_movable_images_.emplace_back(comp, base_x,
+                                         static_cast<float>(i) * screen_size.x);
+    }
+
+    {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(TextureName::STAGESELECT_ARROW_LEFT, HEAP_ID)) {
+        return false;
+      }
+      const float x =
+          screen_size.x * 0.25f - image->GetSprite().GetContentSize().x * 0.5f;
+      const float y =
+          screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
+      image->SetPosition(math::Vector2(x, y));
+      image->SetEnable(false);
+      ui::UIComponent* comp = board_.AddComponent(std::move(image));
+      stage_non_movable_images_.emplace_back(comp);
+    }
+    {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(TextureName::STAGESELECT_ARROW_RIGHT, HEAP_ID)) {
+        return false;
+      }
+      const float x =
+          screen_size.x * 0.75f - image->GetSprite().GetContentSize().x * 0.5f;
+      const float y =
+          screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
+      image->SetPosition(math::Vector2(x, y));
+      image->SetEnable(false);
+      ui::UIComponent* comp = board_.AddComponent(std::move(image));
+      stage_non_movable_images_.emplace_back(comp);
     }
   }
 
@@ -129,8 +147,11 @@ bool Title::Update() {
       for (auto&& im : title_images_) {
         im->SetEnable(false);
       }
-      for (auto&& st : stage_images_) {
+      for (auto&& st : stage_movable_images_) {
         st.component->SetEnable(true);
+      }
+      for (auto&& im : stage_non_movable_images_) {
+        im->SetEnable(true);
       }
     }
   };
@@ -141,7 +162,7 @@ bool Title::Update() {
   };
 
   auto UpdateStageItems = [&](float t) {
-    for (auto&& st : stage_images_) {
+    for (auto&& st : stage_movable_images_) {
       const math::Vector2 prev_pos = st.component->GetPosition();
       const float x = math::util::Lerp(st.prev_x, st.next_x, t) + st.base_x;
       st.component->SetPosition(math::Vector2(x, prev_pos.y));
@@ -152,9 +173,9 @@ bool Title::Update() {
     const auto screen_size =
         game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
     stage_move_select_timer_.Init(STAGE_ITEM_MOVE_TIME);
-    const i32 size = static_cast<i32>(stage_images_.size());
+    const i32 size = static_cast<i32>(stage_movable_images_.size());
     for (i32 i = 0; i < size; i++) {
-      auto& st = stage_images_[i];
+      auto& st = stage_movable_images_[i];
       st.prev_x = st.next_x;
       st.next_x =
           screen_size.x * 1.0f * (i - current_select_stage_item_id_.Get());

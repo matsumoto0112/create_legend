@@ -202,6 +202,11 @@ class Player : public actor::Actor {
 
   PlayerMoveDirectionModel move_direction_;
   std::shared_ptr<draw::particle::ParticleEmitter> player_move_particle_;
+
+  //! フルパワーではじいたかどうか
+  bool is_fullpower_;
+  //! フルパワー時のボーナス
+  float fullpower_bonus_ = 1.2f;
 };
 
 }  // namespace player

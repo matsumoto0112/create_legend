@@ -290,6 +290,8 @@ void Player::SetImpulse() {
       se_interval_.Init(1.0f);
     }
   } else {
+    is_fullpower_ = (impulse_ >= 0.9f);
+
     is_set_power_ = true;
   }
 }
@@ -304,6 +306,7 @@ void Player::ResetParameter() {
   input_velocity_ = math::Vector3::kZeroVector;
   is_move_ = false;
   velocity_update_time_ = 0;
+  is_fullpower_ = false;
 }
 
 //À•W‚ÌŽæ“¾
@@ -380,7 +383,14 @@ void Player::OnHit(bullet::Collider* other) {
           b->UpdateStrength(v * strength_ * -0.005f);
         }
 
-        auto s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
+        float s;
+
+        if (is_fullpower_) {
+          s = math::util::Clamp(
+              strength_ * fullpower_bonus_ - ea->GetStrength(), 0.0f, 1.0f);
+        } else {
+          s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
+        }
         auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
         auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
                         trigonometric;

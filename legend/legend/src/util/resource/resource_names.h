@@ -142,6 +142,11 @@ constexpr name SHADOW_MAP = L"shadow_map";
 }  // namespace pipeline
 
 namespace audio {
+constexpr name BGM_MAIN = L"BGM_main.wav";
+constexpr name BGM_RESULT = L"BGM_result.wav";
+constexpr name BGM_TITLE = L"BGM_title.wav";
+constexpr name BOSS1_SPIN = L"boss1_spin.wav";
+constexpr name BOSS1_STRIKE = L"boss1_strike.wav";
 constexpr name ENEMY_TURN_END = L"enemy_turn_end.wav";
 constexpr name ERASE_GRAFFITI = L"erase_graffiti.wav";
 constexpr name PLAYER_ENEMY_HIT_BIG = L"player_enemy_hit_big.wav";
@@ -158,20 +163,12 @@ constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE =
     L"player_return_from_select_skill_mode.wav";
 constexpr name PLAYER_SNAP = L"player_snap.wav";
 constexpr name PLAYER_TURN_END = L"player_turn_end.wav";
+constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
 constexpr name SKILL_DECISION = L"skill_decision.wav";
 constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";
 constexpr name SKILL_SELECT = L"skill_select.wav";
-
 constexpr name TITLE_DECISION = L"title_decision.wav";
-// constexpr name RESULT_STAGE_CLEAR = L"free_2.wav";
-// constexpr name RESULT_GAMEOVER = L"free_2.wav";
-// constexpr name RESULT_PRINT_TEXT = L"free_2.wav";
-constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
-
-constexpr name BGM_MAIN = L"BGM_main.wav";
-constexpr name BGM_TITLE = L"BGM_title.wav";
-constexpr name BGM_RESULT = L"BGM_result.wav";
 }  // namespace audio
 
 }  // namespace resource_names

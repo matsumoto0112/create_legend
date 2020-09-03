@@ -332,6 +332,7 @@ bool TurnSystem::PlayerSkillAfterMoved() {
 }
 
 bool TurnSystem::AddSkill() {
+  actor_manager_.GetCameraManager()->SetUpdateEnable(false);
   actor_manager_.GetPlayer()->EquipmentUpdate();
   return true;
 }

@@ -156,6 +156,8 @@ void ActorManager::PlayerCompleteEquipment() {
     turn_system_->SetTurnMode(system::Mode::ENEMY_MOVING);
   else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END)
     turn_system_->SetTurnMode(system::Mode::PLAYER_MOVE_READY);
+
+  camera_manager_.SetUpdateEnable(true);
 }
 
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }

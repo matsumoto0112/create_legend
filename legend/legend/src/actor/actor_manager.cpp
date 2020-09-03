@@ -153,9 +153,11 @@ void ActorManager::PlayerSkillDeactivate() {}
 
 void ActorManager::PlayerCompleteEquipment() {
   if (GetBeforeTurn() == system::Mode::PLAYER_SKILL_AFTER_MOVED)
-    turn_system_->SetTurnMode(system::Mode::ENEMY_MOVING);
-  else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END)
-    turn_system_->SetTurnMode(system::Mode::PLAYER_MOVE_READY);
+    turn_system_->ToEnemyTurn();
+  else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END ||
+           GetBeforeTurn() == system::Mode::ENEMY_PRODUCTION ||
+           GetBeforeTurn() == system::Mode::BOSS_PRODUCTION)
+    turn_system_->ToPlayerTurn();
 }
 
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }

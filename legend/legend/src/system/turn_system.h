@@ -8,25 +8,15 @@
 
 #include <set>
 
-//#include "src/actor/actor_mediator.h"
-//#include "src/actor/actor_render_command_list.h"
-//#include "src/bullet/physics_field.h"
+#include "src/actor/actor_manager.h"
 #include "src/camera/follow_camera.h"
 #include "src/camera/perspective_camera.h"
 #include "src/directx/buffer/index_buffer.h"
 #include "src/directx/buffer/vertex_buffer.h"
-//#include "src/enemy/enemy_manager.h"
-//#include "src/object/desk.h"
-//#include "src/object/fragment.h"
-//#include "src/object/graffiti.h"
-//#include "src/player/player.h"
 #include "src/scenes/fade_in_out.h"
-//#include "src/search/search_manager.h"
-//#include "src/skill/skill_item_box.h"
-//#include "src/stage_generate/stage_generator.h"
-#include "src/actor/actor_manager.h"
 #include "src/system/game_data.h"
 #include "src/system/mode.h"
+#include "src/turn_change/turn_change.h"
 #include "src/ui/gauge.h"
 #include "src/ui/image.h"
 #include "src/ui/number.h"
@@ -67,7 +57,7 @@ enum Enum { DIGIT_3, DIGIT_2, DIGIT_1, MAX };
  * @class TurnSystem
  * @brief ターン数管理クラス
  */
-class TurnSystem /* : public actor::IActorMediator*/ {
+class TurnSystem {
  public:
   /**
    * @brief コンストラクタ
@@ -111,6 +101,14 @@ class TurnSystem /* : public actor::IActorMediator*/ {
    * @brief 1つ前のターン状態を取得
    */
   Mode GetBeforeMode();
+  /**
+   * @brief プレイヤーターンになる演出
+   */
+  bool ToPlayerTurn();
+  /**
+   * @brief 敵のターンになる演出
+   */
+  bool ToEnemyTurn();
 
  private:
   /**
@@ -168,6 +166,8 @@ class TurnSystem /* : public actor::IActorMediator*/ {
 
   //! アクター管理クラス
   actor::ActorManager actor_manager_;
+  //! ターン変更演出用クラス
+  turn_change::TurnChange turn_change_;
 
   //! UI表示ボード
   ui::UIBoard ui_board_;

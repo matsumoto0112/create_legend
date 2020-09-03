@@ -72,7 +72,8 @@ class Title : public Scene {
 
   Phase current_phase_;
   std::vector<ui::UIComponent*> title_images_;
-  std::vector<StageImageInfo> stage_images_;
+  std::vector<ui::UIComponent*> stage_non_movable_images_;
+  std::vector<StageImageInfo> stage_movable_images_;
   StageSelectMoveDirection stage_select_move_direction_;
   util::ModInt current_select_stage_item_id_;
   util::CountDownTimer stage_move_select_timer_;

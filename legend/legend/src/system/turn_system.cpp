@@ -276,22 +276,22 @@ bool TurnSystem::Update() {
 //プレイヤーの移動準備
 bool TurnSystem::PlayerMoveReady() {
   auto& input = game::GameDevice::GetInstance()->GetInput();
-  auto& camera_manager = actor_manager_.GetCameraManager();
+  auto* camera_manager = actor_manager_.GetCameraManager();
   if (input.GetCommand(input::input_code::CAMERA_CHANGE) &&
       !actor_manager_.GetPlayer()->GetSkillSelect()) {
     auto SwitchCamera = [&]() {
-      if (camera_manager.GetCameraMode() ==
+      if (camera_manager->GetCameraMode() ==
           camera::camera_mode::PLAYER_LOOKAT) {
-        camera_manager.SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
+        camera_manager->SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
       } else {
-        camera_manager.SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
+        camera_manager->SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
       }
     };
     SwitchCamera();
   }
 
   //メインカメラの状態じゃないと移動できないようにする
-  if (camera_manager.GetCameraMode() == camera::camera_mode::PLAYER_LOOKAT) {
+  if (camera_manager->GetCameraMode() == camera::camera_mode::PLAYER_LOOKAT) {
     //プレイヤーの速度更新は入力を受け取って処理する
     if (!actor_manager_.GetPlayer()->GetSkillSelect())
       actor_manager_.GetPlayer()->CheckImpulse();

@@ -25,6 +25,7 @@ bool CameraManager::Init(
     const std::vector<stage_generate::CameraGenerateInfo>& infos) {
   actor_mediator_ = mediator;
   type_ = Type::Type_C;
+  update_enable_ = true;
 
   const math::IntVector2 screen_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
@@ -76,6 +77,7 @@ bool CameraManager::Init(
     free_cameras_.emplace_back(std::move(camera));
   }
 
+  SetUpdateEnable(update_enable_);
   return true;
 }
 
@@ -102,6 +104,15 @@ void CameraManager::UpdateCamera() {
   // if (input.GetKeyboard()->GetKeyDown(input::key_code::C)) {
   //  type_ = static_cast<Type>((type_ + 1) % Type::MAX);
   //}
+}
+
+void CameraManager::SetUpdateEnable(bool enable) {
+  update_enable_ = enable;
+  player_lookat_camera_->SetUpdateEnable(enable);
+  birds_eye_view_camera_->SetUpdateEnable(enable);
+  for (auto&& cm : free_cameras_) {
+    cm->SetUpdateEnable(enable);
+  }
 }
 
 void CameraManager::SetCameraMode(camera_mode::Enum camera_mode) {

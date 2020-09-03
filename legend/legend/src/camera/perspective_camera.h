@@ -125,7 +125,12 @@ class PerspectiveCamera : public Camera {
    */
   inline float GetFarZ() const { return far_z_; }
 
+  inline void SetUpdateEnable(bool enable) { update_enable_ = enable; }
+  inline bool GetUpdateEnable() const { return update_enable_; }
+
  protected:
+  //! カメラ行列の更新処理をするかどうか
+  bool update_enable_;
   //! カメラ座標
   math::Vector3 position_;
   //! カメラの回転角

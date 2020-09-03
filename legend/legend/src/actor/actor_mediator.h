@@ -10,6 +10,9 @@
 #include "src/system/mode.h"
 
 namespace legend {
+namespace camera {
+class CameraManager;
+}  // namespace camera
 namespace player {
 class Player;
 }  // namespace player
@@ -97,6 +100,10 @@ class IActorMediator {
    * @brief 生成した消しカスを登録する
    */
   virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) = 0;
+  /**
+   * @brief カメラの管理クラスを取得する
+   */
+  virtual camera::CameraManager* GetCameraManager() = 0;
 };
 
 }  // namespace actor

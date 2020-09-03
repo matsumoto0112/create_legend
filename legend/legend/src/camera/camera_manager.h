@@ -47,6 +47,10 @@ class CameraManager {
    */
   void UpdateCamera();
   /**
+   * @brief カメラの更新を有効にするかどうかのフラグをセットする
+   */
+  void SetUpdateEnable(bool enable);
+  /**
    * @brief カメラのモードを設定する
    */
   void SetCameraMode(camera_mode::Enum camera_mode);
@@ -70,6 +74,8 @@ class CameraManager {
   void RenderStart();
 
  private:
+  //! カメラの更新を有効にするか
+  bool update_enable_;
   //! アクター仲介オブジェクト
   actor::IActorMediator* actor_mediator_;
   //! 現在のカメラのモード

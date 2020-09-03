@@ -40,8 +40,11 @@ bool PerspectiveCamera::Init(const std::wstring& name,
 
 //コンスタントバッファの更新
 void PerspectiveCamera::UpdateConstantBufferStaging() {
-  view_ = CreateView();
-  projection_ = CreateProjection();
+  if (update_enable_) {
+    view_ = CreateView();
+    projection_ = CreateProjection();
+  }
+
   Camera::UpdateConstantBufferStaging();
 }
 

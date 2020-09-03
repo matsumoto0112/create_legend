@@ -127,8 +127,9 @@ class ActorManager : public actor::IActorMediator {
   virtual void SetStopTime(float time) override;
 
   virtual void AddFragment(std::unique_ptr<object::Fragment> fragment) override;
-
-  camera::CameraManager& GetCameraManager() { return camera_manager_; }
+  virtual camera::CameraManager* GetCameraManager() override {
+    return &camera_manager_;
+  };
 
  private:
   /**

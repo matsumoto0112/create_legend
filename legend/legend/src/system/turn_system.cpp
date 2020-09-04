@@ -157,6 +157,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
       L"L_CB");
 
   current_turn_ = 0;
+  view_turn_ = 0;
 
   return true;
 }
@@ -164,6 +165,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
 bool TurnSystem::Update() {
   if (ImGui::Begin("TurnSystem")) {
     ImGui::Text("CurrntTurn : %d", current_turn_);
+    ImGui::Text("ViewTurn : %d", view_turn_);
     if (ImGui::Button("AddTurn")) {
       current_mode_ = Mode::ENEMY_MOVE_END;
     }
@@ -397,6 +399,7 @@ bool TurnSystem::EnemyGenerate() {
 
 bool TurnSystem::ToPlayerTurn() {
   current_mode_ = Mode::TO_PLAYER_TURN_;
+  view_turn_++;
   return turn_change_.ChangeStart(Mode::PLAYER_MOVE_READY);
 }
 
@@ -494,7 +497,7 @@ system::GameDataStorage::ResultData legend::system::TurnSystem::GetResult()
   //プレイヤーが死亡したか、敵のボスが死亡したらその情報を返す
   return system::GameDataStorage::ResultData{
       end_type, CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer()),
-      current_turn_ + 1};
+      view_turn_};
 }
 
 void TurnSystem::SetTurnMode(Mode mode) {
@@ -510,6 +513,8 @@ void TurnSystem::AddCurrentTurn() { current_turn_++; }
 
 //現在のターン数を取得
 i32 TurnSystem::GetCurrentTurn() { return current_turn_; }
+
+i32 TurnSystem::GetViewTurn() { return view_turn_; }
 
 }  // namespace system
 }  // namespace legend

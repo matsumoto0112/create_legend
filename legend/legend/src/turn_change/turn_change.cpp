@@ -58,6 +58,8 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
   }
   before_turn_sprite_.SetRect(math::Rect(0, 0, 1, 1));
   next_turn_sprite_.SetRect(math::Rect(0, 0, 1, 1));
+  before_turn_sprite_.SetZOrder(0.005f);
+  next_turn_sprite_.SetZOrder(0.005f);
   before_turn_sprite_.SetPosition(math::Vector2(
       screen_size_.x * 0.5f - before_turn_sprite_.GetContentSize().x * 0.5f,
       screen_size_.y * 0.5f - before_turn_sprite_.GetContentSize().y * 0.5f));

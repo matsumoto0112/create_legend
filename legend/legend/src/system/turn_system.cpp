@@ -165,7 +165,6 @@ bool TurnSystem::Update() {
   if (ImGui::Begin("TurnSystem")) {
     ImGui::Text("CurrntTurn : %d", current_turn_);
     if (ImGui::Button("AddTurn")) {
-      // AddCurrentTurn();
       current_mode_ = Mode::ENEMY_MOVE_END;
     }
   }
@@ -184,8 +183,11 @@ bool TurnSystem::Update() {
       {Mode::ENEMY_MOVE_END, [&]() { return EnemyMoveEnd(); }},
       {Mode::ENEMY_PRODUCTION, [&]() { return EnemyMoveProducing(); }},
       {Mode::BOSS_PRODUCTION, [&]() { return BossMoveProducing(); }},
-      {Mode::PLAYER_ADD_SKILL, [&]() { return AddSkill(); }},
-      {Mode::TURN_CHANGE, [&]() { return turn_change_.Update(); }}};
+      {Mode::PLAYER_END_ADD_SKILL, [&]() { return AddSkill(); }},
+      {Mode::ENEMY_END_ADD_SKILL, [&]() { return AddSkill(); }},
+      {Mode::TO_PLAYER_TURN_, [&]() { return turn_change_.Update(); }},
+      {Mode::TO_ENEMY_TURN_, [&]() { return turn_change_.Update(); }},
+      {Mode::ENEMY_GENERATE, [&]() { return EnemyGenerate(); }}};
   if (!switcher.at(current_mode_)()) {
     return false;
   }
@@ -330,7 +332,7 @@ bool TurnSystem::PlayerSkillAfterMoved() {
   audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
   before_mode_ = current_mode_;
-  current_mode_ = Mode::PLAYER_ADD_SKILL;
+  current_mode_ = Mode::PLAYER_END_ADD_SKILL;
   return true;
 }
 
@@ -357,23 +359,8 @@ bool TurnSystem::EnemyMoveEnd() {
     return true;
   }
 
-  //ターンの更新
-  AddCurrentTurn();
-
-  //敵の生成
-  if (!actor_manager_.GenerateActors(current_turn_)) {
-    return false;
-  }
-
-  //敵が存在しているか
-  if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
-    before_mode_ = current_mode_;
-    current_mode_ = Mode::PLAYER_ADD_SKILL;
-    return true;
-  }
-
   before_mode_ = current_mode_;
-  current_mode_ = Mode::PLAYER_ADD_SKILL;
+  current_mode_ = Mode::ENEMY_END_ADD_SKILL;
   return true;
 }
 
@@ -391,13 +378,30 @@ bool TurnSystem::BossMoveProducing() {
   return true;
 }
 
+bool TurnSystem::EnemyGenerate() {
+  //ターンの更新
+  AddCurrentTurn();
+
+  //敵の生成
+  if (!actor_manager_.GenerateActors(current_turn_)) {
+    MY_LOG(L"マップオブジェクトの生成に失敗しました。");
+    return false;
+  }
+
+  if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
+    current_mode_ = Mode::ENEMY_PRODUCTION;
+  }
+
+  return true;
+}
+
 bool TurnSystem::ToPlayerTurn() {
-  current_mode_ = Mode::TURN_CHANGE;
+  current_mode_ = Mode::TO_PLAYER_TURN_;
   return turn_change_.ChangeStart(Mode::PLAYER_MOVE_READY);
 }
 
 bool TurnSystem::ToEnemyTurn() {
-  current_mode_ = Mode::TURN_CHANGE;
+  current_mode_ = Mode::TO_ENEMY_TURN_;
   return turn_change_.ChangeStart(Mode::ENEMY_MOVING);
 }
 

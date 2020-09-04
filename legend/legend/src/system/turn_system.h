@@ -155,6 +155,10 @@ class TurnSystem {
    * @brief ボスの移動終了時処理
    */
   bool BossMoveProducing();
+  /**
+   * @brief 敵の生成処理
+   */
+  bool EnemyGenerate();
 
  private:
   //! 現在ターン数

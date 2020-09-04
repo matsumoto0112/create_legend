@@ -13,15 +13,19 @@ namespace legend {
 namespace scenes {
 const std::vector<Title::Stage> Title::STAGE_LIST = {
     {
-        "Test_01",
+        "tutorial_01",
         TextureName::STAGESELECT_STAGE_FRAME,
     },
     {
-        "Test_01",
+        "stage_01",
         TextureName::STAGESELECT_STAGE_FRAME,
     },
     {
-        "Test_01",
+        "stage_02",
+        TextureName::STAGESELECT_STAGE_FRAME,
+    },
+    {
+        "stage_03",
         TextureName::STAGESELECT_STAGE_FRAME,
     },
 };

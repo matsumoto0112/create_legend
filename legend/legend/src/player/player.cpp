@@ -368,33 +368,38 @@ void Player::OnHit(bullet::Collider* other) {
       enemy::EnemyActor* ea =
           dynamic_cast<enemy::EnemyActor*>(other->GetOwner());
       if (ea) {
-        const math::Vector3 position = transform_.GetPosition();
-        const math::Vector3 other_position = ea->GetTransform().GetPosition();
-        const math::Vector3 velocity = GetVelocity();
-        const math::Vector3 direction =
-            ((other_position - position).Normalized() + velocity.Normalized())
-                .Normalized();
+        auto CalcApplyImpulse = [&]() {
+          const math::Vector3 position = transform_.GetPosition();
+          const math::Vector3 other_position = ea->GetTransform().GetPosition();
+          const math::Vector3 velocity = GetVelocity();
+          const math::Vector3 direction =
+              ((other_position - position).Normalized() + velocity.Normalized())
+                  .Normalized();
 
-        ea->GetCollider()->ApplyCentralImpulse(
-            direction * ((strength_ + velocity.Magnitude()) / 2.0f));
+          const float magnitude = ((strength_ + velocity.Magnitude()) / 2.0f);
+          const math::Vector3 base_power = direction * magnitude;
+
+          const float stength_consideration_full_power =
+              is_fullpower_ ? strength_ * fullpower_bonus_ : strength_;
+
+          const float clamp_sub_strength =
+              math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
+          const float up_power = is_fullpower_
+                                     ? clamp_sub_strength * fullpower_bonus_
+                                     : clamp_sub_strength;
+          auto trigonometric =
+              (math::util::Sin(30.0f * math::util::DEG_2_RAD * up_power));
+          auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
+                          trigonometric;
+          return base_power + addPower;
+        };
+
+        other->ApplyCentralImpulse(CalcApplyImpulse());
 
         if (auto* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
           auto v = GetVelocity().Magnitude();
           b->UpdateStrength(v * strength_ * -0.005f);
         }
-
-        float s;
-
-        if (is_fullpower_) {
-          s = math::util::Clamp(
-              strength_ * fullpower_bonus_ - ea->GetStrength(), 0.0f, 1.0f);
-        } else {
-          s = math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
-        }
-        auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
-        auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
-                        trigonometric;
-        other->ApplyCentralImpulse(addPower);
 
         //ヒット時の速度の大きさでSE音を適用
         {

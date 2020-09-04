@@ -7,7 +7,7 @@
 #include "src/util/resource/resource_names.h"
 
 namespace {
-constexpr float floor_pos = -30.0f;
+constexpr float floor_pos = -50.0f;
 }
 
 namespace legend {
@@ -45,11 +45,15 @@ bool ResultScene::Initialize() {
 
   //プレイヤーが死亡したら
   if (data.end_type == system::GameDataStorage::GameEndType::PLAYER_DEAD) {
-    transforms_[0].SetPosition(math::Vector3::kZeroVector);
     if (!LoseProductionInit(window_size, heap_id)) return false;
+    transforms_[0].SetPosition(math::Vector3(-60, floor_pos, -20));
+    float rotate =
+        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+    transforms_[0].SetRotation(
+        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
   } else {
-    transforms_[0].SetPosition(math::Vector3::kZeroVector);
     if (!WinProductionInit(window_size, heap_id)) return false;
+    transforms_[0].SetPosition(math::Vector3(30, 2, 0));
   }
   transform_cbs_[0].GetStagingRef().world = transforms_[0].CreateWorldMatrix();
   transform_cbs_[0].UpdateStaging();
@@ -66,13 +70,6 @@ bool ResultScene::Initialize() {
 
 //更新
 bool ResultScene::Update() {
-  if (ImGui::Begin("Camera")) {
-    math::Vector3 pos = camera_.GetPosition();
-    ImGui::SliderFloat3("position", &pos.x, -100.0f, 100.0f);
-    camera_.SetPosition(pos);
-  }
-  ImGui::End();
-
   if (mode_ == ResultMode::END_PRODUCTION) {
     if (!is_draw_) {
       if (!draw_timer_.Update()) {
@@ -101,10 +98,11 @@ void ResultScene::Draw() {
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   camera_.RenderStart();
+  back_ground_.Draw();
   resource.GetPipeline()
       .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
       ->SetCommandList(command_list);
-  for (i32 i = 0; i < 1; i++) {
+  for (i32 i = 0; i < transforms_.size(); i++) {
     transform_cbs_[i].GetStagingRef().world =
         transforms_[i].CreateWorldMatrix();
     transform_cbs_[i].UpdateStaging();
@@ -112,7 +110,6 @@ void ResultScene::Draw() {
         device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
     models_[i]->Draw(command_list);
   }
-  back_ground_.Draw();
 
   if (is_draw_) {
     board_.Draw();
@@ -200,10 +197,14 @@ bool ResultScene::LoadStageData() {
   for (auto&& param : enemys) {
     util::Transform transform = param.transform;
     float pos_x =
-        game::GameDevice::GetInstance()->GetRandom().Range(-10.0f, 10.0f);
+        game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
     float pos_z =
-        game::GameDevice::GetInstance()->GetRandom().Range(-20.0f, 20.0f);
+        game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
     transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
+    float rotate =
+        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+    transform.SetRotation(
+        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
     transforms_.emplace_back(transform);
     TransformConstantBuffer constant_buffer;
     constant_buffer.Init(
@@ -229,9 +230,9 @@ bool ResultScene::WinProductionInit(
   mode_ = ResultMode::WIN_INITIAL;
 
   {
-    const math::Vector3 pos = math::Vector3(5.0f, 0.0f, 0.0f);
-    const math::Quaternion rot =
-        math::Quaternion::FromEular(0.0f, 90.0f * math::util::DEG_2_RAD, 0.0f);
+    const math::Vector3 pos = math::Vector3(50.0f, 15.0f, 0.0f);
+    const math::Quaternion rot = math::Quaternion::FromEular(
+        math::Vector3(20.0f, -90.0f, 0.0f) * math::util::DEG_2_RAD);
     const float fov = 50.0f * math::util::DEG_2_RAD;
     const float aspect = 1280.0f / 720.0f;
     if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect,
@@ -263,7 +264,7 @@ bool ResultScene::LoseProductionInit(
   mode_ = ResultMode::LOSE;
 
   {
-    const math::Vector3 pos = math::Vector3(0.0f, 0.0f, -50.0f);
+    const math::Vector3 pos = math::Vector3(-60.0f, -25.0f, -45.0f);
     const math::Quaternion rot =
         math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;
@@ -323,7 +324,7 @@ bool ResultScene::Turn(
   for (i32 index = 0; index < numbers.size(); index++) {
     auto number_size = numbers[index]->GetSprite().GetContentSize().x / 10.0f;
     const float x = center.x + (-numbers_width + number_size);
-    const float y = center.y + 150.0f;
+    const float y = center.y + 100.0f;
     numbers_width -= number_size + number_space;
     auto c = line[index];
     numbers[index]->SetNumber(std::stoi(&c));
@@ -338,7 +339,7 @@ bool ResultScene::Turn(
   const float x = center.x + (-numbers_width) +
                   turn_image->GetSprite().GetContentSize().x / 3.0f;
   const float y =
-      center.y + 150.0f - turn_image->GetSprite().GetContentSize().y / 3.0f;
+      center.y + 100.0f - turn_image->GetSprite().GetContentSize().y / 3.0f;
   turn_image->SetPosition(math::Vector2(x, y));
   turn_image->SetZOrder(0.5f);
   board_.AddComponent(std::move(turn_image));
@@ -381,7 +382,7 @@ bool ResultScene::PlayerPower(
   for (i32 index = 0; index < numbers.size(); index++) {
     auto number_size = numbers[index]->GetSprite().GetContentSize().x / 10.0f;
     const float x = center.x + (-numbers_width + number_size);
-    const float y = center.y + 150.0f;
+    const float y = center.y + 100.0f;
     numbers_width -= number_size + number_space;
     auto c = line[index];
     numbers[index]->SetNumber(std::stoi(&c));
@@ -396,7 +397,7 @@ bool ResultScene::PlayerPower(
   const float x = center.x + (-numbers_width) +
                   power_image->GetSprite().GetContentSize().x / 3.0f;
   const float y =
-      center.y + 150.0f - power_image->GetSprite().GetContentSize().y / 3.0f;
+      center.y + 100.0f - power_image->GetSprite().GetContentSize().y / 3.0f;
   power_image->SetPosition(math::Vector2(x, y));
   power_image->SetZOrder(0.5f);
   board_.AddComponent(std::move(power_image));
@@ -415,15 +416,16 @@ void ResultScene::ProductionUpdate() {
       mode_ = ResultMode::CAMERA_CACTH;
     }
   } else if (mode_ == ResultMode::CAMERA_CACTH) {
+    const float destination_x = 200.0f;
     math::Vector3 velocity = math::Vector3::kRightVector *
                              game::GameDevice::GetInstance()
                                  ->GetFPSCounter()
                                  .GetDeltaSeconds<float>() *
-                             5;
+                             100;
     camera_.SetPosition(camera_.GetPosition() + velocity);
-    if (camera_.GetPosition().x >= 20.0f ||
+    if (camera_.GetPosition().x >= destination_x ||
         input.GetCommand(input::input_code::Decide)) {
-      camera_.SetPosition(math::Vector3(20.0f, camera_.GetPosition().y,
+      camera_.SetPosition(math::Vector3(destination_x, camera_.GetPosition().y,
                                         camera_.GetPosition().z));
       mode_ = ResultMode::END_PRODUCTION;
     }

@@ -25,28 +25,10 @@ bool Enemy::Init(actor::IActorMediator* mediator,
                  const InitializeParameter& parameter) {
   if (enemy::EnemyActor::Init(mediator, parameter)) {
     auto& resource = game::GameDevice::GetInstance()->GetResource();
-    model_ =
-        resource.GetModel().Get(util::resource::resource_names::model::ENEMY_ERASER_01);
+    model_ = resource.GetModel().Get(
+        util::resource::resource_names::model::ENEMY_ERASER_01);
 
-    enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
-        game::GameDevice::GetInstance()->GetRandom().Range(
-            0, enemy::enemy_type::MoveType::Move_Type_End));
-    enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(
-        game::GameDevice::GetInstance()->GetRandom().Range(
-            0, enemy::enemy_type::HitType::Hit_Type_End));
-    enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
-        game::GameDevice::GetInstance()->GetRandom().Range(
-            0, enemy::enemy_type::EffectType::Effect_Type_End));
-
-    if (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate) {
-      enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
-          enemy::EnemyAIType::Enemy_Rotate,
-      });
-    } else {
-      enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
-          enemy::EnemyAIType::None,
-      });
-    }
+    SetType();
 
     return true;
   }

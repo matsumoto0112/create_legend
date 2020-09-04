@@ -40,9 +40,9 @@ class Boss : public enemy::EnemyActor {
    */
   void SetVelocity(math::Vector3 velocity);
 
-  void SetType(i32 type_index = 0);
-
   virtual void OnHit(bullet::Collider* other);
+
+  virtual void SetType(i32 type_index = 0);
 
   void Boss_Rotate_Stand();
   void Boss_Rush_Move();

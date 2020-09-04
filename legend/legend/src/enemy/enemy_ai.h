@@ -15,6 +15,7 @@ enum EnemyAIType : i32 {
   Boss_Rotate_Stand,
   Boss_Rush_Move,
   Boss_Rotate_Move,
+  Boss_Escape,
 };
 
 struct EnemyAI {
@@ -107,6 +108,11 @@ struct EnemyAI {
              angle *= (game::GameDevice::GetInstance()->GetRandom().Range(
                  -0.75f, 0.75f));
              box->SetAngularVelocity(angle);
+           }},
+          {EnemyAIType::Boss_Escape,
+           [&](math::Vector3 velocity, bullet::BoundingBox* box) {
+             // ‰Á‘¬“x‚ÌÝ’è
+             box->ApplyCentralImpulse(velocity);
            }},
   };  //!< s“®”»’è
 };

@@ -332,6 +332,7 @@
     <ClInclude Include="src\camera\lookat_target_camera.h" />
     <ClInclude Include="src\util\mod_int.h" />
     <ClInclude Include="src\turn_change\turn_change.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\enemy_move_particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

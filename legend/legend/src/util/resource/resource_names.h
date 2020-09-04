@@ -138,6 +138,7 @@ namespace pipeline {
 constexpr name SPRITE = L"sprite";
 constexpr name GRAFFITI = L"graffiti";
 constexpr name MODEL_VIEW = L"model_view";
+constexpr name ALPHA_OBJECT = L"alpha_object";
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle";
 constexpr name OBB = L"obb";
 constexpr name GAUGE = L"gauge";

@@ -74,6 +74,9 @@ class SkillItemBox : public actor::Actor {
   std::shared_ptr<bullet::BoundingBox> box_;
   //! スキル内容のアイコンモデル
   std::shared_ptr<draw::Model> skill_icon_model_;
+  directx::buffer::ConstantBuffer<
+      directx::buffer::constant_buffer_structure::Transform>
+      skill_icon_transform_cb_;
   //! 移動パーティクル
   std::shared_ptr<draw::particle::ParticleEmitter> move_particle_;
   //! 速度

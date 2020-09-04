@@ -457,9 +457,12 @@ void TurnSystem::Draw() {
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
-
+      directx::render_target::DepthStencilTargetID::NONE, false);
   actor_manager_.DrawAlphaObject(command_list);
+
+  render_resource_manager.SetRenderTargets(
+      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
+      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
   actor_manager_.Draw2D(command_list);
 
   const bool is_player_turn = current_mode_ == Mode::PLAYER_MOVING ||

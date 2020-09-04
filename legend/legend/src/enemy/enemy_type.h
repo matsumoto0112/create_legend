@@ -35,6 +35,7 @@ enum HitType : i32 {
 enum EffectType : i32 {
   None = 0,      // ’Êí
   Rotate = 1,       // ‰ñ“]
+  Escape = 2,       // “¦‘–
   Effect_Type_End,  // ”z—ñ‚ÌÅŒã
 };
 

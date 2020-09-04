@@ -97,8 +97,9 @@ void SkillManager::EquipmentProductionUpdate() {
   }
   //下降
   if (current_mode_ == Mode::FALL_PLAYER) {
-    //一定の高さまで行ったらターンを切り替える
-    if (player_->GetTransform().GetPosition().y <= 1.8f) {
+      //一定の高さまで降りてきて、速度が小さくなったら演出終了
+    if (player_->GetCollider()->GetVelocity().Magnitude() <= 0.1f &&
+        player_->GetPosition().y <= 20.0f) {
       current_mode_ = Mode::NONE;
       something_skill_use_ = false;
       mediator_->PlayerCompleteEquipment();

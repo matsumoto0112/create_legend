@@ -121,7 +121,7 @@ bool StageGenerator::GetMapActors(
         (i32)String_2_Float(infomation[15]) == turn_count) {
       skill::SkillItemBox::InitializeParameter parameter;
       parameter.transform = transform;
-      parameter.bounding_box_length = math::Vector3(4, 4, 4);
+      parameter.bounding_box_length = math::Vector3::kUnitVector * 1.5f;
       auto& resource = game::GameDevice::GetInstance()->GetResource();
       parameter.skill_icon_model = resource.GetModel().Get(
           util::resource::resource_names::model::ITEM_PLANE_01);

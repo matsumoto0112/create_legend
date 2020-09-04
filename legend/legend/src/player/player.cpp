@@ -62,7 +62,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   transform_cb_.UpdateStaging();
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-  model_ = resource.GetModel().Get(resource_name::model::PLAYER);
+  model_ = resource.GetModel().Get(resource_name::model::ERASER_01);
 
   //スキルマネージャーの初期化
   skill_manager_.Init(mediator_, this);

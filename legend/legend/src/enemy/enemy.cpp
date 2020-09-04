@@ -26,7 +26,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   if (enemy::EnemyActor::Init(mediator, parameter)) {
     auto& resource = game::GameDevice::GetInstance()->GetResource();
     model_ =
-        resource.GetModel().Get(util::resource::resource_names::model::ENEMY);
+        resource.GetModel().Get(util::resource::resource_names::model::ENEMY_ERASER_01);
 
     enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
         game::GameDevice::GetInstance()->GetRandom().Range(

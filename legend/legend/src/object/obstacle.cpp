@@ -29,7 +29,7 @@ bool Obstacle::Init(actor::IActorMediator* mediator,
   mediator->AddCollider(box_);
 
   model_ = game::GameDevice::GetInstance()->GetResource().GetModel().Get(
-      util::resource::resource_names::model::OBSTACLE);
+      util::resource::resource_names::model::FIELD_OBJECT_01);
   return true;
 }
 bool Obstacle::Update() { return true; }

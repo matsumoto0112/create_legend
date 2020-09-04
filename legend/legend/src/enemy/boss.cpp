@@ -39,7 +39,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
   if (enemy::EnemyActor::Init(mediator, parameter)) {
     auto& resource = game::GameDevice::GetInstance()->GetResource();
     model_ =
-        resource.GetModel().Get(util::resource::resource_names::model::BOSS);
+        resource.GetModel().Get(util::resource::resource_names::model::BOSS_01);
 
     enemy_ai_.move_type_ = (enemy::enemy_type::MoveType::Straight);
     enemy_ai_.hit_type_ = (enemy::enemy_type::HitType::Rush);

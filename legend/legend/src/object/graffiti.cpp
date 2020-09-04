@@ -127,8 +127,8 @@ bool Graffiti::Update() {
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
   if (is_hit_) {
-      mediator_->AddFragment(InstanceFragment());
-      is_hit_ = false;
+    mediator_->AddFragment(InstanceFragment());
+    is_hit_ = false;
   }
 
   if (is_erase_) {
@@ -164,7 +164,7 @@ void Graffiti::Draw() {
   transform_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
   resource.GetModel()
-      .Get(util::resource::resource_names::model::GRAFFITI)
+      .Get(util::resource::resource_names::model::GRAFFITI_01)
       ->Draw(command_list);
 }
 
@@ -282,8 +282,6 @@ void Graffiti::SetInstancePosition(math::Vector3 position,
 
   instance_position_ += math::Matrix4x4::MultiplyCoord(
       pos, math::Matrix4x4::CreateRotationY(-theta));
-
-
 }
 
 }  // namespace object

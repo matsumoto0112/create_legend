@@ -13,30 +13,36 @@ namespace resource {
 namespace resource_names {
 using name = const wchar_t*;
 namespace model {
+constexpr name ALPHAKAKUNINOBJECT = L"alphaKakuninObject.glb";
 constexpr name ARROW = L"arrow.glb";
-constexpr name ENEMY = L"enemy_eraser_01.glb";
-constexpr name BOSS = L"boss_01.glb";
-constexpr name DESK = L"desk.glb";
-constexpr name PLAYER = L"eraser_01.glb";
-constexpr name FRAGMENT_01 = L"eraser_fragment_01.glb";
-constexpr name STATIONERY_01 = L"stationery_01.glb";
-constexpr name STATIONERY_02 = L"stationery_02.glb";
-constexpr name STATIONERY_03 = L"stationery_03.glb";
-constexpr name STATIONERY_04 = L"stationery_04.glb";
-constexpr name STATIONERY_05 = L"stationery_05.glb";
-constexpr name OBSTACLE = L"field_object_01.glb";
-constexpr name GRAFFITI = L"graffiti_01.glb";
 constexpr name BACK_FIELD_01 = L"back_field_01.glb";
-constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
-constexpr name ITEM_PLANE_01 = L"item_plane_01.glb";
-constexpr name ITEM_PLANE_02 = L"item_plane_02.glb";
-constexpr name GLUE_PLANE = L"glue_plane.glb";
+constexpr name BOSS_01 = L"boss_01.glb";
 constexpr name CLASSROOM_BACKWALL = L"classroom_backwall.glb";
 constexpr name CLASSROOM_CEILING = L"classroom_ceiling.glb";
 constexpr name CLASSROOM_FLOOR = L"classroom_floor.glb";
 constexpr name CLASSROOM_FORWARDWALL = L"classroom_forwardwall.glb";
 constexpr name CLASSROOM_LEFTWALL = L"classroom_leftwall.glb";
 constexpr name CLASSROOM_RIGHTWALL = L"classroom_rightwall.glb";
+constexpr name DESK = L"desk.glb";
+constexpr name ENEMY_ERASER_01 = L"enemy_eraser_01.glb";
+constexpr name ERASER_01 = L"eraser_01.glb";
+constexpr name ERASER_FRAGMENT_01 = L"eraser_fragment_01.glb";
+constexpr name FIELD_OBJECT_01 = L"field_object_01.glb";
+constexpr name GLUE_PLANE = L"glue_plane.glb";
+constexpr name GRAFFITI_01 = L"graffiti_01.glb";
+constexpr name GRAFFITI_02 = L"graffiti_02.glb";
+constexpr name GRAFFITI_03 = L"graffiti_03.glb";
+constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
+constexpr name ITEM_PLANE_01 = L"item_plane_01.glb";
+constexpr name ITEM_PLANE_02 = L"item_plane_02.glb";
+constexpr name KARI = L"kari.glb";
+constexpr name MARU_UV_TEXUMEKOMI = L"maru_UV_TexUmekomi.glb";
+constexpr name PLANE = L"plane.glb";
+constexpr name STATIONERY_01 = L"stationery_01.glb";
+constexpr name STATIONERY_02 = L"stationery_02.glb";
+constexpr name STATIONERY_03 = L"stationery_03.glb";
+constexpr name STATIONERY_04 = L"stationery_04.glb";
+constexpr name STATIONERY_05 = L"stationery_05.glb";
 }  // namespace model
 
 namespace texture {

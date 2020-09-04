@@ -31,11 +31,16 @@ class Boss : public enemy::EnemyActor {
    */
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
+  /**
+  * @brief XV
+  */
   virtual bool Update();
   /**
    * @brief ˆÚ“®—Ê‚Ìİ’è
    */
   void SetVelocity(math::Vector3 velocity);
+
+  void SetType(i32 type_index = 0);
 
   virtual void OnHit(bullet::Collider* other);
 
@@ -44,7 +49,7 @@ class Boss : public enemy::EnemyActor {
 
  private:
   std::unique_ptr < std::function<bool()>> special_action_ = {};
-  float rotate_speed_ = 15.0f;
+  float rotate_speed_ = 20.0f;
   const float rotate_time_ = 1.0f;
   float rotate_timer_ = 0.0f;
   bool is_rotate_ = false;

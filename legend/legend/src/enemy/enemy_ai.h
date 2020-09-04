@@ -1,6 +1,7 @@
 #ifndef LEGEND_ENEMY_ENEMY_AI_H_
 #define LEGEND_ENEMY_ENEMY_AI_H_
 
+#include <vector>
 #include "src/bullet/bounding_box.h"
 #include "src/enemy/enemy_type.h"
 #include "src/game/game_device.h"
@@ -25,6 +26,10 @@ struct EnemyAI {
   enemy_type::EffectType effect_type_;
 
   EnemyAIType ai_type_;
+  std::vector<EnemyAIType> ai_actions_;
+
+ private:
+  i32 action_index_ = 0;
 
  public:
   void Init() {
@@ -32,23 +37,35 @@ struct EnemyAI {
     hit_type_ = enemy_type::HitType::Rush;
     effect_type_ = enemy_type::EffectType::None;
 
-	ai_type_ = EnemyAIType::None;
+    ai_type_ = EnemyAIType::None;
+    ai_actions_ = {ai_type_};
+    action_index_ = 0;
+  }
+
+  void SetAction(std::vector<EnemyAIType> ai_actions) {
+    ai_actions_ = ai_actions;
+    ai_type_ = (ai_actions_.size() <= 0) ? EnemyAIType::None : ai_actions_[0];
+    action_index_ = 0;
   }
 
   void Action(math::Vector3 velocity, bullet::BoundingBox* box) {
     auto value = enemy_ai_[ai_type_];
     value(velocity, box);
-    switch (ai_type_) {
-      case EnemyAIType::Boss_Rotate_Stand:
-        ai_type_ = EnemyAIType::Boss_Rush_Move;
-        break;
-      case EnemyAIType::Boss_Rush_Move:
-        ai_type_ = EnemyAIType::Boss_Rotate_Stand;
-        break;
-      case EnemyAIType::Boss_Rotate_Move:
-        ai_type_ = EnemyAIType::Boss_Rotate_Stand;
-        break;
-    }
+    action_index_ =
+        (ai_actions_.size() <= (action_index_ + 1)) ? 0 : (action_index_ + 1);
+    ai_type_ = ai_actions_[action_index_];
+
+    // switch (ai_type_) {
+    //  case EnemyAIType::Boss_Rotate_Stand:
+    //    ai_type_ = EnemyAIType::Boss_Rush_Move;
+    //    break;
+    //  case EnemyAIType::Boss_Rush_Move:
+    //    ai_type_ = EnemyAIType::Boss_Rotate_Stand;
+    //    break;
+    //  case EnemyAIType::Boss_Rotate_Move:
+    //    ai_type_ = EnemyAIType::Boss_Rotate_Stand;
+    //    break;
+    //}
   }
 
  private:
@@ -73,8 +90,8 @@ struct EnemyAI {
           {EnemyAIType::Boss_Rotate_Stand,
            [&](math::Vector3 velocity, bullet::BoundingBox* box) {
              //// ‰ñ“]‚ÌÝ’è
-             //auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-             //box->SetAngularVelocity(angle);
+             // auto angle = math::Vector3::kUpVector * velocity.Magnitude();
+             // box->SetAngularVelocity(angle);
            }},
           {EnemyAIType::Boss_Rush_Move,
            [&](math::Vector3 velocity, bullet::BoundingBox* box) {

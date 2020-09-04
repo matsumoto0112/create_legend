@@ -153,6 +153,7 @@ bool StageGenerator::GetMapActors(
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
       parameter.bouding_box_length = math::Vector3(3.0f, 1.0f, 5.5f);
+      parameter.type_index = (int)String_2_Float(infomation[14]);
       bosses.push_back(parameter);
       continue;
     }

@@ -154,10 +154,8 @@ void ActorManager::PlayerSkillDeactivate() {}
 void ActorManager::PlayerCompleteEquipment() {
   if (GetBeforeTurn() == system::Mode::PLAYER_SKILL_AFTER_MOVED)
     turn_system_->ToEnemyTurn();
-  else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END ||
-           GetBeforeTurn() == system::Mode::ENEMY_PRODUCTION ||
-           GetBeforeTurn() == system::Mode::BOSS_PRODUCTION)
-    turn_system_->ToPlayerTurn();
+  else if (GetBeforeTurn() == system::Mode::ENEMY_MOVE_END)
+    turn_system_->SetTurnMode(system::Mode::ENEMY_GENERATE);
 
   camera_manager_.SetUpdateEnable(true);
 }
@@ -231,7 +229,7 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
       if (!obj->Init(this, param, skill)) {
         return false;
       }
-      static_actors_.emplace_back(std::move(obj));
+      alpha_actors_.emplace_back(std::move(obj));
     }
 
     for (auto&& enemy_parameter : enemys) {

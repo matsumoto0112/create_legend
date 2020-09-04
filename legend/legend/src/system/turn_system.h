@@ -120,6 +120,10 @@ class TurnSystem {
    */
   i32 GetCurrentTurn();
   /**
+   * @brief 表示用のターン数を表示
+   */
+  i32 GetViewTurn();
+  /**
    * @brief プレイヤーの移動前準備処理
    */
   bool PlayerMoveReady();
@@ -163,6 +167,7 @@ class TurnSystem {
  private:
   //! 現在ターン数
   i32 current_turn_;
+  i32 view_turn_;
   //! 現在のプレイ状態
   Mode current_mode_;
   //! 1つ前のプレイ状態

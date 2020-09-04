@@ -158,6 +158,8 @@ void ActorManager::PlayerCompleteEquipment() {
            GetBeforeTurn() == system::Mode::ENEMY_PRODUCTION ||
            GetBeforeTurn() == system::Mode::BOSS_PRODUCTION)
     turn_system_->ToPlayerTurn();
+
+  camera_manager_.SetUpdateEnable(true);
 }
 
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }

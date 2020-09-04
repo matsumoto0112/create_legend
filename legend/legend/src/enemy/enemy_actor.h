@@ -102,6 +102,10 @@ class EnemyActor : public actor::Actor {
    * @brief 移動終了判定のリセット
    */
   void ResetMoveEnd();
+  /**
+   * @brief プレイヤーとの距離
+   */
+  float DistanceWithPlayer();
 
   enemy::enemy_type::MoveType GetMoveType() { return enemy_ai_.move_type_; };
   bullet::BoundingBox* GetCollider() const { return box_.get(); }

@@ -40,6 +40,9 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
     if (isMove) {
       action_enemy_index_ = 0;
       move_timer_ = 0.0f;
+      std::sort(enemys_.begin(), enemys_.end(), [](auto& e1, auto& e2) {
+        return (e1->DistanceWithPlayer() < e2->DistanceWithPlayer());
+      });
     }
   }
   // “Gs“®

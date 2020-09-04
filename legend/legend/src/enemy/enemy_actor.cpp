@@ -16,8 +16,8 @@
 namespace legend {
 namespace enemy {
 //コンストラクタ
-EnemyActor::EnemyActor() : Parent(L"EnemyActor") { 
-	is_move_ = false;
+EnemyActor::EnemyActor() : Parent(L"EnemyActor") {
+  is_move_ = false;
   enemy_ai_.Init();
 }
 
@@ -160,16 +160,26 @@ bool EnemyActor::GetMoveEnd() const { return (!is_move_ && move_end_); }
 
 void EnemyActor::ResetMoveEnd() { move_end_ = false; }
 
+float EnemyActor::DistanceWithPlayer() {
+  auto p_pos = mediator_->GetPlayer()->GetPosition();
+  auto e_pos = GetPosition();
+  p_pos.y = 0;
+  e_pos.y = 0;
+  return (p_pos - e_pos).Magnitude();
+}
+
 void EnemyActor::OnHit(bullet::Collider* other) {
-  //system::Mode turn_mode = mediator_->GetCurrentTurn();
-  //if (turn_mode == system::Mode::ENEMY_MOVING) {
+  // system::Mode turn_mode = mediator_->GetCurrentTurn();
+  // if (turn_mode == system::Mode::ENEMY_MOVING) {
   //  //プレイヤーに触れた
-  //  if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+  //  if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner()))
+  //  {
   //    HitAction(other);
   //    auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
   //    auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
   //    auto strength =
-  //        math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
+  //        math::Vector3::kUpVector * GetVelocity().Magnitude() *
+  //        trigonometric;
   //    other->ApplyCentralImpulse(strength);
   //    CreateFireParticle(
   //        GetCollider()->GetHitPositions().at(other));
@@ -193,8 +203,7 @@ void EnemyActor::OnHit(bullet::Collider* other) {
       if (!is_hit_obstacle_) {
         obstacle_hit_timer_.Init(1.0f, [&]() { is_hit_obstacle_ = false; });
         is_hit_obstacle_ = true;
-        CreateFireParticle(
-            GetCollider()->GetHitPositions().at(other));
+        CreateFireParticle(GetCollider()->GetHitPositions().at(other));
       }
     }
   }

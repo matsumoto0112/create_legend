@@ -128,6 +128,25 @@ bool StageGenerator::GetMapActors(
       itemboxes.emplace_back(parameter);
       continue;
     }
+	
+  //* -----------------------------------------------
+    //* infomation[0] : 名前
+    //* infomation[1] : ポジション_X
+    //* infomation[2] : ポジション_Y
+    //* infomation[3] : ポジション_Z
+    //* infomation[4] : ローテーション_X
+    //* infomation[5] : ローテーション_Y
+    //* infomation[6] : ローテーション_Z
+    //* infomation[7] : スケール_X
+    //* infomation[8] : スケール_Y
+    //* infomation[9] : スケール_Z
+    //* infomation[10]: おもさ
+    //* infomation[11]: 摩擦
+    //* infomation[12]: 反発力
+    //* infomation[13]: モデルID
+    //* infomation[14]: AI_ID
+    //* infomation[15]: ターン数
+    //* -----------------------------------------------
 
     //敵の生成
     if (infomation[0] == "enemy" &&
@@ -138,6 +157,9 @@ bool StageGenerator::GetMapActors(
       parameter.transform.SetPosition(parameter.transform.GetPosition() +
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.bouding_box_length = math::Vector3(1.25f, 0.5f, 2.75f);
+      parameter.mass = String_2_Float(infomation[10]);
+      parameter.friction = String_2_Float(infomation[11]);
+      parameter.restitution = String_2_Float(infomation[12]);
       enemys.push_back(parameter);
       continue;
     }
@@ -153,6 +175,9 @@ bool StageGenerator::GetMapActors(
                                       math::Vector3(0.0f, 10.0f, 0.0f));
       parameter.transform.SetScale(scale);
       parameter.bouding_box_length = math::Vector3(3.0f, 1.0f, 5.5f);
+      parameter.mass = String_2_Float(infomation[10]);
+      parameter.friction = String_2_Float(infomation[11]);
+      parameter.restitution = String_2_Float(infomation[12]);
       parameter.type_index = (int)String_2_Float(infomation[14]);
       bosses.push_back(parameter);
       continue;

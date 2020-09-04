@@ -1042,3 +1042,4 @@ dkms.conf
 *.pyd
 */nsight/*
 *imgui.ini
+!legend/archiver/*.exe

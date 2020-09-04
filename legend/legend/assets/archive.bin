@@ -22,8 +22,8 @@ skill_pencil_shot.wav,1,1
 skill_select.wav,1,1
 title_decision.wav,1,1UI_playerForm_frame,120.000000,108.000000,0.670000,0,
 UI_playerPower_frame,135.000000,220.000000,0.565000,0,
-UI_powerGauge_frame,466.000000,550.000000,0.990000,0,
-UI_powerGauge,470.000000,554.000000,0.400000,1,
+UI_powerGauge_frame,466.000000,550.000000,0.450000,0,
+UI_powerGauge,470.000000,554.000000,0.480000,1,
 UI_playerPower_gauge_frame,57.000000,26.000000,0.990000,0,
 UI_playerPower_gauge_0to100,57.000000,26.000000,0.800000,2,
 UI_playerPower_gauge_101to200,57.000000,26.000000,0.600000,2,

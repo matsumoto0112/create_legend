@@ -81,15 +81,21 @@ void Boss::SetType(i32 type_index) {
   enemy_ai_.move_type_ = (enemy_type::MoveType::Straight);
   enemy_ai_.hit_type_ = (enemy_type::HitType::Rush);
   enemy_ai_.effect_type_ = (enemy_type::EffectType)type_index;
-  if (enemy_ai_.effect_type_ == enemy_type::EffectType::None) {
+
+  switch (enemy_ai_.effect_type_) { 
+  case enemy_type::EffectType::None:
     enemy_ai_.SetAction(std::vector<EnemyAIType>{
         EnemyAIType::Boss_Rotate_Stand,
         EnemyAIType::Boss_Rush_Move,
     });
-  } else if (enemy_ai_.effect_type_ == enemy::enemy_type::EffectType::Rotate) {
+      break;
+  case enemy_type::EffectType::Rotate: 
     enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
         enemy::EnemyAIType::Boss_Rotate_Move,
     });
+    break;
+  case enemy_type::EffectType::Escape:
+    break;
   }
 }
 
@@ -150,7 +156,32 @@ void Boss::Boss_Rush_Move() {
     direction.y = 0;
     direction = direction.Normalized();
 
-    auto point = position + direction * 30.0f;
+    {
+      auto vector =
+          (mediator_->GetPlayer()->GetPosition() - GetPosition()).Normalized();
+      vector.y = 0;
+      vector.Normalized();
+      auto v = (GetTransform().GetRotation() * math::Vector3::kForwardVector)
+                   .Normalized();
+      v.y = 0.0f;
+      v.Normalized();
+
+      auto cross = (v.x * vector.z * 100.0f - vector.x * v.z * 100.0f);
+
+      if (15.0f <= cross && cross <= 80.0f) {
+        auto velocity = GetVelocity();
+        velocity += (vector + v).Normalized() * rotate_speed_ * update_time_;
+        box_->SetVelocity(velocity.Normalized() * GetVelocity().Magnitude());
+        box_->SetAngularVelocity(math::Vector3::kUpVector * -1.0f);
+      } else if (-80.0f <= cross && cross <= -15.0f) {
+        auto velocity = GetVelocity();
+        velocity += (vector + v).Normalized() * rotate_speed_ * update_time_;
+        box_->SetVelocity(velocity.Normalized() * GetVelocity().Magnitude());
+        box_->SetAngularVelocity(math::Vector3::kUpVector * 1.0f);
+      }
+    }
+
+    auto point = position + direction * 15.0f;
     const auto raycast =
         mediator_->RayCast(point, point + math::Vector3::kDownVector * 10.0f);
     auto objs = raycast.m_collisionObjects;

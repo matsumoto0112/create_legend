@@ -188,7 +188,7 @@ void Boss::Boss_Rush_Move() {
 
     {  // 進行方向にプレイヤーがいれば進行
       const auto raycast =
-          mediator_->RayCast(position, mediator_->GetPlayer()->GetPosition());
+          mediator_->RayCast(position, position + direction * 15.0f);
       auto objs = raycast.m_collisionObjects;
 
       for (i32 i = 0; i < objs.size(); i++) {

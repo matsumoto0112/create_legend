@@ -126,7 +126,10 @@ void ResultScene::Finalize() {
 }
 
 bool ResultScene::LoadStageData() {
-  const std::string stage_name = "stage_01";
+  system::GameDataStorage::PlayStageData stage_data =
+      system::GameDataStorage::GetInstance()->GetPlayStageData();
+
+  const std::string stage_name = stage_data.stage_name;
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
   stage_generator_.LoadStringStageData(stage_path, stage_name);

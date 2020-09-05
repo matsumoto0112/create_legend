@@ -45,15 +45,15 @@ bool ResultScene::Initialize() {
 
   //ƒvƒŒƒCƒ„[‚ªŽ€–S‚µ‚½‚ç
   if (data.end_type == system::GameDataStorage::GameEndType::PLAYER_DEAD) {
+    transforms_[0].SetPosition(math::Vector3(-60.0f, floor_pos, -20.0f));
     if (!LoseProductionInit(window_size, heap_id)) return false;
-    transforms_[0].SetPosition(math::Vector3(-60, floor_pos, -20));
     float rotate =
         game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
     transforms_[0].SetRotation(
         math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
   } else {
-    if (!WinProductionInit(window_size, heap_id)) return false;
     transforms_[0].SetPosition(math::Vector3(30, 2, 0));
+    if (!WinProductionInit(window_size, heap_id)) return false;
   }
   transform_cbs_[0].GetStagingRef().world = transforms_[0].CreateWorldMatrix();
   transform_cbs_[0].UpdateStaging();
@@ -267,13 +267,13 @@ bool ResultScene::LoseProductionInit(
   mode_ = ResultMode::LOSE;
 
   {
-    const math::Vector3 pos = math::Vector3(-60.0f, -25.0f, -45.0f);
+    const math::Vector3 pos = math::Vector3(
+        transforms_[0].GetPosition().x, -20.0f, transforms_[0].GetPosition().z - 40.0f);
     const math::Quaternion rot =
-        math::Quaternion::FromEular(45.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
+        math::Quaternion::FromEular(30.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;
     const float aspect = 1280.0f / 720.0f;
-    if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect,
-                      math::Vector3::kUpVector, 0.1f, 1000.0f)) {
+    if (!camera_.Init(L"MainCamera", pos, rot, fov, aspect)) {
       return false;
     }
   }

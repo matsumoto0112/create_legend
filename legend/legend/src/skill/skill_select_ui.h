@@ -58,6 +58,14 @@ class SkillSelectUI {
    * @brief 選択中のスキル番号の更新
    */
   void SelectSkillNumber(i32 select_number);
+  /**
+   * @brief スキル説明画像の追加
+   */
+  void AddSkillExplanatory(std::shared_ptr<directx::buffer::Texture2D> texture);
+  /**
+   * @brief スキル説明画像の削除
+   */
+  void RemoveSkillExplanatory(i32 index_num);
 
  private:
   //! スキルアイコンの基本座標
@@ -70,7 +78,7 @@ class SkillSelectUI {
   //! 空のスキルフレームアイコン
   draw::Sprite2D skill_frame_icons_[5];
   //! スキルの説明画像
-  draw::Sprite2D skill_explanatory_;
+  std::vector<draw::Sprite2D> skill_explanatories_;
   //! スキルの選択中フレーム画像
   draw::Sprite2D skill_select_frame_;
 

@@ -72,6 +72,10 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   skill_icon_texture_ =
       resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_1);
 
+  //スキル説明のテクスチャ設定
+  skill_explanation_texture_ =
+      resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION_1);
+
   //装備用テクスチャ設定
   equipment_texture_ =
       resource.GetTexture().Get(resource_name::texture::UI_PLAYERFORM_SKILL_1);

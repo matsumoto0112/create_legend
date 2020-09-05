@@ -64,6 +64,10 @@ bool SkillPasteStick::Init(actor::IActorMediator* mediator,
   skill_icon_texture_ =
       resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_2);
 
+  //スキル使用アイコンのテクスチャ設定
+  skill_icon_using_texture_ =
+      resource.GetTexture().Get(resource_name::texture::UI_SKILL_ICON_2_USING);
+
   //スキル説明のテクスチャ設定
   skill_explanation_texture_ =
       resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION_2);

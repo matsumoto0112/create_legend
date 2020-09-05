@@ -49,6 +49,10 @@ std::shared_ptr<directx::buffer::Texture2D> Skill::GetIconTexture() const {
   return skill_icon_texture_;
 }
 
+std::shared_ptr<directx::buffer::Texture2D> Skill::GetIconUsingTexture() const {
+  return skill_icon_using_texture_;
+}
+
 std::shared_ptr<directx::buffer::Texture2D> Skill::GetEquipmentTexture() const {
   return equipment_texture_;
 }

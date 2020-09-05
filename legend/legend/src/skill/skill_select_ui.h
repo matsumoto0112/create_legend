@@ -66,6 +66,10 @@ class SkillSelectUI {
    * @brief スキル説明画像の削除
    */
   void RemoveSkillExplanatory(i32 index_num);
+  /**
+   * @brief スキル使用中のアイコン変更
+   */
+  void ChangeSkillIcon(const Skill* skill, i32 index_num);
 
  private:
   //! スキルアイコンの基本座標

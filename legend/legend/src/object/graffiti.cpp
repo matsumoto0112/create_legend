@@ -80,13 +80,16 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
     case 0:
       model_ = resource.GetModel().Get(
           util::resource::resource_names::model::GRAFFITI_01);
+      break;
 
     case 1:
       model_ = resource.GetModel().Get(
           util::resource::resource_names::model::GRAFFITI_02);
+      break;
     case 2:
       model_ = resource.GetModel().Get(
           util::resource::resource_names::model::GRAFFITI_03);
+      break;
   }
 
   UpdateTexture(command_list);
@@ -246,7 +249,7 @@ std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   is_hit_ = false;
   std::unique_ptr<Fragment> f = std::make_unique<Fragment>();
   f->Init(mediator_, parameter);
-  return std::move(f);
+  return (f);
 }
 
 //テクスチャの色を設定する

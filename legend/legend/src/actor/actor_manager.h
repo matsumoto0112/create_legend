@@ -145,8 +145,9 @@ class ActorManager : public actor::IActorMediator {
   std::unique_ptr<player::Player> player_;
   //! 静止オブジェクト
   std::vector<std::unique_ptr<Actor>> static_actors_;
-
   std::vector<std::unique_ptr<Actor>> alpha_actors_;
+  std::vector<std::unique_ptr<Actor>> add_static_actors_;
+  std::vector<std::unique_ptr<Actor>> add_alpha_actors_;
   //! 敵管理
   enemy::EnemyManager enemy_manager_;
   //! 分岐管理

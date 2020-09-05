@@ -97,63 +97,96 @@ search,-0.9,3,39.8,2,4,9
 search,-5.6,3,-12.3,8,0
 search,69.1,3,-6.8,1,7
 stage_02,-1
-camera,34.9,20,-64.2,0,0,0,1,1,1,0,0,0
-camera,88.2,16,52.8,0,0,0,1,1,1,0,0,0
-camera,88.2,16,-24.8,0,0,0,1,1,1,0,0,0
-camera,-23.4,16,-24.8,0,0,0,1,1,1,0,0,0
-camera,-23.4,16,63.8,0,0,0,1,1,1,0,0,0
-enemy,-15.1,1.75,48.8,0,180,0,1,1,1,50,0.5,0.5,0,0,6
-obstacle,78,3.75,54.3,0,90,0,1,1,1,0,0,0.5,0
-enemy,40.9,1.75,-40.3,0,180,0,1,1,1,50,0.5,0.5,0,0,3
-enemy,69.2,1.75,-8.8,0,90,0,1,1,1,50,0.5,0.5,0,0,12
-enemy,68.7,1.75,-9.1,0,180,0,1,1,1,50,0.5,0.5,0,0,6
-floor,0,0,40,0,180,0,1,1,1,0,0,1
-enemy,-19.2,1.75,27.5,0,270,0,1,1,1,50,0.5,0.5,0,0,9
-enemy,-20.1,1.75,-12,0,180,0,1,1,1,50,0.5,0.5,0,0,6
-enemy,70.9,1.75,4.2,0,90,0,1,1,1,50,0.5,0.5,0,0,12
-enemy,57.4,1.75,48.7,0,180,0,1,1,1,50,0.5,0.5,0,0,6
-stationery,72.8,1.5,37.8,0,31.13,0,1,1,1,40,0,0,0,0,0
-stationery,30.7,1.5,-3.3,0,31.13,0,1,1,1,40,0,0,0,0,12
-obstacle,6.2,3.75,-34.2,0,0,0,1,1,1,0,0,0.5,0
-boss,30.3,9.87,11.5,0,90,0,1,1,1,300,1,1,0,0,17,0
-enemy,0.1,1.75,46.7,0,270,0,1,1,1,50,0.5,0.5,0,0,12
-enemy,82.4,1.75,27.6,0,180,0,1,1,1,50,0.5,0.5,0,0,0
-enemy,18.6,1.75,-39,0,180,0,1,1,1,50,0.5,0.5,0,0,3
-stationery,9.3,1.5,17.1,0,31.13,0,1,1,1,40,0,0,0,0,6
-enemy,-21.5,1.75,19.1,0,270,0,1,1,1,50,0.5,0.5,0,0,12
-floor,60,0,0,0,0,0,1,1,1,0,0,1
-enemy,8.7,1.75,20.4,0,180,0,1,1,1,50,0.5,0.5,0,0,0
-stationery,38,1.5,33.5,0,31.13,0,1,1,1,40,0,0,0,0,12
-enemy,79.6,1.75,14.4,0,90,0,1,1,1,50,0.5,0.5,0,0,12
-floor,30,0,-40,0,0,0,1,1,1,0,0,1
-graffiti,78.9,1.01,-7.4,0,0,0,1,1,1,0,0,0,0
-graffiti,9.9,1.01,9.7,0,0,0,1,1,1,0,0,0,0
-enemy,-13.5,1.75,25.8,0,270,0,1,1,1,50,0.5,0.5,0,0,12
-graffiti,38.1,1.01,38.3,0,0,0,1,1,1,0,0,0,0
-enemy,26.1,1.75,-50,0,180,0,1,1,1,50,0.5,0.5,0,0,9
-enemy,-1.6,1.75,14.3,0,180,0,1,1,1,50,0.5,0.5,0,0,0
-obstacle,55.3,3.75,-34.2,0,0,0,1,1,1,0,0,0.5,0
-startpoint,29,1.75,-31,0,180,0,1,1,1,100,0,0,0
-floor,60,0,40,0,180,0,1,1,1,0,0,1
-enemy,55.4,1.75,-0.3,0,180,0,1,1,1,50,0.5,0.5,0,0,0
+camera,-22.5,17,14.6,0,0,0,1,1,1,0,0,0
+camera,-44.4,16,58.7,0,0,0,1,1,1,0,0,0
+camera,-77,12,13.7,0,0,0,1,1,1,0,0,0
+camera,-77,14,-45.7,0,0,0,1,1,1,0,0,0
+camera,-85.4,16,-106.1,0,0,0,1,1,1,0,0,0
+camera,-18.7,14,-90.1,0,0,0,1,1,1,0,0,0
+camera,45.3,12,-125.7,0,0,0,1,1,1,0,0,0
+camera,21.6,14,-96.7,0,0,0,1,1,1,0,0,0
+camera,70,12,-50.2,0,0,0,1,1,1,0,0,0
+camera,70,12,2.8,0,0,0,1,1,1,0,0,0
+camera,65.3,14,53.8,0,0,0,1,1,1,0,0,0
+camera,17.8,14,27.5,0,0,0,1,1,1,0,0,0
+camera,-1.2,16,-28.4,0,0,0,1,1,1,0,0,0
+boss,-55.1,0,-33.1,0,270,0,1,1,1,1.5,1,0.5,0,1,12,0
+stationery,46.7,1.5,-29.7,0,31.13,0,1,1,1,40,0,0,0,0,10
+enemy,17,1.75,-68.8,0,180,0,1,1,1,1,1.5,0.5,0,0,10
+enemy,-15.2,1.75,-50.9,0,180,0,1,1,1,1,1.5,0.5,0,0,10
+enemy,-15.2,1.75,-10.7,0,180,0,1,1,1,1,1.5,0.5,0,0,10
+enemy,14.6,1.75,9.1,0,180,0,1,1,1,1,1.5,0.5,0,0,10
+stationery,-0.6,1.5,-63.8,0,31.13,0,1,1,1,40,0,0,0,1,8
+stationery,-1,1.5,-1.8,0,31.13,0,1,1,1,40,0,0,0,0,8
+enemy,-43.6,1.75,-92.7,0,180,0,1,1,1,1,1.5,0.5,0,0,8
+enemy,-57.1,1.75,-92.3,0,180,0,1,1,1,1,1.5,0.5,0,0,8
+enemy,47.5,1.75,29.3,0,180,0,1,1,1,1,1.5,0.5,0,0,8
+enemy,36.9,1.75,29.8,0,180,0,1,1,1,1,1.5,0.5,0,0,8
+stationery,-45.1,1.5,29.1,0,31.13,0,1,1,1,40,0,0,0,1,5
+stationery,36.3,1.5,-97.8,0,31.13,0,1,1,1,40,0,0,0,0,5
+enemy,30.8,1.75,6.6,0,180,0,1,1,1,1,1.5,0.5,0,0,5
+enemy,18.3,1.75,-0.1,0,180,0,1,1,1,1,1.5,0.5,0,0,5
+enemy,-48.7,1.75,-48.7,0,180,0,1,1,1,1,1.5,0.5,0,0,5
+enemy,-43.4,1.75,-69,0,180,0,1,1,1,1,1.5,0.5,0,0,3
+enemy,50.5,1.75,-62.3,0,180,0,1,1,1,1,1.5,0.5,0,0,3
+enemy,47,1.75,-43.6,0,180,0,1,1,1,1,1.5,0.5,0,0,3
+stationery,-49.5,1.5,-96.8,0,31.13,0,1,1,1,40,0,0,0,0,0
+stationery,50,1.5,-92.8,0,31.13,0,1,1,1,40,0,0,0,1,0
+enemy,-39.9,1.75,-59.6,0,180,0,1,1,1,1,1.5,0.5,0,0,0
+enemy,13.2,1.75,-69.9,0,180,0,1,1,1,1,1.5,0.5,0,0,0
+enemy,-3.9,1.75,-53.8,0,180,0,1,1,1,1,1.5,0.5,0,0,0
+enemy,49,1.75,-55.8,0,180,0,1,1,1,1,1.5,0.5,0,0,0
+enemy,42.9,1.75,-13.3,0,180,0,1,1,1,1,1.5,0.5,0,0,0
+obstacle,37.9,3.75,-104.6,0,0,0,1,1,1,0,0,0.5,0
+startpoint,5.2,1.75,-0.1,0,180,0,1,1,1,100,0,0,0
 floor,0,0,0,0,0,0,1,1,1,0,0,1
-enemy,-10.8,1.75,24.6,0,180,0,1,1,1,50,0.5,0.5,0,0,0
-enemy,-19.2,1.75,21.6,0,270,0,1,1,1,50,0.5,0.5,0,0,9
-graffiti,-12.5,1.01,36.7,0,0,0,1,1,1,0,0,0,0
-stationery,51.6,1.5,14.8,0,31.13,0,1,1,1,40,0,0,0,0,9
-enemy,34.6,1.75,-50,0,180,0,1,1,1,50,0.5,0.5,0,0,9
-enemy,82.6,1.75,21.6,0,90,0,1,1,1,50,0.5,0.5,0,0,9
-enemy,82.60001,1.75,27.5,0,90,0,1,1,1,50,0.5,0.5,0,0,9
-graffiti,-15.2,1.01,0.7,0,0,0,1,1,1,0,0,0,0
-search,19.4,3,-8.4,1,2,5,4,8
-search,48.5,3,-7.7,0,3,4,6,7
-search,17.9,3,46.7,0,3,4,8
-search,56.1,3,45,1,2,4,7
-search,35.8,3,17.3,0,1,2,3,8,7
-search,16.5,3,-50.9,0,6
-search,41.3,3,-50.4,1,5
-search,80.3,3,23.3,1,3,4
-search,-18.5,3,15.4,2,4,0
+floor,0,0,-60.7,0,0,0,1,1,1,0,0,1
+floor,49.7,0,-31,0,90,0,1,1,1,0,0,1
+floor,49.7,0,28.9,0,90,0,1,1,1,0,0,1
+floor,49.7,0,-90.5,0,90,0,1,1,1,0,0,1
+floor,-49.7,0,-90.5,0,90,0,1,1,1,0,0,1
+floor,-49.7,0,28.9,0,90,0,1,1,1,0,0,1
+floor,-49.7,0,-31,0,90,0,1,1,1,0,0,1
+graffiti,-23.6,1.01,3.9,0,0,0,1,1,1,0,0,0,0
+graffiti,60.7,1.01,30.2,0,0,0,1,1,1,0,0,0,0
+graffiti,-61.8,1.01,28.8,0,0,0,1,1,1,0,0,0,0
+graffiti,-39.1,1.01,-30.8,0,0,0,1,1,1,0,0,0,0
+graffiti,-63.9,1.01,-11.3,0,0,0,1,1,1,0,0,0,0
+graffiti,-63.4,1.01,-73.1,0,0,0,1,1,1,0,0,0,0
+graffiti,-20.6,1.01,-71.7,0,0,0,1,1,1,0,0,0,0
+graffiti,63,1.01,-19.8,0,0,0,1,1,1,0,0,0,0
+obstacle,-15.9,3.75,43.2,0,90,0,1,1,1,0,0,0.5,0
+search,-29.80504,1.898587,-10.20163,1,2,25,26,27
+search,15.29496,1.898587,12.49837,0,2,3
+search,15.29496,1.898587,-10.50163,0,1,4,3
+search,36.59496,1.898587,11.39837,1,4,2,8,10,9,5
+search,36.29496,1.898587,-12.30163,2,3,5,7
+search,57.19496,1.898587,-28.30163,4,6,8,3,7
+search,58.49496,1.898587,-55.10162,5,7,11
+search,36.89496,1.898587,-54.60162,4,6,5,14,16
+search,56.59496,1.898587,12.29837,3,9,5
+search,53.29496,1.898587,48.99837,8,10,3
+search,38.29496,1.898587,48.99837,9,3
+search,60.29496,1.898587,-79.60162,6,12,14
+search,55.19496,1.898587,-111.8016,11,13,14
+search,41.09496,1.898587,-112.2016,12,14
+search,33.49496,1.898587,-70.00163,13,7,11,12,15
+search,16.69496,1.898587,-69.90163,14,16,18
+search,19.09496,1.898587,-47.40163,15,7,17,18
+search,-21.80504,1.898587,-45.90163,16,18,22,24
+search,-18.70504,1.898587,-60.60163,17,15,16,19
+search,-38.00504,1.898587,-60.60163,18,20,22
+search,-42.30504,1.898587,-103.8016,19,21,22
+search,-60.20504,1.898587,-105.5016,20,22
+search,-53.30504,1.898587,-50.70163,21,19,20,17,23
+search,-62.00504,1.898587,-40.80163,22,24,25
+search,-51.50504,1.898587,-37.30163,23,17,25
+search,-57.50504,1.898587,-23.10163,23,24,0,26
+search,-54.40504,1.898587,-6.901627,25,0,27,28
+search,-33.60504,1.898587,7.398373,26,0,28,30
+search,-54.80504,1.898587,14.49837,27,26,29,30
+search,-53.70504,1.898587,48.09838,28,30
+search,-40.00504,1.898587,47.59838,29,27,28
 stage_03,-1
 camera,34.9,20,-64.2,0,0,0,1,1,1,0,0,0
 camera,88.2,16,52.8,0,0,0,1,1,1,0,0,0
@@ -6853,4 +6886,5 @@ SùÿI´û  ÀÌ¾,é=3  å¥ oæIXÚ—&   €üVş¯ŠÔ?  éÊ ”Óld   (B`xÂ  P¦N/@å?OLø“(mí¦
 @44Æ¯ü{{LŸ½œÊ Àh—PÔ(wMËÃ?38-“;o¦c¼?€D)Êp=çÜ“fvTÒLŠåê¥Şhâi5RMíØ•yv¹â£/Hÿv/oü ’«¨O¯rœ ˆ> ˜HvXà¡â @A@Y­@   H£)ÅŞ¡sn
 Å @Ê€aRô  ¤, pÎ”t5Å @º2 rÎuHú:?  )
  †ƒ€Jú?  E®ƒËá Ìì
-I”bßŒ   ”6˜&i€   € #¢Î@   H£²“?<OÀùi  HQ 0œ)égü<  ¨®-çƒ3³)’Ş.äqÒ   P~™€¡á&ƒüT  ¤$0FFàÏùZÈ   È ”{´âÜi’¾ Éøé  HI 0Ü7Ü,ğ]  bÖ§I?3k•ôÏqÏ…&   @²3%½*i*   ›R)'âœ{Ë9÷>çœ“´RÑğA  PÉ€	2ó$=(©v¬ó%   P‰sûsç9ç¦gÎt»¤¢!                                                                                                                                                                                                “ÿ¿rµ1dYÅ    IEND®B`‚@       j     parameters/audio_list.txtj       parameters/main_ui.txtù  ì     parameters/pipeline.txtå  8     stage/stage_01.txt  ,     stage/stage_01_searchData.txtI  &	     stage/stage_02.txto  ù      stage/stage_02_searchData.txth  &	     stage/stage_03.txt#  ù      stage/stage_03_searchData.txt‡$       stage/tutorial_01.txt¦)  X      stage/tutorial_01_searchData.txtş+  w      textures/fade_image.pngu,  r  !   textures/Particle_fallLocus_1.pngç-    !   textures/Particle_fallLocus_2.pngf0  ¯     textures/Particle_smoke_1.pngE  >'     textures/Particle_smoke_2.pngSl  v     textures/Particle_smoke_3.pngÉˆ  ›	      textures/Particle_sparking_1.pngd’  Ù      textures/Particle_sparking_2.png=Ÿ  x      textures/Particle_sparking_3.pngµµ  á     textures/Result_gameOver.png4— r	  &   textures/Result_playerPower_text_1.png¦    &   textures/Result_playerPower_text_2.pngÅ£ s    textures/Result_stageClear.png8ª   $   textures/Result_totalTurn_text_1.png·¯ Ú  $   textures/Result_totalTurn_text_2.png‘²    #   textures/StageSelect_arrow_left.png±Î ¿  $   textures/StageSelect_arrow_right.pngpë ?    textures/StageSelect_back.png¯{   $   textures/StageSelect_stage_frame.png0„ —    textures/tex.png= 4     textures/TItle_logo.pngq« ¢  #   textures/Title_pushButton_guide.png° Æ     textures/UI_number_1.pngÙ² ó     textures/UI_number_2.pngÌµ Ï      textures/UI_playerForm_frame.png›¹ 0  !   textures/UI_playerForm_player.pngËÈ È  "   textures/UI_playerForm_skill_1.png“Ş +  "   textures/UI_playerForm_skill_2.png¾ü ¸  !   textures/UI_playerPower_frame.pngvÿ Ä  (   textures/UI_playerPower_gauge_0to100.png: &  *   textures/UI_playerPower_gauge_101to200.png`0 ™  *   textures/UI_playerPower_gauge_201to300.pngùH œ  '   textures/UI_playerPower_gauge_frame.png•M ä     textures/UI_player_estimate.pngyO ?€    textures/UI_pose_back.png¸Ï ¹	     textures/UI_powerGauge.pngqÙ      textures/UI_powerGauge_bg.png}Ú ä   &   textures/UI_powerGauge_blurryPoint.pngaÛ ?      textures/UI_powerGauge_frame.png Ü ù  !   textures/UI_skill_explanation.png™Ş õh  #   textures/UI_skill_explanation_1.pngG vG  #   textures/UI_skill_explanation_2.png      textures/UI_skill_frame.png!   !   textures/UI_skill_frame_whole.png¿‘ ƒ     textures/UI_skill_icon_1.pngB• ‚     textures/UI_skill_icon_2.pngÄ˜ µ  "   textures/UI_skill_icon_2_using.pngyœ ^     textures/UI_skill_icon_3.png× Ê     textures/UI_skill_icon_4.png¡  å     textures/UI_skill_icon_5.png†£   "   textures/UI_skill_select_frame.png¢¤ N      textures/UI_turnChange_enemy.pngğ¶ €  !   textures/UI_turnChange_player.pngpÎ 
+I”bßŒ   ”6˜&i€   € #¢Î@   H£²“?<OÀùi  HQ 0œ)égü<  ¨®-çƒ3³)’Ş.äqÒ   P~™€¡á&ƒüT  ¤$0FFàÏùZÈ   È ”{´âÜi’¾ Éøé  HI 0Ü7Ü,ğ]  bÖ§I?3k•ôÏqÏ…&   @²3%½*i*   ›R)'âœ{Ë9÷>çœ“´RÑğA  PÉ€	2ó$=(©v¬ó%   P‰sûsç9ç¦gÎt»¤¢!                                                                                                                                                                                                “ÿ¿rµ1dYÅ    IEND®B`‚@       j     parameters/audio_list.txtj       parameters/main_ui.txtù  ì     parameters/pipeline.txtå  8     stage/stage_01.txt  ,     stage/stage_01_searchData.txtI  ¤
+     stage/stage_02.txtí  ˆ     stage/stage_02_searchData.txtu   &	     stage/stage_03.txt›)  ù      stage/stage_03_searchData.txt”*       stage/tutorial_01.txt³/  X      stage/tutorial_01_searchData.txt2  w      textures/fade_image.png‚2  r  !   textures/Particle_fallLocus_1.pngô3    !   textures/Particle_fallLocus_2.pngs6  ¯     textures/Particle_smoke_1.png"K  >'     textures/Particle_smoke_2.png`r  v     textures/Particle_smoke_3.pngÖ  ›	      textures/Particle_sparking_1.pngq˜  Ù      textures/Particle_sparking_2.pngJ¥  x      textures/Particle_sparking_3.pngÂ»  á     textures/Result_gameOver.pngA r	  &   textures/Result_playerPower_text_1.png³¦   &   textures/Result_playerPower_text_2.pngÒ© s    textures/Result_stageClear.pngE°   $   textures/Result_totalTurn_text_1.pngÄµ Ú  $   textures/Result_totalTurn_text_2.png¸    #   textures/StageSelect_arrow_left.png¾Ô ¿  $   textures/StageSelect_arrow_right.png}ñ ?    textures/StageSelect_back.png¼   $   textures/StageSelect_stage_frame.png=Š —    textures/tex.pngJ! 4     textures/TItle_logo.png~± ¢  #   textures/Title_pushButton_guide.png ¶ Æ     textures/UI_number_1.pngæ¸ ó     textures/UI_number_2.pngÙ» Ï      textures/UI_playerForm_frame.png¨¿ 0  !   textures/UI_playerForm_player.pngØÎ È  "   textures/UI_playerForm_skill_1.png ä +  "   textures/UI_playerForm_skill_2.pngË ¸  !   textures/UI_playerPower_frame.pngƒ Ä  (   textures/UI_playerPower_gauge_0to100.pngG &  *   textures/UI_playerPower_gauge_101to200.pngm6 ™  *   textures/UI_playerPower_gauge_201to300.pngO œ  '   textures/UI_playerPower_gauge_frame.png¢S ä     textures/UI_player_estimate.png†U ?€    textures/UI_pose_back.pngÅÕ ¹	     textures/UI_powerGauge.png~ß      textures/UI_powerGauge_bg.pngŠà ä   &   textures/UI_powerGauge_blurryPoint.pngná ?      textures/UI_powerGauge_frame.png­â ù  !   textures/UI_skill_explanation.png¦ä õh  #   textures/UI_skill_explanation_1.png›M vG  #   textures/UI_skill_explanation_2.png•      textures/UI_skill_frame.png.–   !   textures/UI_skill_frame_whole.pngÌ— ƒ     textures/UI_skill_icon_1.pngO› ‚     textures/UI_skill_icon_2.pngÑ µ  "   textures/UI_skill_icon_2_using.png†¢ ^     textures/UI_skill_icon_3.pngä£ Ê     textures/UI_skill_icon_4.png®¦ å     textures/UI_skill_icon_5.png“©   "   textures/UI_skill_select_frame.png¯ª N      textures/UI_turnChange_enemy.pngı¼ €  !   textures/UI_turnChange_player.png}Ô 

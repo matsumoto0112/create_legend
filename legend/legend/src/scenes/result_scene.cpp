@@ -24,8 +24,10 @@ ResultScene::~ResultScene() {}
 bool ResultScene::Initialize() {
   const auto window_size =
       game::GameDevice::GetInstance()->GetWindow().GetScreenSize();
-  const system::GameDataStorage::ResultData data =
+  const system::GameDataStorage::ResultData result_data =
       system::GameDataStorage::GetInstance()->GetResultData();
+  const system::GameDataStorage::PlayStageData stage_data =
+      system::GameDataStorage::GetInstance()->GetPlayStageData();
   const auto heap_id =
       directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY;
 
@@ -37,30 +39,25 @@ bool ResultScene::Initialize() {
 
   start_cacth_timer_.Init(1.0f);
 
-  if (!LoadStageData()) return false;
+  if (!LoadStageData(stage_data)) return false;
 
   if (!back_ground_.Init()) {
     return false;
   }
 
   //ƒvƒŒƒCƒ„[‚ªŽ€–S‚µ‚½‚ç
-  if (data.end_type == system::GameDataStorage::GameEndType::PLAYER_DEAD) {
-    transforms_[0].SetPosition(math::Vector3(-60.0f, floor_pos, -20.0f));
-    if (!LoseProductionInit(window_size, heap_id)) return false;
-    float rotate =
-        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
-    transforms_[0].SetRotation(
-        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+  if (result_data.end_type ==
+      system::GameDataStorage::GameEndType::PLAYER_DEAD) {
+    if (!LoseProductionInit(window_size, heap_id, stage_data)) return false;
   } else {
-    transforms_[0].SetPosition(math::Vector3(30, 2, 0));
-    if (!WinProductionInit(window_size, heap_id)) return false;
+    if (!WinProductionInit(window_size, heap_id, stage_data)) return false;
   }
   transform_cbs_[0].GetStagingRef().world = transforms_[0].CreateWorldMatrix();
   transform_cbs_[0].UpdateStaging();
 
-  if (!Turn(window_size, heap_id, data)) return false;
+  if (!Turn(window_size, heap_id, result_data)) return false;
 
-  if (!PlayerPower(window_size, heap_id, data)) return false;
+  if (!PlayerPower(window_size, heap_id, result_data)) return false;
 
   fade_.Init(resource_name::texture::FADE_IMAGE);
   fade_.StartFadeIn(1.0f);
@@ -125,11 +122,8 @@ void ResultScene::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
-bool ResultScene::LoadStageData() {
-  system::GameDataStorage::PlayStageData stage_data =
-      system::GameDataStorage::GetInstance()->GetPlayStageData();
-
-  const std::string stage_name = stage_data.stage_name;
+bool ResultScene::LoadStageData(system::GameDataStorage::PlayStageData data) {
+  const std::string stage_name = data.stage_name;
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
   stage_generator_.LoadStringStageData(stage_path, stage_name);
@@ -151,6 +145,8 @@ bool ResultScene::LoadStageData() {
 
   {
     util::Transform transform = player.transform;
+    transform.SetPosition(math::Vector3(transform.GetPosition().x, 2.0f,
+                                        transform.GetPosition().z));
     transforms_.emplace_back(transform);
     TransformConstantBuffer constant_buffer;
     constant_buffer.Init(
@@ -228,12 +224,23 @@ bool ResultScene::LoadStageData() {
 //Ÿ—˜‰‰o‰Šú‰»
 bool ResultScene::WinProductionInit(
     math::IntVector2 window_size,
-    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
+    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id,
+    system::GameDataStorage::PlayStageData data) {
   //‰‰o‰Šúó‘Ô
   mode_ = ResultMode::WIN_INITIAL;
 
   {
-    const math::Vector3 pos = math::Vector3(50.0f, 15.0f, 0.0f);
+    if (data.stage_name == "stage_01") {
+      transforms_[0].SetPosition(
+          math::Vector3(transforms_[0].GetPosition().x, 2.0f,
+                        transforms_[0].GetPosition().z + 20.0f));
+    }
+  }
+
+  {
+    const math::Vector3 pos =
+        math::Vector3(transforms_[0].GetPosition().x + 20.0f, 15.0f,
+                      transforms_[0].GetPosition().z);
     const math::Quaternion rot = math::Quaternion::FromEular(
         math::Vector3(20.0f, -90.0f, 0.0f) * math::util::DEG_2_RAD);
     const float fov = 50.0f * math::util::DEG_2_RAD;
@@ -262,13 +269,21 @@ bool ResultScene::WinProductionInit(
 //”s–k‰‰o‰Šú‰»
 bool ResultScene::LoseProductionInit(
     math::IntVector2 window_size,
-    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id) {
+    directx::descriptor_heap::heap_parameter::LocalHeapID heap_id,
+    system::GameDataStorage::PlayStageData data) {
   //”s–k‰‰o
   mode_ = ResultMode::LOSE;
 
+  transforms_[0].SetPosition(math::Vector3(-60.0f, floor_pos, -20.0f));
+  float rotate =
+      game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+  transforms_[0].SetRotation(
+      math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+
   {
-    const math::Vector3 pos = math::Vector3(
-        transforms_[0].GetPosition().x, -20.0f, transforms_[0].GetPosition().z - 40.0f);
+    const math::Vector3 pos =
+        math::Vector3(transforms_[0].GetPosition().x, -20.0f,
+                      transforms_[0].GetPosition().z - 40.0f);
     const math::Quaternion rot =
         math::Quaternion::FromEular(30.0f * math::util::DEG_2_RAD, 0.0f, 0.0f);
     const float fov = 50.0f * math::util::DEG_2_RAD;

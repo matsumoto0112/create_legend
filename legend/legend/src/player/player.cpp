@@ -483,5 +483,9 @@ void Player::CreateFireParticle(const util::Transform& transform) {
 
 void Player::EquipmentUpdate() { skill_manager_.EquipmentProductionUpdate(); }
 
+void Player::SkillUIChangeEnable(bool enable) {
+  skill_manager_.ChangeEnable(enable);
+}
+
 }  // namespace player
 }  // namespace legend

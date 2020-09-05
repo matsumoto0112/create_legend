@@ -28,6 +28,7 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   something_skill_use_ = false;
   select_skill_number_ = 0;
   previous_select_number_ = 0;
+  ui_enable_ = true;
 }
 
 //ƒXƒLƒ‹Žæ“¾Žž
@@ -159,6 +160,9 @@ void SkillManager::Draw() {
   for (auto&& skill : skills_) {
     skill->Draw();
   }
+
+  if (!ui_enable_) return;
+
   select_ui_.Draw();
   player_ui_.Draw();
 }
@@ -291,5 +295,7 @@ void SkillManager::SetPositionSelectSkill(i32 skill_num) {
 
   previous_select_number_ = skill_num;
 }
+
+void SkillManager::ChangeEnable(bool enable) { ui_enable_ = enable; }
 }  // namespace skill
 }  // namespace legend

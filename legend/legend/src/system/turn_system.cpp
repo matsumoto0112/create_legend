@@ -406,7 +406,7 @@ bool TurnSystem::EnemyGenerate() {
 void TurnSystem::ChangeUIRenderEnable(bool enabler) {
   ui_board_.SetRenderEnable(enabler);
   // TODO: スキルUIの表示非表示切替処理
-
+  actor_manager_.GetPlayer()->SkillUIChangeEnable(enabler);
 }
 
 bool TurnSystem::ToPlayerTurn() {

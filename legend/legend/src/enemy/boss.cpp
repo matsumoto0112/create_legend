@@ -43,6 +43,10 @@ bool Boss::Init(actor::IActorMediator* mediator,
         model_ = resource.GetModel().Get(
             util::resource::resource_names::model::BOSS_01);
         break;
+      case 1:
+        model_ = resource.GetModel().Get(
+            util::resource::resource_names::model::BOSS_02);
+        break;
     }
 
     SetType(parameter.type_index);

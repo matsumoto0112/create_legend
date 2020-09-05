@@ -154,7 +154,21 @@ void SkillSelectUI::AddSkillExplanatory(
 }
 
 void SkillSelectUI::RemoveSkillExplanatory(i32 index_num) {
-    skill_explanatories_.erase(skill_explanatories_.begin() + index_num);
+  skill_explanatories_.erase(skill_explanatories_.begin() + index_num);
+}
+
+void SkillSelectUI::ChangeSkillIcon(const Skill* skill, i32 index_num) {
+  draw::Sprite2D sprite;
+  if (!sprite.Init(
+          skill->GetIconUsingTexture(),
+          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+    MY_LOG(L"スキル使用中画像の初期化に失敗しました。");
+  }
+  sprite.SetPosition(skill_icons_[index_num].GetPosition());
+  sprite.SetScale(math::Vector2::kUnitVector);
+  sprite.SetRect(math::Rect(0, 0, 1, 1));
+
+  skill_icons_[index_num] = sprite;
 }
 
 }  // namespace skill

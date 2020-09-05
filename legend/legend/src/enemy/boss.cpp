@@ -41,7 +41,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
     model_ =
         resource.GetModel().Get(util::resource::resource_names::model::BOSS_01);
 
-	SetType(parameter.type_index);
+    SetType(parameter.type_index);
 
     strength_ = 1.5f;
 
@@ -77,28 +77,29 @@ void Boss::SetVelocity(math::Vector3 velocity) {
 }
 
 void Boss::SetType(i32 type_index) {
-  type_index = std::clamp(type_index, 0, (i32)enemy_type::EffectType::Effect_Type_End);
+  type_index =
+      std::clamp(type_index, 0, (i32)enemy_type::EffectType::Effect_Type_End);
   enemy_ai_.move_type_ = (enemy_type::MoveType::Move_Straight);
   enemy_ai_.hit_type_ = (enemy_type::HitType::Hit_Rush);
   enemy_ai_.effect_type_ = (enemy_type::EffectType)type_index;
 
-  switch (enemy_ai_.effect_type_) { 
-  case enemy_type::EffectType::Effect_None:		// index: 0
-    enemy_ai_.SetAction(std::vector<EnemyAIType>{
-        EnemyAIType::Boss_Tutorial,
-    });
+  switch (enemy_ai_.effect_type_) {
+    case enemy_type::EffectType::Effect_None:  // index: 0
+      enemy_ai_.SetAction(std::vector<EnemyAIType>{
+          EnemyAIType::Boss_Tutorial,
+      });
       break;
-  case enemy_type::EffectType::Effect_Rotate:	// index: 1
-    enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
-        enemy::EnemyAIType::Boss_Rotate_Move,
-    });
-    break;
-  case enemy_type::EffectType::Effect_Rush:		// index: 2
-    enemy_ai_.SetAction(std::vector<EnemyAIType>{
-        EnemyAIType::Boss_Rotate_Stand,
-        EnemyAIType::Boss_Rush_Move,
-    });
-    break;
+    case enemy_type::EffectType::Effect_Rotate:  // index: 1
+      enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
+          enemy::EnemyAIType::Boss_Rotate_Move,
+      });
+      break;
+    case enemy_type::EffectType::Effect_Rush:  // index: 2
+      enemy_ai_.SetAction(std::vector<EnemyAIType>{
+          EnemyAIType::Boss_Rotate_Stand,
+          EnemyAIType::Boss_Rush_Move,
+      });
+      break;
   }
 }
 
@@ -182,17 +183,43 @@ void Boss::Boss_Rush_Move() {
         box_->SetVelocity(velocity.Normalized() * GetVelocity().Magnitude());
         box_->SetAngularVelocity(math::Vector3::kUpVector * 1.0f);
       }
+      is_rush_ = is_move_;
     }
 
-    auto point = position + direction * 15.0f;
-    const auto raycast =
-        mediator_->RayCast(point, point + math::Vector3::kDownVector * 10.0f);
-    auto objs = raycast.m_collisionObjects;
+    {  // 進行方向にプレイヤーがいれば進行
+      const auto raycast =
+          mediator_->RayCast(position, position + direction * 15.0f);
+      auto objs = raycast.m_collisionObjects;
 
-    if (objs.size() <= 0) {
-      box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() * -0.5f);
+      for (i32 i = 0; i < objs.size(); i++) {
+        bullet::Collider* act =
+            static_cast<bullet::Collider*>(objs[i]->getUserPointer());
+        if (dynamic_cast<player::Player*>(act->GetOwner())) {
+          auto point = position + (act->GetPosition() - position) / 2.0f;
+          const auto raycast = mediator_->RayCast(
+              point, point + math::Vector3::kDownVector * 15.0f);
+          auto objs = raycast.m_collisionObjects;
+
+          if (objs.size() <= 0) {
+            box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() *
+                                      -0.5f);
+          }
+          return;
+        }
+      }
     }
-    is_rush_ = is_move_;
+
+    {  // 崖際だと原則
+      auto point = position + direction * 15.0f;
+      const auto raycast =
+          mediator_->RayCast(point, point + math::Vector3::kDownVector * 10.0f);
+      auto objs = raycast.m_collisionObjects;
+
+      if (objs.size() <= 0) {
+        box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() *
+                                  -0.5f);
+      }
+    }
   }
 }
 }  // namespace enemy

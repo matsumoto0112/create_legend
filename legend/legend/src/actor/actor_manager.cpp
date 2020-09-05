@@ -66,11 +66,11 @@ bool ActorManager::Update() {
   player_->Update();
   enemy_manager_.DestroyUpdate();
 
-  for (auto&& fragment : alpha_actors_) {
-    fragment->Update();
+  for (auto&& actor : alpha_actors_) {
+      actor->Update();
   }
-  for (auto&& item_box : static_actors_) {
-    item_box->Update();
+  for (auto&& actor : static_actors_) {
+      actor->Update();
   }
 
   alpha_actors_.erase(
@@ -94,6 +94,15 @@ bool ActorManager::Update() {
   physics_field_.Update();
 
   camera_manager_.UpdateCamera();
+
+  for (auto&& actor : add_static_actors_) {
+      static_actors_.emplace_back(std::move(actor));
+  }
+  add_static_actors_.clear();
+  for (auto&& actor : add_alpha_actors_) {
+      alpha_actors_.emplace_back(std::move(actor));
+  }
+  add_alpha_actors_.clear();
 
   return true;
 }
@@ -163,7 +172,7 @@ void ActorManager::PlayerCompleteEquipment() {
 player::Player* ActorManager::GetPlayer() const { return player_.get(); }
 
 void ActorManager::AddFragment(std::unique_ptr<object::Fragment> fragment) {
-  alpha_actors_.emplace_back(std::move(fragment));
+  add_static_actors_.emplace_back(std::move(fragment));
 }
 
 bool ActorManager::GenerateActors(i32 currnt_turn) {

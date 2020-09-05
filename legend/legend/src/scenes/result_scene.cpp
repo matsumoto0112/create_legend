@@ -98,7 +98,7 @@ void ResultScene::Draw() {
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   camera_.RenderStart();
-  back_ground_.Draw();
+  back_ground_.Draw(util::resource::resource_names::pipeline::MODEL_VIEW);
   resource.GetPipeline()
       .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
       ->SetCommandList(command_list);

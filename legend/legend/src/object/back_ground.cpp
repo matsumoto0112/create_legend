@@ -51,7 +51,7 @@ bool BackGround::Init() {
   return true;
 }
 
-void BackGround::Draw() {
+void BackGround::Draw(const std::wstring& pipeline_name) {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
@@ -60,9 +60,7 @@ void BackGround::Draw() {
   constexpr const wchar_t* NAMES[] = {
       CLASSROOM_LEFTWALL, CLASSROOM_RIGHTWALL, CLASSROOM_FORWARDWALL,
       CLASSROOM_BACKWALL, CLASSROOM_FLOOR,     CLASSROOM_CEILING};
-  resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING_PRE)
-      ->SetCommandList(command_list);
+  resource.GetPipeline().Get(pipeline_name)->SetCommandList(command_list);
 
   for (u32 i = 0; i < bg_type::MAX; i++) {
     transform_cbs_[i].RegisterHandle(

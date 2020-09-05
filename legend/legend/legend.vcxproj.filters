@@ -384,7 +384,6 @@
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_gs.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="assets\stage\bbbb.txt" />
     <Text Include="assets\parameters\main_ui.txt" />
     <Text Include="assets\parameters\pipeline.txt" />
     <Text Include="assets\parameters\audio_list.txt" />

@@ -6,7 +6,7 @@ namespace legend {
 namespace ui {
 
 //コンストラクタ
-UIBoard::UIBoard() {}
+UIBoard::UIBoard() : render_enable_(true) {}
 
 //デストラクタ
 UIBoard::~UIBoard() { Reset(); }
@@ -21,7 +21,10 @@ UIComponent* UIBoard::AddComponent(std::unique_ptr<UIComponent> component) {
 
 //描画
 void UIBoard::Draw() {
+  if (!render_enable_) return;
+
   auto& sprite_renderer = game::GameDevice::GetInstance()->GetSpriteRenderer();
+
   for (auto&& comp : ui_components_) {
     if (!comp->GetEnable()) {
       continue;

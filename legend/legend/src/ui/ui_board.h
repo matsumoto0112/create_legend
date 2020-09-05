@@ -34,12 +34,19 @@ class UIBoard {
    * @brief コンポーネントを追加し、そのポインタを返す
    */
   UIComponent* AddComponent(std::unique_ptr<UIComponent> component);
+
+  void SetRenderEnable(bool render_enable) {
+    this->render_enable_ = render_enable;
+  };
+  bool GetRenderEnable() const { return render_enable_; }
   /**
    * @コンポーネントの描画
    */
   void Draw();
 
  private:
+  //! 描画が有効かどうか
+  bool render_enable_;
   //! コンポーネント配列
   std::vector<std::unique_ptr<UIComponent>> ui_components_;
 };

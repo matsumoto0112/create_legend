@@ -291,8 +291,10 @@ bool TurnSystem::PlayerMoveReady() {
       if (camera_manager->GetCameraMode() ==
           camera::camera_mode::PLAYER_LOOKAT) {
         camera_manager->SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
+        ChangeUIRenderEnable(false);
       } else {
         camera_manager->SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
+        ChangeUIRenderEnable(true);
       }
     };
     SwitchCamera();
@@ -399,6 +401,12 @@ bool TurnSystem::EnemyGenerate() {
   }
 
   return true;
+}
+
+void TurnSystem::ChangeUIRenderEnable(bool enabler) {
+  ui_board_.SetRenderEnable(enabler);
+  // TODO: スキルUIの表示非表示切替処理
+
 }
 
 bool TurnSystem::ToPlayerTurn() {

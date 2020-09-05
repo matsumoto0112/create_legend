@@ -164,6 +164,8 @@ class TurnSystem {
    */
   bool EnemyGenerate();
 
+  void ChangeUIRenderEnable(bool enabler);
+
  private:
   //! Œ»İƒ^[ƒ“”
   i32 current_turn_;

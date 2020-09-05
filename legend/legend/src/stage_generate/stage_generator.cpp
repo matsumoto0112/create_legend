@@ -123,8 +123,7 @@ bool StageGenerator::GetMapActors(
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3::kUnitVector * 1.5f;
       auto& resource = game::GameDevice::GetInstance()->GetResource();
-      parameter.skill_icon_model = resource.GetModel().Get(
-          util::resource::resource_names::model::ITEM_PLANE_01);
+      parameter.skill_icon_model_num = static_cast<i32>(String_2_Float(infomation[14]));
       itemboxes.emplace_back(parameter);
       continue;
     }

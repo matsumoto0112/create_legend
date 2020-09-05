@@ -50,7 +50,15 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
       util::resource::resource_names::model::ITEM_CAPSULE_01);
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  skill_icon_model_ = parameter.skill_icon_model;
+  std::shared_ptr<draw::Model> icon_model;
+  if (parameter.skill_icon_model_num == 0) {
+    icon_model = resource.GetModel().Get(
+        util::resource::resource_names::model::ITEM_PLANE_01);
+  } else {
+    icon_model = resource.GetModel().Get(
+        util::resource::resource_names::model::ITEM_PLANE_02);
+  }
+  skill_icon_model_ = icon_model;
   //トランスフォームバッファを作成する
   if (!skill_icon_transform_cb_.Init(
           device,

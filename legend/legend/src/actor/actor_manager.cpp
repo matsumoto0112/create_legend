@@ -224,8 +224,12 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
 
     for (auto&& param : item_boxes) {
       auto obj = std::make_unique<skill::SkillItemBox>();
-      std::shared_ptr<skill::Skill> skill =
-          std::make_shared<skill::SkillPencil>();
+      std::shared_ptr<skill::Skill> skill;
+      if (param.skill_icon_model_num == 0) {
+        skill = std::make_shared<skill::SkillPencil>();
+      } else {
+        skill = std::make_shared<skill::SkillPasteStick>();
+      }
       if (!obj->Init(this, param, skill)) {
         return false;
       }

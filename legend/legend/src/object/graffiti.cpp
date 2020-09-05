@@ -35,6 +35,7 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
     return false;
   }
 
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& device = game::GameDevice::GetInstance()->GetDevice();
 
   //通常のテクスチャをまず作成する
@@ -72,6 +73,20 @@ bool Graffiti::Init(actor::IActorMediator* mediator,
       pixels_[pos + 2] = 0xff;
       pixels_[pos + 3] = 0xff;
     }
+  }
+
+  //モデルの指定
+  switch (parameter.model_id) {
+    case 0:
+      model_ = resource.GetModel().Get(
+          util::resource::resource_names::model::GRAFFITI_01);
+
+    case 1:
+      model_ = resource.GetModel().Get(
+          util::resource::resource_names::model::GRAFFITI_02);
+    case 2:
+      model_ = resource.GetModel().Get(
+          util::resource::resource_names::model::GRAFFITI_03);
   }
 
   UpdateTexture(command_list);
@@ -163,9 +178,7 @@ void Graffiti::Draw() {
       MASK_TEXTURE_ID, directx::shader::ResourceType::SRV, handle_);
   transform_cb_.RegisterHandle(
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
-  resource.GetModel()
-      .Get(util::resource::resource_names::model::GRAFFITI_01)
-      ->Draw(command_list);
+  model_->Draw(command_list);
 }
 
 float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }

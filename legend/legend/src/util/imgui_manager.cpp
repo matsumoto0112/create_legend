@@ -28,7 +28,7 @@ bool ImguiManager::Init(HWND__* window_handle, ID3D12Device* device,
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
 
-  if (enable_gui_) {
+  if (!enable_gui_) {
     io.IniFilename = nullptr;
   }
   // const std::filesystem::path font_path =

@@ -43,7 +43,9 @@ void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
 
   skills_.push_back(skill);
   SetPosition(skill, static_cast<i32>(skills_.size() - 1));
+
   select_ui_.AddSkill(skill.get());
+  select_ui_.AddSkillExplanatory(skill->GetExplanationTexture());
   player_ui_.AddEquipmentUI(skill.get());
 }
 
@@ -97,7 +99,7 @@ void SkillManager::EquipmentProductionUpdate() {
   }
   //下降
   if (current_mode_ == Mode::FALL_PLAYER) {
-      //一定の高さまで降りてきて、速度が小さくなったら演出終了
+    //一定の高さまで降りてきて、速度が小さくなったら演出終了
     if (player_->GetCollider()->GetVelocity().Magnitude() <= 0.1f &&
         player_->GetPosition().y <= 20.0f) {
       current_mode_ = Mode::NONE;
@@ -182,6 +184,7 @@ void SkillManager::RemoveSkill() {
     skills_[i]->RemoveCollider();
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
+    select_ui_.RemoveSkillExplanatory(i);
     player_ui_.RemoveEquipmentUI(i);
     i--;
     select_ui_.SelectSkillNumber(0);

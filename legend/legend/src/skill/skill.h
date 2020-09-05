@@ -73,6 +73,7 @@ class Skill : public actor::Actor {
   //i32 GetIconTexture();
   std::shared_ptr<directx::buffer::Texture2D> GetIconTexture() const;
   std::shared_ptr<directx::buffer::Texture2D> GetEquipmentTexture() const;
+  std::shared_ptr<directx::buffer::Texture2D> GetExplanationTexture() const;
   //i32 GetExplanationTexture();
   bool GetUseFlag();
   bool ProductionFlag();
@@ -102,6 +103,8 @@ class Skill : public actor::Actor {
 
   //! スキルアイコンのテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> skill_icon_texture_;
+  //! スキル説明のテクスチャ
+  std::shared_ptr<directx::buffer::Texture2D> skill_explanation_texture_;
   //! スキル説明の画像のID
   // i32 skill_explanation_id_;
 

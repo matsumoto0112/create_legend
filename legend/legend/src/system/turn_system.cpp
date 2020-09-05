@@ -105,10 +105,14 @@ bool TurnSystem::Init(const std::string& stage_name) {
     components_.emplace_back(comp);
     input_lines_.emplace_back(split);
 
+    const std::set<std::wstring> NO_RENDER_IF_ENEMY_TUAN_UI_NAMES = {
+        util::resource::resource_names::texture::UI_POWERGAUGE_FRAME,
+        util::resource::resource_names::texture::UI_POWERGAUGE,
+        util::resource::resource_names::texture::UI_POWERGAUGE_BG,
+    };
     //敵のターンでは表示しないUIをリストに積む
-    if (w_name ==
-            util::resource::resource_names::texture::UI_POWERGAUGE_FRAME ||
-        w_name == util::resource::resource_names::texture::UI_POWERGAUGE) {
+    if (NO_RENDER_IF_ENEMY_TUAN_UI_NAMES.find(w_name) !=
+        NO_RENDER_IF_ENEMY_TUAN_UI_NAMES.end()) {
       no_render_if_enemy_turn_uis_.emplace_back(comp);
     }
   }
@@ -287,8 +291,10 @@ bool TurnSystem::PlayerMoveReady() {
       if (camera_manager->GetCameraMode() ==
           camera::camera_mode::PLAYER_LOOKAT) {
         camera_manager->SetCameraMode(camera::camera_mode::BIRDS_EYE_VIEW);
+        ChangeUIRenderEnable(false);
       } else {
         camera_manager->SetCameraMode(camera::camera_mode::PLAYER_LOOKAT);
+        ChangeUIRenderEnable(true);
       }
     };
     SwitchCamera();
@@ -395,6 +401,12 @@ bool TurnSystem::EnemyGenerate() {
   }
 
   return true;
+}
+
+void TurnSystem::ChangeUIRenderEnable(bool enabler) {
+  ui_board_.SetRenderEnable(enabler);
+  // TODO: スキルUIの表示非表示切替処理
+  actor_manager_.GetPlayer()->SkillUIChangeEnable(enabler);
 }
 
 bool TurnSystem::ToPlayerTurn() {

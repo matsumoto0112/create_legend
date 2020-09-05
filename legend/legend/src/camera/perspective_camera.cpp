@@ -34,6 +34,7 @@ bool PerspectiveCamera::Init(const std::wstring& name,
   this->aspect_ratio_ = aspect_ratio;
   this->near_z_ = near_z;
   this->far_z_ = far_z;
+  this->update_enable_ = true;
 
   return Camera::Init(name, CreateView(), CreateProjection());
 }

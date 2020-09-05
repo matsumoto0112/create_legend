@@ -147,8 +147,14 @@ class Player : public actor::Actor {
   bool SkillUpdateTurnEnd();
 
   void CreateFireParticle(const util::Transform& transform);
-
+  /**
+   * @brief 装備演出の更新
+   */
   void EquipmentUpdate();
+  /**
+   * @brief スキルUIの表示切替
+   */
+  void SkillUIChangeEnable(bool enable);
 
  private:
   //! 速度

@@ -28,6 +28,7 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   something_skill_use_ = false;
   select_skill_number_ = 0;
   previous_select_number_ = 0;
+  ui_enable_ = true;
 }
 
 //スキル取得時
@@ -43,7 +44,9 @@ void SkillManager::AddSkill(std::shared_ptr<Skill> skill) {
 
   skills_.push_back(skill);
   SetPosition(skill, static_cast<i32>(skills_.size() - 1));
+
   select_ui_.AddSkill(skill.get());
+  select_ui_.AddSkillExplanatory(skill->GetExplanationTexture());
   player_ui_.AddEquipmentUI(skill.get());
 }
 
@@ -97,8 +100,9 @@ void SkillManager::EquipmentProductionUpdate() {
   }
   //下降
   if (current_mode_ == Mode::FALL_PLAYER) {
-    //一定の高さまで行ったらターンを切り替える
-    if (player_->GetTransform().GetPosition().y <= 1.8f) {
+    //一定の高さまで降りてきて、速度が小さくなったら演出終了
+    if (player_->GetCollider()->GetVelocity().Magnitude() <= 0.1f &&
+        player_->GetPosition().y <= 20.0f) {
       current_mode_ = Mode::NONE;
       something_skill_use_ = false;
       mediator_->PlayerCompleteEquipment();
@@ -156,6 +160,9 @@ void SkillManager::Draw() {
   for (auto&& skill : skills_) {
     skill->Draw();
   }
+
+  if (!ui_enable_) return;
+
   select_ui_.Draw();
   player_ui_.Draw();
 }
@@ -181,6 +188,7 @@ void SkillManager::RemoveSkill() {
     skills_[i]->RemoveCollider();
     skills_.erase(skills_.begin() + i);
     select_ui_.RemoveSkillUI(i);
+    select_ui_.RemoveSkillExplanatory(i);
     player_ui_.RemoveEquipmentUI(i);
     i--;
     select_ui_.SelectSkillNumber(0);
@@ -287,5 +295,7 @@ void SkillManager::SetPositionSelectSkill(i32 skill_num) {
 
   previous_select_number_ = skill_num;
 }
+
+void SkillManager::ChangeEnable(bool enable) { ui_enable_ = enable; }
 }  // namespace skill
 }  // namespace legend

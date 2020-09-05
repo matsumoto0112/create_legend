@@ -23,15 +23,6 @@ SkillSelectUI::SkillSelectUI() {
     MY_LOG(L"スキル選択アイコンの初期化に失敗しました。");
   }
   skill_select_frame_.SetRect(math::Rect(0, 0, 1, 1));
-  if (!skill_explanatory_.Init(
-          resource.GetTexture().Get(
-              resource_name::texture::UI_SKILL_EXPLANATION),
-          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
-    MY_LOG(L"スキル説明画像の初期化に失敗しました。");
-  }
-  skill_explanatory_.SetPosition(math::Vector2(896.0f, 32.0f));
-  skill_explanatory_.SetScale(math::Vector2::kUnitVector);
-  skill_explanatory_.SetRect(math::Rect(0, 0, 1, 1));
 
   for (i32 i = 0; i < 5; i++) {
     if (!skill_frame_icons_[i].Init(
@@ -63,14 +54,10 @@ void SkillSelectUI::Draw() {
   for (auto&& sprite : skill_icons_) {
     sprite_renderer.AddDrawItems(&sprite);
   }
-  // sprite_renderer.DrawItems(game::GameDevice::GetInstance()
-  //                              ->GetDevice()
-  //                              .GetCurrentFrameResource()
-  //                              ->GetCommandList());
 
   if (is_select_mode_) {
     sprite_renderer.AddDrawItems(&skill_select_frame_);
-    sprite_renderer.AddDrawItems(&skill_explanatory_);
+    sprite_renderer.AddDrawItems(&skill_explanatories_[select_number_]);
   }
 
   for (auto&& frame : skill_frame_icons_) {
@@ -148,6 +135,26 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   skill_select_frame_.SetPosition(skill_icons_[select_number_].GetPosition());
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(resource_name::audio::SKILL_SELECT, 1.0f);
+}
+
+void SkillSelectUI::AddSkillExplanatory(
+    std::shared_ptr<directx::buffer::Texture2D> texture) {
+  draw::Sprite2D sprite;
+
+  if (!sprite.Init(
+          texture,
+          directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+    MY_LOG(L"スキル説明画像の初期化に失敗しました。");
+  }
+  sprite.SetPosition(math::Vector2(768.0f, 32.0f));
+  sprite.SetScale(math::Vector2::kUnitVector);
+  sprite.SetRect(math::Rect(0, 0, 1, 1));
+
+  skill_explanatories_.push_back(sprite);
+}
+
+void SkillSelectUI::RemoveSkillExplanatory(i32 index_num) {
+    skill_explanatories_.erase(skill_explanatories_.begin() + index_num);
 }
 
 }  // namespace skill

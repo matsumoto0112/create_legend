@@ -137,10 +137,12 @@ math::Vector3 SearchManager::NextSearch(
   enemys_ = _enemys;
   auto start = _enemy->GetOwner()->GetTransform().GetPosition();
   auto end = mediator_->GetPlayer()->GetPosition();
+  auto point = start + (end - start) / 2.0f;
   course_list_.clear();
 
   // 衝突したら探索経路
-  if (OnCollision(start, end)) {
+  if (OnCollision(start, end) ||
+      !OnCollision(point, point + math::Vector3::kDownVector * 15.0f)) {
     SetCourse(NearSearch(start), NearSearch(end));
     ChaseCourse();
     end = (course_list_.size() <= 0 ? end : course_list_[0]->GetPosition());
@@ -291,22 +293,21 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
     // プレイヤーとの衝突を無視
     if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
       continue;
-	// 敵が直進していく場合、ほかの敵との衝突を無視
-    if (move_type == enemy::enemy_type::Straight) {
-      if (auto e = dynamic_cast<enemy::Enemy*>(act->GetOwner())) {
+    // 敵が直進していく場合、ほかの敵との衝突を無視
+    if (move_type == enemy::enemy_type::Move_Straight) {
+      if (dynamic_cast<enemy::Enemy*>(act->GetOwner())) {
         continue;
       }
-      if (auto b = dynamic_cast<enemy::Boss*>(act->GetOwner())) {
+      if (dynamic_cast<enemy::Boss*>(act->GetOwner())) {
         continue;
       }
     }
-	// スキルボックスとの衝突を無視
-    if (skill::Skill* sb = dynamic_cast<skill::Skill*>(act->GetOwner())) {
+    // スキルボックスとの衝突を無視
+    if (dynamic_cast<skill::SkillItemBox*>(act->GetOwner())) {
       continue;
     }
-    
-    if (object::Fragment* fragment =
-            dynamic_cast<object::Fragment*>(act->GetOwner())) {
+
+    if (dynamic_cast<object::Fragment*>(act->GetOwner())) {
       continue;
     }
     return true;

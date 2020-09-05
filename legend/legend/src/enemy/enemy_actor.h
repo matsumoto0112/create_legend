@@ -111,8 +111,13 @@ class EnemyActor : public actor::Actor {
   enemy::enemy_type::MoveType GetMoveType() { return enemy_ai_.move_type_; };
   bullet::BoundingBox* GetCollider() const { return box_.get(); }
 
+  virtual void SetType(i32 type_index = 0);
+  /**
+   * @brief 衝突判定
+   */
   virtual void OnHit(bullet::Collider* other);
   void HitAction(bullet::Collider* other);
+
   /**
    * @brief 強化パラメータの更新
    */

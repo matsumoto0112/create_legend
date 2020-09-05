@@ -8,6 +8,7 @@
 
 #include "src/directx/buffer/constant_buffer.h"
 #include "src/directx/buffer/constant_buffer_structure.h"
+#include "src/util/resource/resource_names.h"
 
 namespace legend {
 namespace object {
@@ -28,7 +29,9 @@ class BackGround {
   BackGround();
   ~BackGround();
   bool Init();
-  void Draw();
+  void Draw(
+      const std::wstring& pipeline_name =
+          util::resource::resource_names::pipeline::DIFFERED_RENDERING_PRE);
 
  private:
   std::array<directx::buffer::ConstantBuffer<

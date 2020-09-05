@@ -90,6 +90,10 @@ class SkillManager {
    * @brief 選択中スキルの座標設定
    */
   void SetPositionSelectSkill(i32 skill_num);
+  /**
+   * @brief UIの表示切替
+   */
+  void ChangeEnable(bool enable);
 
  private:
   actor::IActorMediator* mediator_;
@@ -121,6 +125,9 @@ class SkillManager {
   //! 選択番号
   i32 select_skill_number_;
   i32 previous_select_number_;
+  
+  //! UIの表示非表示
+  bool ui_enable_;
 };
 }  // namespace skill
 }  // namespace legend

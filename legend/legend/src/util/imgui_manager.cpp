@@ -28,10 +28,14 @@ bool ImguiManager::Init(HWND__* window_handle, ID3D12Device* device,
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
 
-  //const std::filesystem::path font_path =
+  if (enable_gui_) {
+    io.IniFilename = nullptr;
+  }
+  // const std::filesystem::path font_path =
   //    Path::GetInstance()->exe() / "assets" / "fonts" / "APJapanesefontF.ttf";
-  //io.Fonts->AddFontFromFileTTF(font_path.generic_string().c_str(), 14.0f,
+  // io.Fonts->AddFontFromFileTTF(font_path.generic_string().c_str(), 14.0f,
   //                             nullptr, io.Fonts->GetGlyphRangesJapanese());
+
   ImGui::StyleColorsDark();
   ImGui_ImplWin32_Init(window_handle);
 

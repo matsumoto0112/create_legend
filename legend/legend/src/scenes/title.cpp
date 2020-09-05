@@ -60,7 +60,8 @@ bool Title::Initialize() {
     }
     const float x =
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
-    const float y = image->GetSprite().GetContentSize().y * 0.5f;
+    const float y = -image->GetSprite().GetContentSize().y / 2 +
+                    screen_size.y / 2 - screen_size.y / 8;
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     ui::UIComponent* comp = board_.AddComponent(std::move(image));
@@ -73,7 +74,8 @@ bool Title::Initialize() {
     }
     const float x =
         screen_size.x * 0.5f - image->GetSprite().GetContentSize().x * 0.5f;
-    const float y = image->GetSprite().GetContentSize().y * 0.5f + 400.0f;
+    const float y = -image->GetSprite().GetContentSize().y / 2 +
+                    screen_size.y / 2 + screen_size.y / 4;
     image->SetPosition(math::Vector2(x, y));
     image->SetZOrder(0.5f);
     ui::UIComponent* comp = board_.AddComponent(std::move(image));
@@ -94,7 +96,7 @@ bool Title::Initialize() {
       const float y =
           screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
-      image->SetZOrder(0.2f);
+      image->SetZOrder(0.8f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_movable_images_.emplace_back(comp, base_x,
@@ -111,6 +113,7 @@ bool Title::Initialize() {
       const float y =
           screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
+      image->SetZOrder(0.8f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_non_movable_images_.emplace_back(comp);
@@ -125,6 +128,7 @@ bool Title::Initialize() {
       const float y =
           screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
+      image->SetZOrder(0.8f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_non_movable_images_.emplace_back(comp);

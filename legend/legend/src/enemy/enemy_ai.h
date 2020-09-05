@@ -15,7 +15,7 @@ enum EnemyAIType : i32 {
   Boss_Rotate_Stand,
   Boss_Rush_Move,
   Boss_Rotate_Move,
-  Boss_Escape,
+  Boss_Tutorial,
 };
 
 struct EnemyAI {
@@ -34,9 +34,9 @@ struct EnemyAI {
 
  public:
   void Init() {
-    move_type_ = enemy_type::MoveType::Detour;
-    hit_type_ = enemy_type::HitType::Rush;
-    effect_type_ = enemy_type::EffectType::None;
+    move_type_ = enemy_type::MoveType::Move_Detour;
+    hit_type_ = enemy_type::HitType::Hit_Rush;
+    effect_type_ = enemy_type::EffectType::Effect_None;
 
     ai_type_ = EnemyAIType::None;
     ai_actions_ = {ai_type_};
@@ -109,7 +109,7 @@ struct EnemyAI {
                  -0.75f, 0.75f));
              box->SetAngularVelocity(angle);
            }},
-          {EnemyAIType::Boss_Escape,
+          {EnemyAIType::Boss_Tutorial,
            [&](math::Vector3 velocity, bullet::BoundingBox* box) {
              // ‰Á‘¬“x‚ÌÝ’è
              box->ApplyCentralImpulse(velocity);

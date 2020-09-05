@@ -105,10 +105,14 @@ bool TurnSystem::Init(const std::string& stage_name) {
     components_.emplace_back(comp);
     input_lines_.emplace_back(split);
 
+    const std::set<std::wstring> NO_RENDER_IF_ENEMY_TUAN_UI_NAMES = {
+        util::resource::resource_names::texture::UI_POWERGAUGE_FRAME,
+        util::resource::resource_names::texture::UI_POWERGAUGE,
+        util::resource::resource_names::texture::UI_POWERGAUGE_BG,
+    };
     //敵のターンでは表示しないUIをリストに積む
-    if (w_name ==
-            util::resource::resource_names::texture::UI_POWERGAUGE_FRAME ||
-        w_name == util::resource::resource_names::texture::UI_POWERGAUGE) {
+    if (NO_RENDER_IF_ENEMY_TUAN_UI_NAMES.find(w_name) !=
+        NO_RENDER_IF_ENEMY_TUAN_UI_NAMES.end()) {
       no_render_if_enemy_turn_uis_.emplace_back(comp);
     }
   }

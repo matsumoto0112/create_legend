@@ -39,7 +39,9 @@ class GameDataStorage : public util::Singleton<GameDataStorage> {
   PlayStageData play_stage_data_;
 
  protected:
-  GameDataStorage() {}
+  GameDataStorage()
+      : result_data_{GameEndType::PLAYER_DEAD, 100, 1},
+        play_stage_data_{"tutorial_01"} {}
   virtual ~GameDataStorage() {}
 };
 

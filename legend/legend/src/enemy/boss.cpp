@@ -78,23 +78,26 @@ void Boss::SetVelocity(math::Vector3 velocity) {
 
 void Boss::SetType(i32 type_index) {
   type_index = std::clamp(type_index, 0, (i32)enemy_type::EffectType::Effect_Type_End);
-  enemy_ai_.move_type_ = (enemy_type::MoveType::Straight);
-  enemy_ai_.hit_type_ = (enemy_type::HitType::Rush);
+  enemy_ai_.move_type_ = (enemy_type::MoveType::Move_Straight);
+  enemy_ai_.hit_type_ = (enemy_type::HitType::Hit_Rush);
   enemy_ai_.effect_type_ = (enemy_type::EffectType)type_index;
 
   switch (enemy_ai_.effect_type_) { 
-  case enemy_type::EffectType::None:
+  case enemy_type::EffectType::Effect_None:		// index: 0
     enemy_ai_.SetAction(std::vector<EnemyAIType>{
-        EnemyAIType::Boss_Rotate_Stand,
-        EnemyAIType::Boss_Rush_Move,
+        EnemyAIType::Boss_Tutorial,
     });
       break;
-  case enemy_type::EffectType::Rotate: 
+  case enemy_type::EffectType::Effect_Rotate:	// index: 1
     enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
         enemy::EnemyAIType::Boss_Rotate_Move,
     });
     break;
-  case enemy_type::EffectType::Escape:
+  case enemy_type::EffectType::Effect_Rush:		// index: 2
+    enemy_ai_.SetAction(std::vector<EnemyAIType>{
+        EnemyAIType::Boss_Rotate_Stand,
+        EnemyAIType::Boss_Rush_Move,
+    });
     break;
   }
 }

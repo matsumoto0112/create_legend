@@ -183,12 +183,12 @@ void EnemyActor::SetType(i32 type_index) {
           0, (i32)enemy_type::EffectType::Effect_Type_End - 1));
 
   switch (enemy_ai_.effect_type_) {
-    case enemy_type::EffectType::None:
+    case enemy_type::EffectType::Effect_None:
       enemy_ai_.SetAction(std::vector<EnemyAIType>{
           EnemyAIType::None,
       });
       break;
-    case enemy_type::EffectType::Rotate:
+    case enemy_type::EffectType::Effect_Rotate:
       enemy_ai_.SetAction(std::vector<enemy::EnemyAIType>{
           enemy::EnemyAIType::Enemy_Rotate,
       });
@@ -254,16 +254,16 @@ void EnemyActor::HitAction(bullet::Collider* other) {
   auto add_power = ((strength_ + velocity.Magnitude()) / 2.0f);
   switch (enemy_ai_.hit_type_) {
       // Õ“ËŽžA’âŽ~‚·‚éˆ—
-    case enemy::enemy_type::HitType::Stop:
+    case enemy::enemy_type::HitType::Hit_Stop:
       GetCollider()->ApplyCentralImpulse(velocity * -1.0f);
       other->ApplyCentralImpulse(direction * add_power);
       break;
       // Õ“ËŽžA“Ëi‚·‚éˆ—
-    case enemy::enemy_type::HitType::Rush:
+    case enemy::enemy_type::HitType::Hit_Rush:
       other->ApplyCentralImpulse(direction * add_power);
       break;
       // Õ“ËŽžA’µ’e‚·‚éˆ—
-    case enemy::enemy_type::HitType::Bound:
+    case enemy::enemy_type::HitType::Hit_Bound:
       GetCollider()->ApplyCentralImpulse(velocity * -2.0f);
       other->ApplyCentralImpulse(direction * add_power);
       break;

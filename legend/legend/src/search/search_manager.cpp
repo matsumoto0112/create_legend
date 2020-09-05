@@ -292,7 +292,7 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
     if (act->GetOwner() == mediator_->GetPlayer()->GetCollider()->GetOwner())
       continue;
 	// “G‚ª’¼i‚µ‚Ä‚¢‚­ê‡A‚Ù‚©‚Ì“G‚Æ‚ÌÕ“Ë‚ğ–³‹
-    if (move_type == enemy::enemy_type::Straight) {
+    if (move_type == enemy::enemy_type::Move_Straight) {
       if (auto e = dynamic_cast<enemy::Enemy*>(act->GetOwner())) {
         continue;
       }

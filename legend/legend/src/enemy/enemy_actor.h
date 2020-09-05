@@ -28,6 +28,7 @@ class EnemyActor : public actor::Actor {
     float mass = 1.5f;
     float restitution = 0.5f;
     float friction = 1.0f;
+    i32 model_id = 0;
     i32 type_index = 0;
   };
 

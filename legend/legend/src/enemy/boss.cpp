@@ -38,8 +38,16 @@ bool Boss::Init(actor::IActorMediator* mediator,
                 const InitializeParameter& parameter) {
   if (enemy::EnemyActor::Init(mediator, parameter)) {
     auto& resource = game::GameDevice::GetInstance()->GetResource();
-    model_ =
-        resource.GetModel().Get(util::resource::resource_names::model::BOSS_01);
+    switch (parameter.model_id) {
+      case 0:
+        model_ = resource.GetModel().Get(
+            util::resource::resource_names::model::BOSS_01);
+        break;
+      case 1:
+        model_ = resource.GetModel().Get(
+            util::resource::resource_names::model::BOSS_02);
+        break;
+    }
 
     SetType(parameter.type_index);
 

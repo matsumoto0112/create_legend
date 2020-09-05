@@ -82,6 +82,7 @@ constexpr name ALPHAKAKUNINOBJECT = L"alphaKakuninObject.glb";
 constexpr name ARROW = L"arrow.glb";
 constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 constexpr name BOSS_01 = L"boss_01.glb";
+constexpr name BOSS_02 = L"boss_02.glb";
 constexpr name CLASSROOM_BACKWALL = L"classroom_backwall.glb";
 constexpr name CLASSROOM_CEILING = L"classroom_ceiling.glb";
 constexpr name CLASSROOM_FLOOR = L"classroom_floor.glb";

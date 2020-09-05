@@ -3,6 +3,10 @@
 #include "src/directx/shader/shader_register_id.h"
 #include "src/game/game_device.h"
 
+namespace {
+constexpr bool ENABLE_DEBUG_CAMERA = false;
+}  // namespace
+
 namespace legend {
 namespace camera {
 
@@ -42,6 +46,11 @@ bool PerspectiveCamera::Init(const std::wstring& name,
 //コンスタントバッファの更新
 void PerspectiveCamera::UpdateConstantBufferStaging() {
   if (update_enable_) {
+    if constexpr (ENABLE_DEBUG_CAMERA) {
+      auto& input = game::GameDevice::GetInstance()->GetInput();
+      const float input_vert = input.GetGamepad()->GetStickRight().y;
+      position_ += math::Vector3(0, input_vert, 0);
+    }
     view_ = CreateView();
     projection_ = CreateProjection();
   }

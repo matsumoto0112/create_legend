@@ -44,6 +44,7 @@ class Boss : public enemy::EnemyActor {
 
   virtual void SetType(i32 type_index = 0);
 
+  void Boss_Tutorial();
   void Boss_Rotate_Stand();
   void Boss_Rush_Move();
 
@@ -52,6 +53,8 @@ class Boss : public enemy::EnemyActor {
   float rotate_speed_ = 20.0f;
   const float rotate_time_ = 1.0f;
   float rotate_timer_ = 0.0f;
+
+  bool is_tutorial_ = false;
   bool is_rotate_ = false;
   bool is_rush_ = false;
 };

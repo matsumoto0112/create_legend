@@ -248,6 +248,7 @@ void SkillManager::UseSkill() {
     if (skills_[skill_num]->GetActivetionTiming() !=
         SkillActivationTiming::NOW) {
       select_ui_.ChangeIsSelectMode();
+      select_ui_.ChangeSkillIcon(skills_[skill_num].get(), skill_num);
     }
   }
 }

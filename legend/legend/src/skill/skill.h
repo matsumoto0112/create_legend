@@ -72,6 +72,10 @@ class Skill : public actor::Actor {
   SkillEffectEndTiming GetEndTiming();
   //i32 GetIconTexture();
   std::shared_ptr<directx::buffer::Texture2D> GetIconTexture() const;
+  /**
+   * @brief スキル使用中アイコンの取得
+   */
+  std::shared_ptr<directx::buffer::Texture2D> GetIconUsingTexture() const;
   std::shared_ptr<directx::buffer::Texture2D> GetEquipmentTexture() const;
   std::shared_ptr<directx::buffer::Texture2D> GetExplanationTexture() const;
   //i32 GetExplanationTexture();
@@ -103,6 +107,8 @@ class Skill : public actor::Actor {
 
   //! スキルアイコンのテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> skill_icon_texture_;
+  //! スキル使用中アイコンのテクスチャ
+  std::shared_ptr<directx::buffer::Texture2D> skill_icon_using_texture_;
   //! スキル説明のテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> skill_explanation_texture_;
   //! スキル説明の画像のID

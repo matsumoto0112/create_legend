@@ -14,15 +14,15 @@ namespace scenes {
 const std::vector<Title::Stage> Title::STAGE_LIST = {
     {
         "tutorial_01",
-        TextureName::STAGESELECT_STAGE_FRAME,
+        TextureName::STAGESELECT_STAGE_FRAME_01,
     },
     {
         "stage_01",
-        TextureName::STAGESELECT_STAGE_FRAME,
+        TextureName::STAGESELECT_STAGE_FRAME_02,
     },
     {
         "stage_02",
-        TextureName::STAGESELECT_STAGE_FRAME,
+        TextureName::STAGESELECT_STAGE_FRAME_03,
     },
     //{
     //    "stage_03",

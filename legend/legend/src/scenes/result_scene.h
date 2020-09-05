@@ -56,19 +56,21 @@ class ResultScene : public Scene {
   /**
    * @brief ステージデータ読込
    */
-  bool LoadStageData();
+  bool LoadStageData(system::GameDataStorage::PlayStageData data);
   /**
    * @brief 勝利演出初期化
    */
   bool WinProductionInit(
       math::IntVector2 window_size,
-      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id);
+      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id,
+      system::GameDataStorage::PlayStageData data);
   /**
    * @brief 敗北演出初期化
    */
   bool LoseProductionInit(
       math::IntVector2 window_size,
-      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id);
+      directx::descriptor_heap::heap_parameter::LocalHeapID heap_id,
+      system::GameDataStorage::PlayStageData data);
   /**
    * @brief ターン表示処理
    */

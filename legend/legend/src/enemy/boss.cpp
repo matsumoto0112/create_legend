@@ -60,6 +60,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
 
 bool Boss::Update() {
   enemy::EnemyActor::Update();
+  Boss_Tutorial();
   Boss_Rotate_Stand();
   Boss_Rush_Move();
   return true;
@@ -68,11 +69,14 @@ bool Boss::Update() {
 //速度の設定
 void Boss::SetVelocity(math::Vector3 velocity) {
   switch (enemy_ai_.ai_type_) {
-    case enemy::EnemyAIType::Boss_Rotate_Stand:
+    case EnemyAIType::Boss_Tutorial:
+      is_tutorial_ = true;
+      break;
+    case EnemyAIType::Boss_Rotate_Stand:
       is_rotate_ = true;
       rotate_timer_ = rotate_time_;
       break;
-    case enemy::EnemyAIType::Boss_Rush_Move:
+    case EnemyAIType::Boss_Rush_Move:
       auto power = velocity.Magnitude();
       velocity = (GetTransform().GetRotation() * math::Vector3::kForwardVector);
       velocity.y = 0.0f;
@@ -132,6 +136,51 @@ void Boss::OnHit(bullet::Collider* other) {
   }
 }
 
+void Boss::Boss_Tutorial() {
+  if (is_tutorial_) {
+    auto position = GetPosition();
+    auto direction = GetVelocity().Normalized();
+    direction.y = 0;
+    direction = direction.Normalized();
+
+    is_tutorial_ = is_move_;
+
+    {  // 進行方向にプレイヤーがいれば進行
+      const auto raycast =
+          mediator_->RayCast(position, position + direction * 15.0f);
+      auto objs = raycast.m_collisionObjects;
+
+      for (i32 i = 0; i < objs.size(); i++) {
+        bullet::Collider* act =
+            static_cast<bullet::Collider*>(objs[i]->getUserPointer());
+        if (dynamic_cast<player::Player*>(act->GetOwner())) {
+          auto point = position + (act->GetPosition() - position) / 2.0f;
+          const auto raycast = mediator_->RayCast(
+              point, point + math::Vector3::kDownVector * 15.0f);
+          auto objs = raycast.m_collisionObjects;
+
+          if (objs.size() <= 0) {
+            box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() *
+                                      -0.5f);
+          }
+          return;
+        }
+      }
+    }
+
+    {  // 崖際だと原則
+      auto point = position + direction * 15.0f;
+      const auto raycast =
+          mediator_->RayCast(point, point + math::Vector3::kDownVector * 10.0f);
+      auto objs = raycast.m_collisionObjects;
+
+      if (objs.size() <= 0) {
+        box_->ApplyCentralImpulse(direction * GetVelocity().Magnitude() *
+                                  -0.5f);
+      }
+    }
+  }
+}
 void Boss::Boss_Rotate_Stand() {
   if (is_rotate_) {
     auto vector =

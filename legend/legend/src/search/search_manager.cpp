@@ -235,8 +235,10 @@ void SearchManager::ChaseCourse() {
   auto start = ignore_enemy_->GetOwner()->GetTransform().GetPosition();
   for (i32 i = 1; i < course_list_.size(); i++) {
     auto end = course_list_[i]->GetPosition();
+    auto point = start + (end - start) / 2.0f;
     //*------è’ìÀîªíË--------
-    if (!OnCollision(start, end)) {
+    if (!OnCollision(start, end) &&
+        OnCollision(point, point + math::Vector3::kDownVector * 15.0f)) {
       course_list_.erase(course_list_.begin() + i - 1);
       i--;
     }

@@ -257,6 +257,10 @@ class InputCommand {
              return (Down(KeyCode::Space, i_key) ||
                      Down(JoyCode::Y, i_gamePad));
            }},
+          {InputCode::CANCEL,  //!< キャンセルコマンド
+           [&](Keyboard* i_key, Mouse* i_mouse, GamePad* i_gamePad) {
+             return (Down(JoyCode::B, i_gamePad));
+           }},
   };  //!< 入力判定
 };
 }  // namespace input

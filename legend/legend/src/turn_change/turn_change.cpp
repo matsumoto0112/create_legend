@@ -29,14 +29,14 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
     if (!before_turn_sprite_.Init(
             resource.GetTexture().Get(
                 resource_name::texture::UI_TURNCHANGE_ENEMY),
-            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       MY_LOG(L"前のターン画像の初期化に失敗しました。");
       return false;
     }
     if (!next_turn_sprite_.Init(
             resource.GetTexture().Get(
                 resource_name::texture::UI_TURNCHANGE_PLAYER),
-            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       MY_LOG(L"次のターン画像の初期化に失敗しました。");
       return false;
     }
@@ -44,14 +44,14 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
     if (!before_turn_sprite_.Init(
             resource.GetTexture().Get(
                 resource_name::texture::UI_TURNCHANGE_PLAYER),
-            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       MY_LOG(L"前のターン画像の初期化に失敗しました。");
       return false;
     }
     if (!next_turn_sprite_.Init(
             resource.GetTexture().Get(
                 resource_name::texture::UI_TURNCHANGE_ENEMY),
-            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID)) {
+            directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
       MY_LOG(L"次のターン画像の初期化に失敗しました。");
       return false;
     }
@@ -64,7 +64,8 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
   next_turn_sprite_.SetPosition(math::Vector2(
       screen_size_.x,
       screen_size_.y * 0.5f - next_turn_sprite_.GetContentSize().y * 0.5f));
-
+  next_turn_sprite_.SetZOrder(0.03f);
+  before_turn_sprite_.SetZOrder(0.03f);
   timer_ = 0.0f;
   is_view_ = true;
 
@@ -100,9 +101,10 @@ bool TurnChange::Update() {
       screen_size_.x * 0.5f - next_turn_sprite_.GetContentSize().x * 0.5f,
       yPos);
   if (timer_ - start_time <= staging_time - before_sprite_move_start_time) {
-    next_turn_sprite_.SetPosition(LerpVector2(
-        startPos, endPos,
-        (timer_ - start_time) / (staging_time - before_sprite_move_start_time)));
+    next_turn_sprite_.SetPosition(
+        LerpVector2(startPos, endPos,
+                    (timer_ - start_time) /
+                        (staging_time - before_sprite_move_start_time)));
   } else {
     next_turn_sprite_.SetPosition(math::Vector2(endPos));
   }
@@ -115,7 +117,8 @@ bool TurnChange::Update() {
   if (timer_ - start_time >= before_sprite_move_start_time) {
     before_turn_sprite_.SetPosition(math::Vector2(LerpVector2(
         startPos, endPos,
-        math::util::Clamp(timer_ - start_time - before_sprite_move_start_time, 0.0f, 1.0f) /
+        math::util::Clamp(timer_ - start_time - before_sprite_move_start_time,
+                          0.0f, 1.0f) /
             (staging_time - before_sprite_move_start_time))));
   }
 

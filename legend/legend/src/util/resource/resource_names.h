@@ -94,6 +94,7 @@ constexpr name UI_SKILL_FRAME = L"UI_skill_frame.png";
 constexpr name UI_SKILL_FRAME_WHOLE = L"UI_skill_frame_whole.png";
 constexpr name UI_SKILL_ICON_1 = L"UI_skill_icon_1.png";
 constexpr name UI_SKILL_ICON_2 = L"UI_skill_icon_2.png";
+constexpr name UI_SKILL_ICON_2_USING = L"UI_skill_icon_2_using.png";
 constexpr name UI_SKILL_ICON_3 = L"UI_skill_icon_3.png";
 constexpr name UI_SKILL_ICON_4 = L"UI_skill_icon_4.png";
 constexpr name UI_SKILL_ICON_5 = L"UI_skill_icon_5.png";

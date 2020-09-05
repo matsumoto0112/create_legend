@@ -24,10 +24,10 @@ const std::vector<Title::Stage> Title::STAGE_LIST = {
         "stage_02",
         TextureName::STAGESELECT_STAGE_FRAME,
     },
-    {
-        "stage_03",
-        TextureName::STAGESELECT_STAGE_FRAME,
-    },
+    //{
+    //    "stage_03",
+    //    TextureName::STAGESELECT_STAGE_FRAME,
+    //},
 };
 
 //コンストラクタ
@@ -133,6 +133,17 @@ bool Title::Initialize() {
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_non_movable_images_.emplace_back(comp);
     }
+    {
+      auto image = std::make_unique<ui::Image>();
+      if (!image->Init(TextureName::STAGESELECT_BACK, HEAP_ID)) {
+        return false;
+      }
+      const float x = 0.0f;
+      const float y = 0.0f;
+      image->SetPosition(math::Vector2(x, y));
+      image->SetZOrder(0.95f);
+      board_.AddComponent(std::move(image));
+    }
   }
 
   fade_.Init(util::resource::resource_names::texture::FADE_IMAGE);
@@ -205,7 +216,7 @@ bool Title::Update() {
 
       return;
     }
-
+    MY_LOG(L"%d", input.GetCommand(input::input_code::CANCEL));
     //決定キーでフェードを開始し、シーンを終了する
     if (const bool input_decide = input.GetCommand(input::input_code::Decide);
         input_decide) {
@@ -225,6 +236,19 @@ bool Title::Update() {
       current_select_stage_item_id_--;
       stage_select_move_direction_ = StageSelectMoveDirection::LEFT;
       SetupStageUpdate();
+    } else if (const bool input_cancel =
+                   input.GetCommand(input::input_code::CANCEL);
+               input_cancel) {
+      current_phase_ = Phase::TITLE;
+      for (auto&& im : title_images_) {
+        im->SetEnable(true);
+      }
+      for (auto&& st : stage_movable_images_) {
+        st.component->SetEnable(false);
+      }
+      for (auto&& im : stage_non_movable_images_) {
+        im->SetEnable(false);
+      }
     }
   };
 

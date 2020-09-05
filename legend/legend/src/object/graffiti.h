@@ -25,6 +25,7 @@ struct GraffitiInitializeParameter {
   math::Vector3 bounding_box_length;
   float remaining_graffiti;
   float can_erase_speed;
+  i32 model_id;
 };
 
 /**

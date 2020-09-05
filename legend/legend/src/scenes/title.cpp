@@ -216,7 +216,6 @@ bool Title::Update() {
 
       return;
     }
-    MY_LOG(L"%d", input.GetCommand(input::input_code::CANCEL));
     //決定キーでフェードを開始し、シーンを終了する
     if (const bool input_decide = input.GetCommand(input::input_code::Decide);
         input_decide) {

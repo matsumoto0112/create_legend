@@ -567,11 +567,7 @@
   <ItemGroup>
     <Text Include="assets\parameters\audio_list.txt" />
     <Text Include="assets\parameters\main_ui.txt" />
-    <Text Include="assets\parameters\pipeline.txt">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </Text>
-    <Text Include="assets\stage\bbbb.txt" />
+    <Text Include="assets\parameters\pipeline.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

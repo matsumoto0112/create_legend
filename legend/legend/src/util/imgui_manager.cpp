@@ -24,6 +24,8 @@ ImguiManager::~ImguiManager() {
 bool ImguiManager::Init(HWND__* window_handle, ID3D12Device* device,
                         DXGI_FORMAT back_buffer_format, u32 frame_count,
                         bool enable_gui) {
+  this->enable_gui_ = enable_gui;
+
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
@@ -52,7 +54,6 @@ bool ImguiManager::Init(HWND__* window_handle, ID3D12Device* device,
     return false;
   }
 
-  this->enable_gui_ = enable_gui;
   return true;
 }
 

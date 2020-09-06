@@ -42,16 +42,18 @@ bool Boss::Init(actor::IActorMediator* mediator,
       case 0:
         model_ = resource.GetModel().Get(
             util::resource::resource_names::model::BOSS_01);
+
+        strength_ = 1.5f;
         break;
       case 1:
         model_ = resource.GetModel().Get(
             util::resource::resource_names::model::BOSS_02);
+
+        strength_ = 1.0f;
         break;
     }
 
     SetType(parameter.type_index);
-
-    strength_ = 1.5f;
 
     return true;
   }

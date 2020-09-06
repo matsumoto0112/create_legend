@@ -91,9 +91,10 @@ bool TurnChange::Update() {
   const float yPos =
       screen_size_.y * 0.5f - next_turn_sprite_.GetContentSize().y * 0.5f;
 
-  const float start_time = 0.5f;
-  const float staging_time = 1.0f;
-  const float before_sprite_move_start_time = 0.3f;
+  const float start_time = 0.15f;
+  const float staging_time = 0.75f;
+  const float before_sprite_move_start_time = staging_time / 10 * 3;
+  const float before_time = 0.4f;
 
   if (timer_ < start_time) return true;
 
@@ -125,7 +126,7 @@ bool TurnChange::Update() {
   }
 
   //‚Ü‚¾I‚í‚Á‚Ä‚È‚¢‚©
-  if (timer_ < start_time + staging_time + 0.5f) return true;
+  if (timer_ < start_time + staging_time + before_time) return true;
 
   is_view_ = false;
   turn_system_->SetTurnMode(next_mode_);

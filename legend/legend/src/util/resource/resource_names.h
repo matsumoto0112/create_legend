@@ -69,6 +69,7 @@ constexpr name STAGESELECT_STAGE_FRAME = L"StageSelect_stage_frame.png";
 constexpr name STAGESELECT_STAGE_FRAME_01 = L"StageSelect_stage_frame_01.png";
 constexpr name STAGESELECT_STAGE_FRAME_02 = L"StageSelect_stage_frame_02.png";
 constexpr name STAGESELECT_STAGE_FRAME_03 = L"StageSelect_stage_frame_03.png";
+constexpr name STAGESELECT_STAGE_FRAME_04 = L"StageSelect_stage_frame_04.png";
 constexpr name TEX = L"tex.png";
 constexpr name TITLE_LOGO = L"TItle_logo.png";
 constexpr name TITLE_PUSHBUTTON_GUIDE = L"Title_pushButton_guide.png";

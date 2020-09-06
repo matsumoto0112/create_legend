@@ -24,10 +24,10 @@ const std::vector<Title::Stage> Title::STAGE_LIST = {
         "stage_02",
         TextureName::STAGESELECT_STAGE_FRAME_03,
     },
-    //{
-    //    "stage_03",
-    //    TextureName::STAGESELECT_STAGE_FRAME,
-    //},
+    {
+        "stage_03",
+        TextureName::STAGESELECT_STAGE_FRAME_04,
+    },
 };
 
 //コンストラクタ

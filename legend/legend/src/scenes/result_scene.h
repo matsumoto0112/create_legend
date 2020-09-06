@@ -56,7 +56,8 @@ class ResultScene : public Scene {
   /**
    * @brief ステージデータ読込
    */
-  bool LoadStageData(system::GameDataStorage::PlayStageData data);
+  bool LoadStageData(system::GameDataStorage::PlayStageData data,
+                     system::GameDataStorage::ResultData result_data);
   /**
    * @brief 勝利演出初期化
    */

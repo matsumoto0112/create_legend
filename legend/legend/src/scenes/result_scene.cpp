@@ -39,7 +39,7 @@ bool ResultScene::Initialize() {
 
   start_cacth_timer_.Init(1.0f);
 
-  if (!LoadStageData(stage_data)) return false;
+  if (!LoadStageData(stage_data, result_data)) return false;
 
   if (!back_ground_.Init()) {
     return false;
@@ -122,8 +122,10 @@ void ResultScene::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
-bool ResultScene::LoadStageData(system::GameDataStorage::PlayStageData data) {
-  const std::string stage_name = data.stage_name;
+bool ResultScene::LoadStageData(
+    system::GameDataStorage::PlayStageData stage_data,
+    system::GameDataStorage::ResultData result_data) {
+  const std::string stage_name = stage_data.stage_name;
   auto stage_path = util::Path::GetInstance()->exe() / "assets" / "stage" /
                     (stage_name + ".txt");
   stage_generator_.LoadStringStageData(stage_path, stage_name);
@@ -193,29 +195,60 @@ bool ResultScene::LoadStageData(system::GameDataStorage::PlayStageData data) {
     models_.emplace_back(std::move(
         resource.GetModel().Get(resource_name::model::FIELD_OBJECT_01)));
   }
-  for (auto&& param : enemys) {
-    util::Transform transform = param.transform;
-    float pos_x =
-        game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
-    float pos_z =
-        game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
-    transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
-    float rotate =
-        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
-    transform.SetRotation(
-        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
-    transforms_.emplace_back(transform);
-    TransformConstantBuffer constant_buffer;
-    constant_buffer.Init(
-        device,
-        device.GetLocalHandle(
-            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-        L"Enemy_Transform");
-    constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
-    constant_buffer.UpdateStaging();
-    transform_cbs_.emplace_back(constant_buffer);
-    models_.emplace_back(std::move(
-        resource.GetModel().Get(resource_name::model::ENEMY_ERASER_01)));
+  for (i32 i = 0; i < result_data.play_turn; i++) {
+    for (auto&& param : stage_generator_.GetEnemyParameters(i)) {
+      util::Transform transform = param.transform;
+      float pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+      float pos_z =
+          game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+      transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
+      float rotate =
+          game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+      transform.SetRotation(
+          math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+      transforms_.emplace_back(transform);
+      TransformConstantBuffer constant_buffer;
+      constant_buffer.Init(
+          device,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Enemy_Transform");
+      constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
+      constant_buffer.UpdateStaging();
+      transform_cbs_.emplace_back(constant_buffer);
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_01)));
+    }
+    for (auto&& boss : stage_generator_.GetBossParameters(i)) {
+      util::Transform transform = boss.transform;
+      float pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+      float pos_z =
+          game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+      transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
+      float rotate =
+          game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+      transform.SetRotation(
+          math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+      transforms_.emplace_back(transform);
+      TransformConstantBuffer constant_buffer;
+      constant_buffer.Init(
+          device,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+          L"Boss_Transform");
+      constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
+      constant_buffer.UpdateStaging();
+      transform_cbs_.emplace_back(constant_buffer);
+      if (boss.model_id == 0) {
+        models_.emplace_back(
+            std::move(resource.GetModel().Get(resource_name::model::BOSS_01)));
+      } else {
+        models_.emplace_back(
+            std::move(resource.GetModel().Get(resource_name::model::BOSS_02)));
+      }
+    }
   }
 
   return true;

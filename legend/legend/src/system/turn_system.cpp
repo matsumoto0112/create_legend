@@ -412,6 +412,12 @@ void TurnSystem::ChangeUIRenderEnable(bool enabler) {
 bool TurnSystem::ToPlayerTurn() {
   current_mode_ = Mode::TO_PLAYER_TURN_;
   view_turn_++;
+
+  if (current_turn_ <= 0) {
+      current_mode_ = Mode::PLAYER_MOVE_READY;
+      return true;
+  }
+
   return turn_change_.ChangeStart(Mode::PLAYER_MOVE_READY);
 }
 

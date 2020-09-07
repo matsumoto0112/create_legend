@@ -113,7 +113,7 @@ bool Title::Initialize() {
       const float y =
           screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
-      image->SetZOrder(0.8f);
+      image->SetZOrder(0.6f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_non_movable_images_.emplace_back(comp);
@@ -128,7 +128,7 @@ bool Title::Initialize() {
       const float y =
           screen_size.y * 0.5f - image->GetSprite().GetContentSize().y * 0.5f;
       image->SetPosition(math::Vector2(x, y));
-      image->SetZOrder(0.8f);
+      image->SetZOrder(0.6f);
       image->SetEnable(false);
       ui::UIComponent* comp = board_.AddComponent(std::move(image));
       stage_non_movable_images_.emplace_back(comp);

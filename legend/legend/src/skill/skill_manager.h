@@ -120,8 +120,8 @@ class SkillManager {
   bool is_equipment_production_;
   //! 装備し終えたか
   bool complete_eqquipment_;
-  //! 何かスキルを使ったか
-  bool something_skill_use_;
+  //! 糊スキルを使ったか
+  bool paste_skill_use_;
   //! 選択番号
   i32 select_skill_number_;
   i32 previous_select_number_;

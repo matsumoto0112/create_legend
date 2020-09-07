@@ -25,7 +25,7 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   current_mode_ = Mode::NONE;
   is_equipment_production_ = false;
   complete_eqquipment_ = false;
-  something_skill_use_ = false;
+  paste_skill_use_ = false;
   select_skill_number_ = 0;
   previous_select_number_ = 0;
   ui_enable_ = true;
@@ -71,7 +71,7 @@ void SkillManager::EquipmentProductionUpdate() {
   //このターンに何も取っていない又は、所持スキル数が最大なら、ターンを切り替える
   if (this_turn_get_skills_.empty() ||
       (skills_.size() >= skill_max_count_ && !complete_eqquipment_)) {
-    something_skill_use_ = false;
+    paste_skill_use_ = false;
     mediator_->PlayerCompleteEquipment();
     return;
   }
@@ -104,7 +104,7 @@ void SkillManager::EquipmentProductionUpdate() {
     if (player_->GetCollider()->GetVelocity().Magnitude() <= 0.1f &&
         player_->GetPosition().y <= 20.0f) {
       current_mode_ = Mode::NONE;
-      something_skill_use_ = false;
+      paste_skill_use_ = false;
       mediator_->PlayerCompleteEquipment();
       complete_eqquipment_ = false;
       this_turn_get_skills_.clear();
@@ -232,23 +232,33 @@ bool SkillManager::SelectSkill() {
 //スキルの使用
 void SkillManager::UseSkill() {
   //選択中、演出中、そのターンにスキルを使用済でなければ使用できる
-  if (!select_ui_.GetIsSelectMode() || IsProductionNow() ||
-      something_skill_use_)
-    return;
+  if (!select_ui_.GetIsSelectMode() || IsProductionNow()) return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   i32 skill_num = select_ui_.GetSkillNumber();
+  const bool cannot_skill =
+      (paste_skill_use_ &&
+       skills_[skill_num]->GetName() == skill_name::SKILLPASTESTICK);
   if (input.GetGamepad()->GetButtonDown(input::joy_code::A)) {
+    //糊スキルは1ターンに1度だけ
+    if (cannot_skill) {
+      return;
+    }
+
     skills_[skill_num]->Use();
-    something_skill_use_ = true;
     select_skill_number_ = 0;
     previous_select_number_ = 0;
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
+    //選択状態を解除
     if (skills_[skill_num]->GetActivetionTiming() !=
         SkillActivationTiming::NOW) {
       select_ui_.ChangeIsSelectMode();
       select_ui_.ChangeSkillIcon(skills_[skill_num].get(), skill_num);
+    }
+    //糊スキルの使用状態を変更
+    if (skills_[skill_num]->GetName() == skill_name::SKILLPASTESTICK) {
+      paste_skill_use_ = true;
     }
   }
 }

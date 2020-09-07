@@ -16,6 +16,11 @@ class Player;
 }
 
 namespace skill {
+namespace skill_name {
+constexpr const wchar_t* SKILLPENCIL = L"SkiilPencil";
+constexpr const wchar_t* SKILLPASTESTICK = L"SkiilPasteStick";
+constexpr const wchar_t* SKILLCOMPASS = L"SkiilCompass";
+}  // namespace skill_name
 
 class Skill : public actor::Actor {
   using Parent = actor::Actor;
@@ -70,7 +75,7 @@ class Skill : public actor::Actor {
   i32 GetRemainingRecastTurn();
   SkillActivationTiming GetActivetionTiming();
   SkillEffectEndTiming GetEndTiming();
-  //i32 GetIconTexture();
+  // i32 GetIconTexture();
   std::shared_ptr<directx::buffer::Texture2D> GetIconTexture() const;
   /**
    * @brief スキル使用中アイコンの取得
@@ -78,7 +83,7 @@ class Skill : public actor::Actor {
   std::shared_ptr<directx::buffer::Texture2D> GetIconUsingTexture() const;
   std::shared_ptr<directx::buffer::Texture2D> GetEquipmentTexture() const;
   std::shared_ptr<directx::buffer::Texture2D> GetExplanationTexture() const;
-  //i32 GetExplanationTexture();
+  // i32 GetExplanationTexture();
   bool GetUseFlag();
   bool ProductionFlag();
   void RemoveCollider();
@@ -86,6 +91,14 @@ class Skill : public actor::Actor {
    * @brief スキルの演出終了判定取得
    */
   bool EndSkillProduction() const;
+  /**
+   * @brief スキル名の設定
+   */
+  void SetName(const std::wstring name);
+  /**
+   * @brief スキル名の取得
+   */
+  std::wstring GetName() const;
 
  protected:
   //! モデルのID

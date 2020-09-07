@@ -71,7 +71,14 @@ bool Skill::ProductionFlag() { return is_production_; }
 
 void Skill::RemoveCollider() { mediator_->RemoveCollider(box_); }
 
+//演出終わり判定の取得
 bool Skill::EndSkillProduction() const { return (is_use_ && !is_production_); }
+
+//スキル名の設定
+void Skill::SetName(const std::wstring name) { Parent::name_ = name; }
+
+//スキル名の取得
+std::wstring Skill::GetName() const { return Parent::name_; }
 
 }  // namespace skill
 }  // namespace legend

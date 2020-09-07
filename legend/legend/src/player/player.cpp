@@ -105,6 +105,14 @@ bool Player::Update() {
         skill_manager_.AddSkill(skill);
       }
     }
+    if (ImGui::Button("Add SkillCompass")) {
+      if (skill_manager_.GetSkillList().size() < 5) {
+        std::shared_ptr<skill::SkillCompass> skill =
+            std::make_shared<skill::SkillCompass>();
+        skill->Init(mediator_, this);
+        skill_manager_.AddSkill(skill);
+      }
+    }
   }
   ImGui::End();
 

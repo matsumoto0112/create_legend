@@ -108,8 +108,8 @@ void SkillPasteStick::Use() { is_use_ = true; }
 //”­“®
 void SkillPasteStick::Action() {
   is_production_ = true;
-  ProductionUpdate();
   mediator_->PlayerSkillActivate();
+  ProductionUpdate();
 }
 
 //‰‰o‚ÌXV

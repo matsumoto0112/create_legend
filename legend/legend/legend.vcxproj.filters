@@ -137,6 +137,7 @@
     <ClCompile Include="src\camera\lookat_follow_target_camera.cpp" />
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\turn_change\turn_change.cpp" />
+    <ClCompile Include="src\skill\skill_compass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -333,6 +334,7 @@
     <ClInclude Include="src\util\mod_int.h" />
     <ClInclude Include="src\turn_change\turn_change.h" />
     <ClInclude Include="assets\shaders\gpu_particle\enemy_move_particle.h" />
+    <ClInclude Include="src\skill\skill_compass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

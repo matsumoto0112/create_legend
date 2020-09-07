@@ -119,6 +119,9 @@ void SkillPencil::Use() {
 //発動
 void SkillPencil::Action() {
   is_production_ = true;
+  //スキルを使用したタイミングで射出方向を取得する
+  shoot_theta_ =
+      mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   mediator_->PlayerSkillActivate();
 }
 
@@ -126,13 +129,9 @@ void SkillPencil::Action() {
 void SkillPencil::ProductionUpdate() {
   float update_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  //メインカメラの回転角を取得する
-  //角度はXY平面上で(1,0)の方角から0としているため、90°回転する必要がある
-  float theta =
-      mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   //移動する方向ベクトルにカメラの向きに応じた回転をかけることで、カメラの向いている方向に対した入力値に変換する
   math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
-      math::Vector3::kForwardVector, math::Matrix4x4::CreateRotationY(-theta));
+      math::Vector3::kForwardVector, math::Matrix4x4::CreateRotationY(-shoot_theta_));
   velocity = velocity.Normalized();
   velocity = velocity + math::Vector3(0, -9.8f, 0) * update_time;
   math::Vector3 position = transform_.GetPosition() + velocity;

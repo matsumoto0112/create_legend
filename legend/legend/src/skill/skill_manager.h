@@ -2,6 +2,7 @@
 #define LEGEND_SKILL_SKILL_MANAGER_H_
 
 #include "src/skill/skill.h"
+#include "src/skill/skill_compass.h"
 #include "src/skill/skill_paste_stick.h"
 #include "src/skill/skill_pencil.h"
 #include "src/skill/skill_select_ui.h"
@@ -125,7 +126,7 @@ class SkillManager {
   //! ‘I‘ğ”Ô†
   i32 select_skill_number_;
   i32 previous_select_number_;
-  
+
   //! UI‚Ì•\¦”ñ•\¦
   bool ui_enable_;
 };

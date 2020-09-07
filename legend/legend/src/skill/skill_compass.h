@@ -1,26 +1,23 @@
-#ifndef LEGEND_SKILL_SKILL_PENCIL_H_
-#define LEGEND_SKILL_SKILL_PENCIL_H_
+#ifndef LEGEND_SKILL_SKILL_COMPASS_H_
+#define LEGEND_SKILL_SKILL_COMPASS_H_
 
-#include "src/bullet/bounding_sphere.h"
-#include "src/skill/explosion_pencil.h"
 #include "src/skill/skill.h"
-#include "src/util/timer.h"
 
 namespace legend {
 namespace skill {
 
-class SkillPencil : public Skill {
+class SkillCompass : public Skill {
   using Parent = Skill;
 
  public:
   /**
    * @brief コンストラクタ
    */
-  SkillPencil();
+  SkillCompass();
   /**
    * @brief デストラクタ
    */
-  ~SkillPencil();
+  virtual ~SkillCompass();
   /**
    * @brief 初期化
    */
@@ -53,26 +50,15 @@ class SkillPencil : public Skill {
    * @brief 衝突判定
    */
   void OnHit(bullet::Collider* other);
-  /**
-   * @brief 爆発開始
-   */
-  void Explosion();
-  /**
-   * @brief 爆発更新
-   */
-  void ExplosionUpdate();
 
  private:
-  //! タイマー
-  util::CountDownTimer explosion_timer_;
-  //! 爆発クラス
-  std::shared_ptr<ExplosionPencil> explosion_pencil_;
-  //! 爆発中か
-  bool is_explosion_;
-  //! 射出角度
-  float shoot_theta_;
+  //! 弾き飛ばす力
+  float flip_off_power_;
+  //! 経過時間
+  float elapsed_time_;
 };
 
 }  // namespace skill
 }  // namespace legend
-#endif  //! LEGEND_SKILL_SKILL_PENCIL_H_
+
+#endif  //! LEGEND_SKILL_SKILL_COMPASS_H_

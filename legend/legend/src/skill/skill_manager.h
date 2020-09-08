@@ -116,6 +116,7 @@ class SkillManager {
   //! 装備状態UI
   ui::PlayerUI player_ui_;
 
+  //! 現在の演出状態
   Mode current_mode_;
   //! 装備演出中か
   bool is_equipment_production_;
@@ -125,6 +126,7 @@ class SkillManager {
   bool paste_skill_use_;
   //! 選択番号
   i32 select_skill_number_;
+  //! 前の選択番号
   i32 previous_select_number_;
 
   //! UIの表示非表示

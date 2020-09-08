@@ -137,6 +137,7 @@ void SkillSelectUI::SelectSkillNumber(i32 select_number) {
   audio.Start(resource_name::audio::SKILL_SELECT, 1.0f);
 }
 
+//説明画像の追加
 void SkillSelectUI::AddSkillExplanatory(
     std::shared_ptr<directx::buffer::Texture2D> texture) {
   draw::Sprite2D sprite;
@@ -153,10 +154,12 @@ void SkillSelectUI::AddSkillExplanatory(
   skill_explanatories_.push_back(sprite);
 }
 
+//説明画像の削除
 void SkillSelectUI::RemoveSkillExplanatory(i32 index_num) {
   skill_explanatories_.erase(skill_explanatories_.begin() + index_num);
 }
 
+//使用状態のアイコンへの差し替え
 void SkillSelectUI::ChangeSkillIcon(const Skill* skill, i32 index_num) {
   draw::Sprite2D sprite;
   if (!sprite.Init(

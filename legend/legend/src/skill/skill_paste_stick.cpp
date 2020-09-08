@@ -108,8 +108,17 @@ void SkillPasteStick::Use() { is_use_ = true; }
 
 //”­“®
 void SkillPasteStick::Action() {
-  is_production_ = true;
-  mediator_->PlayerSkillActivate();
+  //‰‰oó‘Ô‚Ö‚ÌØ‚è‘Ö‚í‚èŽž‚ÉÀ•W‚ðˆÚ“®
+  if (!is_production_) {
+    math::Vector3 position =
+        player_->GetPosition() + math::Vector3::kUpVector * 1.5f;
+    transform_.SetPosition(position);
+    box_->SetTransform(transform_);
+
+    is_production_ = true;
+    mediator_->PlayerSkillActivate();
+  }
+
   ProductionUpdate();
 }
 

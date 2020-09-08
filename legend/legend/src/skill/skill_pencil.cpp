@@ -57,7 +57,6 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   params.mass = 0.0f;
 
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator_->AddCollider(box_);
 
@@ -123,22 +122,27 @@ void SkillPencil::Action() {
   shoot_theta_ =
       mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   mediator_->PlayerSkillActivate();
+
+  //一度コライダーを削除して、新たに設定し追加する
+  mediator_->RemoveCollider(box_);
+  bullet::BoundingBox::InitializeParameter params;
+  params.position = transform_.GetPosition();
+  params.rotation = transform_.GetRotation();
+  params.scale = math::Vector3(0.5f, 0.5f, 0.5f);
+  params.mass = 0.1f;
+
+  box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
+  mediator_->AddCollider(box_);
+  math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
+      math::Vector3::kForwardVector + math::Vector3::kUpVector,
+      math::Matrix4x4::CreateRotationY(-shoot_theta_));
+  //コライダーを正面上方向に弾く
+  box_->ApplyCentralImpulse(velocity);
 }
 
 //演出の更新
 void SkillPencil::ProductionUpdate() {
-  float update_time =
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  //移動する方向ベクトルにカメラの向きに応じた回転をかけることで、カメラの向いている方向に対した入力値に変換する
-  math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
-      math::Vector3::kForwardVector, math::Matrix4x4::CreateRotationY(-shoot_theta_));
-  velocity = velocity.Normalized();
-  velocity = velocity + math::Vector3(0, -9.8f, 0) * update_time;
-  math::Vector3 position = transform_.GetPosition() + velocity;
-
-  transform_.SetPosition(position);
-  box_->SetTransform(transform_);
-
   if (transform_.GetPosition().y <= -2.0f) EndAction();
 }
 

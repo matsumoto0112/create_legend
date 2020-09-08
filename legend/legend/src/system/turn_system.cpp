@@ -11,20 +11,6 @@ legend::i32 CalcPlayerStrengthToPrintNumber(
   const float str = player.GetStrength();
   return static_cast<legend::i32>(str * 100);
 }
-
-struct Camera {
-  legend::math::Vector3 camera_position;
-};
-legend::directx::buffer::ConstantBuffer<Camera> camera_cb_;
-
-struct Light {
-  legend::math::Vector3 position;
-};
-struct LightCBStruct {
-  legend::math::Matrix4x4 view;
-  legend::math::Matrix4x4 proj;
-};
-legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
 }  // namespace
 
 namespace legend {
@@ -149,17 +135,17 @@ bool TurnSystem::Init(const std::string& stage_name) {
     index_buffer_.WriteBufferResource(indices.data());
   }
 
-  camera_cb_.Init(
-      device,
-      device.GetLocalHandle(
-          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
-      L"CB");
-
-  light_cb_.Init(
-      device,
-      device.GetLocalHandle(
-          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
-      L"L_CB");
+  if (!light_cb_.Init(
+          device,
+          device.GetLocalHandle(
+              directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY),
+          L"LightConstantBuffer")) {
+    return false;
+  }
+  light_cb_.GetStagingRef().light_position =
+      math::Vector4(100.0f, 200.0f, 100.0f, 1.0f);
+  light_cb_.GetStagingRef().light_color = util::Color4(1.0f, 1.0f, 1.0f, 1.0f);
+  light_cb_.UpdateStaging();
 
   current_turn_ = 0;
   view_turn_ = 0;
@@ -198,52 +184,6 @@ bool TurnSystem::Update() {
   if (!switcher.at(current_mode_)()) {
     return false;
   }
-
-  if (ImGui::Begin("UI")) {
-    const u32 size = static_cast<u32>(components_.size());
-    for (u32 i = 0; i < size; i++) {
-      std::stringstream ss;
-      ss << "Image:" << i;
-      ImGui::Text(ss.str().c_str());
-
-      math::Vector2 pos = components_[i]->GetPosition();
-      float field[2] = {pos.x, pos.y};
-      ss.str("");
-      ss.clear(std::stringstream::goodbit);
-      ss << "Position:" << i;
-      ImGui::SliderFloat2(ss.str().c_str(), field, -400.0f, 2000.0f);
-      components_[i]->SetPosition(math::Vector2(field[0], field[1]));
-
-      float z = components_[i]->GetZOrder();
-      ss.str("");
-      ss.clear(std::stringstream::goodbit);
-      ss << "Z_Order:" << i;
-      ImGui::SliderFloat(ss.str().c_str(), &z, 0.0f, 1.0f);
-      components_[i]->SetZOrder(z);
-    }
-
-    if (ImGui::Button("Apply")) {
-      std::ofstream ofs(
-          std::filesystem::path("assets") / "parameters" / "main_ui.txt",
-          std::ios::out);
-      ofs.clear();
-      const u32 size = static_cast<u32>(components_.size());
-      for (u32 i = 0; i < size; i++) {
-        input_lines_[i][ui_format::X] =
-            std::to_string(components_[i]->GetPosition().x);
-        input_lines_[i][ui_format::Y] =
-            std::to_string(components_[i]->GetPosition().y);
-        input_lines_[i][ui_format::Z] =
-            std::to_string(components_[i]->GetZOrder());
-        for (auto&& s : input_lines_[i]) {
-          ofs << s << ",";
-        }
-        ofs << "\n";
-      }
-      ofs.flush();
-    }
-  }
-  ImGui::End();
 
   {
     //プレイヤーの強化状態をUI数値に変換する
@@ -440,6 +380,9 @@ void TurnSystem::Draw() {
 
   using directx::render_target::DepthStencilTargetID;
   using directx::render_target::RenderTargetID;
+  namespace TextureRegisterID = directx::shader::TextureRegisterID;
+  namespace ConstantBufferRegisterID =
+      directx::shader::ConstantBufferRegisterID;
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
@@ -449,23 +392,25 @@ void TurnSystem::Draw() {
   // Differed-Rendering用G-Buffer生成
   actor_manager_.DrawDifferedRenderingObject(command_list);
 
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
-      directx::render_target::DepthStencilTargetID::NONE, true);
+  render_resource_manager.SetRenderTargets(command_list,
+                                           RenderTargetID::BACK_BUFFER, true,
+                                           DepthStencilTargetID::NONE, true);
 
   // Differed-Rendering描画
   resource.GetPipeline()
       .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
       ->SetCommandList(command_list);
-  render_resource_manager.UseAsSRV(
-      device, command_list, RenderTargetID::DIFFERED_RENDERING_PRE,
-      directx::shader::TextureRegisterID::G_BUFFER_WORLD_POSITION);
   render_resource_manager.UseAsSRV(device, command_list,
-                                   RenderTargetID::DIFFERED_RENDERING_PRE, 1);
+                                   RenderTargetID::DIFFERED_RENDERING_PRE,
+                                   TextureRegisterID::G_BUFFER_WORLD_POSITION);
   render_resource_manager.UseAsSRV(device, command_list,
-                                   RenderTargetID::DIFFERED_RENDERING_PRE, 2);
+                                   RenderTargetID::DIFFERED_RENDERING_PRE,
+                                   TextureRegisterID::G_BUFFER_WORLD_NORMAL);
+  render_resource_manager.UseAsSRV(device, command_list,
+                                   RenderTargetID::DIFFERED_RENDERING_PRE,
+                                   TextureRegisterID::G_BUFFER_DIFFUSE);
 
-  light_cb_.RegisterHandle(device, 7);
+  light_cb_.RegisterHandle(device, ConstantBufferRegisterID::LIGHT);
 
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
                                                             command_list);

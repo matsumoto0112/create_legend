@@ -21,6 +21,7 @@ enum Enum : u32 {
   COLOR = 4,            //! 色情報
   GAUGE_PARAMETER = 5,  //! UIのゲージ情報
   PARTICLE_INFO = 5,
+  LIGHT = 7,  //! ライト情報
 };
 }  // namespace ConstantBufferRegisterID
 
@@ -34,7 +35,7 @@ enum Enum : u32 {
 
   G_BUFFER_WORLD_POSITION = 0,
   G_BUFFER_WORLD_NORMAL = 1,
-  G_BUFFER_WORLD_DIFFUSE = 2,
+  G_BUFFER_DIFFUSE = 2,
 };
 }  // namespace TextureRegisterID
 

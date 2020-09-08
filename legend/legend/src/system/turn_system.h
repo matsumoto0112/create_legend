@@ -192,13 +192,24 @@ class TurnSystem {
   bool is_scene_all_end_;
   bool is_scene_end_fade_start_;
 
+  /**
+   * @brief ライト情報
+   */
+  struct LightCBStruct {
+    legend::math::Vector4 light_position;
+    legend::util::Color4 light_color;
+  };
+
+  legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
+
+  // Differed-Rendering描画用バッファ
+  directx::buffer::VertexBuffer vertex_buffer_;
+  directx::buffer::IndexBuffer index_buffer_;
+
  private:
   // UIのリアルタイム修正用パラメータ
   std::vector<legend::ui::UIComponent*> components_;
   std::vector<std::vector<std::string>> input_lines_;
-
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
 };
 
 }  // namespace system

@@ -11,11 +11,10 @@
 texture2D g_world_normal : register(t0);
 texture2D g_world_position : register(t1);
 texture2D g_diffuse : register(t2);
-texture2D g_shadow_map : register(t3);
 
 struct LightCBStruct {
-  float4x4 view;
-  float4x4 proj;
+  float4 light_position;
+  float4 light_color;
 };
 ConstantBuffer<LightCBStruct> g_light_cb : register(b7);
 
@@ -32,8 +31,8 @@ float4 main(const PSInput i) : SV_TARGET {
   float4 color = float4(0, 0, 0, 0);
   float4 diffuse = g_diffuse.Sample(g_sampler_warp, i.uv);
 
-  float3 light_position = float3(3000, 2000, 500);
-  float3 light_color = float3(1.0, 1.0, 1.0);
+  float3 light_position = g_light_cb.light_position.xyz;
+  float3 light_color = g_light_cb.light_color.rgb;
   float3 light_dir = light_position - world_position;
 
   float3 L = normalize(light_dir);

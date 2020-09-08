@@ -31,6 +31,10 @@ namespace TextureRegisterID {
 enum Enum : u32 {
   ALBEDO = 0,  //! アルベド情報
   NORMAL = 1,  //! ノーマルマップ
+
+  G_BUFFER_WORLD_POSITION = 0,
+  G_BUFFER_WORLD_NORMAL = 1,
+  G_BUFFER_WORLD_DIFFUSE = 2,
 };
 }  // namespace TextureRegisterID
 

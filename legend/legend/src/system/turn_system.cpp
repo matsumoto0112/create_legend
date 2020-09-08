@@ -1,5 +1,6 @@
 #include "src/system/turn_system.h"
 
+#include "src/directx/shader/shader_register_id.h"
 #include "src/ui/number.h"
 #include "src/ui/quarter_gauge.h"
 #include "src/util/resource/resource_names.h"
@@ -410,7 +411,6 @@ bool TurnSystem::EnemyGenerate() {
 
 void TurnSystem::ChangeUIRenderEnable(bool enabler) {
   ui_board_.SetRenderEnable(enabler);
-  // TODO: スキルUIの表示非表示切替処理
   actor_manager_.GetPlayer()->SkillUIChangeEnable(enabler);
 }
 
@@ -433,42 +433,38 @@ bool TurnSystem::ToEnemyTurn() {
 
 //描画
 void TurnSystem::Draw() {
+  //描画の流れ
+  // 1.Differed-Rendering用のG-Buffer生成のため、通常描画モデルを描画する
+  // 2.Differed-Rendering描画をバックバッファに行う
+  // 3.その他オブジェクトの描画をする
+
+  using directx::render_target::DepthStencilTargetID;
+  using directx::render_target::RenderTargetID;
+
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
   auto& render_resource_manager = device.GetRenderResourceManager();
+  auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  //シャドウマップ用描画
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::NONE, false,
-      directx::render_target::DepthStencilTargetID::SHADOW_MAP, true);
-
+  // Differed-Rendering用G-Buffer生成
   actor_manager_.DrawDifferedRenderingObject(command_list);
 
   render_resource_manager.SetRenderTargets(
       command_list, directx::render_target::RenderTargetID::BACK_BUFFER, true,
       directx::render_target::DepthStencilTargetID::NONE, true);
 
-  auto& resource = game::GameDevice::GetInstance()->GetResource();
+  // Differed-Rendering描画
   resource.GetPipeline()
       .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
       ->SetCommandList(command_list);
   render_resource_manager.UseAsSRV(
-      device, command_list,
-      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 0);
-  render_resource_manager.UseAsSRV(
-      device, command_list,
-      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 1);
-  render_resource_manager.UseAsSRV(
-      device, command_list,
-      directx::render_target::RenderTargetID::DIFFERED_RENDERING_PRE, 2);
-  render_resource_manager.UseAsSRV(
-      device, command_list,
-      directx::render_target::DepthStencilTargetID::SHADOW_MAP, 3);
+      device, command_list, RenderTargetID::DIFFERED_RENDERING_PRE,
+      directx::shader::TextureRegisterID::G_BUFFER_WORLD_POSITION);
+  render_resource_manager.UseAsSRV(device, command_list,
+                                   RenderTargetID::DIFFERED_RENDERING_PRE, 1);
+  render_resource_manager.UseAsSRV(device, command_list,
+                                   RenderTargetID::DIFFERED_RENDERING_PRE, 2);
 
-  // camera_cb_.GetStagingRef().camera_position =
-  //    camera_manager_.GetCurrentCamera()->GetPosition();
-  // camera_cb_.UpdateStaging();
-  // camera_cb_.RegisterHandle(device, 6);
   light_cb_.RegisterHandle(device, 7);
 
   device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
@@ -478,17 +474,18 @@ void TurnSystem::Draw() {
   index_buffer_.SetGraphicsCommandList(command_list);
   index_buffer_.Draw(command_list);
 
+  //その他オブジェクト描画
   game::GameDevice::GetInstance()->GetParticleCommandList().RenderParticle(
       command_list);
 
-  render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::NONE, false);
+  render_resource_manager.SetRenderTargets(command_list,
+                                           RenderTargetID::BACK_BUFFER, false,
+                                           DepthStencilTargetID::NONE, false);
   actor_manager_.DrawAlphaObject(command_list);
 
   render_resource_manager.SetRenderTargets(
-      command_list, directx::render_target::RenderTargetID::BACK_BUFFER, false,
-      directx::render_target::DepthStencilTargetID::DEPTH_ONLY, false);
+      command_list, RenderTargetID::BACK_BUFFER, false,
+      DepthStencilTargetID::DEPTH_ONLY, false);
   actor_manager_.Draw2D(command_list);
 
   const bool is_player_turn = current_mode_ == Mode::PLAYER_MOVING ||

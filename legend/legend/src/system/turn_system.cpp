@@ -143,7 +143,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
     return false;
   }
   light_cb_.GetStagingRef().light_position =
-      math::Vector4(100.0f, 200.0f, 100.0f, 1.0f);
+      math::Vector4(3000.0f, 2000.0f, 500.0f, 1.0f);
   light_cb_.GetStagingRef().light_color = util::Color4(1.0f, 1.0f, 1.0f, 1.0f);
   light_cb_.UpdateStaging();
 

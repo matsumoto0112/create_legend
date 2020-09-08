@@ -139,7 +139,7 @@ void SkillCompass::Action() {
 void SkillCompass::ProductionUpdate() {
   float update_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  // y²‚É‰ñ“]‚ğ‰Á‚¦‚é
+  // x²‰ñ“]‚Å’¼—§‚³‚¹‚Ä‚¢‚é‚Ì‚ÅAz²‚É‰ñ“]‚ğ‰Á‚¦‚é
   math::Vector3 angle(0.0f, 0.0f, 360.0f);
   math::Quaternion rotation = math::Quaternion::FromEular(
       (angle * update_time * 3) * math::util::DEG_2_RAD);

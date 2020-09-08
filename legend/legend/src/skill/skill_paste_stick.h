@@ -52,6 +52,8 @@ class SkillPasteStick : public Skill {
   std::vector<std::shared_ptr<SkillPaste>> pastes_;
   //! ¶¬”
   i32 instance_count_;
+  //! Œo‰ßŠÔ
+  float elapsed_time_;
 };
 }  // namespace skill
 }  // namespace legend

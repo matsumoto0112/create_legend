@@ -67,10 +67,10 @@ bool ActorManager::Update() {
   enemy_manager_.DestroyUpdate();
 
   for (auto&& actor : alpha_actors_) {
-      actor->Update();
+    actor->Update();
   }
   for (auto&& actor : static_actors_) {
-      actor->Update();
+    actor->Update();
   }
 
   alpha_actors_.erase(
@@ -96,11 +96,11 @@ bool ActorManager::Update() {
   camera_manager_.UpdateCamera();
 
   for (auto&& actor : add_static_actors_) {
-      static_actors_.emplace_back(std::move(actor));
+    static_actors_.emplace_back(std::move(actor));
   }
   add_static_actors_.clear();
   for (auto&& actor : add_alpha_actors_) {
-      alpha_actors_.emplace_back(std::move(actor));
+    alpha_actors_.emplace_back(std::move(actor));
   }
   add_alpha_actors_.clear();
 
@@ -234,10 +234,12 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
     for (auto&& param : item_boxes) {
       auto obj = std::make_unique<skill::SkillItemBox>();
       std::shared_ptr<skill::Skill> skill;
-      if (param.skill_icon_model_num == 0) {
+      if (param.skill_model_num == 0) {
         skill = std::make_shared<skill::SkillPencil>();
-      } else {
+      } else if (param.skill_model_num == 1) {
         skill = std::make_shared<skill::SkillPasteStick>();
+      } else {
+        skill = std::make_shared<skill::SkillCompass>();
       }
       if (!obj->Init(this, param, skill)) {
         return false;

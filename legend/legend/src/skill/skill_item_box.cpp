@@ -51,13 +51,18 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   std::shared_ptr<draw::Model> icon_model;
-  if (parameter.skill_icon_model_num == 0) {
+  if (parameter.skill_model_num == 0) {
     icon_model = resource.GetModel().Get(
         util::resource::resource_names::model::ITEM_PLANE_01);
-  } else {
+  } else if (parameter.skill_model_num == 1) {
     icon_model = resource.GetModel().Get(
         util::resource::resource_names::model::ITEM_PLANE_02);
+  } else {
+    //後に変更
+    icon_model = resource.GetModel().Get(
+        util::resource::resource_names::model::ITEM_PLANE_01);
   }
+
   skill_icon_model_ = icon_model;
   //トランスフォームバッファを作成する
   if (!skill_icon_transform_cb_.Init(

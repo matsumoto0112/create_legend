@@ -20,7 +20,7 @@ class SkillItemBox : public actor::Actor {
   struct InitializeParameter {
     util::Transform transform;
     math::Vector3 bounding_box_length;
-    i32 skill_icon_model_num;
+    i32 skill_model_num;
   };
 
  public:

@@ -122,6 +122,9 @@ void SkillPencil::Action() {
   shoot_theta_ =
       mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   mediator_->PlayerSkillActivate();
+  math::Vector3 position =
+      transform_.GetPosition() + math::Vector3::kUpVector * 1.5f;
+  transform_.SetPosition(position);
 
   //一度コライダーを削除して、新たに設定し追加する
   mediator_->RemoveCollider(box_);
@@ -133,6 +136,7 @@ void SkillPencil::Action() {
 
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
   box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
+  box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator_->AddCollider(box_);
   math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
       math::Vector3::kForwardVector + math::Vector3::kUpVector,

@@ -60,7 +60,10 @@ void SkillManager::Update() {
       continue;
     }
 
-    if (!select_ui_.GetIsSelectMode()) SetPosition(skill, i);
+    //選択中またはスキルの演出中なら座標を更新しない
+    if (!select_ui_.GetIsSelectMode() && !IsProductionNow()) {
+      SetPosition(skill, i);
+    }
     i++;
   }
 
@@ -191,6 +194,7 @@ void SkillManager::RemoveSkill() {
     select_ui_.RemoveSkillExplanatory(i);
     player_ui_.RemoveEquipmentUI(i);
     i--;
+    //スキルが消えたら0番目を選択状態にする
     select_ui_.SelectSkillNumber(0);
   }
 }
@@ -217,8 +221,9 @@ bool SkillManager::SelectSkill() {
       select_move_ = true;
     }
     if (input.GetGamepad()->GetStickLeft().x > -0.8f &&
-        input.GetGamepad()->GetStickLeft().x < 0.8f)
+        input.GetGamepad()->GetStickLeft().x < 0.8f) {
       select_move_ = false;
+    }
     //選択中の番号に合わせて表示関係を更新
     select_ui_.SelectSkillNumber(select_skill_number_);
     SetPositionSelectSkill(select_skill_number_);
@@ -231,7 +236,7 @@ bool SkillManager::SelectSkill() {
 
 //スキルの使用
 void SkillManager::UseSkill() {
-  //選択中、演出中、そのターンにスキルを使用済でなければ使用できる
+  //選択中かつ、演出中でなければ使用できる
   if (!select_ui_.GetIsSelectMode() || IsProductionNow()) return;
 
   auto& input = game::GameDevice::GetInstance()->GetInput();
@@ -250,7 +255,7 @@ void SkillManager::UseSkill() {
     select_skill_number_ = 0;
     previous_select_number_ = 0;
     audio.Start(util::resource::resource_names::audio::SKILL_DECISION, 1.0f);
-    //選択状態を解除
+    //弾く前に発動するスキル以外はアイコンを切り替えて、選択状態を解除する
     if (skills_[skill_num]->GetActivetionTiming() !=
         SkillActivationTiming::NOW) {
       select_ui_.ChangeIsSelectMode();
@@ -267,6 +272,7 @@ void SkillManager::UseSkill() {
 void SkillManager::EndSkill() {
   for (auto&& skill : skills_) {
     if (skill->EndSkillProduction()) {
+      //スキルの演出が終わったタイミングで選択状態を切り替える
       if (skill->GetActivetionTiming() == SkillActivationTiming::NOW) {
         select_ui_.ChangeIsSelectMode();
       }
@@ -275,6 +281,7 @@ void SkillManager::EndSkill() {
   }
 }
 
+//スキルを取得した順に座標を設定
 void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
   math::Vector3 pos;
   if (skill_num == 0)
@@ -294,6 +301,7 @@ void SkillManager::SetPosition(std::shared_ptr<Skill> skill, i32 skill_num) {
   skill->AdjustPosition(pos);
 }
 
+//選択中のスキルの位置を入れ替える
 void SkillManager::SetPositionSelectSkill(i32 skill_num) {
   if (skill_num == previous_select_number_) return;
 
@@ -307,6 +315,7 @@ void SkillManager::SetPositionSelectSkill(i32 skill_num) {
   previous_select_number_ = skill_num;
 }
 
+//UI表示を引数で切り替える
 void SkillManager::ChangeEnable(bool enable) { ui_enable_ = enable; }
 }  // namespace skill
 }  // namespace legend

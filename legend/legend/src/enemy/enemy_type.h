@@ -35,7 +35,7 @@ enum HitType : i32 {
 enum EffectType : i32 {
   Effect_None = 0,      // í èÌ
   Effect_Rotate = 1,       // âÒì]
-  Effect_Rush = 2,       // ì¶ëñ
+  Effect_Rush = 2,       // íºêi
   Effect_Type_End,  // îzóÒÇÃç≈å„
 };
 

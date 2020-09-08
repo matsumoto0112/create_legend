@@ -172,15 +172,19 @@ float EnemyActor::DistanceWithPlayer() {
 void EnemyActor::SetType(i32 type_index) {
   type_index = std::clamp(type_index, 0,
                           (i32)enemy_type::EffectType::Effect_Type_End - 1);
-  enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
-      game::GameDevice::GetInstance()->GetRandom().Range(
-          0, enemy::enemy_type::MoveType::Move_Type_End));
-  enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(
-      game::GameDevice::GetInstance()->GetRandom().Range(
-          0, enemy::enemy_type::HitType::Hit_Type_End));
-  enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
-      game::GameDevice::GetInstance()->GetRandom().Range(
-          0, (i32)enemy_type::EffectType::Effect_Type_End - 1));
+  //enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
+  //    game::GameDevice::GetInstance()->GetRandom().Range(
+  //        0, enemy::enemy_type::MoveType::Move_Type_End));
+  //enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(
+  //    game::GameDevice::GetInstance()->GetRandom().Range(
+  //        0, enemy::enemy_type::HitType::Hit_Type_End));
+  //enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
+  //    game::GameDevice::GetInstance()->GetRandom().Range(
+  //        0, (i32)enemy_type::EffectType::Effect_Type_End - 1));
+
+  enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(type_index / 3 % 2);
+  enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(type_index % 3);
+  enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(type_index / 6);
 
   switch (enemy_ai_.effect_type_) {
     case enemy_type::EffectType::Effect_None:

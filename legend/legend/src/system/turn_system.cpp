@@ -248,8 +248,13 @@ bool TurnSystem::Update() {
     //プレイヤーの強化状態をUI数値に変換する
     const i32 str =
         CalcPlayerStrengthToPrintNumber(*actor_manager_.GetPlayer());
-    numbers_[number_id::DIGIT_3]->SetNumber(str / 100);
-    numbers_[number_id::DIGIT_2]->SetNumber(str / 10 % 10);
+    const i32 third_digit = str / 100;
+    numbers_[number_id::DIGIT_3]->SetNumber(third_digit);
+    numbers_[number_id::DIGIT_3]->SetEnable(third_digit != 0);
+    const i32 second_digit = str / 10 % 10;
+    numbers_[number_id::DIGIT_2]->SetNumber(second_digit);
+    numbers_[number_id::DIGIT_2]->SetEnable(
+        !(second_digit == 0 && third_digit == 0));
     numbers_[number_id::DIGIT_1]->SetNumber(str % 10);
     gauges_[gauge_id::PLAYER_STRENGTHENED_STATE_0]->SetValue(
         math::util::Clamp(str * 0.01f, 0.0f, 1.0f));
@@ -414,8 +419,8 @@ bool TurnSystem::ToPlayerTurn() {
   view_turn_++;
 
   if (current_turn_ <= 0) {
-      current_mode_ = Mode::PLAYER_MOVE_READY;
-      return true;
+    current_mode_ = Mode::PLAYER_MOVE_READY;
+    return true;
   }
 
   return turn_change_.ChangeStart(Mode::PLAYER_MOVE_READY);

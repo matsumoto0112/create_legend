@@ -160,6 +160,8 @@ bool StageGenerator::GetMapActors(
       parameter.mass = String_2_Float(infomation[10]);
       parameter.friction = String_2_Float(infomation[11]);
       parameter.restitution = String_2_Float(infomation[12]);
+      parameter.model_id = (int)String_2_Float(infomation[13]);
+      parameter.type_index = (int)String_2_Float(infomation[14]);
       enemys.push_back(parameter);
       continue;
     }

@@ -36,6 +36,7 @@ bool SkillPasteStick::Init(actor::IActorMediator* mediator,
   is_use_ = false;
   is_production_ = false;
   instance_count_ = 6;
+  elapsed_time_ = 0.0f;
 
   player_ = player;
 
@@ -114,38 +115,52 @@ void SkillPasteStick::Action() {
 
 //ââèoÇÃçXêV
 void SkillPasteStick::ProductionUpdate() {
-  for (i32 i = 0; i < instance_count_; i++) {
-    math::Vector3 position;
-    if (i == 0) {
-      position = (math::Vector3::kRightVector + math::Vector3::kForwardVector)
-                     .Normalized() *
-                 10;
-    } else if (i == 1) {
-      position = math::Vector3::kRightVector.Normalized() * 10;
-    } else if (i == 2) {
-      position = (math::Vector3::kRightVector + math::Vector3::kBackwardVector)
-                     .Normalized() *
-                 10;
-    } else if (i == 3) {
-      position = (math::Vector3::kLeftVector + math::Vector3::kBackwardVector)
-                     .Normalized() *
-                 10;
-    } else if (i == 4) {
-      position = math::Vector3::kLeftVector.Normalized() * 10;
-    } else {
-      position = (math::Vector3::kLeftVector + math::Vector3::kForwardVector)
-                     .Normalized() *
-                 10;
-    }
+  float update_time =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+  // yé≤Ç…âÒì]Çâ¡Ç¶ÇÈ
+  math::Vector3 angle(0.0f, 360.0f, .0f);
+  math::Quaternion rotation = math::Quaternion::FromEular(
+      (angle * update_time) * math::util::DEG_2_RAD);
+  transform_.SetRotation(transform_.GetRotation() * rotation);
+  box_->SetTransform(transform_);
 
-    position += player_->GetTransform().GetPosition();
-    position.y = 1.01f;
-    std::shared_ptr<SkillPaste> paste = std::make_shared<SkillPaste>();
-    paste->Init(position, mediator_);
-    pastes_.emplace_back(std::move(paste));
+  // 1ïbä‘Ç≈360ìxâÒì]Ç∑ÇÈÇÃÇ≈ÅA1ïbåoâﬂå„Ç…ê∂ê¨Ç∑ÇÈ
+  elapsed_time_ += update_time;
+  if (elapsed_time_ >= 1.0f) {
+    for (i32 i = 0; i < instance_count_; i++) {
+      math::Vector3 position;
+      if (i == 0) {
+        position = (math::Vector3::kRightVector + math::Vector3::kForwardVector)
+                       .Normalized() *
+                   10;
+      } else if (i == 1) {
+        position = math::Vector3::kRightVector.Normalized() * 10;
+      } else if (i == 2) {
+        position =
+            (math::Vector3::kRightVector + math::Vector3::kBackwardVector)
+                .Normalized() *
+            10;
+      } else if (i == 3) {
+        position = (math::Vector3::kLeftVector + math::Vector3::kBackwardVector)
+                       .Normalized() *
+                   10;
+      } else if (i == 4) {
+        position = math::Vector3::kLeftVector.Normalized() * 10;
+      } else {
+        position = (math::Vector3::kLeftVector + math::Vector3::kForwardVector)
+                       .Normalized() *
+                   10;
+      }
+
+      position += player_->GetTransform().GetPosition();
+      position.y = 1.01f;
+      std::shared_ptr<SkillPaste> paste = std::make_shared<SkillPaste>();
+      paste->Init(position, mediator_);
+      pastes_.emplace_back(std::move(paste));
+    }
+    mediator_->PlayerSkillDeactivate();
+    is_production_ = false;
   }
-  mediator_->PlayerSkillDeactivate();
-  is_production_ = false;
 }
 
 //èIóπ

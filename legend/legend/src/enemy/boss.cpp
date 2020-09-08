@@ -122,7 +122,8 @@ void Boss::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
     //ƒvƒŒƒCƒ„[‚ÉG‚ê‚½
-    if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner())) {
+    auto p = dynamic_cast<player::Player*>(other->GetOwner());
+    if (p != nullptr) {
       HitAction(other);
       auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
       auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
@@ -132,7 +133,7 @@ void Boss::OnHit(bullet::Collider* other) {
       CreateFireParticle(GetCollider()->GetHitPositions().at(other));
     }
     //“G‚ÉG‚ê‚½
-    if (enemy::Enemy* e = dynamic_cast<enemy::Enemy*>(other->GetOwner())) {
+    if (dynamic_cast<enemy::Enemy*>(other->GetOwner()) != nullptr) {
       HitAction(other);
     }
   }

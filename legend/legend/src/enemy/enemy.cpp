@@ -39,8 +39,8 @@ void Enemy::OnHit(bullet::Collider* other) {
   enemy::EnemyActor::OnHit(other);
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
-    //ボスに触れた
-    if (enemy::Boss* b = dynamic_cast<enemy::Boss*>(other->GetOwner())) {
+    //プレイヤーに触れた
+    if (dynamic_cast<player::Player*>(other->GetOwner()) != nullptr) {
       HitAction(other);
     }
   }

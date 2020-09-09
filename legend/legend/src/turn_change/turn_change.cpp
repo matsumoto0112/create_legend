@@ -50,7 +50,7 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
 
   //ç¿ïWÇéwíË
   boss_generate_ui_center_position_ =
-      math::Vector2(screen_size_.x * 0.5f, screen_size_.y * 0.125f);
+      math::Vector2(screen_size_.x * 0.75f, screen_size_.y * 0.125f);
   boss_generate_ui_bg_.SetPosition(
       math::Vector2(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f,

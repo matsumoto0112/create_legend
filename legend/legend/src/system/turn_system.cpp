@@ -371,6 +371,11 @@ bool TurnSystem::ToEnemyTurn() {
   return turn_change_.ChangeStart(Mode::ENEMY_MOVING);
 }
 
+i32 TurnSystem::GetBossGenerateTurn()
+{
+    return actor_manager_.GetBossGenerateTurn();
+}
+
 //•`‰æ
 void TurnSystem::Draw() {
   //•`‰æ‚Ì—¬‚ê

@@ -124,12 +124,13 @@ bool StageGenerator::GetMapActors(
       parameter.transform = transform;
       parameter.bounding_box_length = math::Vector3::kUnitVector * 1.5f;
       auto& resource = game::GameDevice::GetInstance()->GetResource();
-      parameter.skill_model_num = static_cast<i32>(String_2_Float(infomation[14]));
+      parameter.skill_model_num =
+          static_cast<i32>(String_2_Float(infomation[14]));
       itemboxes.emplace_back(parameter);
       continue;
     }
-	
-  //* -----------------------------------------------
+
+    //* -----------------------------------------------
     //* infomation[0] : 名前
     //* infomation[1] : ポジション_X
     //* infomation[2] : ポジション_Y
@@ -280,6 +281,24 @@ std::vector<CameraGenerateInfo> StageGenerator::GetCameraGenerateInfos() const {
   }
 
   return res;
+}
+
+i32 StageGenerator::GetBossGenerateTurn() {
+  if (indexs_.empty() || indexs_[0] == "error") {
+    MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
+    return false;
+  }
+
+  for (auto&& index : indexs_) {
+    //文字列を分割
+    std::vector<std::string> infomation = StringSplit(index, ',');
+
+    if (infomation[0] == "boss") {
+      return (int)String_2_Float(infomation[15]);
+    }
+  }
+
+  return 0;
 }
 
 float StageGenerator::String_2_Float(const std::string& string) const {

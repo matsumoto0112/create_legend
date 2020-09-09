@@ -13,11 +13,37 @@ namespace turn_change {
 
 class TurnChange {
  public:
+     /**
+      * @brief コンストラクタ
+      */
   TurnChange();
+  /**
+   * @brief デストラクタ
+   */
   ~TurnChange();
+  /**
+   * @brief 初期化
+   */
   bool Init(system::TurnSystem* turn_system);
+  /**
+   * @brief ターン切り替え演出の開始
+   */
   bool ChangeStart(system::Mode next_mode);
+  /**
+   * @brief ターン切り替え演出の更新
+   */
+  bool TurnChangeUpdate();
+  /**
+   * @brief ボス出現ゲージの更新
+   */
+  bool BossGenerateUIUpdate();
+  /**
+   * @brief 更新処理
+   */
   bool Update();
+  /**
+   * @brief 描画処理
+   */
   void Draw();
 
 private:
@@ -28,6 +54,12 @@ private:
   bool is_view_;
   //! タイマー
   float timer_;
+  //! ターン切り替え演出の開始までの秒数
+  const float start_time_ = 0.15f;
+  //! ターン切り替え演出中の秒数
+  const float staging_time_ = 0.75f;
+  //! ターン切り替え演出の後の秒数
+  const float before_time_ = 0.4f;
   //! ウィンドウサイズ
   math::Vector2 screen_size_;
   //! ターンシステムのポインタ
@@ -38,6 +70,19 @@ private:
   draw::Sprite2D next_turn_sprite_;
   //! 変更後のモード
   system::Mode next_mode_;
+  
+  //! ボスの出現するターン
+  i32 boss_generate_turn_;
+  //! ボス出現までのUIの位置
+  math::Vector2 boss_generate_ui_center_position_;
+  //! 移動前のプレイヤーアイコンの位置
+  math::Vector2 before_player_icon_position_;
+  //! プレイヤーのアイコン画像
+  draw::Sprite2D player_icon_;
+  //! ボスのアイコン画像
+  draw::Sprite2D boss_icon_;
+  //! ボス出現ターンまでの背景画像
+  draw::Sprite2D boss_generate_ui_bg_;
 };
 
 }  // namespace turn_change

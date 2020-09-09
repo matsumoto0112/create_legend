@@ -213,6 +213,11 @@ class Player : public actor::Actor {
   bool is_fullpower_;
   //! フルパワー時のボーナス
   float fullpower_bonus_ = 1.2f;
+  //! ヒットストップするかどうか
+  bool is_hitstop_;
+
+  //! 集中線のスプライト
+  draw::Sprite2D concentrated_line_;
 };
 
 }  // namespace player

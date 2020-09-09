@@ -54,6 +54,8 @@ class StageGenerator {
 
   std::vector<CameraGenerateInfo> GetCameraGenerateInfos() const;
 
+  i32 GetBossGenerateTurn();
+
  private:
   /**
    * @brief String‚ðfloat‚É•ÏŠ·‚·‚é

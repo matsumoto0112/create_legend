@@ -54,6 +54,7 @@ bool Player::Init(actor::IActorMediator* mediator,
 
   up_power_ = true;
   is_set_power_ = false;
+  is_hitstop_ = false;
   strength_ = 1.0f;
   max_strength_ = parameter.max_strength;
   min_strength_ = parameter.min_strength;
@@ -78,6 +79,18 @@ bool Player::Init(actor::IActorMediator* mediator,
   player_move_particle_->SetEmitEnable(false);
 
   ResetParameter();
+
+  //集中線の初期化
+  if (!concentrated_line_.Init(
+          resource.GetTexture().Get(
+              resource_name::texture::TITLE_LOGO),
+          directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
+    MY_LOG(L"集中線の画像の初期化に失敗しました。");
+    return false;
+  }
+  concentrated_line_.SetRect(math::Rect(0, 0, 1, 1));
+  concentrated_line_.SetZOrder(0.005f);
+  concentrated_line_.SetPosition(math::Vector2::kZeroVector);
 
   return true;
 }
@@ -189,6 +202,12 @@ void Player::Draw() {
 
   //スキルマネージャーの描画
   skill_manager_.Draw();
+
+  if (!is_fullpower_) return;
+
+  draw::SpriteRenderer& sprite_renderer =
+      game::GameDevice::GetInstance()->GetSpriteRenderer();
+  sprite_renderer.AddDrawItems(&concentrated_line_);
 }
 
 //座標の設定
@@ -299,6 +318,7 @@ void Player::SetImpulse() {
     }
   } else {
     is_fullpower_ = (impulse_ >= 0.9f);
+    is_hitstop_ = is_fullpower_;
 
     is_set_power_ = true;
   }
@@ -399,6 +419,12 @@ void Player::OnHit(bullet::Collider* other) {
               (math::util::Sin(30.0f * math::util::DEG_2_RAD * up_power));
           auto addPower = math::Vector3::kUpVector * GetVelocity().Magnitude() *
                           trigonometric;
+
+          if (is_hitstop_) {
+            mediator_->SetStopTime(0.3f);
+            is_hitstop_ = false;
+          }
+
           return base_power + addPower;
         };
 

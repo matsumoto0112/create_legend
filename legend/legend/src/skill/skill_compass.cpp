@@ -63,7 +63,7 @@ bool SkillCompass::Init(actor::IActorMediator* mediator,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
   //モデルの初期化
-  model_ = resource.GetModel().Get(resource_name::model::STATIONERY_04);
+  model_ = resource.GetModel().Get(resource_name::model::STATIONERY_04_CLOSE);
 
   //スキルアイコンのテクスチャ設定
   skill_icon_texture_ =
@@ -114,11 +114,10 @@ void SkillCompass::Action() {
   math::Quaternion rotation =
       math::Quaternion::FromEular(angle * math::util::DEG_2_RAD);
   transform_.SetRotation(rotation);
-  box_->SetTransform(transform_);
 
   auto& resource = game::GameDevice::GetInstance()->GetResource();
-  //開いたコンパスにモデルを変更(?)
-  // model_ = resource.GetModel().Get(resource_name::model::STATIONERY_04);
+  //開いたコンパスにモデルを変更
+  model_ = resource.GetModel().Get(resource_name::model::STATIONERY_04_OPEN);
   mediator_->PlayerSkillActivate();
 
   //一度コライダーを削除して、新たに設定し追加する

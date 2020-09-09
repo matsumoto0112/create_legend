@@ -24,21 +24,21 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
 
   //ボス出現までのUIの画像を初期化
   if (!boss_generate_ui_bg_.Init(
-          resource.GetTexture().Get(resource_name::texture::UI_POWERGAUGE_BG),
+          resource.GetTexture().Get(resource_name::texture::UI_REMAINTURN_LINE),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"ボス出現ゲージの背景画像の初期化に失敗しました。");
     return false;
   }
   if (!player_icon_.Init(
           resource.GetTexture().Get(
-              resource_name::texture::UI_POWERGAUGE_BLURRYPOINT),
+              resource_name::texture::UI_REMAINTURN_PLAYER),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"ボス出現ゲージのプレイヤーアイコン画像の初期化に失敗しました。");
     return false;
   }
   if (!boss_icon_.Init(
           resource.GetTexture().Get(
-              resource_name::texture::UI_POWERGAUGE_BLURRYPOINT),
+              resource_name::texture::UI_REMAINTURN_BOSS),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"ボス出現ゲージのボスアイコン画像の初期化に失敗しました。");
     return false;
@@ -50,7 +50,7 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
 
   //座標を指定
   boss_generate_ui_center_position_ =
-      math::Vector2(screen_size_.x / 4 * 3, screen_size_.y * 0.125f);
+      math::Vector2(screen_size_.x * 0.75f, screen_size_.y * 0.125f);
   boss_generate_ui_bg_.SetPosition(
       math::Vector2(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f,
@@ -62,14 +62,14 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
                         player_icon_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y +
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f -
-                        player_icon_.GetContentSize().y));
+                        player_icon_.GetContentSize().y * 0.75f));
   boss_icon_.SetPosition(
       math::Vector2(boss_generate_ui_center_position_.x +
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
-                        boss_icon_.GetContentSize().x / 2,
+                        boss_icon_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y +
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f -
-                        boss_icon_.GetContentSize().y));
+                        boss_icon_.GetContentSize().y * 0.75f));
 
   //移動前の座標を保存
   before_player_icon_position_ = player_icon_.GetPosition();
@@ -198,14 +198,14 @@ bool TurnChange::BossGenerateUIUpdate() {
                         player_icon_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y +
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f -
-                        player_icon_.GetContentSize().y);
+                        player_icon_.GetContentSize().y * 0.75f);
   math::Vector2 endPos = math::Vector2(
       math::Vector2(boss_generate_ui_center_position_.x +
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
                         player_icon_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y +
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f -
-                        player_icon_.GetContentSize().y));
+                        player_icon_.GetContentSize().y * 0.75f));
 
   math::Vector2 nextPos = math::Vector2(
       startPos + (endPos - startPos) * (((float)turn_system_->GetCurrentTurn() /

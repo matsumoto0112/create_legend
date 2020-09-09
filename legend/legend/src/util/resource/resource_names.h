@@ -143,6 +143,7 @@ constexpr name FIRE_PARTICLE = L"fire_particle_gs.cso";
 namespace compute_shader {
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_cs.cso";
 constexpr name FIRE_PARTICLE = L"fire_particle_cs.cso";
+constexpr name EXPLOSION = L"explosion_cs.cso";
 }  // namespace compute_shader
 
 namespace pipeline {

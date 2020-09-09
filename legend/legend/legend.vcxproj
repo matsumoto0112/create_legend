@@ -224,6 +224,11 @@
   <ItemGroup>
     <ClInclude Include="assets\shaders\defines\global.h" />
     <ClInclude Include="assets\shaders\gpu_particle\enemy_move_particle.h" />
+    <FxCompile Include="assets\shaders\gpu_particle\explosion_cs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <ClInclude Include="assets\shaders\gpu_particle\explosion.h" />
     <ClInclude Include="assets\shaders\gpu_particle\fire_particle.h" />
     <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
     <ClInclude Include="assets\shaders\gpu_particle\player_move_particle.h" />

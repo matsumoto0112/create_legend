@@ -1,5 +1,6 @@
 #include "src/skill/explosion_pencil.h"
 
+#include "src/draw/particle/particle_factory.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
 #include "src/game/game_device.h"
@@ -38,6 +39,10 @@ void ExplosionPencil::Init(util::Transform transform,
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
+
+  explosion_particle_ =
+      draw::particle::particle_factory::CreateExplosionParticle();
+  explosion_particle_->SetTransform(transform_);
 }
 
 //XV
@@ -53,6 +58,7 @@ bool ExplosionPencil::Update() {
   mediator_->AddCollider(sphere_);
   sphere_->SetFlags(sphere_->GetFlags() |
                     btCollisionObject::CF_NO_CONTACT_RESPONSE);
+  explosion_particle_->SetTransform(transform_);
   return true;
 }
 

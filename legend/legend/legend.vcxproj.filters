@@ -335,6 +335,7 @@
     <ClInclude Include="src\turn_change\turn_change.h" />
     <ClInclude Include="assets\shaders\gpu_particle\enemy_move_particle.h" />
     <ClInclude Include="src\skill\skill_compass.h" />
+    <ClInclude Include="assets\shaders\gpu_particle\explosion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -384,6 +385,7 @@
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_cs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_gs.hlsl" />
+    <FxCompile Include="assets\shaders\gpu_particle\explosion_cs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\parameters\main_ui.txt" />

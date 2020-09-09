@@ -14,7 +14,7 @@ namespace particle {
 namespace particle_factory {
 std::shared_ptr<draw::particle::ParticleEmitter> CreatePlayerMoveParticle();
 std::shared_ptr<draw::particle::ParticleEmitter> CreateEnemyMoveParticle();
-
+std::shared_ptr<draw::particle::ParticleEmitter> CreateExplosionParticle();
 std::shared_ptr<draw::particle::ParticleEmitter> CreateFireParticle();
 
 }  // namespace particle_factory

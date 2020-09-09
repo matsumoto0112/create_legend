@@ -3,6 +3,7 @@
 
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_sphere.h"
+#include "src/draw/particle/particle_emitter.h"
 #include "src/util/timer.h"
 
 namespace legend {
@@ -22,8 +23,7 @@ class ExplosionPencil : public actor::Actor {
   /**
    * @brief èâä˙âª
    */
-  void Init(util::Transform transform,
-            actor::IActorMediator* mediator);
+  void Init(util::Transform transform, actor::IActorMediator* mediator);
   /**
    * @brief çXêV
    */
@@ -44,6 +44,7 @@ class ExplosionPencil : public actor::Actor {
   float radius_;
   //! îöî≠à–óÕ
   float explosion_power_;
+  std::shared_ptr<draw::particle::ParticleEmitter> explosion_particle_;
 };
 }  // namespace skill
 }  // namespace legend

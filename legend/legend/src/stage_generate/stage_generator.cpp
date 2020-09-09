@@ -282,6 +282,26 @@ std::vector<CameraGenerateInfo> StageGenerator::GetCameraGenerateInfos() const {
   return res;
 }
 
+i32 StageGenerator::GetBossGenerateTurn()
+{
+    if (indexs_.empty() || indexs_[0] == "error") {
+        MY_LOG(L"データが読み込まれていないか、読み込みに失敗しています。");
+        return false;
+    }
+
+    for (auto&& index : indexs_) {
+        //文字列を分割
+        std::vector<std::string> infomation = StringSplit(index, ',');
+
+        if (infomation[1] == "boss")
+        {
+            return (int)String_2_Float(infomation[15]);
+        }
+    }
+
+    return 0;
+}
+
 float StageGenerator::String_2_Float(const std::string& string) const {
   return std::stof(string.c_str());
 }

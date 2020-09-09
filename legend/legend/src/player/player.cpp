@@ -85,7 +85,7 @@ bool Player::Init(actor::IActorMediator* mediator,
           resource.GetTexture().Get(
               resource_name::texture::TITLE_LOGO),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
-    MY_LOG(L"前のターン画像の初期化に失敗しました。");
+    MY_LOG(L"集中線の画像の初期化に失敗しました。");
     return false;
   }
   concentrated_line_.SetRect(math::Rect(0, 0, 1, 1));

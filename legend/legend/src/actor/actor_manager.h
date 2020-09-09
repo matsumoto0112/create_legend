@@ -72,6 +72,7 @@ class ActorManager : public actor::IActorMediator {
   enemy::EnemyManager* GetEnemyManager();
   void EnemyManagerUpdate();
   bool IsBossGenerated();
+  i32 GetBossGenerateTurn();
 
  public:
   /**

@@ -109,16 +109,20 @@ class TurnSystem {
    * @brief 敵のターンになる演出
    */
   bool ToEnemyTurn();
+  /**
+   * @brief ボス出現ターンの取得
+   */
+  i32 GetBossGenerateTurn();
+  /**
+   * @brief 現在のターン数を取得
+   */
+  i32 GetCurrentTurn();
 
  private:
   /**
    * @brief ターン数の増加
    */
   void AddCurrentTurn();
-  /**
-   * @brief 現在のターン数を取得
-   */
-  i32 GetCurrentTurn();
   /**
    * @brief 表示用のターン数を表示
    */

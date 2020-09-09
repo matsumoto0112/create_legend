@@ -292,6 +292,11 @@ bool legend::actor::ActorManager::IsBossGenerated() {
   return is_boss_generated_;
 }
 
+i32 legend::actor::ActorManager::GetBossGenerateTurn()
+{
+    return stage_generator_.GetBossGenerateTurn();
+}
+
 std::vector<enemy::Enemy*> ActorManager::GetEnemies() {
   return enemy_manager_.GetEnemyPointers();
 }

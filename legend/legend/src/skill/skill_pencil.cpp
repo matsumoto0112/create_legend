@@ -123,7 +123,7 @@ void SkillPencil::Action() {
       mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   mediator_->PlayerSkillActivate();
   math::Vector3 position =
-      transform_.GetPosition() + math::Vector3::kUpVector * 1.5f;
+      transform_.GetPosition() + math::Vector3::kUpVector * 2.0f;
   transform_.SetPosition(position);
 
   //一度コライダーを削除して、新たに設定し追加する
@@ -131,7 +131,7 @@ void SkillPencil::Action() {
   bullet::BoundingBox::InitializeParameter params;
   params.position = transform_.GetPosition();
   params.rotation = transform_.GetRotation();
-  params.scale = math::Vector3(0.5f, 0.5f, 0.5f);
+  params.scale = math::Vector3(0.5f, 0.5f, 5.0f);
   params.mass = 0.1f;
 
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
@@ -147,6 +147,10 @@ void SkillPencil::Action() {
 
 //演出の更新
 void SkillPencil::ProductionUpdate() {
+  math::Vector3 target = box_->GetVelocity() - transform_.GetPosition();
+  transform_.SetRotation(LookAt(target));
+  box_->SetTransform(transform_);
+
   if (transform_.GetPosition().y <= -2.0f) EndAction();
 }
 
@@ -168,12 +172,15 @@ void SkillPencil::OnHit(bullet::Collider* other) {
       dynamic_cast<enemy::Boss*>(other->GetOwner()) ||
       dynamic_cast<object::Desk*>(other->GetOwner()) ||
       dynamic_cast<object::Obstacle*>(other->GetOwner())) {
-    Explosion();
+    //衝突点から爆発させる
+    util::Transform transform = transform_;
+    transform.SetPosition(box_->GetHitPositions().at(other));
+    Explosion(transform);
   }
 }
 
 //爆発開始
-void SkillPencil::Explosion() {
+void SkillPencil::Explosion(util::Transform transform) {
   if (is_explosion_) return;
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
@@ -184,15 +191,23 @@ void SkillPencil::Explosion() {
   audio.Start(resource_name::audio::SKILL_PENCIL_HIT, 1.0f);
 
   explosion_pencil_ = std::make_shared<ExplosionPencil>();
-  explosion_pencil_->Init(transform_, mediator_);
-
-  //パーティクルの再生?
+  explosion_pencil_->Init(transform, mediator_);
 }
 
 //爆発更新
 void SkillPencil::ExplosionUpdate() {
   //爆発中は更新
   if (!explosion_timer_.Update()) explosion_pencil_->Update();
+}
+
+math::Quaternion SkillPencil::LookAt(const math::Vector3& target) {
+  const float dot =
+      math::Vector3::Dot(math::Vector3::kForwardVector, target.Normalized());
+  const float theta = math::util::Acos(dot);
+  const math::Vector3 cross =
+      math::Vector3::Cross(math::Vector3::kForwardVector, target).Normalized();
+
+  return math::Quaternion(cross, theta);
 }
 
 }  // namespace skill

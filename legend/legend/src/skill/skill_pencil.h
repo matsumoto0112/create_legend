@@ -56,11 +56,18 @@ class SkillPencil : public Skill {
   /**
    * @brief 爆発開始
    */
-  void Explosion();
+  void Explosion(util::Transform transform);
   /**
    * @brief 爆発更新
    */
   void ExplosionUpdate();
+
+private:
+    /**
+     * @brief targetに向きを回転させる
+     * @param 方向
+     */
+    math::Quaternion LookAt(const math::Vector3& target);
 
  private:
   //! タイマー

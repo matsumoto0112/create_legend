@@ -13,7 +13,6 @@ namespace resource {
 namespace resource_names {
 using name = const wchar_t*;
 namespace model {
-constexpr name ALPHAKAKUNINOBJECT = L"alphaKakuninObject.glb";
 constexpr name ARROW = L"arrow.glb";
 constexpr name BACK_FIELD_01 = L"back_field_01.glb";
 constexpr name BOSS_01 = L"boss_01.glb";
@@ -36,13 +35,13 @@ constexpr name GRAFFITI_03 = L"graffiti_03.glb";
 constexpr name ITEM_CAPSULE_01 = L"item_capsule_01.glb";
 constexpr name ITEM_PLANE_01 = L"item_plane_01.glb";
 constexpr name ITEM_PLANE_02 = L"item_plane_02.glb";
-constexpr name KARI = L"kari.glb";
-constexpr name MARU_UV_TEXUMEKOMI = L"maru_UV_TexUmekomi.glb";
 constexpr name PLANE = L"plane.glb";
 constexpr name STATIONERY_01 = L"stationery_01.glb";
 constexpr name STATIONERY_02 = L"stationery_02.glb";
 constexpr name STATIONERY_03 = L"stationery_03.glb";
 constexpr name STATIONERY_04 = L"stationery_04.glb";
+constexpr name STATIONERY_04_CLOSE = L"stationery_04_close.glb";
+constexpr name STATIONERY_04_OPEN = L"stationery_04_open.glb";
 constexpr name STATIONERY_05 = L"stationery_05.glb";
 }  // namespace model
 
@@ -184,9 +183,11 @@ constexpr name PLAYER_SNAP = L"player_snap.wav";
 constexpr name PLAYER_TURN_END = L"player_turn_end.wav";
 constexpr name RESULT_MOVE_OTHER_SCENE = L"result_move_other_scene.wav";
 constexpr name SKILL_DECISION = L"skill_decision.wav";
+constexpr name SKILL_FITOUT_UP = L"skill_fitOut_up.wav";
 constexpr name SKILL_PENCIL_HIT = L"skill_pencil_hit.wav";
 constexpr name SKILL_PENCIL_SHOT = L"skill_pencil_shot.wav";
 constexpr name SKILL_SELECT = L"skill_select.wav";
+constexpr name STAGESELECT_SELECT = L"stageSelect_select.wav";
 constexpr name TITLE_DECISION = L"title_decision.wav";
 }  // namespace audio
 

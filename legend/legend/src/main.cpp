@@ -151,13 +151,9 @@ class MyApp final : public device::Application {
                       .c_str());
 
       constexpr scenes::SceneType SCENES[] = {
-          scenes::SceneType::TITLE,
-          scenes::SceneType::GAMEOVER,
-          scenes::SceneType::MODEL_VIEW,
-          scenes::SceneType::SOUND_TEST,
-          scenes::SceneType::SPRITE_TEST,
-          scenes::SceneType::MAIN_SCENE_1,
-          scenes::SceneType::SKILL_TEST,
+          scenes::SceneType::TITLE,        scenes::SceneType::GAMEOVER,
+          scenes::SceneType::MODEL_VIEW,   scenes::SceneType::SOUND_TEST,
+          scenes::SceneType::MAIN_SCENE_1, scenes::SceneType::SKILL_TEST,
       };
       for (auto&& scene : SCENES) {
         if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {

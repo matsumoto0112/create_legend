@@ -13,7 +13,6 @@ enum class SceneType {
 
   MODEL_VIEW = 100,
   SOUND_TEST,
-  SPRITE_TEST,
   INPUT_TEST,
   MAIN_SCENE_1,
   SKILL_TEST,

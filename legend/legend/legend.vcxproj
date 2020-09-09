@@ -167,7 +167,6 @@
     <ClCompile Include="src\scenes\debugscene\model_view.cpp" />
     <ClCompile Include="src\scenes\debugscene\skill_test.cpp" />
     <ClCompile Include="src\scenes\debugscene\sound_test.cpp" />
-    <ClCompile Include="src\scenes\debugscene\sprite_render_test.cpp" />
     <ClCompile Include="src\scenes\decorator\pausable.cpp" />
     <ClCompile Include="src\scenes\result_scene.cpp" />
     <ClCompile Include="src\scenes\mainscene\main_scene_1.cpp" />
@@ -357,7 +356,6 @@
     <ClInclude Include="src\scenes\debugscene\model_view.h" />
     <ClInclude Include="src\scenes\debugscene\skill_test.h" />
     <ClInclude Include="src\scenes\debugscene\sound_test.h" />
-    <ClInclude Include="src\scenes\debugscene\sprite_render_test.h" />
     <ClInclude Include="src\scenes\decorator\pausable.h" />
     <ClInclude Include="src\scenes\result_scene.h" />
     <ClInclude Include="src\scenes\mainscene\main_scene_1.h" />

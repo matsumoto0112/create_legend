@@ -83,7 +83,7 @@ bool Player::Init(actor::IActorMediator* mediator,
   //集中線の初期化
   if (!concentrated_line_.Init(
           resource.GetTexture().Get(
-              resource_name::texture::TITLE_LOGO),
+              resource_name::texture::UI_INTENSIVELINE),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"集中線の画像の初期化に失敗しました。");
     return false;
@@ -203,7 +203,7 @@ void Player::Draw() {
   //スキルマネージャーの描画
   skill_manager_.Draw();
 
-  if (!is_fullpower_) return;
+  if (!is_fullpower_ || is_hitstop_) return;
 
   draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();

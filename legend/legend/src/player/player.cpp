@@ -70,7 +70,6 @@ bool Player::Init(actor::IActorMediator* mediator,
 
   is_hit_obstacle_ = false;
   power_se_interval_.Init(0.0f);
-  move_start_ = false;
   fall_start_ = false;
 
   if (!move_direction_.Init()) {
@@ -189,16 +188,6 @@ bool Player::Update() {
         fall_start_ = true;
       }
     } else {
-      const math::Vector2 velocity(GetVelocity().x, GetVelocity().z);
-      if (velocity.Magnitude() > 0.1f) {
-        if (!move_start_) {
-          audio.Start(resource_name::audio::PLAYER_MOVING, 3.0f);
-          move_start_ = true;
-        }
-      } else {
-        move_start_ = false;
-      }
-
       fall_start_ = false;
     }
   }

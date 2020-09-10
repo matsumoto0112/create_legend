@@ -186,7 +186,6 @@ constexpr name PLAYER_GET_FRAGMENT = L"player_get_fragment.wav";
 constexpr name PLAYER_GET_STATIONERY = L"player_get_stationery.wav";
 constexpr name PLAYER_MOVE_SELECT_SKILL_MODE =
     L"player_move_select_skill_mode.wav";
-constexpr name PLAYER_MOVING = L"player_moving.wav";
 constexpr name PLAYER_OBSTACLE_HIT = L"player_obstacle_hit.wav";
 constexpr name PLAYER_POWER_CHARGE = L"player_power_charge.wav";
 constexpr name PLAYER_RETURN_FROM_SELECT_SKILL_MODE =

@@ -205,7 +205,6 @@ class Player : public actor::Actor {
   util::CountDownTimer obstacle_hit_timer_;
 
   util::CountDownTimer power_se_interval_;
-  bool move_start_;
   bool fall_start_;
 
   PlayerMoveDirectionModel move_direction_;

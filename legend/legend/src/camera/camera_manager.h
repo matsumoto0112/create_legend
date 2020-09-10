@@ -61,7 +61,7 @@ class CameraManager {
   /**
    * @brief 現在のモードに応じたカメラを取得する
    */
-  camera::Camera* GetCurrentCamera() const;
+  camera::Camera* GetCurrentCamera();
   /**
    * @brief プレイヤーを注視するカメラを取得する
    */
@@ -86,6 +86,16 @@ class CameraManager {
   std::unique_ptr<camera::PerspectiveCamera> birds_eye_view_camera_;
   //! フリーカメラ
   std::vector<std::unique_ptr<LookatTargetCamera>> free_cameras_;
+
+  //! 描画カメラを指すID
+  int id;
+  //! カメラの種類
+  enum Type {
+    Type_A,  //ランダム
+    Type_B,  //遠いやつ
+    Type_C,  //近いやつ
+    MAX
+  } type_;
 };
 
 }  // namespace camera

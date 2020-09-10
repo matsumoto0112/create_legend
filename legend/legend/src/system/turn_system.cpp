@@ -302,7 +302,7 @@ bool TurnSystem::EnemyMoveEnd() {
 }
 
 bool TurnSystem::EnemyMoveProducing() {
-  if (actor_manager_.IsAllActorStop()) {
+  if (actor_manager_.IsAllActorStop() || !actor_manager_.GetEnemyManager()->IsGameClear()) {
     ToPlayerTurn();
   }
 
@@ -310,7 +310,9 @@ bool TurnSystem::EnemyMoveProducing() {
 }
 
 bool TurnSystem::BossMoveProducing() {
-  ToPlayerTurn();
+  if (actor_manager_.IsAllActorStop() || !actor_manager_.GetEnemyManager()->IsGameClear()) {
+    ToPlayerTurn();
+  }
 
   return true;
 }

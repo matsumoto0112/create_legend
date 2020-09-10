@@ -86,6 +86,10 @@ class AudioSource {
    * @brief ファイルネームを取得
    */
   std::wstring GetFileName();
+  /**
+   * @brief オーディオの種類を取得
+   */
+  AudioType GetAudioType();
 
  private:
   bool LoadSplit(IXAudio2* p_xaudio2, std::wstring filepath);

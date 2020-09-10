@@ -226,7 +226,7 @@ void Player::Draw() {
   //スキルマネージャーの描画
   skill_manager_.Draw();
 
-  if (!is_fullpower_ || is_hitstop_) return;
+  if (!mediator_->IsHitStopNow()) return;
 
   draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
@@ -340,7 +340,7 @@ void Player::SetImpulse() {
       power_se_interval_.Init(1.0f);
     }
   } else {
-    is_fullpower_ = (impulse_ >= 0.9f);
+    is_fullpower_ = (impulse_ >= 0.95f);
     is_hitstop_ = is_fullpower_;
 
     is_set_power_ = true;

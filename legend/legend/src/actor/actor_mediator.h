@@ -104,6 +104,10 @@ class IActorMediator {
    * @brief カメラの管理クラスを取得する
    */
   virtual camera::CameraManager* GetCameraManager() = 0;
+  /**
+   * @brief ヒットストップしているかどうか
+   */
+  virtual bool IsHitStopNow() = 0;
 };
 
 }  // namespace actor

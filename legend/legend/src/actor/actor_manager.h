@@ -171,6 +171,8 @@ class ActorManager : public actor::IActorMediator {
     return &camera_manager_;
   };
 
+  virtual bool IsHitStopNow() override;
+
  private:
   /**
    * @brief è¡ÇµÉJÉXÇÃí«â¡

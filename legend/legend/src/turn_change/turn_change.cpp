@@ -49,16 +49,16 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
 
   //ç¿ïWÇéwíË
   boss_generate_ui_center_position_ =
-      math::Vector2(screen_size_.x * 0.775f, screen_size_.y * 0.125f);
+      math::Vector2(screen_size_.x * 0.788f, screen_size_.y * 0.125f);
   boss_generate_ui_bg_.SetPosition(
       math::Vector2(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y -
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f));
   player_icon_.SetPosition(
-      math::Vector2(boss_generate_ui_center_position_.x -
+      math::Vector2((float)(int)(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
-                        player_icon_.GetContentSize().x * 0.5f,
+                        player_icon_.GetContentSize().x * 0.5f),
                     boss_generate_ui_center_position_.y +
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f -
                         player_icon_.GetContentSize().y * 0.75f));

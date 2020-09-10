@@ -119,6 +119,9 @@ void SkillCompass::Action() {
   //開いたコンパスにモデルを変更
   model_ = resource.GetModel().Get(resource_name::model::STATIONERY_04_OPEN);
   mediator_->PlayerSkillActivate();
+  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+  audio.Start(resource_name::audio::SKILL_COMPASS_SPIN, 4.0f);
+
 
   //一度コライダーを削除して、新たに設定し追加する
   mediator_->RemoveCollider(box_);

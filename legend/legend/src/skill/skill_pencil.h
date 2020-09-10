@@ -78,6 +78,7 @@ private:
   bool is_explosion_;
   //! éÀèoäpìx
   float shoot_theta_;
+  math::Vector3 velocity_;
 };
 
 }  // namespace skill

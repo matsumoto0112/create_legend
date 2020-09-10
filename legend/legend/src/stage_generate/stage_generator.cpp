@@ -191,6 +191,102 @@ bool StageGenerator::GetMapActors(
   return is_all_ok;
 }
 
+bool StageGenerator::GetResultActors(
+    player::Player::InitializeParameter& player,
+    std::vector<object::Desk::InitializeParameter>& desks,
+    std::vector<object::Obstacle::InitializeParameter>& obstacles,
+    std::vector<enemy::Enemy::InitializeParameter>& enemys,
+    std::vector<enemy::Boss::InitializeParameter>& bosses) {
+  bool is_all_ok = true;
+  for (auto&& index : indexs_) {
+    //•¶š—ñ‚ğ•ªŠ„
+    std::vector<std::string> infomation = StringSplit(index, ',');
+
+    //–{—ˆ‚Í”wŒiID‚È‚Ç‚ğ“Ç‚İ‚Ş‚ªŒ»İ‚Í–³‹
+    if (infomation[0] == map_name_) continue;
+
+    // Transform‚ğ“Ç‚İ‚İ(scale‚ÍŒ»ó–³‹)
+    util::Transform transform =
+        String_2_Transform(infomation[1], infomation[2], infomation[3],
+                           infomation[4], infomation[5], infomation[6],
+                           infomation[7], infomation[8], infomation[9]);
+
+    //Š÷‚Ì‰Šú‰»
+    if (infomation[0] == "floor") {
+      object::Desk::InitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.bounding_box_length = math::Vector3(30.0f, 1.25f, 20.0f);
+      parameter.normal = math::Vector3::kUpVector;
+      desks.emplace_back(parameter);
+      continue;
+    }
+
+    //ƒvƒŒƒCƒ„[‚Ì¶¬
+    if (infomation[0] == "startpoint") {
+      player::Player::InitializeParameter parameter;
+      parameter.transform = transform;
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.bouding_box_length = math::Vector3(1.25f, 0.5f, 2.75f);
+      parameter.min_power = 0;
+      parameter.max_power = 1;
+      parameter.max_strength = 3;
+      parameter.min_strength = 0.5f;
+      player = parameter;
+      continue;
+    }
+
+    //áŠQ•¨‚Ì¶¬
+    if (infomation[0] == "obstacle") {
+      object::Obstacle::InitializeParameter parameter;
+      parameter.position = transform.GetPosition();
+      parameter.rotation = transform.GetRotation();
+      parameter.model_id = 0;
+      parameter.bounding_box_length = math::Vector3(4.5f, 2.5f, 10.0f);
+      obstacles.emplace_back(parameter);
+
+      continue;
+    }
+
+    //“G‚Ì¶¬
+    if (infomation[0] == "enemy") {
+      enemy::Enemy::InitializeParameter parameter;
+
+      parameter.transform = transform;
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.bouding_box_length = math::Vector3(1.25f, 0.5f, 2.75f);
+      parameter.mass = String_2_Float(infomation[10]);
+      parameter.friction = String_2_Float(infomation[11]);
+      parameter.restitution = String_2_Float(infomation[12]);
+      parameter.model_id = (int)String_2_Float(infomation[13]);
+      parameter.type_index = (int)String_2_Float(infomation[14]);
+      enemys.push_back(parameter);
+      continue;
+    }
+
+    //ƒ{ƒX‚Ì¶¬
+    if (infomation[0] == "boss") {
+      enemy::Boss::InitializeParameter parameter;
+      math::Vector3 scale = math::Vector3::kUnitVector * 1.25f;
+
+      parameter.transform = transform;
+      parameter.transform.SetPosition(parameter.transform.GetPosition() +
+                                      math::Vector3(0.0f, 10.0f, 0.0f));
+      parameter.transform.SetScale(scale);
+      parameter.bouding_box_length = math::Vector3(3.0f, 1.0f, 5.5f);
+      parameter.mass = String_2_Float(infomation[10]);
+      parameter.friction = String_2_Float(infomation[11]);
+      parameter.restitution = String_2_Float(infomation[12]);
+      parameter.model_id = (int)String_2_Float(infomation[13]);
+      parameter.type_index = (int)String_2_Float(infomation[14]);
+      bosses.push_back(parameter);
+      continue;
+    }
+  }
+  return is_all_ok;
+}
+
 std::vector<enemy::Enemy::InitializeParameter>
 StageGenerator::GetEnemyParameters(const i32 turn_count) {
   std::vector<enemy::Enemy::InitializeParameter> enemy_parameters;

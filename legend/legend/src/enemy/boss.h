@@ -57,6 +57,9 @@ class Boss : public enemy::EnemyActor {
   bool is_tutorial_ = false;
   bool is_rotate_ = false;
   bool is_rush_ = false;
+
+  bool is_play_spin_se_;
+  bool is_play_strike_se_;
 };
 
 }  // namespace enemy

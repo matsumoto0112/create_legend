@@ -204,7 +204,9 @@ class Player : public actor::Actor {
   bool is_hit_obstacle_;
   util::CountDownTimer obstacle_hit_timer_;
 
-  util::CountDownTimer se_interval_;
+  util::CountDownTimer power_se_interval_;
+  bool move_start_;
+  bool fall_start_;
 
   PlayerMoveDirectionModel move_direction_;
   std::shared_ptr<draw::particle::ParticleEmitter> player_move_particle_;

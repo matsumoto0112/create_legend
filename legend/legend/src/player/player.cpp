@@ -69,7 +69,9 @@ bool Player::Init(actor::IActorMediator* mediator,
   skill_manager_.Init(mediator_, this);
 
   is_hit_obstacle_ = false;
-  se_interval_.Init(0.0f);
+  power_se_interval_.Init(0.0f);
+  move_start_ = false;
+  fall_start_ = false;
 
   if (!move_direction_.Init()) {
     return false;
@@ -82,8 +84,7 @@ bool Player::Init(actor::IActorMediator* mediator,
 
   //集中線の初期化
   if (!concentrated_line_.Init(
-          resource.GetTexture().Get(
-              resource_name::texture::UI_INTENSIVELINE),
+          resource.GetTexture().Get(resource_name::texture::UI_INTENSIVELINE),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"集中線の画像の初期化に失敗しました。");
     return false;
@@ -179,6 +180,28 @@ bool Player::Update() {
           util::resource::resource_names::texture::PARTICLE_SMOKE_3);
     }
   };
+
+  {
+    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+    if (GetVelocity().y <= -5.0f) {
+      if (!fall_start_) {
+        audio.Start(resource_name::audio::PLAYER_FALL_OUT, 1.0f);
+        fall_start_ = true;
+      }
+    } else {
+      const math::Vector2 velocity(GetVelocity().x, GetVelocity().z);
+      if (velocity.Magnitude() > 0.1f) {
+        if (!move_start_) {
+          audio.Start(resource_name::audio::PLAYER_MOVING, 3.0f);
+          move_start_ = true;
+        }
+      } else {
+        move_start_ = false;
+      }
+
+      fall_start_ = false;
+    }
+  }
 
   ParticleUpdate();
   obstacle_hit_timer_.Update();
@@ -312,9 +335,9 @@ void Player::SetImpulse() {
         up_power_ = true;
       }
     }
-    if (se_interval_.Update()) {
+    if (power_se_interval_.Update()) {
       audio.Start(resource_name::audio::PLAYER_POWER_CHARGE, 1.0f);
-      se_interval_.Init(1.0f);
+      power_se_interval_.Init(1.0f);
     }
   } else {
     is_fullpower_ = (impulse_ >= 0.9f);
@@ -335,6 +358,7 @@ void Player::ResetParameter() {
   is_move_ = false;
   velocity_update_time_ = 0;
   is_fullpower_ = false;
+  power_se_interval_.Init(0.0f);
 }
 
 //座標の取得

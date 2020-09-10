@@ -1,6 +1,8 @@
 BGM_main.wav,1,1
-BGM_title.wav,1,1
 BGM_result.wav,1,1
+BGM_title.wav,1,1
+boss1_spin.wav,1,1
+boss1_strike.wav,1,1
 enemy_turn_end.wav,1,1
 erase_graffiti.wav,1,1
 player_enemy_hit_big.wav,1,1
@@ -17,7 +19,9 @@ player_snap.wav,1,1
 player_turn_end.wav,1,1
 result_move_other_scene.wav,1,1
 skill_decision.wav,1,1
+skill_fitOut_up.wav,1,1
 skill_pencil_hit.wav,1,1
 skill_pencil_shot.wav,1,1
 skill_select.wav,1,1
+stageSelect_select.wav,1,1
 title_decision.wav,1,1

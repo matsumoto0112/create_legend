@@ -1,6 +1,36 @@
+BGM_main.wav
+BGM_result.wav
+BGM_title.wav
+boss1_spin.wav
+boss1_strike.wav
+enemy_turn_end.wav
+erase_graffiti.wav
+log.txt
+player_enemy_hit_big.wav
+player_enemy_hit_small.wav
+player_fall_out.wav
+player_get_fragment.wav
+player_get_stationery.wav
+player_move_select_skill_mode.wav
+player_moving.wav
+player_obstacle_hit.wav
+player_power_charge.wav
+player_return_from_select_skill_mode.wav
+player_snap.wav
+player_turn_end.wav
+result_move_other_scene.wav
+skill_decision.wav
+skill_fitOut_up.wav
+skill_pencil_hit.wav
+skill_pencil_shot.wav
+skill_select.wav
+stageSelect_select.wav
+title_decision.wav
 BGM_main.wav,1,1
-BGM_title.wav,1,1
 BGM_result.wav,1,1
+BGM_title.wav,1,1
+boss1_spin.wav,1,1
+boss1_strike.wav,1,1
 enemy_turn_end.wav,1,1
 erase_graffiti.wav,1,1
 player_enemy_hit_big.wav,1,1
@@ -17,9 +47,11 @@ player_snap.wav,1,1
 player_turn_end.wav,1,1
 result_move_other_scene.wav,1,1
 skill_decision.wav,1,1
+skill_fitOut_up.wav,1,1
 skill_pencil_hit.wav,1,1
 skill_pencil_shot.wav,1,1
 skill_select.wav,1,1
+stageSelect_select.wav,1,1
 title_decision.wav,1,1UI_playerForm_frame,120.000000,112.000000,0.670000,0,
 UI_playerPower_frame,135.000000,236.000000,0.565000,0,
 UI_powerGauge_bg,476.000000,550.000000,0.600000,0,
@@ -8797,5 +8829,4 @@ SùÿI´û  ÀÌ¾,é=3  å¥ oæIXÚ—&   €üVş¯ŠÔ?  éÊ ”Óld   (B`xÂ  P¦N/@å?OLø“(mí¦
 @44Æ¯ü{{LŸ½œÊ Àh—PÔ(wMËÃ?38-“;o¦c¼?€D)Êp=çÜ“fvTÒLŠåê¥Şhâi5RMíØ•yv¹â£/Hÿv/oü ’«¨O¯rœ ˆ> ˜HvXà¡â @A@Y­@   H£)ÅŞ¡sn
 Å @Ê€aRô  ¤, pÎ”t5Å @º2 rÎuHú:?  )
  †ƒ€Jú?  E®ƒËá Ìì
-I”bßŒ   ”6˜&i€   € #¢Î@   H£²“?<OÀùi  HQ 0œ)égü<  ¨®-çƒ3³)’Ş.äqÒ   P~™€¡á&ƒüT  ¤$0FFàÏùZÈ   È ”{´âÜi’¾ Éøé  HI 0Ü7Ü,ğ]  bÖ§I?3k•ôÏqÏ…&   @²3%½*i*   ›R)'âœ{Ë9÷>çœ“´RÑğA  PÉ€	2ó$=(©v¬ó%   P‰sûsç9ç¦gÎt»¤¢!                                                                                                                                                                                                “ÿ¿rµ1dYÅ    IEND®B`‚G       j     parameters/audio_list.txtj       parameters/main_ui.txtù  ì     parameters/pipeline.txtå  8     stage/stage_01.txt  ,     stage/stage_01_searchData.txtI  Í	     stage/stage_02.txt  ¯     stage/stage_02_searchData.txtÅ  ‚     stage/stage_03.txtG+       stage/stage_03_searchData.txte.  ¸     stage/tutorial_01.txt3  X      stage/tutorial_01_searchData.txtu5  w      textures/fade_image.pngì5  r  !   textures/Particle_fallLocus_1.png^7    !   textures/Particle_fallLocus_2.pngİ9  ¯     textures/Particle_smoke_1.pngŒN  >'     textures/Particle_smoke_2.pngÊu  v     textures/Particle_smoke_3.png@’  ›	      textures/Particle_sparking_1.pngÛ›  Ù      textures/Particle_sparking_2.png´¨  x      textures/Particle_sparking_3.png,¿  á     textures/Result_gameOver.png«  r	  &   textures/Result_playerPower_text_1.pngª   &   textures/Result_playerPower_text_2.png<­ s    textures/Result_stageClear.png¯³   $   textures/Result_totalTurn_text_1.png.¹ Ú  $   textures/Result_totalTurn_text_2.png¼    #   textures/StageSelect_arrow_left.png(Ø ¿  $   textures/StageSelect_arrow_right.pngçô ?    textures/StageSelect_back.png&…   $   textures/StageSelect_stage_frame.png§ ¬J '   textures/StageSelect_stage_frame_01.pngSØ ÕÌ '   textures/StageSelect_stage_frame_02.png(¥ [D '   textures/StageSelect_stage_frame_03.pngƒé í '   textures/StageSelect_stage_frame_04.png–Ö 4     textures/TItle_logo.pngÊf a  #   textures/Title_pushButton_guide.png+l 6     textures/UI_IntensiveLine.pngD¢ Æ     textures/UI_number_1.png
-¥ ó     textures/UI_number_2.pngı§ Ï      textures/UI_playerForm_frame.pngÌ« 0  !   textures/UI_playerForm_player.pngüº È  "   textures/UI_playerForm_skill_1.pngÄĞ +  "   textures/UI_playerForm_skill_2.pngïî ¸  !   textures/UI_playerPower_frame.png§ñ Ä  (   textures/UI_playerPower_gauge_0to100.pngk  &  *   textures/UI_playerPower_gauge_101to200.png‘"  ™  *   textures/UI_playerPower_gauge_201to300.png*;  œ  '   textures/UI_playerPower_gauge_frame.pngÆ?  ä     textures/UI_player_estimate.pngªA  ?€    textures/UI_pose_back.pngéÁ! ¹	     textures/UI_powerGauge.png¢Ë!      textures/UI_powerGauge_bg.png®Ì! ä   &   textures/UI_powerGauge_blurryPoint.png’Í! ?      textures/UI_powerGauge_frame.pngÑÎ! ¡     textures/UI_remainTurn_boss.pngrÒ!      textures/UI_remainTurn_line.pngtÓ! e  !   textures/UI_remainTurn_player.pngÙÔ! ù  !   textures/UI_skill_explanation.pngÒÖ! õh  #   textures/UI_skill_explanation_1.pngÇ?" vG  #   textures/UI_skill_explanation_2.png=‡"      textures/UI_skill_frame.pngZˆ"   !   textures/UI_skill_frame_whole.pngø‰" ƒ     textures/UI_skill_icon_1.png{" ‚     textures/UI_skill_icon_2.pngı" µ  "   textures/UI_skill_icon_2_using.png²”" ^     textures/UI_skill_icon_3.png–" Ê     textures/UI_skill_icon_4.pngÚ˜" å     textures/UI_skill_icon_5.png¿›"   "   textures/UI_skill_select_frame.pngÛœ" N      textures/UI_turnChange_enemy.png)¯" €  !   textures/UI_turnChange_player.png©Æ" 
+I”bßŒ   ”6˜&i€   € #¢Î@   H£²“?<OÀùi  HQ 0œ)égü<  ¨®-çƒ3³)’Ş.äqÒ   P~™€¡á&ƒüT  ¤$0FFàÏùZÈ   È ”{´âÜi’¾ Éøé  HI 0Ü7Ü,ğ]  bÖ§I?3k•ôÏqÏ…&   @²3%½*i*   ›R)'âœ{Ë9÷>çœ“´RÑğA  PÉ€	2ó$=(©v¬ó%   P‰sûsç9ç¦gÎt»¤¢!                                                                                                                                                                                                “ÿ¿rµ1dYÅ    IEND®B`‚H       L     audios/log.txtL  É     parameters/audio_list.txt       parameters/main_ui.txt¤  ì     parameters/pipeline.txt	  8     stage/stage_01.txtÈ  ,     stage/stage_01_searchData.txtô  Í	     stage/stage_02.txtÁ  ¯     stage/stage_02_searchData.txtp!  ‚     stage/stage_03.txtò-       stage/stage_03_searchData.txt1  ¸     stage/tutorial_01.txtÈ5  X      stage/tutorial_01_searchData.txt 8  w      textures/fade_image.png—8  r  !   textures/Particle_fallLocus_1.png	:    !   textures/Particle_fallLocus_2.pngˆ<  ¯     textures/Particle_smoke_1.png7Q  >'     textures/Particle_smoke_2.pngux  v     textures/Particle_smoke_3.pngë”  ›	      textures/Particle_sparking_1.png†  Ù      textures/Particle_sparking_2.png_«  x      textures/Particle_sparking_3.png×Á  á     textures/Result_gameOver.pngV£ r	  &   textures/Result_playerPower_text_1.pngÈ¬   &   textures/Result_playerPower_text_2.pngç¯ s    textures/Result_stageClear.pngZ¶   $   textures/Result_totalTurn_text_1.pngÙ» Ú  $   textures/Result_totalTurn_text_2.png³¾    #   textures/StageSelect_arrow_left.pngÓÚ ¿  $   textures/StageSelect_arrow_right.png’÷ ?    textures/StageSelect_back.pngÑ‡   $   textures/StageSelect_stage_frame.pngR ¬J '   textures/StageSelect_stage_frame_01.pngşÚ ÕÌ '   textures/StageSelect_stage_frame_02.pngÓ§ [D '   textures/StageSelect_stage_frame_03.png.ì í '   textures/StageSelect_stage_frame_04.pngAÙ 4     textures/TItle_logo.pngui a  #   textures/Title_pushButton_guide.pngÖn 6     textures/UI_IntensiveLine.pngï¤ Æ     textures/UI_number_1.pngµ§ ó     textures/UI_number_2.png¨ª Ï      textures/UI_playerForm_frame.pngw® 0  !   textures/UI_playerForm_player.png§½ È  "   textures/UI_playerForm_skill_1.pngoÓ +  "   textures/UI_playerForm_skill_2.pngšñ ¸  !   textures/UI_playerPower_frame.pngRô Ä  (   textures/UI_playerPower_gauge_0to100.png  &  *   textures/UI_playerPower_gauge_101to200.png<%  ™  *   textures/UI_playerPower_gauge_201to300.pngÕ=  œ  '   textures/UI_playerPower_gauge_frame.pngqB  ä     textures/UI_player_estimate.pngUD  ?€    textures/UI_pose_back.png”Ä! ¹	     textures/UI_powerGauge.pngMÎ!      textures/UI_powerGauge_bg.pngYÏ! ä   &   textures/UI_powerGauge_blurryPoint.png=Ğ! ?      textures/UI_powerGauge_frame.png|Ñ! ¡     textures/UI_remainTurn_boss.pngÕ!      textures/UI_remainTurn_line.pngÖ! e  !   textures/UI_remainTurn_player.png„×! ù  !   textures/UI_skill_explanation.png}Ù! õh  #   textures/UI_skill_explanation_1.pngrB" vG  #   textures/UI_skill_explanation_2.pngè‰"      textures/UI_skill_frame.png‹"   !   textures/UI_skill_frame_whole.png£Œ" ƒ     textures/UI_skill_icon_1.png&" ‚     textures/UI_skill_icon_2.png¨“" µ  "   textures/UI_skill_icon_2_using.png]—" ^     textures/UI_skill_icon_3.png»˜" Ê     textures/UI_skill_icon_4.png…›" å     textures/UI_skill_icon_5.pngj"   "   textures/UI_skill_select_frame.png†Ÿ" N      textures/UI_turnChange_enemy.pngÔ±" €  !   textures/UI_turnChange_player.pngTÉ" 

@@ -174,15 +174,14 @@ void Boss::Boss_Tutorial() {
       }
 
       if (box_->GetVelocity().Magnitude() > 0.1f) {
-          if (!is_play_strike_se_) {
-              auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-              audio.Start(util::resource::resource_names::audio::BOSS1_STRIKE,
-                  1.0f);
-              is_play_strike_se_ = true;
-          }
-      }
-      else {
-          is_play_strike_se_ = false;
+        if (!is_play_strike_se_) {
+          auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+          audio.Start(util::resource::resource_names::audio::BOSS1_STRIKE,
+                      2.0f);
+          is_play_strike_se_ = true;
+        }
+      } else {
+        is_play_strike_se_ = false;
       }
     }
 
@@ -214,7 +213,7 @@ void Boss::Boss_Rotate_Stand() {
     if (box_->GetAngularVelocity().Magnitude() > 0.1f) {
       if (!is_play_spin_se_) {
         auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-        audio.Start(util::resource::resource_names::audio::BOSS1_SPIN, 1.0f);
+        audio.Start(util::resource::resource_names::audio::BOSS1_SPIN, 3.0f);
         is_play_spin_se_ = true;
       }
     } else {
@@ -272,7 +271,7 @@ void Boss::Boss_Rush_Move() {
       if (box_->GetAngularVelocity().Magnitude() > 0.1f) {
         if (!is_play_spin_se_) {
           auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-          audio.Start(util::resource::resource_names::audio::BOSS1_SPIN, 1.0f);
+          audio.Start(util::resource::resource_names::audio::BOSS1_SPIN, 3.0f);
           is_play_spin_se_ = true;
         }
       } else {
@@ -308,7 +307,7 @@ void Boss::Boss_Rush_Move() {
         if (!is_play_strike_se_) {
           auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
           audio.Start(util::resource::resource_names::audio::BOSS1_STRIKE,
-                      1.0f);
+                      2.0f);
           is_play_strike_se_ = true;
         }
       } else {

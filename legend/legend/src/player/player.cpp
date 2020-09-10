@@ -183,7 +183,7 @@ bool Player::Update() {
 
   {
     auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-    if (GetVelocity().y <= -0.5f) {
+    if (GetVelocity().y <= -5.0f) {
       if (!fall_start_) {
         audio.Start(resource_name::audio::PLAYER_FALL_OUT, 1.0f);
         fall_start_ = true;

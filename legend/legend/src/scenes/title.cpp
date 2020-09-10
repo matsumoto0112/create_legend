@@ -213,16 +213,20 @@ bool Title::Update() {
     if (stage_image_moving) {
       if (stage_move_select_timer_.Update()) {
         stage_select_move_direction_ = StageSelectMoveDirection::NONE;
-        is_play_se_ = false;
       }
       if (!is_play_se_) {
-        audio.Start(util::resource::resource_names::audio::STAGESELECT_SELECT,
-                    1.0f);
+        ////再生処理は通っているがこのSEだけ再生されてない(?)
+        // audio.Start(util::resource::resource_names::audio::STAGESELECT_SELECT,
+        //            1.0f);
+        //代用で再生
+        audio.Start(util::resource::resource_names::audio::SKILL_SELECT, 1.0f);
         is_play_se_ = true;
       }
       UpdateStageItems(GetLerpT());
 
       return;
+    } else {
+      is_play_se_ = false;
     }
     //決定キーでフェードを開始し、シーンを終了する
     if (const bool input_decide = input.GetCommand(input::input_code::Decide);

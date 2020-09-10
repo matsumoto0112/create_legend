@@ -46,6 +46,13 @@ class StageGenerator {
       std::vector<enemy::Enemy::InitializeParameter>& enemys,
       std::vector<enemy::Boss::InitializeParameter>& bosses);
 
+  bool GetResultActors(
+      player::Player::InitializeParameter& player,
+      std::vector<object::Desk::InitializeParameter>& desks,
+      std::vector<object::Obstacle::InitializeParameter>& obstacles,
+      std::vector<enemy::Enemy::InitializeParameter>& enemys,
+      std::vector<enemy::Boss::InitializeParameter>& bosses);
+
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);
 

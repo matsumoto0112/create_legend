@@ -8,6 +8,10 @@
 #include "src/player/player.h"
 #include "src/util/resource/resource_names.h"
 
+namespace {
+float g = -9.8f;
+}
+
 namespace legend {
 namespace skill {
 namespace resource_name = util::resource::resource_names;
@@ -57,6 +61,7 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   params.mass = 0.0f;
 
   box_ = std::make_shared<bullet::BoundingBox>(this, params);
+  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
   box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
   mediator_->AddCollider(box_);
 
@@ -126,29 +131,20 @@ void SkillPencil::Action() {
       transform_.GetPosition() + math::Vector3::kUpVector * 2.0f;
   transform_.SetPosition(position);
 
-  //一度コライダーを削除して、新たに設定し追加する
-  mediator_->RemoveCollider(box_);
-  bullet::BoundingBox::InitializeParameter params;
-  params.position = transform_.GetPosition();
-  params.rotation = transform_.GetRotation();
-  params.scale = math::Vector3(0.5f, 0.5f, 5.0f);
-  params.mass = 0.1f;
-
-  box_ = std::make_shared<bullet::BoundingBox>(this, params);
-  box_->SetCollisionCallBack([&](bullet::Collider* other) { OnHit(other); });
-  box_->SetFlags(box_->GetFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-  mediator_->AddCollider(box_);
-  math::Vector3 velocity = math::Matrix4x4::MultiplyCoord(
+  velocity_ = math::Matrix4x4::MultiplyCoord(
       math::Vector3::kForwardVector + math::Vector3::kUpVector,
       math::Matrix4x4::CreateRotationY(-shoot_theta_));
-  //コライダーを正面上方向に弾く
-  box_->ApplyCentralImpulse(velocity);
+  velocity_.y += g * 0.5f;
 }
 
 //演出の更新
 void SkillPencil::ProductionUpdate() {
-  math::Vector3 target = box_->GetVelocity() - transform_.GetPosition();
-  transform_.SetRotation(LookAt(target));
+  float update_time =
+      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  velocity_.y = velocity_.y * update_time + 0.5f * (g * update_time);
+  transform_.SetPosition(transform_.GetPosition() + velocity_);
+  transform_.SetRotation(LookAt(velocity_));
   box_->SetTransform(transform_);
 
   if (transform_.GetPosition().y <= -2.0f) EndAction();

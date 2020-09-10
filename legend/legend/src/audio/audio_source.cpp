@@ -184,6 +184,11 @@ std::wstring AudioSource::GetFilePath() { return file_path_; }
 
 std::wstring AudioSource::GetFileName() { return file_name_; }
 
+AudioType AudioSource::GetAudioType()
+{
+    return audio_type_;
+}
+
 bool AudioSource::LoadSplit(IXAudio2* p_xaudio2, std::wstring filepath) {
   buffer_ = NULL;
   buffer_count_ = 0;

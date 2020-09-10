@@ -3,8 +3,11 @@
 namespace legend {
 namespace audio {
 
-legend::audio::AudioManager::AudioManager() : master_volume_(1.0f) {
+legend::audio::AudioManager::AudioManager() {
   path_ = util::Path::GetInstance()->exe() / L"assets" / L"audios";
+  master_volume_ = 1.0f;
+  bgm_volume_ = 0.75f;
+  se_volume_ = 1.0f;
 }
 
 legend::audio::AudioManager::~AudioManager() {
@@ -90,7 +93,12 @@ i32 AudioManager::Start(std::wstring filename, float volume, bool loop) {
   audiosources_[play_count_]->Copy(p_xaudio2_, *base_audiosources_[filename]);
   // audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
   audiosources_[play_count_]->SetLoopFlag(loop);
-  audiosources_[play_count_]->SetVolume(volume, master_volume_);
+
+  float type_volume =
+      base_audiosources_[filename]->GetAudioType() == AudioType::BGM
+          ? bgm_volume_
+          : se_volume_;
+  audiosources_[play_count_]->SetVolume(volume, master_volume_ * type_volume);
   audiosources_[play_count_]->SetPitch(1.0f);
   audiosources_[play_count_]->Play();
 
@@ -136,7 +144,25 @@ void AudioManager::SetMasterVolume(float volume) {
   }
 }
 
+void AudioManager::SetBGMVolume(float volume) {
+  bgm_volume_ = volume;
+  for (auto&& audio : audiosources_) {
+    SetVolume(audio.first, audio.second->GetVolume());
+  }
+}
+
+void AudioManager::SetSEVolume(float volume) {
+  se_volume_ = volume;
+  for (auto&& audio : audiosources_) {
+    SetVolume(audio.first, audio.second->GetVolume());
+  }
+}
+
 float AudioManager::GetMasterVolume() { return master_volume_; }
+
+float AudioManager::GetBGMVolume() { return bgm_volume_; }
+
+float AudioManager::GetSEVolume() { return se_volume_; }
 
 void AudioManager::SetVolume(i32 key, float volume) {
   //エラーチェック
@@ -144,7 +170,12 @@ void AudioManager::SetVolume(i32 key, float volume) {
     MY_LOG(L"存在しないキーが指定されました。\n");
     return;
   }
-  audiosources_[key]->SetVolume(volume, master_volume_);
+
+  float type_volume = audiosources_[key]->GetAudioType() == AudioType::BGM
+                          ? bgm_volume_
+                          : se_volume_;
+
+  audiosources_[key]->SetVolume(volume, master_volume_ * type_volume);
 }
 
 void AudioManager::SetLoopFlag(i32 key, bool loop) {

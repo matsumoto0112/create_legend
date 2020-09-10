@@ -175,6 +175,8 @@ void ActorManager::AddFragment(std::unique_ptr<object::Fragment> fragment) {
   add_static_actors_.emplace_back(std::move(fragment));
 }
 
+bool ActorManager::IsHitStopNow() { return hit_stop_time_ > 0; }
+
 bool ActorManager::GenerateActors(i32 currnt_turn) {
   {
     player::Player::InitializeParameter player;
@@ -292,7 +294,7 @@ i32 legend::actor::ActorManager::GetEnemiesSize() {
 }
 
 bool legend::actor::ActorManager::IsAllActorStop() {
-    return IsPlayerStop() && IsAllEnemeyStop();
+  return IsPlayerStop() && IsAllEnemeyStop();
 }
 
 enemy::EnemyManager* legend::actor::ActorManager::GetEnemyManager() {

@@ -62,11 +62,27 @@ class AudioManager {
    */
   void SetMasterVolume(float volume);
   /**
+   * @brief マスター音量の設定
+   */
+  void SetBGMVolume(float volume);
+  /**
+   * @brief マスター音量の設定
+   */
+  void SetSEVolume(float volume);
+  /**
    * @brief マスター音量の取得
    */
   float GetMasterVolume();
   /**
-   * @brief 音量の設定
+   * @brief BGM音量の取得
+   */
+  float GetBGMVolume();
+  /**
+   * @brief SE音量の取得
+   */
+  float GetSEVolume();
+  /**
+   * @brief 個別の音量の設定
    */
   void SetVolume(i32 key, float volume);
   /**
@@ -107,6 +123,10 @@ class AudioManager {
 
   //! 全体の音量
   float master_volume_;
+  //! BGMの音量
+  float bgm_volume_;
+  //! SEの音量
+  float se_volume_;
 };
 
 }  // namespace audio

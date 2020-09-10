@@ -115,7 +115,9 @@ class Sprite2D {
   //! トランスフォーム行列バッファ
   directx::buffer::ConstantBuffer<Transform_CBStruct>
       transform_constant_buffer_;
+  //! UV矩形バッファ
   directx::buffer::ConstantBuffer<UVRect_CBStruct> uv_rect_constant_buffer_;
+  //! 色情報バッファ
   directx::buffer::ConstantBuffer<Color_CBStruct> color_constant_buffer_;
 };
 }  // namespace draw

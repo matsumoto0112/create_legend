@@ -3,6 +3,7 @@
 
 /**
  * @file rect.h
+ * @brief 矩形クラス定義
  */
 
 namespace legend {

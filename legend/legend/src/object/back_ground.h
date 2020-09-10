@@ -3,7 +3,7 @@
 
 /**
  * @file back_ground.h
- * @brief
+ * @brief 背景オブジェクト
  */
 
 #include "src/directx/buffer/constant_buffer.h"
@@ -12,6 +12,7 @@
 
 namespace legend {
 namespace object {
+//背景の種類
 namespace bg_type {
 enum Enum {
   LEFT,
@@ -23,6 +24,10 @@ enum Enum {
   MAX
 };
 }  // namespace bg_type
+
+/**
+ * @brief 背景オブジェクト
+ */
 class BackGround {
  private:
  public:
@@ -30,7 +35,7 @@ class BackGround {
   ~BackGround();
   bool Init();
   void Draw(
-      const std::wstring& pipeline_name =
+      std::wstring_view pipeline_name =
           util::resource::resource_names::pipeline::DIFFERED_RENDERING_PRE);
 
  private:

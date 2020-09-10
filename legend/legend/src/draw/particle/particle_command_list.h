@@ -35,7 +35,9 @@ class ParticleCommandList {
    * @return 初期化に成功したらtrueを返す
    */
   bool Init(directx::device::IDirectXAccessor& accessor, u32 frame_count);
-
+  /**
+   * @brief パーティクルを作成する
+   */
   template <class T, class... Args>
   std::shared_ptr<T> CreateParticle(
       directx::device::CommandList& command_list,

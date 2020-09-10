@@ -31,6 +31,9 @@ class ParticleEmitter {
       directx::buffer::ConstantBuffer<shader::gpu_particle::ParticleInfo>;
 
  public:
+  /**
+   * @brief パーティクルの定数パラメータ
+   */
   struct ParticleConstData {
     u32 particle_max_size;
     u32 particle_structure_size;

@@ -43,8 +43,8 @@ bool SkillCompass::Init(actor::IActorMediator* mediator,
   player_ = player;
 
   SetName(skill_name::SKILLCOMPASS);
-  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector);
-  transform_.SetRotation(player->GetRotation());
+  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
+  transform_.SetRotation(player_->GetRotation());
   transform_.SetScale(math::Vector3::kUnitVector);
 
   bullet::BoundingBox::InitializeParameter params;
@@ -71,11 +71,11 @@ bool SkillCompass::Init(actor::IActorMediator* mediator,
 
   //スキル説明のテクスチャ設定
   skill_explanation_texture_ =
-      resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION_1);
+      resource.GetTexture().Get(resource_name::texture::UI_SKILL_EXPLANATION_4);
 
   //装備用テクスチャ設定
   equipment_texture_ =
-      resource.GetTexture().Get(resource_name::texture::UI_PLAYERFORM_SKILL_1);
+      resource.GetTexture().Get(resource_name::texture::UI_PLAYERFORM_SKILL_4);
 
   return true;
 }
@@ -170,7 +170,6 @@ void SkillCompass::OnHit(bullet::Collider* other) {
       math::Vector3 direction =
           (enemy_position - explosion_position).Normalized();
       direction = direction * flip_off_power_;
-      //値は適当
       direction.y = 2.0f;
 
       enemy->GetCollider()->ApplyCentralImpulse(direction);
@@ -184,7 +183,6 @@ void SkillCompass::OnHit(bullet::Collider* other) {
       math::Vector3 direction =
           (boss_position - explosion_position).Normalized();
       direction = direction * flip_off_power_;
-      //値は適当
       direction.y = 2.0f;
 
       boss->GetCollider()->ApplyCentralImpulse(direction * 0.5f);

@@ -6,6 +6,13 @@
 #include "src/game/game_device.h"
 #include "src/util/resource/resource_names.h"
 
+namespace {
+//! 拡大速度
+const float spread_speed = 2.0f;
+//! 最大半径
+const float max_radius = 20.0f;
+}  // namespace
+
 namespace legend {
 namespace skill {
 //コンストラクタ
@@ -47,11 +54,16 @@ void ExplosionPencil::Init(util::Transform transform,
 
 //更新
 bool ExplosionPencil::Update() {
-  radius_ +=
-      10.0f *
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  //再生成しているためか、一度格納したコライダーを取り除いて
-  //格納し直さないとうまく出来なかった
+  if (radius_ >= max_radius) {
+    return true;
+  }
+
+  radius_ += 10.0f *
+             game::GameDevice::GetInstance()
+                 ->GetFPSCounter()
+                 .GetDeltaSeconds<float>() *
+             spread_speed;
+
   mediator_->RemoveCollider(sphere_);
   float mass = 0.0f;
   sphere_->SetScale(radius_, mass);
@@ -72,7 +84,6 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 direction =
           (enemy_position - explosion_position).Normalized();
       direction = direction * explosion_power_;
-      //値は適当
       direction.y = 2.0f;
 
       enemy->GetCollider()->ApplyCentralImpulse(direction);
@@ -86,7 +97,6 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       math::Vector3 direction =
           (boss_position - explosion_position).Normalized();
       direction = direction * explosion_power_;
-      //値は適当
       direction.y = 2.0f;
 
       boss->GetCollider()->ApplyCentralImpulse(direction * 0.5f);

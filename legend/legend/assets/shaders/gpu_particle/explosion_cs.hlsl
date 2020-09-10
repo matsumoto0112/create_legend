@@ -107,11 +107,11 @@ void UpdateParticle(uint addr) {
   const float3 velocity = GetVelocity(addr);
 
   float3 pos = GetPosition(addr);
-  pos += velocity * g_global.delta_time;
+  pos += velocity * g_global.delta_time * 2.0;
   SetPosition(addr, pos);
 
   float3 scale = GetScale(addr);
-  scale += 15.0 * g_global.delta_time;
+  scale += 15.0 * g_global.delta_time * 2.0;
   SetScale(addr, scale);
 }
 

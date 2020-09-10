@@ -87,6 +87,7 @@ bool Application::Init() {
   }
 
   game::GameDevice::GetInstance()->GetAudioManager().SetMasterVolume(0.25f);
+  game::GameDevice::GetInstance()->GetAudioManager().SetBGMVolume(0.5f);
   return true;
 }
 

@@ -24,7 +24,7 @@ bool MainScene1::Initialize() {
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   bgm_ =
-      audio.Start(util::resource::resource_names::audio::BGM_MAIN, 1.0f, true);
+      audio.Start(util::resource::resource_names::audio::BGM_MAIN, 0.25f, true);
 
   return true;
 }

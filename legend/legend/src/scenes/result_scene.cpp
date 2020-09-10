@@ -198,10 +198,20 @@ bool ResultScene::LoadStageData(
   for (i32 i = 0; i < result_data.play_turn; i++) {
     for (auto&& param : stage_generator_.GetEnemyParameters(i)) {
       util::Transform transform = param.transform;
-      float pos_x =
-          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
-      float pos_z =
-          game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+
+      float pos_x = 0.0f;
+      float pos_z = 0.0f;
+      if (stage_data.stage_name == "tutorial_01") {
+        pos_x =
+            game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
+        pos_z =
+            game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
+      } else {
+        pos_x =
+            game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+        pos_z =
+            game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+      }
       transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
       float rotate =
           game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
@@ -222,10 +232,19 @@ bool ResultScene::LoadStageData(
     }
     for (auto&& boss : stage_generator_.GetBossParameters(i)) {
       util::Transform transform = boss.transform;
-      float pos_x =
-          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
-      float pos_z =
-          game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+      float pos_x = 0.0f;
+      float pos_z = 0.0f;
+      if (stage_data.stage_name == "tutorial_01") {
+        pos_x =
+            game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
+        pos_z =
+            game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
+      } else {
+        pos_x =
+            game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+        pos_z =
+            game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+      }
       transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
       float rotate =
           game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);

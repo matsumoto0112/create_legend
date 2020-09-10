@@ -7,7 +7,7 @@
 namespace legend {
 namespace actor {
 
-const wchar_t* Actor::PIPELINE_NAME =
+const wchar_t* Actor::DEFAULT_PIPELINE_NAME =
     util::resource::resource_names::pipeline::DIFFERED_RENDERING_PRE;
 
 Actor::Actor(const std::wstring& name) : name_(name) {}
@@ -37,7 +37,7 @@ void Actor::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  resource.GetPipeline().Get(PIPELINE_NAME)->SetCommandList(command_list);
+  resource.GetPipeline().Get(DEFAULT_PIPELINE_NAME)->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();

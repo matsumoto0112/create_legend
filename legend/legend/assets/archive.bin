@@ -1,6 +1,6 @@
-BGM_main.wav,1,1
-BGM_result.wav,1,1
-BGM_title.wav,1,1
+BGM_main.wav,0,1
+BGM_result.wav,0,1
+BGM_title.wav,0,1
 boss1_spin.wav,1,1
 boss1_strike.wav,1,1
 enemy_turn_end.wav,1,1

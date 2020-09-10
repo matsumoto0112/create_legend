@@ -3,7 +3,7 @@
 
 /**
  * @file actor_mediator.h
- * @brief
+ * @brief アクターの仲介者
  */
 
 #include "src/bullet/collider.h"

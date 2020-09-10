@@ -122,7 +122,6 @@
     <ClCompile Include="src\skill\skill_item_box.cpp" />
     <ClCompile Include="src\skill\explosion_pencil.cpp" />
     <ClCompile Include="src\scenes\fade_in_out.cpp" />
-    <ClCompile Include="src\actor\actor_render_command_list.cpp" />
     <ClCompile Include="src\scenes\result_scene.cpp" />
     <ClCompile Include="src\skill\skill_paste_stick.cpp" />
     <ClCompile Include="src\skill\skill_paste.cpp" />
@@ -137,6 +136,7 @@
     <ClCompile Include="src\camera\lookat_target_camera.cpp" />
     <ClCompile Include="src\turn_change\turn_change.cpp" />
     <ClCompile Include="src\skill\skill_compass.cpp" />
+    <ClCompile Include="src\actor\differed_rendering_render_command_list.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h" />
@@ -309,7 +309,6 @@
     <ClInclude Include="src\skill\explosion_pencil.h" />
     <ClInclude Include="src\scenes\fade_in_out.h" />
     <ClInclude Include="src\bullet\shape_type.h" />
-    <ClInclude Include="src\actor\actor_render_command_list.h" />
     <ClInclude Include="src\scenes\result_scene.h" />
     <ClInclude Include="src\draw\particle\particle_factory.h" />
     <ClInclude Include="assets\shaders\gpu_particle\gpu_particle.h" />
@@ -334,6 +333,7 @@
     <ClInclude Include="assets\shaders\gpu_particle\enemy_move_particle.h" />
     <ClInclude Include="src\skill\skill_compass.h" />
     <ClInclude Include="assets\shaders\gpu_particle\explosion.h" />
+    <ClInclude Include="src\actor\differed_rendering_render_command_list.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

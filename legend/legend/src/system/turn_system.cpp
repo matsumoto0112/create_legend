@@ -116,24 +116,6 @@ bool TurnSystem::Init(const std::string& stage_name) {
   is_scene_end_fade_start_ = false;
 
   auto& device = game::GameDevice::GetInstance()->GetDevice();
-  {
-    const std::vector<directx::Sprite> vertices = {
-        {{-1.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-        {{1.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
-    };
-    const u32 size = static_cast<u32>(vertices.size());
-    vertex_buffer_.Init(device, sizeof(directx::Sprite), size, L"VB");
-    vertex_buffer_.WriteBufferResource(vertices.data());
-  }
-  {
-    const std::vector<u16> indices = {0, 1, 2, 0, 2, 3};
-    const u32 size = static_cast<u32>(indices.size());
-    index_buffer_.Init(device, sizeof(u16), size,
-                       directx::PrimitiveTopology::TRIANGLE_LIST, L"IB");
-    index_buffer_.WriteBufferResource(indices.data());
-  }
 
   if (!light_cb_.Init(
           device,
@@ -371,9 +353,8 @@ bool TurnSystem::ToEnemyTurn() {
   return turn_change_.ChangeStart(Mode::ENEMY_MOVING);
 }
 
-i32 TurnSystem::GetBossGenerateTurn()
-{
-    return actor_manager_.GetBossGenerateTurn();
+i32 TurnSystem::GetBossGenerateTurn() {
+  return actor_manager_.GetBossGenerateTurn();
 }
 
 //描画
@@ -394,35 +375,10 @@ void TurnSystem::Draw() {
   auto& render_resource_manager = device.GetRenderResourceManager();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
-  // Differed-Rendering用G-Buffer生成
-  actor_manager_.DrawDifferedRenderingObject(command_list);
-
-  render_resource_manager.SetRenderTargets(command_list,
-                                           RenderTargetID::BACK_BUFFER, true,
-                                           DepthStencilTargetID::NONE, true);
-
-  // Differed-Rendering描画
-  resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::DIFFERED_RENDERING)
-      ->SetCommandList(command_list);
-  render_resource_manager.UseAsSRV(device, command_list,
-                                   RenderTargetID::DIFFERED_RENDERING_PRE,
-                                   TextureRegisterID::G_BUFFER_WORLD_POSITION);
-  render_resource_manager.UseAsSRV(device, command_list,
-                                   RenderTargetID::DIFFERED_RENDERING_PRE,
-                                   TextureRegisterID::G_BUFFER_WORLD_NORMAL);
-  render_resource_manager.UseAsSRV(device, command_list,
-                                   RenderTargetID::DIFFERED_RENDERING_PRE,
-                                   TextureRegisterID::G_BUFFER_DIFFUSE);
-
   light_cb_.RegisterHandle(device, ConstantBufferRegisterID::LIGHT);
 
-  device.GetHeapManager().SetHeapTableToGraphicsCommandList(device,
-                                                            command_list);
-
-  vertex_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.SetGraphicsCommandList(command_list);
-  index_buffer_.Draw(command_list);
+  // Differed-Rendering用G-Buffer生成
+  actor_manager_.DrawDifferedRenderingObject(command_list);
 
   //その他オブジェクト描画
   game::GameDevice::GetInstance()->GetParticleCommandList().RenderParticle(

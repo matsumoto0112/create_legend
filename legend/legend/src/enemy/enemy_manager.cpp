@@ -50,7 +50,7 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   return true;
 }
 
-void EnemyManager::Draw(actor::ActorRenderCommandList* render_command_list) {
+void EnemyManager::Draw(actor::DifferedRenderingRenderCommandList* render_command_list) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     render_command_list->Push(enemys_[i].get());
   }

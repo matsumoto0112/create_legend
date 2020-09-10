@@ -1,9 +1,15 @@
 #ifndef LEGEND_ACTOR_ACTOR_MANAGER_H_
 #define LEGEND_ACTOR_ACTOR_MANAGER_H_
+
+/**
+ * @file actor_manager.h
+ * @brief アクターの管理者
+ */
+
 #include <set>
 
 #include "src/actor/actor_mediator.h"
-#include "src/actor/actor_render_command_list.h"
+#include "src/actor/differed_rendering_render_command_list.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/camera_manager.h"
 #include "src/enemy/enemy_manager.h"
@@ -22,6 +28,9 @@ class TurnSystem;
 }  // namespace system
 namespace actor {
 
+/**
+ * @brief アクターの管理者
+ */
 class ActorManager : public actor::IActorMediator {
  public:
   /**
@@ -35,6 +44,7 @@ class ActorManager : public actor::IActorMediator {
   /**
    * @brief 初期化
    * @param stage_name ステージ名
+   * @param turn_system_ ターン管理オブジェクト
    */
   bool Init(const std::string& stage_name, system::TurnSystem* turn_system_);
   /**
@@ -42,11 +52,20 @@ class ActorManager : public actor::IActorMediator {
    */
   bool Update();
   /**
-   * @brief 描画処理
+   * @brief Differed-Renderingによるアクターの描画処理
    */
   void DrawDifferedRenderingObject(directx::device::CommandList& command_list);
+  /**
+   * @brief Alphaオブジェクトの描画処理
+   */
   void DrawAlphaObject(directx::device::CommandList& command_list);
+  /**
+   * @brief 2Dオブジェクト描画処理
+   */
   void Draw2D(directx::device::CommandList& command_list);
+  /**
+  * @brief 描画終了
+  */
   void DrawEnd();
 
   /**
@@ -157,7 +176,7 @@ class ActorManager : public actor::IActorMediator {
   std::set<Actor*> remove_alpha_actors_;
   std::set<Actor*> remove_static_actors_;
 
-  actor::ActorRenderCommandList actor_render_command_list_;
+  actor::DifferedRenderingRenderCommandList actor_render_command_list_;
 
   //ターンシステムのポインタ
   system::TurnSystem* turn_system_;

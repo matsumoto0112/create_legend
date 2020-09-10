@@ -15,15 +15,36 @@
 
 namespace legend {
 namespace directx {
+/**
+ * bullet用デバッグ描画クラス
+ */
 class BulletDebugDraw : public btIDebugDraw {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   BulletDebugDraw();
+  /**
+   * @brief デストラクタ
+   */
   virtual ~BulletDebugDraw();
+  /**
+   * @brief 初期化
+   */
   bool Init(ID3D12Device* device);
+  /**
+   * @brief 描画
+   */
   void Render(const math::Matrix4x4& view, const math::Matrix4x4& projection,
               device::CommandList& command_list);
+  /**
+   * @brief 線分の描画
+   */
   virtual void drawLine(const btVector3& from, const btVector3& to,
                         const btVector3& fromColor, const btVector3& toColor);
+  /**
+   * @brief 線分の描画
+   */
   virtual void drawLine(const btVector3& from, const btVector3& to,
                         const btVector3& color);
 
@@ -38,7 +59,7 @@ class BulletDebugDraw : public btIDebugDraw {
   virtual int getDebugMode() const { return bitDebugMode; }
 
  private:
-  static constexpr u32 MAX_LINE_NUM = 10000;
+  static constexpr u32 MAX_LINE_NUM = 10000;  //! 最大描画可能ライン数
   int bitDebugMode;
 
   struct LineVertex {
@@ -60,7 +81,8 @@ class BulletDebugDraw : public btIDebugDraw {
   //! 描画する線分
   //! 描画範囲内のデータはそもそもシェーダーに渡されないようになっているので、固定数の配列を確保
   std::array<Line, MAX_LINE_NUM> lines_;
-  u32 index;
+  //! 現在の線分インデックス
+  u32 index_;
 
   ID3D12Device* device_;
   ComPtr<ID3D12Resource> vertex_buffer_;

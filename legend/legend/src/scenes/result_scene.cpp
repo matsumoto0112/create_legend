@@ -385,7 +385,7 @@ bool ResultScene::Turn(
 
   for (i32 index = 0; index < line.size(); index++) {
     auto num = std::make_unique<ui::Number>();
-    num->Init(TextureName::UI_NUMBER_1, heap_id);
+    num->Init(TextureName::UI_NUMBER_2, heap_id);
     numbers_width += num->GetSprite().GetContentSize().x / 10.0f * 0.5f;
     numbers_width += number_space;
 
@@ -443,7 +443,7 @@ bool ResultScene::PlayerPower(
 
   for (i32 index = 0; index < line.size(); index++) {
     auto num = std::make_unique<ui::Number>();
-    num->Init(TextureName::UI_NUMBER_1, heap_id);
+    num->Init(TextureName::UI_NUMBER_2, heap_id);
     numbers_width += num->GetSprite().GetContentSize().x / 10.0f * 0.5f;
     numbers_width += number_space;
 

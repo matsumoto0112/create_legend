@@ -50,7 +50,7 @@ bool SkillPencil::Init(actor::IActorMediator* mediator,
   player_ = player;
 
   SetName(skill_name::SKILLPENCIL);
-  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector);
+  transform_.SetPosition(player->GetPosition());
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3(1, 1, 1));
 

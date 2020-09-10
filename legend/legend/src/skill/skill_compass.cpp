@@ -43,7 +43,7 @@ bool SkillCompass::Init(actor::IActorMediator* mediator,
   player_ = player;
 
   SetName(skill_name::SKILLCOMPASS);
-  transform_.SetPosition(player_->GetPosition() + math::Vector3::kUpVector);
+  transform_.SetPosition(player_->GetPosition());
   transform_.SetRotation(player_->GetRotation());
   transform_.SetScale(math::Vector3::kUnitVector);
 

@@ -24,14 +24,28 @@ void Skill::RemaingRecastTurnUpdate() {
 }
 void Skill::AdjustPosition(math::Vector3 position) {
   transform_.SetPosition(player_->GetPosition() + position);
-  transform_.SetRotation(player_->GetRotation());
+  if (GetName() != skill_name::SKILLCOMPASS) {
+    transform_.SetRotation(player_->GetRotation());
+  } else {
+    const math::Vector3 angle(0.0f, 0.0f, 90.0f);
+    math::Quaternion rotation =
+        math::Quaternion::FromEular(angle * math::util::DEG_2_RAD);
+    transform_.SetRotation(player_->GetRotation() * rotation);
+  }
   box_->SetTransform(transform_);
 }
 // i32 Skill::GetModelID() { return model_id_; }
 
 void Skill::ChangePosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  transform_.SetRotation(player_->GetRotation());
+  if (GetName() != skill_name::SKILLCOMPASS) {
+    transform_.SetRotation(player_->GetRotation());
+  } else {
+    const math::Vector3 angle(0.0f, 0.0f, 90.0f);
+    math::Quaternion rotation =
+        math::Quaternion::FromEular(angle * math::util::DEG_2_RAD);
+    transform_.SetRotation(player_->GetRotation() * rotation);
+  }
   box_->SetTransform(transform_);
 }
 

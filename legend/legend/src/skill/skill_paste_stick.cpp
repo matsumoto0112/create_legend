@@ -41,7 +41,7 @@ bool SkillPasteStick::Init(actor::IActorMediator* mediator,
   player_ = player;
 
   SetName(skill_name::SKILLPASTESTICK);
-  transform_.SetPosition(player->GetPosition() + math::Vector3::kUpVector);
+  transform_.SetPosition(player->GetPosition());
   transform_.SetRotation(player->GetRotation());
   transform_.SetScale(math::Vector3::kUnitVector);
   bullet::BoundingBox::InitializeParameter params;

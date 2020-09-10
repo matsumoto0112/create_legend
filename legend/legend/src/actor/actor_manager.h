@@ -81,16 +81,36 @@ class ActorManager : public actor::IActorMediator {
    */
   bool IsGameClear() const;
   /**
-   * @brief 敵の数を取得
+   * @brief プレイヤーが止まっているかどうか
    */
-  i32 GetEnemiesSize();
+  bool IsPlayerStop();
   /**
    * @brief 敵が止まっているかどうか
    */
   bool IsAllEnemeyStop();
+  /**
+   * @brief 全てのアクターが止まっているかどうか
+   */
+  bool IsAllActorStop();
+  /**
+   * @brief エネミーマネージャーの取得
+   */
   enemy::EnemyManager* GetEnemyManager();
+  /**
+   * @brief エネミーマネージャーの更新
+   */
   void EnemyManagerUpdate();
+  /**
+   * @brief 敵の数を取得
+   */
+  i32 GetEnemiesSize();
+  /**
+   * @brief ボスが出現したか
+   */
   bool IsBossGenerated();
+  /**
+   * @brief ボスの出現するターンを取得
+   */
   i32 GetBossGenerateTurn();
 
  public:

@@ -251,7 +251,7 @@ bool TurnSystem::WaitEnemyMoveStart() {
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;
   }
-  if (!actor_manager_.IsAllEnemeyStop()) {
+  if (!actor_manager_.IsAllActorStop()) {
     return true;
   }
   before_mode_ = current_mode_;
@@ -301,7 +301,7 @@ bool TurnSystem::EnemyMoveEnd() {
 }
 
 bool TurnSystem::EnemyMoveProducing() {
-  if (actor_manager_.IsAllEnemeyStop()) {
+  if (actor_manager_.IsAllActorStop()) {
     ToPlayerTurn();
   }
 

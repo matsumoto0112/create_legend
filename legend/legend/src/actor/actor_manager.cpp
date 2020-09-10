@@ -265,18 +265,34 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
 
 bool ActorManager::IsGameClear() const { return enemy_manager_.IsGameClear(); }
 
-i32 legend::actor::ActorManager::GetEnemiesSize() {
-  return enemy_manager_.GetEnemiesSize();
+bool legend::actor::ActorManager::IsPlayerStop() {
+  bool is_x_stop = math::util::Abs(player_->GetVelocity().x) < 0.01f;
+  bool is_y_stop = math::util::Abs(player_->GetVelocity().y) < 0.01f;
+  bool is_z_stop = math::util::Abs(player_->GetVelocity().z) < 0.01f;
+
+  return is_x_stop && is_y_stop && is_z_stop;
 }
 
 bool legend::actor::ActorManager::IsAllEnemeyStop() {
   for (auto&& velocity : enemy_manager_.GetVelocities()) {
-    if (velocity != math::Vector3::kZeroVector) {
+    bool is_x_stop = math::util::Abs(velocity.x) < 0.01f;
+    bool is_y_stop = math::util::Abs(velocity.y) < 0.01f;
+    bool is_z_stop = math::util::Abs(velocity.z) < 0.01f;
+
+    if (!is_x_stop || !is_y_stop || !is_z_stop) {
       return false;
     }
   }
 
   return true;
+}
+
+i32 legend::actor::ActorManager::GetEnemiesSize() {
+  return enemy_manager_.GetEnemiesSize();
+}
+
+bool legend::actor::ActorManager::IsAllActorStop() {
+    return IsPlayerStop() && IsAllEnemeyStop();
 }
 
 enemy::EnemyManager* legend::actor::ActorManager::GetEnemyManager() {
@@ -292,9 +308,8 @@ bool legend::actor::ActorManager::IsBossGenerated() {
   return is_boss_generated_;
 }
 
-i32 legend::actor::ActorManager::GetBossGenerateTurn()
-{
-    return stage_generator_.GetBossGenerateTurn();
+i32 legend::actor::ActorManager::GetBossGenerateTurn() {
+  return stage_generator_.GetBossGenerateTurn();
 }
 
 std::vector<enemy::Enemy*> ActorManager::GetEnemies() {

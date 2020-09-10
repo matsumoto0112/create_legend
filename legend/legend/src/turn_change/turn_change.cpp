@@ -37,8 +37,7 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
     return false;
   }
   if (!boss_icon_.Init(
-          resource.GetTexture().Get(
-              resource_name::texture::UI_REMAINTURN_BOSS),
+          resource.GetTexture().Get(resource_name::texture::UI_REMAINTURN_BOSS),
           directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY)) {
     MY_LOG(L"ボス出現ゲージのボスアイコン画像の初期化に失敗しました。");
     return false;
@@ -140,6 +139,7 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
 
   return true;
 }
+
 bool TurnChange::TurnChangeUpdate() {
   if (!is_view_) return true;
 
@@ -192,6 +192,7 @@ bool TurnChange::TurnChangeUpdate() {
 }
 
 bool TurnChange::BossGenerateUIUpdate() {
+    if (!is_view_) return true;
   math::Vector2 startPos =
       math::Vector2(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
@@ -208,12 +209,18 @@ bool TurnChange::BossGenerateUIUpdate() {
                         player_icon_.GetContentSize().y * 0.75f));
 
   math::Vector2 nextPos = math::Vector2(
-      startPos + (endPos - startPos) * (((float)turn_system_->GetCurrentTurn() /
-                                         (float)boss_generate_turn_)));
+      startPos + (endPos - startPos) *
+                     math::util::Clamp((float)turn_system_->GetCurrentTurn() /
+                                           (float)boss_generate_turn_,
+                                       0.0f, 1.0f));
 
-  player_icon_.SetPosition(
+  math::Vector2 setPos =
       LerpVector2(before_player_icon_position_, nextPos,
-                  timer_ / (start_time_ + staging_time_ + before_time_)));
+                  timer_ / (start_time_ + staging_time_ + before_time_));
+
+  setPos.x = (float)(int)setPos.x;
+
+  player_icon_.SetPosition(setPos);
 
   return true;
 }

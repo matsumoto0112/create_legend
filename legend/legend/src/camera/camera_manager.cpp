@@ -3,16 +3,6 @@
 #include "src/game/game_device.h"
 #include "src/player/player.h"
 
-namespace {
-int id;
-enum Type {
-  Type_A,  //ƒ‰ƒ“ƒ_ƒ€
-  Type_B,  //‰“‚¢‚â‚Â
-  Type_C,  //‹ß‚¢‚â‚Â
-  MAX
-} type_;
-}  // namespace
-
 namespace legend {
 namespace camera {
 
@@ -121,7 +111,7 @@ void CameraManager::SetCameraMode(camera_mode::Enum camera_mode) {
       0, static_cast<i32>(free_cameras_.size()));
 }
 
-camera::Camera* CameraManager::GetCurrentCamera() const {
+camera::Camera* CameraManager::GetCurrentCamera() {
   auto GetMostFarCameraIDBetweenPlayer = [&]() {
     std::vector<float> distances(free_cameras_.size());
     const u64 size = free_cameras_.size();
@@ -130,10 +120,10 @@ camera::Camera* CameraManager::GetCurrentCamera() const {
                       actor_mediator_->GetPlayer()->GetPosition())
                          .MagnitudeSquared();
     }
-    const auto min_dist_iter =
+    const auto max_dist_iter =
         std::max_element(distances.begin(), distances.end());
     const i32 index =
-        static_cast<i32>(std::distance(distances.begin(), min_dist_iter));
+        static_cast<i32>(std::distance(distances.begin(), max_dist_iter));
     return index;
   };
 

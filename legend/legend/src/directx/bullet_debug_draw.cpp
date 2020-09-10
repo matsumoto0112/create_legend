@@ -41,7 +41,7 @@ bool BulletDebugDraw::Init(ID3D12Device* device) {
       dev.GetLocalHandle(
           directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
       L"BulletDebugDraw_World_ConstantBuffer");
-  index = 0;
+  index_ = 0;
   return true;
 }
 
@@ -49,7 +49,7 @@ void BulletDebugDraw::Render(const math::Matrix4x4& view,
                              const math::Matrix4x4& projection,
                              device::CommandList& command_list) {
   if (lines_.empty()) return;
-  const u32 SIZE = sizeof(Line) * index;
+  const u32 SIZE = sizeof(Line) * index_;
   D3D12_SUBRESOURCE_DATA sub_resource = {};
   sub_resource.pData = lines_.data();
   sub_resource.RowPitch = sub_resource.SlicePitch = SIZE;
@@ -92,14 +92,14 @@ void BulletDebugDraw::Render(const math::Matrix4x4& view,
 
   command_list.GetCommandList()->IASetVertexBuffers(0, 1, &vertex_buffer_view);
   command_list.GetCommandList()->DrawInstanced(vert_num * 2, 1, 0, 0);
-  index = 0;
+  index_ = 0;
 }
 
 void BulletDebugDraw::drawLine(const btVector3& from, const btVector3& to,
                                const btVector3& fromColor,
                                const btVector3& toColor) {
-  if (index >= MAX_LINE_NUM) return;
-  lines_[index++] = {from, fromColor, to, toColor};
+  if (index_ >= MAX_LINE_NUM) return;
+  lines_[index_++] = {from, fromColor, to, toColor};
 }
 
 void BulletDebugDraw::drawLine(const btVector3& from, const btVector3& to,

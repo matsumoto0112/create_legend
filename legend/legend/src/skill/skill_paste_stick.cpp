@@ -115,6 +115,9 @@ void SkillPasteStick::Action() {
     transform_.SetPosition(position);
     box_->SetTransform(transform_);
 
+    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+    audio.Start(resource_name::audio::SKILL_PASTE_SPIN, 1.0f);
+
     is_production_ = true;
     mediator_->PlayerSkillActivate();
   }
@@ -167,6 +170,9 @@ void SkillPasteStick::ProductionUpdate() {
       paste->Init(position, mediator_);
       pastes_.emplace_back(std::move(paste));
     }
+    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+    audio.Start(resource_name::audio::SKILL_PASTE_SPREAD, 4.0f);
+
     mediator_->PlayerSkillDeactivate();
     is_production_ = false;
   }

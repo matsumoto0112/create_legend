@@ -4,10 +4,10 @@
 #include <vector>
 
 #include "src/actor/actor_mediator.h"
-#include "src/actor/actor_render_command_list.h"
-#include "src/enemy/enemy_actor.h"
+#include "src/actor/differed_rendering_render_command_list.h"
 #include "src/enemy/boss.h"
 #include "src/enemy/enemy.h"
+#include "src/enemy/enemy_actor.h"
 #include "src/player/player.h"
 #include "src/search/search_manager.h"
 
@@ -38,7 +38,7 @@ class EnemyManager {
   /**
    * @brief •`‰æ
    */
-  void Draw(actor::ActorRenderCommandList* render_command_list);
+  void Draw(actor::DifferedRenderingRenderCommandList* render_command_list);
   /**
    * @brief “G‚Ìs“®ˆ—
    */

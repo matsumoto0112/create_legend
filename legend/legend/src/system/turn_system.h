@@ -206,9 +206,6 @@ class TurnSystem {
 
   legend::directx::buffer::ConstantBuffer<LightCBStruct> light_cb_;
 
-  // Differed-Rendering描画用バッファ
-  directx::buffer::VertexBuffer vertex_buffer_;
-  directx::buffer::IndexBuffer index_buffer_;
 
  private:
   // UIのリアルタイム修正用パラメータ

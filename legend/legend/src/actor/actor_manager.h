@@ -3,7 +3,7 @@
 #include <set>
 
 #include "src/actor/actor_mediator.h"
-#include "src/actor/actor_render_command_list.h"
+#include "src/actor/differed_rendering_render_command_list.h"
 #include "src/bullet/physics_field.h"
 #include "src/camera/camera_manager.h"
 #include "src/enemy/enemy_manager.h"
@@ -157,7 +157,7 @@ class ActorManager : public actor::IActorMediator {
   std::set<Actor*> remove_alpha_actors_;
   std::set<Actor*> remove_static_actors_;
 
-  actor::ActorRenderCommandList actor_render_command_list_;
+  actor::DifferedRenderingRenderCommandList actor_render_command_list_;
 
   //ターンシステムのポインタ
   system::TurnSystem* turn_system_;

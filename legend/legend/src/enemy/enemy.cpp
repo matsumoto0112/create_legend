@@ -24,9 +24,30 @@ Enemy::~Enemy() {}
 bool Enemy::Init(actor::IActorMediator* mediator,
                  const InitializeParameter& parameter) {
   if (enemy::EnemyActor::Init(mediator, parameter)) {
+    auto model_id = util::resource::resource_names::model::ENEMY_ERASER_01;
+    switch (parameter.model_id) {
+      case 0:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_01;
+        break;
+      case 1:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_02;
+        break;
+      case 2:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_03;
+        break;
+      case 3:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_04;
+        break;
+      case 4:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_05;
+        break;
+      case 5:
+        model_id = util::resource::resource_names::model::ENEMY_ERASER_06;
+        break;
+    }
+
     auto& resource = game::GameDevice::GetInstance()->GetResource();
-    model_ = resource.GetModel().Get(
-        util::resource::resource_names::model::ENEMY_ERASER_01);
+    model_ = resource.GetModel().Get(model_id);
 
     SetType();
 

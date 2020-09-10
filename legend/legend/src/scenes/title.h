@@ -77,6 +77,8 @@ class Title : public Scene {
   StageSelectMoveDirection stage_select_move_direction_;
   util::ModInt current_select_stage_item_id_;
   util::CountDownTimer stage_move_select_timer_;
+
+  bool is_play_se_;
 };
 
 }  // namespace scenes

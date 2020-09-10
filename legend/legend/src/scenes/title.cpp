@@ -150,6 +150,8 @@ bool Title::Initialize() {
   fade_.StartFadeIn(1.0f);
   is_scene_end_ = false;
 
+  is_play_se_ = false;
+
   return true;
 }
 
@@ -211,6 +213,12 @@ bool Title::Update() {
     if (stage_image_moving) {
       if (stage_move_select_timer_.Update()) {
         stage_select_move_direction_ = StageSelectMoveDirection::NONE;
+        is_play_se_ = false;
+      }
+      if (!is_play_se_) {
+        audio.Start(util::resource::resource_names::audio::STAGESELECT_SELECT,
+                    1.0f);
+        is_play_se_ = true;
       }
       UpdateStageItems(GetLerpT());
 

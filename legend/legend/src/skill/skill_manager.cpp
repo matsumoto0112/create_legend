@@ -29,6 +29,7 @@ void SkillManager::Init(actor::IActorMediator* mediator,
   select_skill_number_ = 0;
   previous_select_number_ = 0;
   ui_enable_ = true;
+  is_play_fly_se_ = false;
 }
 
 //スキル取得時
@@ -83,6 +84,11 @@ void SkillManager::EquipmentProductionUpdate() {
   if (!complete_eqquipment_) {
     player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
     current_mode_ = Mode::RISE_PLAYER;
+    if (!is_play_fly_se_) {
+      auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+      audio.Start(util::resource::resource_names::audio::SKILL_FITOUT_UP, 1.0f);
+      is_play_fly_se_ = true;
+    }
   }
 
   //上昇
@@ -111,6 +117,7 @@ void SkillManager::EquipmentProductionUpdate() {
       mediator_->PlayerCompleteEquipment();
       complete_eqquipment_ = false;
       this_turn_get_skills_.clear();
+      is_play_fly_se_ = false;
     }
   }
 }
@@ -315,7 +322,7 @@ void SkillManager::SetPositionSelectSkill(i32 skill_num) {
   previous_select_number_ = skill_num;
 }
 
-//UI表示を引数で切り替える
+// UI表示を引数で切り替える
 void SkillManager::ChangeEnable(bool enable) { ui_enable_ = enable; }
 }  // namespace skill
 }  // namespace legend

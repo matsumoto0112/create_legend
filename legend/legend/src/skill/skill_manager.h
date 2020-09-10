@@ -131,6 +131,8 @@ class SkillManager {
 
   //! UI‚Ì•\Ž¦”ñ•\Ž¦
   bool ui_enable_;
+  
+  bool is_play_fly_se_;
 };
 }  // namespace skill
 }  // namespace legend

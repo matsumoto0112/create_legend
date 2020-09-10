@@ -133,12 +133,10 @@ bool ResultScene::LoadStageData(
   player::Player::InitializeParameter player;
   std::vector<object::Desk::InitializeParameter> desks;
   std::vector<object::Obstacle::InitializeParameter> obstacles;
-  std::vector<object::GraffitiInitializeParameter> graffities;
-  std::vector<skill::SkillItemBox::InitializeParameter> item_boxes;
   std::vector<enemy::Enemy::InitializeParameter> enemys;
   std::vector<enemy::Boss::InitializeParameter> bosses;
-  if (!stage_generator_.GetMapActors(0, player, desks, obstacles, graffities,
-                                     item_boxes, enemys, bosses)) {
+  if (!stage_generator_.GetResultActors(player, desks, obstacles, enemys,
+                                        bosses)) {
     return false;
   }
 
@@ -195,83 +193,94 @@ bool ResultScene::LoadStageData(
     models_.emplace_back(std::move(
         resource.GetModel().Get(resource_name::model::FIELD_OBJECT_01)));
   }
-  for (i32 i = 0; i < result_data.play_turn; i++) {
-    for (auto&& param : stage_generator_.GetEnemyParameters(i)) {
-      util::Transform transform = param.transform;
+  for (auto&& param : enemys) {
+    util::Transform transform = param.transform;
 
-      float pos_x = 0.0f;
-      float pos_z = 0.0f;
-      if (stage_data.stage_name == "tutorial_01") {
-        pos_x =
-            game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
-        pos_z =
-            game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
-      } else {
-        pos_x =
-            game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
-        pos_z =
-            game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
-      }
-      transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
-      float rotate =
-          game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
-      transform.SetRotation(
-          math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
-      transforms_.emplace_back(transform);
-      TransformConstantBuffer constant_buffer;
-      constant_buffer.Init(
-          device,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Enemy_Transform");
-      constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
-      constant_buffer.UpdateStaging();
-      transform_cbs_.emplace_back(constant_buffer);
+    float pos_x = 0.0f;
+    float pos_z = 0.0f;
+    if (stage_data.stage_name == "tutorial_01") {
+      pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
+      pos_z = game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
+    } else {
+      pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+      pos_z = game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+    }
+    transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
+    float rotate =
+        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+    transform.SetRotation(
+        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+    transforms_.emplace_back(transform);
+    TransformConstantBuffer constant_buffer;
+    constant_buffer.Init(
+        device,
+        device.GetLocalHandle(
+            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+        L"Enemy_Transform");
+    constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
+    constant_buffer.UpdateStaging();
+    transform_cbs_.emplace_back(constant_buffer);
+    if (param.model_id == 0) {
       models_.emplace_back(std::move(
           resource.GetModel().Get(resource_name::model::ENEMY_ERASER_01)));
+    } else if (param.model_id == 1) {
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_02)));
+    } else if (param.model_id == 2) {
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_03)));
+    } else if (param.model_id == 3) {
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_04)));
+    } else if (param.model_id == 4) {
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_05)));
+    } else {
+      models_.emplace_back(std::move(
+          resource.GetModel().Get(resource_name::model::ENEMY_ERASER_06)));
     }
-    for (auto&& boss : stage_generator_.GetBossParameters(i)) {
-      util::Transform transform = boss.transform;
-      float pos_x = 0.0f;
-      float pos_z = 0.0f;
-      if (stage_data.stage_name == "tutorial_01") {
-        pos_x =
-            game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
-        pos_z =
-            game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
-      } else {
-        pos_x =
-            game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
-        pos_z =
-            game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
-      }
-      transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
-      float rotate =
-          game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
-      transform.SetRotation(
-          math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
-      transforms_.emplace_back(transform);
-      TransformConstantBuffer constant_buffer;
-      constant_buffer.Init(
-          device,
-          device.GetLocalHandle(
-              directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
-          L"Boss_Transform");
-      constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
-      constant_buffer.UpdateStaging();
-      transform_cbs_.emplace_back(constant_buffer);
-      if (boss.model_id == 0) {
-        models_.emplace_back(
-            std::move(resource.GetModel().Get(resource_name::model::BOSS_01)));
-      } else {
-        models_.emplace_back(
-            std::move(resource.GetModel().Get(resource_name::model::BOSS_02)));
-      }
+  }
+  for (auto&& boss : bosses) {
+    util::Transform transform = boss.transform;
+    float pos_x = 0.0f;
+    float pos_z = 0.0f;
+    if (stage_data.stage_name == "tutorial_01") {
+      pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(130.0f, 132.0f);
+      pos_z = game::GameDevice::GetInstance()->GetRandom().Range(-40.0f, 40.0f);
+    } else {
+      pos_x =
+          game::GameDevice::GetInstance()->GetRandom().Range(100.0f, 120.0f);
+      pos_z = game::GameDevice::GetInstance()->GetRandom().Range(-60.0f, 60.0f);
+    }
+    transform.SetPosition(math::Vector3(pos_x, floor_pos, pos_z));
+    float rotate =
+        game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
+    transform.SetRotation(
+        math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
+    transforms_.emplace_back(transform);
+    TransformConstantBuffer constant_buffer;
+    constant_buffer.Init(
+        device,
+        device.GetLocalHandle(
+            directx::descriptor_heap::heap_parameter::LocalHeapID::GLOBAL_ID),
+        L"Boss_Transform");
+    constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
+    constant_buffer.UpdateStaging();
+    transform_cbs_.emplace_back(constant_buffer);
+    if (boss.model_id == 0) {
+      models_.emplace_back(
+          std::move(resource.GetModel().Get(resource_name::model::BOSS_01)));
+    } else {
+      models_.emplace_back(
+          std::move(resource.GetModel().Get(resource_name::model::BOSS_02)));
     }
   }
 
   return true;
-}
+}  // namespace scenes
 
 //èüóòââèoèâä˙âª
 bool ResultScene::WinProductionInit(

@@ -6,7 +6,7 @@ namespace audio {
 legend::audio::AudioManager::AudioManager() {
   path_ = util::Path::GetInstance()->exe() / L"assets" / L"audios";
   master_volume_ = 1.0f;
-  bgm_volume_ = 0.75f;
+  bgm_volume_ = 1.0f;
   se_volume_ = 1.0f;
 }
 

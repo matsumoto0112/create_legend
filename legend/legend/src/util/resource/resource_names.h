@@ -98,6 +98,7 @@ constexpr name UI_POWERGAUGE = L"UI_powerGauge.png";
 constexpr name UI_POWERGAUGE_BG = L"UI_powerGauge_bg.png";
 constexpr name UI_POWERGAUGE_BLURRYPOINT = L"UI_powerGauge_blurryPoint.png";
 constexpr name UI_POWERGAUGE_FRAME = L"UI_powerGauge_frame.png";
+constexpr name UI_POWERGAUGE_STICK = L"UI_powerGauge_stick.png";
 constexpr name UI_REMAINTURN_BOSS = L"UI_remainTurn_boss.png";
 constexpr name UI_REMAINTURN_LINE = L"UI_remainTurn_line.png";
 constexpr name UI_REMAINTURN_PLAYER = L"UI_remainTurn_player.png";

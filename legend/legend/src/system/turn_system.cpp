@@ -96,6 +96,7 @@ bool TurnSystem::Init(const std::string& stage_name) {
         util::resource::resource_names::texture::UI_POWERGAUGE_FRAME,
         util::resource::resource_names::texture::UI_POWERGAUGE,
         util::resource::resource_names::texture::UI_POWERGAUGE_BG,
+        util::resource::resource_names::texture::UI_POWERGAUGE_STICK,
     };
     //敵のターンでは表示しないUIをリストに積む
     if (NO_RENDER_IF_ENEMY_TUAN_UI_NAMES.find(w_name) !=

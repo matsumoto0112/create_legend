@@ -18,8 +18,11 @@ player_return_from_select_skill_mode.wav,1,1
 player_snap.wav,1,1
 player_turn_end.wav,1,1
 result_move_other_scene.wav,1,1
+skill_compass_spin.wav,1,1
 skill_decision.wav,1,1
 skill_fitOut_up.wav,1,1
+skill_paste_spin.wav,1,1
+skill_paste_spread.wav,1,1
 skill_pencil_hit.wav,1,1
 skill_pencil_shot.wav,1,1
 skill_select.wav,1,1

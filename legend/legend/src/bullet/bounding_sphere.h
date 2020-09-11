@@ -1,11 +1,11 @@
 #ifndef LEGEND_BULLET_BOUNDING_SPHERE_H_
 #define LEGEND_BULLET_BOUNDING_SPHERE_H_
+/**
+* @file bounding_sphere.h
+* @brief 球体の物理判定クラス
+*/
 
 #include "src/bullet/collider.h"
-/**
- * @file bounding_box.h
- * @brief 立方体の物理判定クラス
- */
 namespace legend {
 namespace bullet {
 

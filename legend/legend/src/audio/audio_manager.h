@@ -99,8 +99,14 @@ class AudioManager {
   void Update();
 
  private:
+  /**
+   * @brief ループ再生を開始処理
+   */
   void LoopStart(i32 key, std::wstring filename, float volume, float pitch);
 
+  /**
+   * @brief 指定されたファイルのフルパスを生成する処理
+   */
   bool FindDirectory(std::wstring* filepath, std::wstring filename);
 
  public:

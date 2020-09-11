@@ -11,7 +11,6 @@ player_fall_out.wav,1,1
 player_get_fragment.wav,1,1
 player_get_stationery.wav,1,1
 player_move_select_skill_mode.wav,1,1
-player_moving.wav,1,1
 player_obstacle_hit.wav,1,1
 player_power_charge.wav,1,1
 player_return_from_select_skill_mode.wav,1,1

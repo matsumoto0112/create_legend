@@ -15,6 +15,7 @@ void Application::Run() {
   setlocale(LC_ALL, "");
 
   if (!this->Init()) {
+    MY_LOG(L"‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B");
     Destroy();
     return;
   }

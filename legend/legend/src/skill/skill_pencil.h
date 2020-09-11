@@ -6,9 +6,17 @@
 #include "src/skill/skill.h"
 #include "src/util/timer.h"
 
+/**
+ * @file skill_pencil.h
+ * @brief 鉛筆クラス
+ */
+
 namespace legend {
 namespace skill {
 
+/**
+ * @brief 鉛筆スキル
+ */
 class SkillPencil : public Skill {
   using Parent = Skill;
 

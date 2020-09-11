@@ -6,8 +6,16 @@
 #include "src/draw/particle/particle_emitter.h"
 #include "src/util/timer.h"
 
+/**
+ * @file explosion_pencil.h
+ * @brief ‰”•M‚É‚æ‚é”š•—ƒNƒ‰ƒX
+ */
+
 namespace legend {
 namespace skill {
+/**
+ * @brief ”š•—
+ */
 class ExplosionPencil : public actor::Actor {
   using Parent = actor::Actor;
 

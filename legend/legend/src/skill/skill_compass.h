@@ -3,9 +3,16 @@
 
 #include "src/skill/skill.h"
 
+/**
+ * @file skill_compass.h
+ * @brief コンパススキルクラス
+ */
 namespace legend {
 namespace skill {
 
+/**
+ * @brief コンパススキル
+ */
 class SkillCompass : public Skill {
   using Parent = Skill;
 

@@ -4,8 +4,16 @@
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
 
+/**
+ * @file skill_paste.h
+ * @brief ŒÐƒNƒ‰ƒX
+ */
+
 namespace legend {
 namespace skill {
+/**
+ * @brief ŒÐ
+ */
 class SkillPaste : public actor::Actor {
   using Parent = actor::Actor;
 

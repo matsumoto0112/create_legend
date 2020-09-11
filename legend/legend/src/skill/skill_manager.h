@@ -9,6 +9,11 @@
 #include "src/skill/skill_type.h"
 #include "src/ui/player_ui.h"
 
+/**
+ * @file skill_manager.h
+ * @brief スキル管理クラス
+ */
+
 namespace legend {
 namespace skill {
 enum class Mode {
@@ -17,6 +22,9 @@ enum class Mode {
   FALL_PLAYER,
 };
 
+/**
+ * @brief スキルマネージャー
+ */
 class SkillManager {
  public:
   /**

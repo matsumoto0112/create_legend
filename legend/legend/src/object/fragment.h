@@ -1,17 +1,20 @@
 #ifndef LEGEND_OBJECT_FRAGMENT_H
 #define LEGEND_OBJECT_FRAGMENT_H
 
-/**
- * @file fragment.h
- * @brief
- */
-
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
 #include "src/util/timer.h"
 
+/**
+ * @file fragment.h
+ * @brief 消しカスクラス
+ */
+
 namespace legend {
 namespace object {
+/**
+ * @brief 消しカス
+ */
 class Fragment : public actor::Actor {
   using Parent = actor::Actor;
 
@@ -30,7 +33,7 @@ class Fragment : public actor::Actor {
                     const InitializeParameter& params);
   virtual bool Update() override;
   void Draw() override;
-   
+
   void ChangeDead();
   bool GetIsDead() const;
 

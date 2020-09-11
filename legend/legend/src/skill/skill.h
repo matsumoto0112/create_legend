@@ -22,6 +22,9 @@ constexpr const wchar_t* SKILLPASTESTICK = L"SkiilPasteStick";
 constexpr const wchar_t* SKILLCOMPASS = L"SkiilCompass";
 }  // namespace skill_name
 
+/**
+ * @brief ÉXÉLÉã
+ */
 class Skill : public actor::Actor {
   using Parent = actor::Actor;
 

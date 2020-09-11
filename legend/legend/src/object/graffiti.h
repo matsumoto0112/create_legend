@@ -1,10 +1,6 @@
 #ifndef LEGEND_OBJECT_GRAFFITI_H_
 #define LEGEND_OBJECT_GRAFFITI_H_
 
-/**
- * @file graffiti.h
- */
-
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
 #include "src/object/fragment.h"
@@ -12,6 +8,10 @@
 #include "src/util/timer.h"
 #include "src/util/transform.h"
 
+/**
+ * @file graffiti.h
+ * @brief —‘‚«ƒNƒ‰ƒX
+ */
 namespace legend {
 namespace object {
 

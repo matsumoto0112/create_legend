@@ -4,9 +4,17 @@
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
 
+/**
+ * @file desk.h
+ * @brief Š÷ƒNƒ‰ƒX
+ */
+
 namespace legend {
 namespace object {
 
+/**
+ * @brief Š÷
+ */
 class Desk : public actor::Actor {
   using Parent = actor::Actor;
 

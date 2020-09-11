@@ -166,6 +166,8 @@ class EnemyActor : public actor::Actor {
  protected:
   //! 移動中か
   bool is_move_;
+  //! 一度のアクションでの衝突判定
+  bool is_hit_done_;
 
   //! 移動に加える力
   const float power_ = 1;

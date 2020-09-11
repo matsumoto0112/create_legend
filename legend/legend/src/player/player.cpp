@@ -408,7 +408,7 @@ void Player::OnHit(bullet::Collider* other) {
     {
       enemy::EnemyActor* ea =
           dynamic_cast<enemy::EnemyActor*>(other->GetOwner());
-      if (ea) {
+      if (ea != nullptr) {
         auto CalcApplyImpulse = [&]() {
           const math::Vector3 position = transform_.GetPosition();
           const math::Vector3 other_position = ea->GetTransform().GetPosition();
@@ -417,14 +417,17 @@ void Player::OnHit(bullet::Collider* other) {
               ((other_position - position).Normalized() + velocity.Normalized())
                   .Normalized();
 
-          const float magnitude = ((strength_ + velocity.Magnitude()) / 2.0f);
+          const float clamp_sub_strength =
+              math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
+          float magnitude =
+              (((1.0f + clamp_sub_strength) * velocity.Magnitude()) / 2.0f);
+          if (dynamic_cast<enemy::Boss*>(other->GetOwner()) != nullptr) {
+            magnitude /= 2.0f;
+		  }
           const math::Vector3 base_power = direction * magnitude;
 
           const float stength_consideration_full_power =
               is_fullpower_ ? strength_ * fullpower_bonus_ : strength_;
-
-          const float clamp_sub_strength =
-              math::util::Clamp(strength_ - ea->GetStrength(), 0.0f, 1.0f);
           const float up_power = is_fullpower_
                                      ? clamp_sub_strength * fullpower_bonus_
                                      : clamp_sub_strength;

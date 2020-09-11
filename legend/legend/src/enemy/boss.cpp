@@ -129,15 +129,18 @@ void Boss::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
     //プレイヤーに触れた
-    auto p = dynamic_cast<player::Player*>(other->GetOwner());
-    if (p != nullptr) {
-      HitAction(other);
-      auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
-      auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
-      auto strength =
-          math::Vector3::kUpVector * GetVelocity().Magnitude() * trigonometric;
-      other->ApplyCentralImpulse(strength);
-      CreateFireParticle(GetCollider()->GetHitPositions().at(other));
+    if (!is_hit_done_) {
+      auto p = dynamic_cast<player::Player*>(other->GetOwner());
+      if (p != nullptr) {
+        is_hit_done_ = true;
+        HitAction(other);
+        auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
+        auto trigonometric = (std::sin(5.0f * math::util::DEG_2_RAD));
+        auto strength = math::Vector3::kUpVector * GetVelocity().Magnitude() *
+                        trigonometric * (1.0f - s);
+        other->ApplyCentralImpulse(strength);
+        CreateFireParticle(GetCollider()->GetHitPositions().at(other));
+      }
     }
     //敵に触れた
     if (dynamic_cast<enemy::Enemy*>(other->GetOwner()) != nullptr) {
@@ -250,7 +253,7 @@ void Boss::Boss_Rush_Move() {
     direction.y = 0;
     direction = direction.Normalized();
 
-    { // 前方にプレイヤーがいればそちらに曲げる
+    {  // 前方にプレイヤーがいればそちらに曲げる
       auto vector =
           (mediator_->GetPlayer()->GetPosition() - GetPosition()).Normalized();
       vector.y = 0;

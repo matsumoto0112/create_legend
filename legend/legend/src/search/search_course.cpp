@@ -5,16 +5,21 @@
 namespace legend {
 namespace search {
 
+// コンストラクタ
 SearchCourse::SearchCourse(SearchAI* _baseSearch)
     : baseSearch_(_baseSearch), parentSearch_(-1) {}
 
+// コンストラクタ
 SearchCourse::SearchCourse(SearchAI* _baseSearch, i32 _parentSearch)
     : baseSearch_(_baseSearch), parentSearch_(_parentSearch) {}
 
+// デスクトラクタ
 SearchCourse::~SearchCourse() {}
 
+// 原点取得
 SearchAI* SearchCourse::GetBaseSearch() { return baseSearch_; }
 
+// 探索先設定
 void SearchCourse::SetChild(std::vector<SearchCourse>& children,
                             std::vector<SearchCourse>& searched) {
   // 分岐先に削除対象がいるか確認
@@ -38,11 +43,13 @@ void SearchCourse::SetChild(std::vector<SearchCourse>& children,
   }
 }
 
+// 原点までの分岐元取得
 std::vector<i32> SearchCourse::GetParents(std::vector<SearchCourse>& searched) {
   std::vector<i32> _parents;
   return GetParents(searched, _parents);
 }
 
+// 分岐元の原点までの距離
 std::vector<i32> SearchCourse::GetParents(std::vector<SearchCourse>& searched,
                                           std::vector<i32>& _parents) {
   if (parentSearch_ < 0) {
@@ -53,6 +60,7 @@ std::vector<i32> SearchCourse::GetParents(std::vector<SearchCourse>& searched,
   return searched[parentSearch_].GetParents(searched, _parents);
 }
 
+// 分岐元の原点までの距離
 float SearchCourse::Length(std::vector<SearchCourse>& searched) {
   auto parents = GetParents(searched);
   float length = 0.0f;

@@ -15,16 +15,17 @@
 
 namespace legend {
 namespace enemy {
-//コンストラクタ
+
+// コンストラクタ
 EnemyActor::EnemyActor() : Parent(L"EnemyActor") {
   is_move_ = false;
   enemy_ai_.Init();
 }
 
-//デストラクタ
+// デストラクタ
 EnemyActor::~EnemyActor() {}
 
-//初期化
+// 初期化
 bool EnemyActor::Init(actor::IActorMediator* mediator,
                       const InitializeParameter& parameter) {
   if (!Parent::Init(mediator)) {
@@ -60,12 +61,13 @@ bool EnemyActor::Init(actor::IActorMediator* mediator,
   return true;
 }
 
+// 削除
 void EnemyActor::Remove() {
   mediator_->RemoveCollider(box_);
   enemy_move_particle_->Delete();
 }
 
-//更新
+// 更新
 bool EnemyActor::Update() {
   update_time_ =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
@@ -73,12 +75,14 @@ bool EnemyActor::Update() {
   auto velocity = GetVelocity();
   velocity.y = 0;
   auto angluar = box_->GetAngularVelocity();
+  // 移動時、速度と回転速度が行って一以下なら停止処理
   if (is_move_ && (velocity.Magnitude() < 0.01f) &&
       (angluar.Magnitude() < 0.01f)) {
     move_end_ = true;
     is_move_ = false;
   }
 
+  // パーティクル処理
   auto ParticleUpdate = [&]() {
     const math::Vector3 MOVE_PARTICLE_OFFSET = GetVelocity().Normalized() * -3;
     const math::Vector3 move_particle_position =
@@ -97,6 +101,7 @@ bool EnemyActor::Update() {
   return true;
 }
 
+// 描画
 void EnemyActor::Draw() {
   MY_ASSERTION(model_.get(), L"モデルが存在しません。");
   if (GetPosition().y <= -20) return;
@@ -114,52 +119,33 @@ void EnemyActor::Draw() {
   model_->Draw(command_list);
 }
 
+// 座標の設定
 void EnemyActor::SetPosition(math::Vector3 position) {
   transform_.SetPosition(position);
-  // collision_.SetPosition(position);
 }
 
-//速度の設定
+// 速度の設定
 void EnemyActor::SetVelocity(math::Vector3 velocity) {
   enemy_ai_.Action(velocity, box_.get());
   is_move_ = true;
 }
 
+// 回転量の設定
 void EnemyActor::SetRotation() {
   math::Quaternion rotation = transform_.GetRotation();
   rotation.y += GetVelocity().x;
   transform_.SetRotation(rotation);
 }
 
-//移動に必要なパラメータを初期化
+// 移動に必要なパラメータを初期化
 void EnemyActor::ResetParameter() {
   if (GetVelocity().Magnitude() != 0.0f) return;
 
-  // deceleration_x_ = deceleration_z_ = 0;
   is_move_ = false;
   move_end_ = false;
 }
 
-//座標の取得
-math::Vector3 EnemyActor::GetPosition() const {
-  return transform_.GetPosition();
-}
-
-//移動量の取得
-math::Vector3 EnemyActor::GetVelocity() const { return (box_->GetVelocity()); }
-
-math::Quaternion EnemyActor::GetRotation() const {
-  return transform_.GetRotation();
-}
-
-float EnemyActor::GetPower() const { return power_; }
-
-float EnemyActor::GetStrength() const { return strength_; }
-
-bool EnemyActor::GetMoveEnd() const { return (!is_move_ && move_end_); }
-
-void EnemyActor::ResetMoveEnd() { move_end_ = false; }
-
+// プレイヤーとの距離
 float EnemyActor::DistanceWithPlayer() {
   auto p_pos = mediator_->GetPlayer()->GetPosition();
   auto e_pos = GetPosition();
@@ -168,24 +154,16 @@ float EnemyActor::DistanceWithPlayer() {
   return (p_pos - e_pos).Magnitude();
 }
 
-
+// エネミータイプ設定
 void EnemyActor::SetType(i32 type_index) {
   type_index = std::clamp(type_index, 0,
                           (i32)enemy_type::EffectType::Effect_Type_End - 1);
-  //enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(
-  //    game::GameDevice::GetInstance()->GetRandom().Range(
-  //        0, enemy::enemy_type::MoveType::Move_Type_End));
-  //enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(
-  //    game::GameDevice::GetInstance()->GetRandom().Range(
-  //        0, enemy::enemy_type::HitType::Hit_Type_End));
-  //enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(
-  //    game::GameDevice::GetInstance()->GetRandom().Range(
-  //        0, (i32)enemy_type::EffectType::Effect_Type_End - 1));
 
   enemy_ai_.move_type_ = (enemy::enemy_type::MoveType)(type_index / 3 % 2);
   enemy_ai_.hit_type_ = (enemy::enemy_type::HitType)(type_index % 3);
   enemy_ai_.effect_type_ = (enemy::enemy_type::EffectType)(type_index / 6);
 
+  // エフェクトタイプによって行動処理を変更
   switch (enemy_ai_.effect_type_) {
     case enemy_type::EffectType::Effect_None:
       enemy_ai_.SetAction(std::vector<EnemyAIType>{
@@ -205,23 +183,8 @@ void EnemyActor::SetType(i32 type_index) {
   }
 }
 
+// 衝突判定
 void EnemyActor::OnHit(bullet::Collider* other) {
-  // system::Mode turn_mode = mediator_->GetCurrentTurn();
-  // if (turn_mode == system::Mode::ENEMY_MOVING) {
-  //  //プレイヤーに触れた
-  //  if (player::Player* p = dynamic_cast<player::Player*>(other->GetOwner()))
-  //  {
-  //    HitAction(other);
-  //    auto s = math::util::Clamp(strength_ - p->GetStrength(), 0.0f, 1.0f);
-  //    auto trigonometric = (std::sin(30.0f * math::util::DEG_2_RAD * s));
-  //    auto strength =
-  //        math::Vector3::kUpVector * GetVelocity().Magnitude() *
-  //        trigonometric;
-  //    other->ApplyCentralImpulse(strength);
-  //    CreateFireParticle(
-  //        GetCollider()->GetHitPositions().at(other));
-  //  }
-  //}
 
   //糊に触れた
   {
@@ -246,6 +209,7 @@ void EnemyActor::OnHit(bullet::Collider* other) {
   }
 }
 
+// 衝突時行動
 void EnemyActor::HitAction(bullet::Collider* other) {
   auto actor = other->GetOwner();
   const math::Vector3 position = transform_.GetPosition();
@@ -274,11 +238,13 @@ void EnemyActor::HitAction(bullet::Collider* other) {
   }
 }
 
+// 強化パラメータの更新
 void EnemyActor::UpdateStrength(const float& weak) {
   strength_ += weak;
   if (strength_ <= min_strength_) strength_ = min_strength_;
 }
 
+// パーティクル生成
 void EnemyActor::CreateFireParticle(const util::Transform& transform) {
   auto fire = draw::particle::particle_factory::CreateFireParticle();
   fire->SetTransform(transform);

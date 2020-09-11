@@ -31,7 +31,10 @@ class Enemy : public enemy::EnemyActor {
    */
   virtual bool Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter);
-
+  /**
+   * @brief Õ“Ë”»’è
+   * @param Õ“Ë‘Šè
+   */
   virtual void OnHit(bullet::Collider* other);
 };
 

@@ -4,22 +4,29 @@
 
 namespace legend {
 namespace search {
+
+//コンストラクタ
 SearchAI::SearchAI(math::Vector3 _position) : position_(_position) {
   box_ = std::make_unique<primitive::Box>();
   box_->Init(directx::descriptor_heap::heap_parameter::LocalHeapID::ONE_PLAY);
 }
 
+// デスクトラクタ
 SearchAI::~SearchAI() {}
 
+// 座標取得
 math::Vector3 SearchAI::GetPosition() { return position_; }
 
+// 分岐取得
 std::vector<SearchAI*> legend::search::SearchAI::GetBranch() { return branch_; }
 
+// 分岐設定
 std::vector<SearchAI*> SearchAI::SetBranch(std::vector<SearchAI*> _branch) {
   branch_ = _branch;
   return branch_;
 }
 
+// 分岐追加
 std::vector<SearchAI*> SearchAI::AddBranch(SearchAI* _branch) {
   if ((std::find(branch_.begin(), branch_.end(), _branch) != branch_.end())) {
     return branch_;
@@ -36,6 +43,7 @@ std::vector<SearchAI*> SearchAI::AddBranch(SearchAI* _branch) {
   return branch_;
 }
 
+// 分岐先からランダムで取得
 SearchAI* legend::search::SearchAI::GetRandomSearch(
     std::vector<SearchAI*> remove) {
   std::vector<SearchAI*> result;
@@ -54,6 +62,8 @@ SearchAI* legend::search::SearchAI::GetRandomSearch(
       0, static_cast<i32>(result.size()));
   return result[index];
 }
+
+// デバッグ描画
 void SearchAI::DebugDraw(bullet::PhysicsField* physics_field_) {
   for (auto b : branch_) {
     auto from = bullet::helper::TobtVector3(GetPosition());

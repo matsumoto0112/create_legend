@@ -125,7 +125,7 @@ void SkillCompass::Action() {
   bullet::BoundingBox::InitializeParameter params;
   params.position = transform_.GetPosition();
   params.rotation = transform_.GetRotation();
-  params.scale = math::Vector3(5.0f, 5.0f, 10.0f);
+  params.scale = math::Vector3(10.0f, 10.0f, 10.0f);
   params.mass = 0.0f;
 
   box_ = std::make_shared<bullet::BoundingBox>(this, params);

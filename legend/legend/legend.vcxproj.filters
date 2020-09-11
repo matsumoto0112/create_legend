@@ -351,6 +351,7 @@
     <None Include="assets\shaders\differed_rendering\differed_rendering_pre.hlsli" />
     <None Include="assets\shaders\differed_rendering\differed_rendering.hlsli" />
     <None Include=".clang-format" />
+    <None Include="assets\shaders\result\result_object.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\modelview\model_view_vs.hlsl" />
@@ -384,6 +385,8 @@
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_vs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\fire_particle_gs.hlsl" />
     <FxCompile Include="assets\shaders\gpu_particle\explosion_cs.hlsl" />
+    <FxCompile Include="assets\shaders\result\result_object_vs.hlsl" />
+    <FxCompile Include="assets\shaders\result\result_object_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="assets\parameters\main_ui.txt" />

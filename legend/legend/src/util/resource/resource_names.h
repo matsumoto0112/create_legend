@@ -123,6 +123,7 @@ namespace vertex_shader {
 constexpr name SPRITE = L"sprite_vs.cso";
 constexpr name GRAFFITI = L"graffiti_vs.cso";
 constexpr name MODEL_VIEW = L"model_view_vs.cso";
+constexpr name RESULT_SCENE = L"result_object_vs.cso";
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_vs.cso";
 constexpr name OBB = L"obb_vs.cso";
 constexpr name GAUGE = L"ui_gauge_vs.cso";
@@ -137,6 +138,7 @@ namespace pixel_shader {
 constexpr name SPRITE = L"sprite_ps.cso";
 constexpr name GRAFFITI = L"graffiti_ps.cso";
 constexpr name MODEL_VIEW = L"model_view_ps.cso";
+constexpr name RESULT_SCENE = L"result_object_ps.cso";
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle_ps.cso";
 constexpr name FIRE_PARTICLE = L"player_move_particle_ps.cso";
 constexpr name OBB = L"obb_ps.cso";
@@ -161,6 +163,7 @@ namespace pipeline {
 constexpr name SPRITE = L"sprite";
 constexpr name GRAFFITI = L"graffiti";
 constexpr name MODEL_VIEW = L"model_view";
+constexpr name RESULT_SCENE = L"result_object";
 constexpr name ALPHA_OBJECT = L"alpha_object";
 constexpr name PLAYER_MOVE_PARTICLE = L"player_move_particle";
 constexpr name OBB = L"obb";

@@ -30,7 +30,6 @@ VSOutput VSMain(const VSInput v) {
   o.pos = mul(o.pos, g_world_context.projection);
 
   o.normal = mul(v.normal, (float3x3)g_transform.world);
-  o.normal = v.normal;
   o.uv = v.uv;
 
   return o;

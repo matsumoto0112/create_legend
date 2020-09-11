@@ -101,9 +101,9 @@ void ResultScene::Draw() {
       directx::render_target::DepthStencilTargetID::DEPTH_ONLY, true);
 
   camera_.RenderStart();
-  back_ground_.Draw(util::resource::resource_names::pipeline::MODEL_VIEW);
+  back_ground_.Draw(util::resource::resource_names::pipeline::RESULT_SCENE);
   resource.GetPipeline()
-      .Get(util::resource::resource_names::pipeline::MODEL_VIEW)
+      .Get(util::resource::resource_names::pipeline::RESULT_SCENE)
       ->SetCommandList(command_list);
   for (i32 i = 0; i < transforms_.size(); i++) {
     transform_cbs_[i].GetStagingRef().world =

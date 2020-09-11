@@ -239,7 +239,7 @@ class InputCommand {
       input_command_ = {
           {InputCode::End,  //!< 終了コマンド
            [&](Keyboard* i_key, Mouse* i_mouse, GamePad* i_gamePad) {
-             return (AND({KeyCode::Escape, KeyCode::Enter}, i_key) ||
+             return (Down(KeyCode::Escape, i_key) ||
                      AND({JoyCode::START, JoyCode::SELECT}, i_gamePad));
            }},
           {InputCode::Decide,  //!< 決定コマンド

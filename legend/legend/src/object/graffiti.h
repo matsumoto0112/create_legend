@@ -74,7 +74,7 @@ class Graffiti : public actor::Actor {
    */
   std::unique_ptr<Fragment> InstanceFragment();
 
-  bool GetIsHit() const;
+  //bool GetIsHit() const;
 
   void OnHit(bullet::Collider* other);
 
@@ -91,7 +91,11 @@ class Graffiti : public actor::Actor {
    * @param command_list コマンドリスト
    */
   void UpdateTexture(directx::device::CommandList& command_list);
-
+  /**
+   * @brief 消しカス生成位置の設定
+   * @param position 座標
+   * @param velocity 速度
+   */
   void SetInstancePosition(math::Vector3 position, math::Vector3 velocity);
 
  private:
@@ -116,7 +120,9 @@ class Graffiti : public actor::Actor {
   float remaining_graffiti_;
   //! 消えたかどうか
   bool is_erase_;
+  //! 消しゴムと衝突しているか
   bool is_hit_;
+  //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
 
   util::CountDownTimer delete_time_;

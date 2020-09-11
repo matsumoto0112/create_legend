@@ -139,7 +139,7 @@ class SkillManager {
 
   //! UIの表示非表示
   bool ui_enable_;
-  
+  //! 装備演出開始のSEが鳴ったか
   bool is_play_fly_se_;
 };
 }  // namespace skill

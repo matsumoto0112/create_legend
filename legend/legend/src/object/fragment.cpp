@@ -5,10 +5,13 @@
 
 namespace legend {
 namespace object {
+//コンストラクタ
 Fragment::Fragment() : Parent(L"Fragment") {}
 
+//デストラクタ
 Fragment::~Fragment() {}
 
+//初期化
 bool Fragment::Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter) {
   if (!Parent::Init(mediator)) {
@@ -38,6 +41,7 @@ bool Fragment::Init(actor::IActorMediator* mediator,
   return true;
 }
 
+//更新
 bool Fragment::Update() {
   if (is_dead_) {
     if (dead_time_.Update()) {
@@ -48,13 +52,16 @@ bool Fragment::Update() {
   return true;
 }
 
+//描画
 void Fragment::Draw() {
   if (is_dead_) return;
   Parent::Draw();
 }
 
+//死亡判定の切り替え
 void Fragment::ChangeDead() { is_dead_ = true; }
 
+//死亡判定の取得
 bool Fragment::GetIsDead() const { return is_dead_; }
 
 }  // namespace object

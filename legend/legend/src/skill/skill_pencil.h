@@ -73,7 +73,7 @@ class SkillPencil : public Skill {
  private:
   /**
    * @brief target‚ÉŒü‚«‚ğ‰ñ“]‚³‚¹‚é
-   * @param •ûŒü
+   * @param target •ûŒü
    */
   math::Quaternion LookAt(const math::Vector3& target);
 
@@ -86,6 +86,7 @@ class SkillPencil : public Skill {
   bool is_explosion_;
   //! ËoŠp“x
   float shoot_theta_;
+  //! ‘¬“x
   math::Vector3 velocity_;
 };
 

@@ -43,6 +43,7 @@ void PlayerUI::Init() {
   device.WaitExecute();
 }
 
+//更新
 void PlayerUI::Update() {
   i32 i = 0;
   for (auto&& sprite : equipment_sprites_) {
@@ -50,6 +51,7 @@ void PlayerUI::Update() {
     float z_order;
     float width = sprite.GetContentSize().x;
     float height = sprite.GetContentSize().y;
+    //装備スキルリストから決まった位置に画像を配置
     if (i == 0) {
       pos +=
           (math::Vector2(0, -height) * 0.2f) - (math::Vector2(width, 0) * 0.1f);
@@ -79,6 +81,7 @@ void PlayerUI::Update() {
   }
 }
 
+//描画
 void PlayerUI::Draw() {
   draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();

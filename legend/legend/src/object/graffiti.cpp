@@ -184,11 +184,13 @@ void Graffiti::Draw() {
   model_->Draw(command_list);
 }
 
+//落書きの残量
 float Graffiti::GetRemainingGraffiti() const { return remaining_graffiti_; }
 
+//落書きが消えたか
 bool Graffiti::GetIsErase() const { return is_erase_; }
 
-bool Graffiti::GetIsHit() const { return is_hit_; }
+//bool Graffiti::GetIsHit() const { return is_hit_; }
 
 void Graffiti::OnHit(bullet::Collider* other) {
   if (is_erase_) return;
@@ -234,6 +236,7 @@ void Graffiti::OnHit(bullet::Collider* other) {
   }
 }
 
+//消しカスの生成
 std::unique_ptr<Fragment> Graffiti::InstanceFragment() {
   float rotate_y =
       game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
@@ -287,6 +290,8 @@ void Graffiti::UpdateTexture(directx::device::CommandList& command_list) {
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_DEST,
           D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 }
+
+//消しカス生成位置の設定
 void Graffiti::SetInstancePosition(math::Vector3 position,
                                    math::Vector3 velocity) {
   instance_position_ = position + (-3.5f * (velocity));

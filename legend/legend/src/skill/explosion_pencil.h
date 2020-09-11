@@ -52,6 +52,7 @@ class ExplosionPencil : public actor::Actor {
   float radius_;
   //! 爆発威力
   float explosion_power_;
+  //! 爆発パーティクル
   std::shared_ptr<draw::particle::ParticleEmitter> explosion_particle_;
 };
 }  // namespace skill

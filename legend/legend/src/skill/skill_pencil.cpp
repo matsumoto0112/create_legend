@@ -94,11 +94,13 @@ bool SkillPencil::Update() {
     return false;
   }
 
+  //爆発の更新
   if (is_explosion_) {
     ExplosionUpdate();
     return true;
   }
 
+  //鉛筆スキル演出の更新
   if (is_production_) {
     ProductionUpdate();
     return true;
@@ -109,6 +111,7 @@ bool SkillPencil::Update() {
 
 //描画
 void SkillPencil::Draw() {
+  //爆発したら描画しない
   if (!is_explosion_) actor::Actor::Draw();
 }
 
@@ -142,8 +145,10 @@ void SkillPencil::ProductionUpdate() {
   float update_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  //落下処理
   velocity_.y = velocity_.y * update_time + 0.5f * (g * update_time);
   transform_.SetPosition(transform_.GetPosition() + velocity_);
+  //先端部分を進行方向に向かせる
   transform_.SetRotation(LookAt(velocity_));
   box_->SetTransform(transform_);
 
@@ -186,6 +191,7 @@ void SkillPencil::Explosion(util::Transform transform) {
   is_explosion_ = true;
   audio.Start(resource_name::audio::SKILL_PENCIL_HIT, 1.0f);
 
+  //爆風を生成
   explosion_pencil_ = std::make_shared<ExplosionPencil>();
   explosion_pencil_->Init(transform, mediator_);
 }

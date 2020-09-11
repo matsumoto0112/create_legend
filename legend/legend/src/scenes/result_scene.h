@@ -24,8 +24,8 @@ enum class ResultMode {
 };
 
 /**
- *@class GameOver
- *@brief ゲームオーバーシーン
+ *@class ResultScene
+ *@brief リザルトシーン
  */
 class ResultScene : public Scene {
  public:
@@ -95,7 +95,9 @@ class ResultScene : public Scene {
   ui::UIBoard board_;
   //! フェード
   FadeInOut fade_;
+  //! シーン終了フラグ
   bool is_scene_end_;
+  //! BGM
   i32 bgm_;
 
   //! リザルト演出状態

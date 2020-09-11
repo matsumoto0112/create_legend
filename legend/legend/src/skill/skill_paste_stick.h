@@ -4,8 +4,16 @@
 #include "src/skill/skill.h"
 #include "src/skill/skill_paste.h"
 
+/**
+ * @file skill_paste_stick.h
+ * @brief スティックのりクラス
+ */
+
 namespace legend {
 namespace skill {
+/**
+ * @brief スティックのりスキル
+ */
 class SkillPasteStick : public Skill {
   using Parent = Skill;
 

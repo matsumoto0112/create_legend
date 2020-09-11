@@ -12,6 +12,9 @@
 namespace legend {
 namespace skill {
 
+/**
+ * @brief ƒXƒLƒ‹‘I‘ğUI
+ */
 class SkillSelectUI {
  public:
   /**

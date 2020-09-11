@@ -99,7 +99,8 @@ void ExplosionPencil::OnHit(bullet::Collider* other) {
       direction = direction * explosion_power_;
       direction.y = 2.0f;
 
-      boss->GetCollider()->ApplyCentralImpulse(direction * 0.5f);
+      float power = 1.0f / boss->GetStrength();
+      boss->GetCollider()->ApplyCentralImpulse(direction * power * 0.35f);
     }
   }
 }

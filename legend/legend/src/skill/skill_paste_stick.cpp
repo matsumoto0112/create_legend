@@ -131,15 +131,16 @@ void SkillPasteStick::ProductionUpdate() {
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
   // yé≤Ç…âÒì]Çâ¡Ç¶ÇÈ
   math::Vector3 angle(0.0f, 360.0f, .0f);
+  //ââèoë¨ìx
+  const float speed = 2.0f;
   math::Quaternion rotation = math::Quaternion::FromEular(
-      (angle * update_time) * math::util::DEG_2_RAD);
+      (angle * update_time * speed) * math::util::DEG_2_RAD);
   transform_.SetRotation(transform_.GetRotation() * rotation);
   box_->SetTransform(transform_);
 
-  // 1ïbä‘Ç≈360ìxâÒì]Ç∑ÇÈÇÃÇ≈ÅA1ïbåoâﬂå„Ç…ê∂ê¨Ç∑ÇÈ
   //åàÇ‹Ç¡ÇΩà íuÇ≈ê∂ê¨Ç∑ÇÈ
   elapsed_time_ += update_time;
-  if (elapsed_time_ >= 1.0f) {
+  if (elapsed_time_ >= 1.0f / speed) {
     for (i32 i = 0; i < instance_count_; i++) {
       math::Vector3 position;
       if (i == 0) {
@@ -166,7 +167,7 @@ void SkillPasteStick::ProductionUpdate() {
       }
 
       position += player_->GetTransform().GetPosition();
-      position.y = 1.01f;
+      position.y = 1.03f;
       //å–Çê∂ê¨
       std::shared_ptr<SkillPaste> paste = std::make_shared<SkillPaste>();
       paste->Init(position, mediator_);

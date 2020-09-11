@@ -1,11 +1,11 @@
 #ifndef LEGEND_BULLET_BOUNDING_BOX_H_
 #define LEGEND_BULLET_BOUNDING_BOX_H_
-
-#include "src/bullet/collider.h"
 /**
  * @file bounding_box.h
  * @brief —§•û‘Ì‚Ì•¨—”»’èƒNƒ‰ƒX
  */
+
+#include "src/bullet/collider.h"
 namespace legend {
 namespace bullet {
 

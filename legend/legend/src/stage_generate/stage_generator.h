@@ -46,6 +46,10 @@ class StageGenerator {
       std::vector<enemy::Enemy::InitializeParameter>& enemys,
       std::vector<enemy::Boss::InitializeParameter>& bosses);
 
+  /**
+   * @brief リザルト用のステージ読み込み処理
+   * @return 処理が正しく終了したらtrueを返す
+   */
   bool GetResultActors(
       player::Player::InitializeParameter& player,
       std::vector<object::Desk::InitializeParameter>& desks,
@@ -53,14 +57,23 @@ class StageGenerator {
       std::vector<enemy::Enemy::InitializeParameter>& enemys,
       std::vector<enemy::Boss::InitializeParameter>& bosses);
 
+  /**
+   * @brief 敵のパラメータを取得(使われてない)
+   */
   std::vector<enemy::Enemy::InitializeParameter> GetEnemyParameters(
       const i32 turn_count);
-
+  /**
+   * @brief ボスのパラメータを取得(使われてない)
+   */
   std::vector<enemy::Boss::InitializeParameter> GetBossParameters(
       const i32 turn_count);
-
+  /**
+   * @brief ステージのカメラ位置を取得する(使われてない)
+   */
   std::vector<CameraGenerateInfo> GetCameraGenerateInfos() const;
-
+  /**
+   * @brief ボスの出現するターン数を取得
+   */
   i32 GetBossGenerateTurn();
 
  private:
@@ -88,8 +101,8 @@ class StageGenerator {
       const std::string& eularz, const std::string& sclaex,
       const std::string& sclaey, const std::string& sclaez) const;
   /**
-   * @brief StringをStringのリストへ変換
-   * @param x,y,z 元文字列
+   * @brief StringをStringのリストへ切り分ける
+   * @param 切り分ける前のString
    * @return 変換されたStringのリスト
    */
   std::vector<std::string> StringSplit(const std::string& string,

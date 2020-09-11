@@ -225,7 +225,11 @@ void AudioManager::LoopStart(i32 key, std::wstring filename, float volume,
   audiosources_[key]->Copy(p_xaudio2_, *base_audiosources_[filename]);
   // audiosources_[play_count_]->LoadWav(p_xaudio2_, filename);
   audiosources_[key]->SetLoopFlag(true);
-  audiosources_[key]->SetVolume(volume, master_volume_);
+  float type_volume =
+      base_audiosources_[filename]->GetAudioType() == AudioType::BGM
+      ? bgm_volume_
+      : se_volume_;
+  audiosources_[key]->SetVolume(volume, master_volume_ * type_volume);
   audiosources_[key]->SetPitch(pitch);
   audiosources_[key]->Play();
 }

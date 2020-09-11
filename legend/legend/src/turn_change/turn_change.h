@@ -1,5 +1,11 @@
 #ifndef LEGEND_TURN_CHANGE_TURN_CHANGE_H_
 #define LEGEND_TURN_CHANGE_TURN_CHANGE_H_
+
+/**
+* @file turn_change.h
+* @brief ターン切り替え時の演出用クラス
+*/
+
 #include "src/draw/sprite_renderer.h"
 #include "src/math/vector_2.h"
 #include "src/math/math_util.h"

@@ -3,7 +3,7 @@
 
 /**
  * @file collider.h
- * @brief
+ * @brief “–‚½‚è”»’è‚ÌŠî’êƒNƒ‰ƒX
  */
 
 #include <btBulletDynamicsCommon.h>

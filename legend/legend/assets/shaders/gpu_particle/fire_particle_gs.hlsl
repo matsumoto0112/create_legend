@@ -3,7 +3,7 @@
 
 /**
  * @file fire_particle_gs.hlsl
- * @brief
+ * @brief 炎パーティクル描画用ジオメトリシェーダー
  */
 
 #ifndef HLSL

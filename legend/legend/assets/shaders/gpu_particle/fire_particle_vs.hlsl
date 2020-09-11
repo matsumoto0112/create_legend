@@ -3,7 +3,7 @@
 
 /**
  * @file fire_particle_vs.hlsl
- * @brief
+ * @brief 炎パーティクル描画用頂点シェーダー
  */
 
 #ifndef HLSL

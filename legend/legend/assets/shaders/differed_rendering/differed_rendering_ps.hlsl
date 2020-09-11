@@ -3,7 +3,7 @@
 
 /**
  * @file differed_rendering_ps.hlsl
- * @brief
+ * @brief Differed-Rendering用ピクセルシェーダー定義
  */
 
 #include "differed_rendering.hlsli"

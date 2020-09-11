@@ -64,35 +64,6 @@ class MyApp final : public device::Application {
       return false;
     }
 
-    {
-      auto& device = game::GameDevice::GetInstance()->GetDevice();
-      auto& render_resource_manager = device.GetRenderResourceManager();
-      auto& resource = game::GameDevice::GetInstance()->GetResource();
-
-      directx::shader::GraphicsPipelineStateDesc desc = {};
-      desc.SetVertexShader(
-          resource.GetVertexShader()
-              .Get(std::wstring(util::resource::resource_names::vertex_shader::
-                                    SHADOW_MAP) +
-                   L".cso")
-              .get());
-      desc.SetRootSignature(device.GetDefaultRootSignature());
-      desc.SetDepthStencilTarget(render_resource_manager.GetDepthStencilTarget(
-          directx::render_target::DepthStencilTargetID::SHADOW_MAP));
-      desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-      desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-      desc.PrimitiveTopologyType =
-          D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-      desc.SampleMask = UINT_MAX;
-      desc.SampleDesc.Count = 1;
-      auto pipeline = std::make_shared<directx::shader::PipelineState>();
-      if (!pipeline->Init(device, desc)) {
-        return false;
-      }
-      resource.GetPipeline().Register(
-          util::resource::resource_names::pipeline::SHADOW_MAP, pipeline);
-    }
-
     //使用する音源を事前に読み込む
     // audioデータは大容量のため、すべてを読み込むのは本来NGだが、今回のappで使用する音源の量がそれほど大きくないため、一括で読み込んでおく。
     auto AudioPreLoad = [&]() {
@@ -144,24 +115,6 @@ class MyApp final : public device::Application {
     if (!scene_manager_.Update()) {
       return false;
     }
-
-    if (ImGui::Begin("Scenes")) {
-      ImGui::Text(("CurrentScene: " + scenes::scene_names::Get(
-                                          scene_manager_.GetCurrentSceneType()))
-                      .c_str());
-
-      constexpr scenes::SceneType SCENES[] = {
-          scenes::SceneType::TITLE,        scenes::SceneType::GAMEOVER,
-          scenes::SceneType::MODEL_VIEW,   scenes::SceneType::SOUND_TEST,
-          scenes::SceneType::MAIN_SCENE_1, scenes::SceneType::SKILL_TEST,
-      };
-      for (auto&& scene : SCENES) {
-        if (ImGui::Button(scenes::scene_names::Get(scene).c_str())) {
-          scene_manager_.ChangeScene(scene);
-        }
-      }
-    }
-    ImGui::End();
 
     if (ImGui::Begin("Debug")) {
       auto& fps = game::GameDevice::GetInstance()->GetFPSCounter();

@@ -3,7 +3,7 @@
 
 /**
  * @file bullet_debug_draw_ps.hlsl
- * @brief
+ * @brief bulletデバッグ描画用ピクセルシェーダー
  */
 
 #include "bullet_debug_draw.hlsli"

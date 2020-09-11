@@ -3,12 +3,10 @@
 
 /**
  * @file ui_quarter_gauge_vs.hlsl
- * @brief
+ * @brief 1/4ゲージ描画用頂点シェーダー
  */
 #include "ui_quarter_gauge.hlsli"
 
-VSOutput main(const VSInput v) {
-    return VSMain(v);
-}
+VSOutput main(const VSInput v) { return VSMain(v); }
 
-#endif //! LEGEND_ASSETS_SHADERS_DRAW2D_UI_QUARTER_GAUGE_VS_HLSL
+#endif  //! LEGEND_ASSETS_SHADERS_DRAW2D_UI_QUARTER_GAUGE_VS_HLSL

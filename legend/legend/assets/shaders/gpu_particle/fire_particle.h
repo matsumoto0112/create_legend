@@ -3,7 +3,7 @@
 
 /**
  * @file fire_particle.h
- * @brief
+ * @brief 衝突時の炎のパーティクル情報
  */
 
 #include "gpu_particle.h"

@@ -3,7 +3,7 @@
 
 /**
  * @file player_move_particle.h
- * @brief
+ * @brief プレイヤーの移動時に発生するパーティクル情報定義
  */
 
 #include "gpu_particle.h"

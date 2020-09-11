@@ -3,7 +3,7 @@
 
 /**
  * @file player_move_particle_gs.hlsl
- * @brief
+ * @brief プレイヤー移動時パーティクル描画用ジオメトリシェーダー
  */
 
 #ifndef HLSL

@@ -3,7 +3,7 @@
 
 /**
  * @file fire_particle_cs.hlsl
- * @brief
+ * @brief 炎パーティクル更新シェーダー
  */
 
 #ifndef HLSL

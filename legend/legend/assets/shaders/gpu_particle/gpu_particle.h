@@ -3,7 +3,7 @@
 
 /**
  * @file gpu_particle.h
- * @brief
+ * @brief GPUパーティクルのグローバル情報定義
  */
 
 #ifdef HLSL

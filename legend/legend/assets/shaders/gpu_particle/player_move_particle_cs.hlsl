@@ -3,7 +3,7 @@
 
 /**
  * @file player_move_particle_cs.hlsl
- * @brief
+ * @brief プレイヤー移動時パーティクル更新シェーダー
  */
 
 #ifndef HLSL

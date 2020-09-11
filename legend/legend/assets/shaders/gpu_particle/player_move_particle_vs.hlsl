@@ -3,7 +3,7 @@
 
 /**
  * @file player_move_particle_vs.hlsl
- * @brief
+ * @brief プレイヤー移動時パーティクル描画用頂点シェーダー
  */
 
 #ifndef HLSL

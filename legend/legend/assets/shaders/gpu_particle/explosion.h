@@ -3,7 +3,7 @@
 
 /**
  * @file explosion.h
- * @brief
+ * @brief 爆発時のパーティクル情報定義
  */
 
 #include "gpu_particle.h"

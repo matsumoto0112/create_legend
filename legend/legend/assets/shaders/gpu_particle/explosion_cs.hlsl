@@ -3,7 +3,7 @@
 
 /**
  * @file explosion_cs.h
- * @brief
+ * @brief 爆発時のパーティクル更新シェーダー
  */
 
 #ifndef HLSL

@@ -523,13 +523,11 @@ void Player::SkillUpdate() {
 bool Player::SkillUpdateTurnEnd() {
   if (mediator_->GetCurrentTurn() == system::Mode::PLAYER_SKILL_AFTER_MOVED) {
     skill_manager_.PlayerTurnEnd();
-    skill_manager_.EndSkill();
-    skill_manager_.RemoveSkill();
   } else if (mediator_->GetCurrentTurn() == system::Mode::ENEMY_MOVE_END) {
     skill_manager_.EnemyTurnEnd();
-    skill_manager_.EndSkill();
-    skill_manager_.RemoveSkill();
   }
+  skill_manager_.EndSkill();
+  skill_manager_.RemoveSkill();
 
   return skill_manager_.IsProductionNow();
 }

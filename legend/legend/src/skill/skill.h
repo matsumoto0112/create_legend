@@ -36,11 +36,6 @@ class Skill : public actor::Actor {
    * @brief 更新処理
    */
   virtual bool Update();
-  ///**
-  // * @brief 描画処理
-  // */
-  // void Draw() override;
-
   /**
    * @brief スキルを選択された際のメソッド
    */
@@ -69,23 +64,49 @@ class Skill : public actor::Actor {
    * @brief 選択中のスキルの位置を変更
    */
   void ChangePosition(math::Vector3 position);
-
-  // i32 GetModelID();
+  /**
+   * @brief 残り使用回数の取得
+   */
   i32 GetRemainingUsableCount();
+  /**
+   * @brief リキャストターンの取得
+   */
   i32 GetRemainingRecastTurn();
+  /**
+   * @brief スキル発動タイミングの取得
+   */
   SkillActivationTiming GetActivetionTiming();
+  /**
+   * @brief スキル終了タイミングの取得
+   */
   SkillEffectEndTiming GetEndTiming();
-  // i32 GetIconTexture();
+  /**
+   * @brief スキルアイコン画像の取得
+   */
   std::shared_ptr<directx::buffer::Texture2D> GetIconTexture() const;
   /**
    * @brief スキル使用中アイコンの取得
    */
   std::shared_ptr<directx::buffer::Texture2D> GetIconUsingTexture() const;
+  /**
+   * @brief 装備スキル画像の取得
+   */
   std::shared_ptr<directx::buffer::Texture2D> GetEquipmentTexture() const;
+  /**
+   * @brief スキル説明画像の取得
+   */
   std::shared_ptr<directx::buffer::Texture2D> GetExplanationTexture() const;
-  // i32 GetExplanationTexture();
+  /**
+   * @brief スキル使用フラグの取得
+   */
   bool GetUseFlag();
+  /**
+   * @brief 演出中フラグの取得
+   */
   bool ProductionFlag();
+  /**
+   * @brief コライダーの削除
+   */
   void RemoveCollider();
   /**
    * @brief スキルの演出終了判定取得
@@ -101,8 +122,6 @@ class Skill : public actor::Actor {
   std::wstring GetName() const;
 
  protected:
-  //! モデルのID
-  // i32 model_id_;
   //! 規定使用可能回数
   i32 usable_count_;
   //! 残り使用可能回数
@@ -115,8 +134,6 @@ class Skill : public actor::Actor {
   SkillActivationTiming activetion_timing_;
   //! スキルの効果終了タイミング
   SkillEffectEndTiming end_timing_;
-  ////! スキルアイコンのID
-  // i32 skill_icon_id_;
 
   //! スキルアイコンのテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> skill_icon_texture_;
@@ -124,9 +141,6 @@ class Skill : public actor::Actor {
   std::shared_ptr<directx::buffer::Texture2D> skill_icon_using_texture_;
   //! スキル説明のテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> skill_explanation_texture_;
-  //! スキル説明の画像のID
-  // i32 skill_explanation_id_;
-
   //! 装備状態表示用のテクスチャ
   std::shared_ptr<directx::buffer::Texture2D> equipment_texture_;
 

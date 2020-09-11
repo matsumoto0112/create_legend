@@ -58,9 +58,8 @@ bool SkillItemBox::Init(actor::IActorMediator* mediator,
     icon_model = resource.GetModel().Get(
         util::resource::resource_names::model::ITEM_PLANE_02);
   } else {
-    //å„Ç…ïœçX
     icon_model = resource.GetModel().Get(
-        util::resource::resource_names::model::ITEM_PLANE_01);
+        util::resource::resource_names::model::ITEM_PLANE_04);
   }
 
   skill_icon_model_ = icon_model;

@@ -33,7 +33,7 @@ class SkillSelectUI {
   /**
    * @brief •`‰æˆ—
    */
-  void Draw();
+  void Draw(bool is_production);
   /**
    * @brief ’Ç‰Áˆ—
    */

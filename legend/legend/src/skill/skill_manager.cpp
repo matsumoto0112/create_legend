@@ -173,7 +173,7 @@ void SkillManager::Draw() {
 
   if (!ui_enable_) return;
 
-  select_ui_.Draw();
+  select_ui_.Draw(IsProductionNow());
   player_ui_.Draw();
 }
 

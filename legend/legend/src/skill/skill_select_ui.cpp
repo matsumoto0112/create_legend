@@ -48,7 +48,7 @@ void SkillSelectUI::Init() {}
 void SkillSelectUI::Update() {}
 
 //•`‰æ
-void SkillSelectUI::Draw() {
+void SkillSelectUI::Draw(bool is_production) {
   draw::SpriteRenderer& sprite_renderer =
       game::GameDevice::GetInstance()->GetSpriteRenderer();
   for (auto&& sprite : skill_icons_) {
@@ -57,7 +57,9 @@ void SkillSelectUI::Draw() {
 
   if (is_select_mode_) {
     sprite_renderer.AddDrawItems(&skill_select_frame_);
-    sprite_renderer.AddDrawItems(&skill_explanatories_[select_number_]);
+    if (!is_production) {
+      sprite_renderer.AddDrawItems(&skill_explanatories_[select_number_]);
+    }
   }
 
   for (auto&& frame : skill_frame_icons_) {

@@ -55,13 +55,13 @@ bool TurnChange::Init(system::TurnSystem* turn_system) {
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f,
                     boss_generate_ui_center_position_.y -
                         boss_generate_ui_bg_.GetContentSize().y * 0.5f));
-  player_icon_.SetPosition(
-      math::Vector2((float)(int)(boss_generate_ui_center_position_.x -
-                        boss_generate_ui_bg_.GetContentSize().x * 0.5f -
-                        player_icon_.GetContentSize().x * 0.5f),
-                    boss_generate_ui_center_position_.y +
-                        boss_generate_ui_bg_.GetContentSize().y * 0.5f -
-                        player_icon_.GetContentSize().y * 0.75f));
+  player_icon_.SetPosition(math::Vector2(
+      (float)(int)(boss_generate_ui_center_position_.x -
+                   boss_generate_ui_bg_.GetContentSize().x * 0.5f -
+                   player_icon_.GetContentSize().x * 0.5f),
+      boss_generate_ui_center_position_.y +
+          boss_generate_ui_bg_.GetContentSize().y * 0.5f -
+          player_icon_.GetContentSize().y * 0.75f));
   boss_icon_.SetPosition(
       math::Vector2(boss_generate_ui_center_position_.x +
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
@@ -129,14 +129,6 @@ bool TurnChange::ChangeStart(system::Mode next_mode) {
   //移動前の座標を保存
   before_player_icon_position_ = player_icon_.GetPosition();
 
-  //ターン切り替え時のSE再生
-  auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  if (next_mode_ == system::Mode::PLAYER_MOVE_READY) {
-    audio.Start(util::resource::resource_names::audio::ENEMY_TURN_END, 1.0f);
-  } else {
-    audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
-  }
-
   return true;
 }
 
@@ -145,6 +137,8 @@ bool TurnChange::TurnChangeUpdate() {
 
   float delta_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
+
+  float before_timer = timer_;
 
   timer_ += delta_time;
 
@@ -155,6 +149,16 @@ bool TurnChange::TurnChangeUpdate() {
   const float before_sprite_move_start_time = staging_time_ / 10 * 3;
 
   if (timer_ < start_time_) return true;
+
+  if (before_timer < start_time_) {
+    //ターン切り替え時のSE再生
+    auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
+    if (next_mode_ == system::Mode::PLAYER_MOVE_READY) {
+      audio.Start(util::resource::resource_names::audio::ENEMY_TURN_END, 1.0f);
+    } else {
+      audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
+    }
+  }
 
   //次のモード画像の移動処理
   math::Vector2 startPos = math::Vector2(screen_size_.x, yPos);
@@ -192,7 +196,7 @@ bool TurnChange::TurnChangeUpdate() {
 }
 
 bool TurnChange::BossGenerateUIUpdate() {
-    if (!is_view_) return true;
+  if (!is_view_) return true;
   math::Vector2 startPos =
       math::Vector2(boss_generate_ui_center_position_.x -
                         boss_generate_ui_bg_.GetContentSize().x * 0.5f -
@@ -238,7 +242,7 @@ void TurnChange::Draw() {
   sprite_renderer.AddDrawItems(&player_icon_);
   sprite_renderer.AddDrawItems(&boss_icon_);
 
-  if (!is_view_) return;
+  if (!is_view_ || timer_ < view_start_time_) return;
   sprite_renderer.AddDrawItems(&before_turn_sprite_);
   sprite_renderer.AddDrawItems(&next_turn_sprite_);
 }

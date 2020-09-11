@@ -268,20 +268,14 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
 bool ActorManager::IsGameClear() const { return enemy_manager_.IsGameClear(); }
 
 bool legend::actor::ActorManager::IsPlayerStop() {
-  bool is_x_stop = math::util::Abs(player_->GetVelocity().x) < 0.01f;
-  bool is_y_stop = math::util::Abs(player_->GetVelocity().y) < 0.01f;
-  bool is_z_stop = math::util::Abs(player_->GetVelocity().z) < 0.01f;
 
-  return is_x_stop && is_y_stop && is_z_stop;
+  return player_->GetVelocity().MagnitudeSquared() < 0.001f;
 }
 
 bool legend::actor::ActorManager::IsAllEnemeyStop() {
   for (auto&& velocity : enemy_manager_.GetVelocities()) {
-    bool is_x_stop = math::util::Abs(velocity.x) < 0.01f;
-    bool is_y_stop = math::util::Abs(velocity.y) < 0.01f;
-    bool is_z_stop = math::util::Abs(velocity.z) < 0.01f;
 
-    if (!is_x_stop || !is_y_stop || !is_z_stop) {
+    if (velocity.MagnitudeSquared() >= 0.001f) {
       return false;
     }
   }

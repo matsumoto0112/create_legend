@@ -18,7 +18,7 @@ namespace device {
 class Application : public window::IWindowProcedureEventCallback {
  public:
   Application();
-  ~Application();
+  virtual ~Application();
   void Run();
 
   virtual bool Init();

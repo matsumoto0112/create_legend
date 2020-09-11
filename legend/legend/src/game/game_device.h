@@ -81,7 +81,7 @@ class GameDevice : public util::Singleton<GameDevice> {
   /**
    * @brief デストラクタ
    */
-  ~GameDevice();
+  virtual ~GameDevice();
 
  private:
   static constexpr legend::u32 WINDOW_WIDTH = 1280;

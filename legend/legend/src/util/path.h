@@ -38,7 +38,7 @@ class Path : public Singleton<Path> {
 
  protected:
   Path();
-  ~Path();
+  virtual ~Path();
 
  private:
   //! 実行ファイルのパス

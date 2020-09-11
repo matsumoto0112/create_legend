@@ -159,7 +159,7 @@ void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
   }
 
   auto enemy_count = enemys_.size();
-  //for (i32 i = 0; i < enemy_count; i++) {
+  // for (i32 i = 0; i < enemy_count; i++) {
   //  Destroy(0);
   //}
 
@@ -173,13 +173,16 @@ bool EnemyManager::AbsorpEnemies() {
   if (boss_ == nullptr) return false;
   bool isAbsorp = false;
   for (i32 i = 0; i < enemys_.size(); i++) {
+    //パーティクルの強制有効化を働かせる
+    enemys_[i]->ParticleForceEmitEnable();
+
     enemys_[i]->RemoveCollider();
     auto pos = enemys_[i]->GetTransformRef().GetPosition();
     auto vector = (boss_->GetPosition() - pos);
     if (5.0f < vector.Magnitude()) {
       auto update_time_ = game::GameDevice::GetInstance()
-                         ->GetFPSCounter()
-                         .GetDeltaSeconds<float>();
+                              ->GetFPSCounter()
+                              .GetDeltaSeconds<float>();
       pos += vector.Normalized() * move_speed_max_ * update_time_;
       enemys_[i]->GetTransformRef().SetPosition(pos);
       isAbsorp = true;

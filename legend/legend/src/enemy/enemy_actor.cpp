@@ -56,6 +56,7 @@ bool EnemyActor::Init(actor::IActorMediator* mediator,
   enemy_move_particle_ =
       draw::particle::particle_factory::CreateEnemyMoveParticle();
   enemy_move_particle_->SetEmitEnable(false);
+  particle_force_emit_enable_ = false;
 
   return true;
 }
@@ -92,8 +93,14 @@ bool EnemyActor::Update() {
     enemy_move_particle_->GetTransformRef().SetPosition(move_particle_position);
     const math::Vector3 velocity = GetVelocity();
     const math::Vector3 velocity_xz{velocity.x, 0.0f, velocity.z};
-    const bool emit_enable = is_move_ ? velocity_xz.Magnitude() > 0.6f
-                                      : math::util::Abs(velocity.y) > 1.0f;
+
+    const bool emit_enable = [&]() {
+      if (particle_force_emit_enable_)
+        return true;
+      else
+        return is_move_ ? velocity_xz.Magnitude() > 0.6f
+                        : math::util::Abs(velocity.y) > 1.0f;
+    }();
     enemy_move_particle_->SetEmitEnable(emit_enable);
   };
 
@@ -270,5 +277,10 @@ void EnemyActor::CreateFireParticle(const util::Transform& transform) {
   auto fire = draw::particle::particle_factory::CreateFireParticle();
   fire->SetTransform(transform);
 }
+
+void EnemyActor::ParticleForceEmitEnable() {
+  particle_force_emit_enable_ = true;
+}
+
 }  // namespace enemy
 }  // namespace legend

@@ -169,6 +169,10 @@ class EnemyActor : public actor::Actor {
    * @param トランスフォーム
    */
   void CreateFireParticle(const util::Transform& transform);
+  /**
+   * @brief 強制的にパーティクルを有効にする
+   */
+  void ParticleForceEmitEnable();
 
  protected:
   //! 移動中か
@@ -201,6 +205,8 @@ class EnemyActor : public actor::Actor {
   bool is_hit_obstacle_;
   //! カウントダウンタイマー
   util::CountDownTimer obstacle_hit_timer_;
+  //! 強制的にパーティクルを有効にする
+  bool particle_force_emit_enable_;
 };
 
 }  // namespace enemy

@@ -302,7 +302,10 @@ bool TurnSystem::EnemyMoveEnd() {
 }
 
 bool TurnSystem::EnemyMoveProducing() {
-  if (actor_manager_.IsAllActorStop() || !actor_manager_.GetEnemyManager()->IsGameClear()) {
+  if (actor_manager_.IsBossGenerated()) {
+    current_mode_ = Mode::BOSS_PRODUCTION;
+  }
+  else if (actor_manager_.IsAllActorStop() || !actor_manager_.GetEnemyManager()->IsGameClear()) {
     ToPlayerTurn();
   }
 
@@ -310,6 +313,11 @@ bool TurnSystem::EnemyMoveProducing() {
 }
 
 bool TurnSystem::BossMoveProducing() {
+  if (0 < actor_manager_.GetEnemiesSize() && actor_manager_.IsBossGenerated()) {
+    if (actor_manager_.GetEnemyManager()->AbsorpEnemies()) {
+      return true;
+    }
+  }
   if (actor_manager_.IsAllActorStop() || !actor_manager_.GetEnemyManager()->IsGameClear()) {
     ToPlayerTurn();
   }
@@ -327,7 +335,7 @@ bool TurnSystem::EnemyGenerate() {
     return false;
   }
 
-  if (actor_manager_.GetEnemiesSize() > 0 || actor_manager_.IsBossGenerated()) {
+  if (0 < actor_manager_.GetEnemiesSize() || actor_manager_.IsBossGenerated()) {
     current_mode_ = Mode::ENEMY_PRODUCTION;
   }
 

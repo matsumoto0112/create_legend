@@ -372,7 +372,7 @@ float Player::GetPower() const { return power_; }
 
 //ˆÚ“®‚ğI‚¦‚Ä‚¢‚é‚©‚ğæ“¾
 bool Player::GetMoveEnd() const {
-  bool is_end = (is_move_ && GetVelocity() == math::Vector3::kZeroVector);
+  bool is_end = (is_move_ && GetVelocity().MagnitudeSquared() < 0.001f);
   return is_end;
 }
 

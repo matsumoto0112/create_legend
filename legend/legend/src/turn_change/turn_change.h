@@ -60,8 +60,10 @@ private:
   bool is_view_;
   //! タイマー
   float timer_;
+  //! ターン切り替え演出前の秒数
+  const float view_start_time_ = 1.5f;
   //! ターン切り替え演出の開始までの秒数
-  const float start_time_ = 0.15f;
+  const float start_time_ = view_start_time_ + 0.2f;
   //! ターン切り替え演出中の秒数
   const float staging_time_ = 0.75f;
   //! ターン切り替え演出の後の秒数

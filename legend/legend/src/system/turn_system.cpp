@@ -266,7 +266,7 @@ bool TurnSystem::PlayerSkillAfterMoved() {
   }
 
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
-  audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
+  //audio.Start(util::resource::resource_names::audio::PLAYER_TURN_END, 1.0f);
 
   before_mode_ = current_mode_;
   current_mode_ = Mode::PLAYER_END_ADD_SKILL;

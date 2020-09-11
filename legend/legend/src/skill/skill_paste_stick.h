@@ -58,7 +58,7 @@ class SkillPasteStick : public Skill {
  private:
   //! ŒĞ
   std::vector<std::shared_ptr<SkillPaste>> pastes_;
-  //! ¶¬”
+  //! ŒĞ‚Ì¶¬”
   i32 instance_count_;
   //! Œo‰ßŠÔ
   float elapsed_time_;

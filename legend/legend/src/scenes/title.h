@@ -57,7 +57,9 @@ class Title : public Scene {
    * @brief 描画
    */
   void Draw() override;
-
+  /**
+   * @brief 終了
+   */
   void Finalize() override;
 
  private:
@@ -65,9 +67,13 @@ class Title : public Scene {
   static constexpr float STAGE_ITEM_MOVE_TIME = 0.5f;
 
  private:
+  //! BGM
   i32 bgm_key_;
+  //! UI
   ui::UIBoard board_;
+  //! フェード
   FadeInOut fade_;
+  //! シーン終了フラグ
   bool is_scene_end_;
 
   Phase current_phase_;
@@ -78,6 +84,7 @@ class Title : public Scene {
   util::ModInt current_select_stage_item_id_;
   util::CountDownTimer stage_move_select_timer_;
 
+  //! SEが鳴ったか
   bool is_play_se_;
 };
 

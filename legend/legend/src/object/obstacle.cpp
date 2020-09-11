@@ -5,11 +5,13 @@
 
 namespace legend {
 namespace object {
-
+//コンストラクタ
 Obstacle::Obstacle() : Parent(L"Obstacle") {}
 
+//デストラクタ
 Obstacle::~Obstacle() {}
 
+//初期化
 bool Obstacle::Init(actor::IActorMediator* mediator,
                     const InitializeParameter& parameter) {
   if (!Parent::Init(mediator)) {
@@ -32,6 +34,8 @@ bool Obstacle::Init(actor::IActorMediator* mediator,
       util::resource::resource_names::model::FIELD_OBJECT_01);
   return true;
 }
+
+//更新
 bool Obstacle::Update() { return true; }
 
 }  // namespace object

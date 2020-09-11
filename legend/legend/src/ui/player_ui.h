@@ -5,8 +5,16 @@
 #include "src/draw/texture_string.h"
 #include "src/skill/skill.h"
 
+/**
+ * @file player_ui.h
+ * @brief ‘•”õó‘ÔUI‚ÌƒNƒ‰ƒX
+ */
 namespace legend {
 namespace ui {
+
+/**
+ * @brief ‘•”õó‘ÔUI
+ */
 class PlayerUI {
  public:
   /**

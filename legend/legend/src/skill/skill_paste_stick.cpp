@@ -137,6 +137,7 @@ void SkillPasteStick::ProductionUpdate() {
   box_->SetTransform(transform_);
 
   // 1ïbä‘Ç≈360ìxâÒì]Ç∑ÇÈÇÃÇ≈ÅA1ïbåoâﬂå„Ç…ê∂ê¨Ç∑ÇÈ
+  //åàÇ‹Ç¡ÇΩà íuÇ≈ê∂ê¨Ç∑ÇÈ
   elapsed_time_ += update_time;
   if (elapsed_time_ >= 1.0f) {
     for (i32 i = 0; i < instance_count_; i++) {
@@ -166,6 +167,7 @@ void SkillPasteStick::ProductionUpdate() {
 
       position += player_->GetTransform().GetPosition();
       position.y = 1.01f;
+      //å–Çê∂ê¨
       std::shared_ptr<SkillPaste> paste = std::make_shared<SkillPaste>();
       paste->Init(position, mediator_);
       pastes_.emplace_back(std::move(paste));

@@ -18,6 +18,7 @@ namespace TextureName = resource_name::texture;
 //コンストラクタ
 ResultScene::ResultScene(ISceneChange* scene_change) : Scene(scene_change) {}
 
+//デストラクタ
 ResultScene::~ResultScene() {}
 
 //初期化
@@ -39,6 +40,7 @@ bool ResultScene::Initialize() {
 
   start_cacth_timer_.Init(1.0f);
 
+  //必要なデータを読み込む
   if (!LoadStageData(stage_data, result_data)) return false;
 
   if (!back_ground_.Init()) {
@@ -67,6 +69,7 @@ bool ResultScene::Initialize() {
 
 //更新
 bool ResultScene::Update() {
+  //勝利演出終了時は一定時間経過でUIを描画
   if (mode_ == ResultMode::END_PRODUCTION) {
     if (!is_draw_) {
       if (!draw_timer_.Update()) {
@@ -74,10 +77,13 @@ bool ResultScene::Update() {
       }
       is_draw_ = true;
     }
-  } else if (mode_ == ResultMode::LOSE) {
+  }
+  //敗北時はUIを描画
+  else if (mode_ == ResultMode::LOSE) {
     is_draw_ = true;
   }
 
+  //演出の更新
   ProductionUpdate();
 
   return true;
@@ -115,6 +121,7 @@ void ResultScene::Draw() {
   game::GameDevice::GetInstance()->GetSpriteRenderer().DrawItems(command_list);
 }
 
+//終了
 void ResultScene::Finalize() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Stop(bgm_);
@@ -122,6 +129,7 @@ void ResultScene::Finalize() {
   game::GameDevice::GetInstance()->GetDevice().WaitExecute();
 }
 
+//ステージデータの読み込み
 bool ResultScene::LoadStageData(
     system::GameDataStorage::PlayStageData stage_data,
     system::GameDataStorage::ResultData result_data) {
@@ -143,6 +151,7 @@ bool ResultScene::LoadStageData(
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
 
+  //プレイヤーデータ
   {
     util::Transform transform = player.transform;
     transform.SetPosition(math::Vector3(transform.GetPosition().x, 2.0f,
@@ -160,6 +169,7 @@ bool ResultScene::LoadStageData(
     models_.emplace_back(
         std::move(resource.GetModel().Get(resource_name::model::ERASER_01)));
   }
+  //机データ
   for (auto&& param : desks) {
     util::Transform transform = param.transform;
     transforms_.emplace_back(transform);
@@ -175,6 +185,7 @@ bool ResultScene::LoadStageData(
     models_.emplace_back(
         std::move(resource.GetModel().Get(resource_name::model::DESK)));
   }
+  //障害物データ
   for (auto&& param : obstacles) {
     util::Transform transform;
     transform.SetPosition(param.position);
@@ -193,6 +204,7 @@ bool ResultScene::LoadStageData(
     models_.emplace_back(std::move(
         resource.GetModel().Get(resource_name::model::FIELD_OBJECT_01)));
   }
+  //エネミーデータ
   for (auto&& param : enemys) {
     util::Transform transform = param.transform;
 
@@ -222,6 +234,7 @@ bool ResultScene::LoadStageData(
     constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
     constant_buffer.UpdateStaging();
     transform_cbs_.emplace_back(constant_buffer);
+    //使用しているモデルデータ
     if (param.model_id == 0) {
       models_.emplace_back(std::move(
           resource.GetModel().Get(resource_name::model::ENEMY_ERASER_01)));
@@ -242,6 +255,7 @@ bool ResultScene::LoadStageData(
           resource.GetModel().Get(resource_name::model::ENEMY_ERASER_06)));
     }
   }
+  //ボスデータ
   for (auto&& boss : bosses) {
     util::Transform transform = boss.transform;
     float pos_x = 0.0f;
@@ -270,6 +284,7 @@ bool ResultScene::LoadStageData(
     constant_buffer.GetStagingRef().world = transform.CreateWorldMatrix();
     constant_buffer.UpdateStaging();
     transform_cbs_.emplace_back(constant_buffer);
+    //使用しているモデルデータ
     if (boss.model_id == 0) {
       models_.emplace_back(
           std::move(resource.GetModel().Get(resource_name::model::BOSS_01)));
@@ -280,7 +295,7 @@ bool ResultScene::LoadStageData(
   }
 
   return true;
-}  // namespace scenes
+}
 
 //勝利演出初期化
 bool ResultScene::WinProductionInit(
@@ -290,6 +305,7 @@ bool ResultScene::WinProductionInit(
   //演出初期状態
   mode_ = ResultMode::WIN_INITIAL;
 
+  //プレイヤー座標の設定
   {
     if (data.stage_name == "stage_01") {
       transforms_[0].SetPosition(
@@ -298,6 +314,7 @@ bool ResultScene::WinProductionInit(
     }
   }
 
+  //カメラ位置設定
   {
     const math::Vector3 pos =
         math::Vector3(transforms_[0].GetPosition().x + 20.0f, 15.0f,
@@ -322,7 +339,6 @@ bool ResultScene::WinProductionInit(
   image->SetPosition(math::Vector2(x, y));
   image->SetZOrder(0.5f);
   board_.AddComponent(std::move(image));
-  // audio.Start(resource_name::audio::RESULT_STAGE_CLEAR, 1.0f);
 
   return true;
 }
@@ -335,12 +351,14 @@ bool ResultScene::LoseProductionInit(
   //敗北演出
   mode_ = ResultMode::LOSE;
 
+  //プレイヤー座標の設定
   transforms_[0].SetPosition(math::Vector3(-60.0f, floor_pos, -20.0f));
   float rotate =
       game::GameDevice::GetInstance()->GetRandom().Range(-180.0f, 180.0f);
   transforms_[0].SetRotation(
       math::Quaternion::FromEular(0, rotate * math::util::DEG_2_RAD, 0));
 
+  //カメラ位置設定
   {
     const math::Vector3 pos =
         math::Vector3(transforms_[0].GetPosition().x, -20.0f,
@@ -364,7 +382,6 @@ bool ResultScene::LoseProductionInit(
   image->SetPosition(math::Vector2(x, y));
   image->SetZOrder(0.5f);
   board_.AddComponent(std::move(image));
-  // audio.Start(resource_name::audio::RESULT_GAMEOVER, 1.0f);
 
   return true;
 }
@@ -490,11 +507,13 @@ void ResultScene::ProductionUpdate() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
 
   if (mode_ == ResultMode::WIN_INITIAL) {
+    //勝利時はフェードが終わるまでカメラを引かない
     if (fade_.IsEnd()) {
       if (!start_cacth_timer_.Update()) return;
       mode_ = ResultMode::CAMERA_CACTH;
     }
   } else if (mode_ == ResultMode::CAMERA_CACTH) {
+    //カメラを決まった位置まで引かせる
     const float destination_x = 200.0f;
     math::Vector3 velocity = math::Vector3::kRightVector *
                              game::GameDevice::GetInstance()
@@ -502,6 +521,7 @@ void ResultScene::ProductionUpdate() {
                                  .GetDeltaSeconds<float>() *
                              100;
     camera_.SetPosition(camera_.GetPosition() + velocity);
+    //カメラの位置が目的地まで到達するか、決定キーを押したら演出を終える
     if (camera_.GetPosition().x >= destination_x ||
         input.GetCommand(input::input_code::Decide)) {
       camera_.SetPosition(math::Vector3(destination_x, camera_.GetPosition().y,

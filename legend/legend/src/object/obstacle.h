@@ -27,12 +27,25 @@ class Obstacle : public actor::Actor {
   using Parent = actor::Actor;
 
  public:
+  /**
+   * @brief コンストラクタ
+   */
   Obstacle();
+  /**
+   * @briefデストラクタ
+   */
   virtual ~Obstacle();
+  /**
+   * @brief 初期化
+   */
   bool Init(actor::IActorMediator* mediator, const InitializeParameter& params);
+  /**
+   * @brief 更新
+   */
   virtual bool Update() override;
 
  private:
+  //! コライダー
   std::shared_ptr<bullet::BoundingBox> box_;
 };
 

@@ -122,7 +122,6 @@ void SkillCompass::Action() {
   auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
   audio.Start(resource_name::audio::SKILL_COMPASS_SPIN, 4.0f);
 
-
   //一度コライダーを削除して、新たに設定し追加する
   mediator_->RemoveCollider(box_);
   bullet::BoundingBox::InitializeParameter params;
@@ -188,7 +187,8 @@ void SkillCompass::OnHit(bullet::Collider* other) {
       direction = direction * flip_off_power_;
       direction.y = 2.0f;
 
-      boss->GetCollider()->ApplyCentralImpulse(direction * 0.5f);
+      float power = 1.0f / boss->GetStrength();
+      boss->GetCollider()->ApplyCentralImpulse(direction * power * 0.35f);
     }
   }
 }

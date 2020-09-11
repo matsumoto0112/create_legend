@@ -83,6 +83,7 @@ void Application::Paint() {
 
 //‰Šú‰»
 bool Application::Init() {
+  ShowCursor(false);
   if (!game::GameDevice::GetInstance()->Init(this)) {
     return false;
   }

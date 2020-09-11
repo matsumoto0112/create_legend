@@ -17,10 +17,7 @@ namespace legend {
 namespace enemy {
 
 // コンストラクタ
-EnemyActor::EnemyActor() : Parent(L"EnemyActor") {
-  is_move_ = false;
-  enemy_ai_.Init();
-}
+EnemyActor::EnemyActor() : Parent(L"EnemyActor") { enemy_ai_.Init(); }
 
 // デストラクタ
 EnemyActor::~EnemyActor() {}
@@ -52,7 +49,9 @@ bool EnemyActor::Init(actor::IActorMediator* mediator,
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
 
+  is_move_ = false;
   move_end_ = false;
+  is_hit_done_ = false;
 
   enemy_move_particle_ =
       draw::particle::particle_factory::CreateEnemyMoveParticle();
@@ -109,7 +108,9 @@ void EnemyActor::Draw() {
   auto& device = game::GameDevice::GetInstance()->GetDevice();
   auto& resource = game::GameDevice::GetInstance()->GetResource();
   auto& command_list = device.GetCurrentFrameResource()->GetCommandList();
-  resource.GetPipeline().Get(DEFAULT_PIPELINE_NAME)->SetCommandList(command_list);
+  resource.GetPipeline()
+      .Get(DEFAULT_PIPELINE_NAME)
+      ->SetCommandList(command_list);
 
   transform_cb_.GetStagingRef().world = transform_.CreateWorldMatrix();
   transform_cb_.UpdateStaging();
@@ -143,6 +144,7 @@ void EnemyActor::ResetParameter() {
 
   is_move_ = false;
   move_end_ = false;
+  is_hit_done_ = false;
 }
 
 // プレイヤーとの距離
@@ -185,7 +187,6 @@ void EnemyActor::SetType(i32 type_index) {
 
 // 衝突判定
 void EnemyActor::OnHit(bullet::Collider* other) {
-
   //糊に触れた
   {
     skill::SkillPaste* paste =
@@ -219,7 +220,16 @@ void EnemyActor::HitAction(bullet::Collider* other) {
       ((other_position - position).Normalized() + velocity.Normalized())
           .Normalized();
 
-  auto add_power = ((strength_ + velocity.Magnitude()) / 2.0f);
+  auto add_power = (strength_ + velocity.Magnitude());
+  switch (enemy_ai_.effect_type_) {
+    case enemy_type::EffectType::Effect_Rotate:
+      add_power /= 3.0f;
+      break;
+    default:
+      add_power /= 2.0f;
+      break;
+  }
+
   switch (enemy_ai_.hit_type_) {
       // 衝突時、停止する処理
     case enemy::enemy_type::HitType::Hit_Stop:

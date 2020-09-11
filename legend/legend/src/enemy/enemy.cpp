@@ -63,8 +63,11 @@ void Enemy::OnHit(bullet::Collider* other) {
   system::Mode turn_mode = mediator_->GetCurrentTurn();
   if (turn_mode == system::Mode::ENEMY_MOVING) {
     //ÉvÉåÉCÉÑÅ[Ç…êGÇÍÇΩ
-    if (dynamic_cast<player::Player*>(other->GetOwner()) != nullptr) {
-      HitAction(other);
+    if (!is_hit_done_) {
+      if (dynamic_cast<player::Player*>(other->GetOwner()) != nullptr) {
+        is_hit_done_ = true;
+        HitAction(other);
+      }
     }
   }
 }

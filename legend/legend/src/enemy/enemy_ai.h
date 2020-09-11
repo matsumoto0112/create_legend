@@ -86,9 +86,10 @@ struct EnemyAI {
              // ‰Á‘¬“x‚ÌÝ’è
              box->ApplyCentralImpulse(velocity);
              // ‰ñ“]‚ÌÝ’è
-             auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-             angle *= (game::GameDevice::GetInstance()->GetRandom().Range(
-                 -0.3f, 0.3f));
+             auto angle = math::Vector3::kUpVector * 20.0f;
+             angle *= math::util::Abs(
+                 game::GameDevice::GetInstance()->GetRandom().Range(-1.0f,
+                                                                    1.0f));
              box->SetAngularVelocity(angle);
            }},
           {EnemyAIType::Boss_Rotate_Stand,
@@ -107,9 +108,10 @@ struct EnemyAI {
              // ‰Á‘¬“x‚ÌÝ’è
              box->ApplyCentralImpulse(velocity);
              // ‰ñ“]‚ÌÝ’è
-             auto angle = math::Vector3::kUpVector * velocity.Magnitude();
-             angle *= (game::GameDevice::GetInstance()->GetRandom().Range(
-                 -0.75f, 0.75f));
+             auto angle = math::Vector3::kUpVector * 20.0f;
+             angle *= math::util::Abs(
+                 game::GameDevice::GetInstance()->GetRandom().Range(-1.0f,
+                                                                    1.0f));
              box->SetAngularVelocity(angle);
            }},
           {EnemyAIType::Boss_Tutorial,

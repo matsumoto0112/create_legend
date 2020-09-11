@@ -68,7 +68,10 @@ class EnemyActor : public actor::Actor {
    * @brief 描画
    */
   virtual void Draw();
-
+  /**
+   * @brief 衝突判定削除
+   */
+  virtual void RemoveCollider();
   /**
    * @brief 座標の設定
    * @param position 座標
@@ -96,7 +99,9 @@ class EnemyActor : public actor::Actor {
    * @brief 移動量の取得
    * @return 速度取得
    */
-  virtual math::Vector3 GetVelocity() const { return (box_->GetVelocity()); }
+  virtual math::Vector3 GetVelocity() const {
+    return (box_ != nullptr ? box_->GetVelocity() : math::Vector3::kZeroVector);
+  }
   /**
    * @brief 回転の取得
    * @return 回転取得
@@ -136,7 +141,9 @@ class EnemyActor : public actor::Actor {
    * @brief 衝突取得
    * @return 衝突取得
    */
-  bullet::BoundingBox* GetCollider() const { return box_.get(); }
+  bullet::BoundingBox* GetCollider() const {
+    return (box_ != nullptr ? box_.get() : nullptr);
+  }
   /**
    * @brief エネミータイプ設定
    * @param type_index 敵タイプ番号

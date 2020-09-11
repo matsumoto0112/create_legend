@@ -62,7 +62,9 @@ bool EnemyActor::Init(actor::IActorMediator* mediator,
 
 // 削除
 void EnemyActor::Remove() {
-  mediator_->RemoveCollider(box_);
+  if (box_ != nullptr) {
+    mediator_->RemoveCollider(box_);
+  }
   enemy_move_particle_->Delete();
 }
 
@@ -73,7 +75,8 @@ bool EnemyActor::Update() {
 
   auto velocity = GetVelocity();
   velocity.y = 0;
-  auto angluar = box_->GetAngularVelocity();
+  auto angluar =
+      box_ != nullptr ? box_->GetAngularVelocity() : math::Vector3::kZeroVector;
   // 移動時、速度と回転速度が行って一以下なら停止処理
   if (is_move_ && (velocity.Magnitude() < 0.01f) &&
       (angluar.Magnitude() < 0.01f)) {
@@ -118,6 +121,14 @@ void EnemyActor::Draw() {
       device, directx::shader::ConstantBufferRegisterID::TRANSFORM);
 
   model_->Draw(command_list);
+}
+
+void EnemyActor::RemoveCollider() {
+  if (box_ == nullptr) {
+    return;
+  }
+  mediator_->RemoveCollider(box_);
+  box_ = nullptr;
 }
 
 // 座標の設定

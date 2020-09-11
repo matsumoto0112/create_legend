@@ -30,7 +30,7 @@ bool EnemyManager::Initilaize(actor::IActorMediator* mediator) {
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
     bool isMove = false;
-	// ˆÚ“®‚µ‚Ä‚¢‚é‚©”»’è
+    // ˆÚ“®‚µ‚Ä‚¢‚é‚©”»’è
     {
       for (auto& e : enemys_) {
         if (isMove) break;
@@ -159,14 +159,40 @@ void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
   }
 
   auto enemy_count = enemys_.size();
-  for (i32 i = 0; i < enemy_count; i++) {
-    Destroy(0);
-  }
+  //for (i32 i = 0; i < enemy_count; i++) {
+  //  Destroy(0);
+  //}
 
   boss_ = std::make_unique<Boss>();
   boss_->Init(actor_mediator_, paramater);
   boss_->UpdateStrength(std::max(0.0f, static_cast<float>(enemy_count)) *
                         0.05f);
+}
+
+bool EnemyManager::AbsorpEnemies() {
+  if (boss_ == nullptr) return false;
+  bool isAbsorp = false;
+  for (i32 i = 0; i < enemys_.size(); i++) {
+    enemys_[i]->RemoveCollider();
+    auto pos = enemys_[i]->GetTransformRef().GetPosition();
+    auto vector = (boss_->GetPosition() - pos);
+    if (5.0f < vector.Magnitude()) {
+      auto update_time_ = game::GameDevice::GetInstance()
+                         ->GetFPSCounter()
+                         .GetDeltaSeconds<float>();
+      pos += vector.Normalized() * move_speed_max_ * update_time_;
+      enemys_[i]->GetTransformRef().SetPosition(pos);
+      isAbsorp = true;
+    } else {
+      Destroy(i);
+      i--;
+    }
+  }
+  if (isAbsorp) {
+    boss_->GetCollider()->SetVelocity(math::Vector3::kZeroVector);
+  }
+
+  return isAbsorp;
 }
 
 // íœˆ—

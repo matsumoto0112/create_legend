@@ -59,6 +59,11 @@ class EnemyManager {
    */
   void AddBoss(const EnemyActor::InitializeParameter& paramater);
   /**
+   * @brief ƒ{ƒX‚ğ’Ç‰Á
+   * @return ‰ñûI—¹
+   */
+  bool AbsorpEnemies();
+  /**
    * @brief íœˆ—
    */
   void DestroyUpdate();

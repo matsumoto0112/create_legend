@@ -7,9 +7,17 @@
 #include "src/skill/skill.h"
 #include "src/util/timer.h"
 
+/**
+ * @file skill_item_box.h
+ * @brief スキルアイテムボックスクラス
+ */
+
 namespace legend {
 namespace skill {
 
+/**
+ * @brief スキルアイテムボックス
+ */
 class SkillItemBox : public actor::Actor {
   using Parent = actor::Actor;
 

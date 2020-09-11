@@ -1,16 +1,20 @@
 #ifndef LEGEND_OBJECT_OBSTACLE_H_
 #define LEGEND_OBJECT_OBSTACLE_H_
 
-/**
- * @file obstacle.h
- */
-
 #include "src/actor/actor.h"
 #include "src/bullet/bounding_box.h"
+
+/**
+ * @file obstacle.h
+ * @brief è·äQï®ÉNÉâÉX
+ */
 
 namespace legend {
 namespace object {
 
+/**
+ * @brief è·äQï®
+ */
 class Obstacle : public actor::Actor {
  public:
   struct InitializeParameter {

@@ -5,8 +5,10 @@
 namespace legend {
 namespace enemy {
 
+// コンストラクタ
 EnemyManager::EnemyManager() {}
 
+// デスクトラクタ
 EnemyManager::~EnemyManager() {
   auto enemyCount = enemys_.size();
   for (i32 i = 0; i < enemyCount; i++) {
@@ -18,24 +20,29 @@ EnemyManager::~EnemyManager() {
   }
 }
 
+// 初期化
 bool EnemyManager::Initilaize(actor::IActorMediator* mediator) {
   this->actor_mediator_ = mediator;
   return true;
 }
 
+// 更新
 bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   if ((action_enemy_index_ < 0) && (0 < enemys_.size() || boss_ != nullptr)) {
     bool isMove = false;
-    for (auto& e : enemys_) {
-      if (isMove) break;
-      auto velocity = e->GetVelocity();
-      velocity.y = 0;
-      isMove = (!e->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
-    }
-    if (boss_ != nullptr) {
-      auto velocity = boss_->GetVelocity();
-      velocity.y = 0;
-      isMove |= (!boss_->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
+	// 移動しているか判定
+    {
+      for (auto& e : enemys_) {
+        if (isMove) break;
+        auto velocity = e->GetVelocity();
+        velocity.y = 0;
+        isMove = (!e->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
+      }
+      if (boss_ != nullptr) {
+        auto velocity = boss_->GetVelocity();
+        velocity.y = 0;
+        isMove |= (!boss_->GetMoveEnd() || (0.01f <= velocity.Magnitude()));
+      }
     }
     if (isMove) {
       action_enemy_index_ = 0;
@@ -50,7 +57,9 @@ bool EnemyManager::Update(search::SearchManager* search_manaegr) {
   return true;
 }
 
-void EnemyManager::Draw(actor::DifferedRenderingRenderCommandList* render_command_list) {
+// 描画
+void EnemyManager::Draw(
+    actor::DifferedRenderingRenderCommandList* render_command_list) {
   for (i32 i = 0; i < enemys_.size(); i++) {
     render_command_list->Push(enemys_[i].get());
   }
@@ -59,6 +68,7 @@ void EnemyManager::Draw(actor::DifferedRenderingRenderCommandList* render_comman
   }
 }
 
+// 敵の行動処理
 void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   //ボスの行動indexは敵の配列サイズと一致したとき
   const bool is_index_is_boss = enemys_.size() == action_enemy_index_;
@@ -131,6 +141,7 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
   }
 }
 
+// 敵を追加
 void EnemyManager::AddEnemy(const EnemyActor::InitializeParameter& paramater) {
   if (enemy_max_count_ <= enemys_.size()) {
     return;
@@ -141,6 +152,7 @@ void EnemyManager::AddEnemy(const EnemyActor::InitializeParameter& paramater) {
   enemys_.emplace_back(std::move(enemy));
 }
 
+// ボスを追加
 void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
   if (boss_ != nullptr || is_game_clear_) {
     return;
@@ -157,6 +169,7 @@ void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
                         0.05f);
 }
 
+// 削除処理
 void EnemyManager::DestroyUpdate() {
   for (i32 index = 0; index < enemys_.size(); index++) {
     enemys_[index]->Update();
@@ -171,11 +184,8 @@ void EnemyManager::DestroyUpdate() {
   }
 }
 
+// 敵を削除
 void EnemyManager::Destroy(i32 index) {
-  // if (index < 0 || enemys_.size() <= 0 || enemys_.size() <= index) {
-  //  return;
-  //}
-
   enemys_[index]->Remove();
   enemys_.erase(enemys_.begin() + index);
   if ((0 <= action_enemy_index_) && (index <= action_enemy_index_)) {
@@ -183,6 +193,7 @@ void EnemyManager::Destroy(i32 index) {
   }
 }
 
+// ボスを削除
 void EnemyManager::DestroyBoss() {
   if (boss_ == nullptr) return;
 
@@ -194,6 +205,7 @@ void EnemyManager::DestroyBoss() {
   is_game_clear_ = true;
 }
 
+// ポジション設定
 void EnemyManager::SetPosition(Enemy* enemy) {
   auto x = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
   auto z = game::GameDevice::GetInstance()->GetRandom().Range(-1.0f, 1.0f);
@@ -201,41 +213,23 @@ void EnemyManager::SetPosition(Enemy* enemy) {
   enemy->SetPosition(position);
 }
 
-//最後の敵の取得
+// 最後の敵の取得
 Enemy* EnemyManager::GetLastEnemy() const {
   return enemys_.at(enemys_.size() - 1).get();
 }
 
-// obbの座標を基に座標更新
-// void EnemyManager::SetPosition(system::PhysicsField& physics_field) {
-//  //for (i32 i = 0; i < enemys_.size(); i++) {
-//  //  enemys_[i]->SetPosition(physics_field.GetEnemyOBB(i).GetPosition());
-//  //  if (enemys_[i]->GetPosition().y <= -5.0f) {
-//  //    Destroy(i, physics_field);
-//  //    i--;
-//  //  }
-//  //}
-//}
-
-//敵の数を取得
+// 敵の数を取得
 i32 EnemyManager::GetEnemiesSize() const {
   return static_cast<i32>(enemys_.size());
 }
 
-//// obbの速度を基に速度更新
-// void EnemyManager::SetVelocity(system::PhysicsField& physics_field) {
-//  for (i32 i = 0; i < enemys_.size(); i++) {
-//    if (enemys_[i]->GetMoveEnd()) continue;
-//    enemys_[i]->SetVelocity(physics_field.GetEnemyVelocity(i));
-//  }
-//}
-
+// 敵の行動を初期化
 void EnemyManager::ResetEnemyMove() {
   action_enemy_index_ = -1;
   move_timer_ = -1.0f;
 }
 
-//各敵の速度を取得
+// 各敵の速度を取得
 std::vector<math::Vector3> EnemyManager::GetVelocities() {
   velocities_.resize(enemys_.size());
   for (i32 i = 0; i < velocities_.size(); i++) {
@@ -245,7 +239,7 @@ std::vector<math::Vector3> EnemyManager::GetVelocities() {
   return velocities_;
 }
 
-//最後の敵の移動終了判定を取得
+// 最後の敵の移動終了判定を取得
 bool EnemyManager::LastEnemyMoveEnd() const {
   //空かどうかチェック
   if (enemys_.size() <= 0 && boss_ == nullptr) {
@@ -265,6 +259,7 @@ bool EnemyManager::LastEnemyMoveEnd() const {
     end = false;
   }
 
+  // 移動し終わっていたら移動処理をリセット
   if (end) {
     for (i32 i = 0; i < enemys_.size(); i++) {
       if (enemys_[i]->GetVelocity().y < -0.1f) {
@@ -285,19 +280,12 @@ bool EnemyManager::LastEnemyMoveEnd() const {
   return end;
 }
 
+// プレイヤー設定
 void EnemyManager::SetPlayer(bullet::Collider* player_obb) {
   player_collider_ = player_obb;
 }
 
-void EnemyManager::DebugDraw(directx::device::CommandList& command_list) {
-  // for (i32 i = 0; i < enemys_.size(); i++) {
-  //  enemys_[i]->GetCollisionRef().DebugDraw(command_list);
-  //}
-  // if (boss_ != nullptr) {
-  //  boss_->GetCollisionRef().DebugDraw(command_list);
-  //}
-}
-
+// 敵のポインタリスト取得
 std::vector<Enemy*> EnemyManager::GetEnemyPointers() const {
   std::vector<Enemy*> res(enemys_.size());
   const u32 size = static_cast<u32>(enemys_.size());

@@ -9,6 +9,7 @@
 namespace legend {
 namespace enemy {
 
+// 敵AIタイプ
 enum EnemyAIType : i32 {
   None,
   Enemy_Rotate,
@@ -18,6 +19,7 @@ enum EnemyAIType : i32 {
   Boss_Tutorial,
 };
 
+// 敵AI
 struct EnemyAI {
   //! 移動タイプ
   enemy_type::MoveType move_type_;
@@ -26,13 +28,19 @@ struct EnemyAI {
   //! 効果タイプ
   enemy_type::EffectType effect_type_;
 
+  //! 敵AIタイプ
   EnemyAIType ai_type_;
+  //! 行動リスト
   std::vector<EnemyAIType> ai_actions_;
 
  private:
+  //! 現在の行動番号
   i32 action_index_ = 0;
 
  public:
+  /**
+   * @brief 初期化
+   */
   void Init() {
     move_type_ = enemy_type::MoveType::Move_Detour;
     hit_type_ = enemy_type::HitType::Hit_Rush;
@@ -43,33 +51,28 @@ struct EnemyAI {
     action_index_ = 0;
   }
 
+  /**
+   * @brief 行動設定
+   */
   void SetAction(std::vector<EnemyAIType> ai_actions) {
     ai_actions_ = ai_actions;
     ai_type_ = (ai_actions_.size() <= 0) ? EnemyAIType::None : ai_actions_[0];
     action_index_ = 0;
   }
 
+  /**
+   * @brief 行動アクション
+   */
   void Action(math::Vector3 velocity, bullet::BoundingBox* box) {
     auto value = enemy_ai_[ai_type_];
     value(velocity, box);
     action_index_ =
         (ai_actions_.size() <= (action_index_ + 1)) ? 0 : (action_index_ + 1);
     ai_type_ = ai_actions_[action_index_];
-
-    // switch (ai_type_) {
-    //  case EnemyAIType::Boss_Rotate_Stand:
-    //    ai_type_ = EnemyAIType::Boss_Rush_Move;
-    //    break;
-    //  case EnemyAIType::Boss_Rush_Move:
-    //    ai_type_ = EnemyAIType::Boss_Rotate_Stand;
-    //    break;
-    //  case EnemyAIType::Boss_Rotate_Move:
-    //    ai_type_ = EnemyAIType::Boss_Rotate_Stand;
-    //    break;
-    //}
   }
 
  private:
+  //! 行動リスト
   std::unordered_map<i32,
                      std::function<void(math::Vector3, bullet::BoundingBox*)>>
       enemy_ai_ = {

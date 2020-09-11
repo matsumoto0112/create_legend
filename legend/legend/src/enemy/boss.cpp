@@ -38,14 +38,15 @@ bool Boss::Init(actor::IActorMediator* mediator,
                 const InitializeParameter& parameter) {
   if (enemy::EnemyActor::Init(mediator, parameter)) {
     auto& resource = game::GameDevice::GetInstance()->GetResource();
+    // モデル番号からモデル設定
     switch (parameter.model_id) {
-      case 0:
+      case 0:  // ボス
         model_ = resource.GetModel().Get(
             util::resource::resource_names::model::BOSS_01);
 
         strength_ = 1.5f;
         break;
-      case 1:
+      case 1:  // チュートリアルボス
         model_ = resource.GetModel().Get(
             util::resource::resource_names::model::BOSS_02);
 
@@ -63,6 +64,7 @@ bool Boss::Init(actor::IActorMediator* mediator,
   return false;
 }
 
+//更新
 bool Boss::Update() {
   enemy::EnemyActor::Update();
   Boss_Tutorial();
@@ -93,6 +95,7 @@ void Boss::SetVelocity(math::Vector3 velocity) {
   is_move_ = true;
 }
 
+//エネミータイプ設定
 void Boss::SetType(i32 type_index) {
   type_index =
       std::clamp(type_index, 0, (i32)enemy_type::EffectType::Effect_Type_End);
@@ -120,6 +123,7 @@ void Boss::SetType(i32 type_index) {
   }
 }
 
+//衝突判定
 void Boss::OnHit(bullet::Collider* other) {
   enemy::EnemyActor::OnHit(other);
   system::Mode turn_mode = mediator_->GetCurrentTurn();
@@ -142,6 +146,7 @@ void Boss::OnHit(bullet::Collider* other) {
   }
 }
 
+//チュートリアルの行動
 void Boss::Boss_Tutorial() {
   if (is_tutorial_) {
     auto position = GetPosition();
@@ -198,6 +203,8 @@ void Boss::Boss_Tutorial() {
     }
   }
 }
+
+//その場で回転する行動
 void Boss::Boss_Rotate_Stand() {
   if (is_rotate_) {
     auto vector =
@@ -205,10 +212,7 @@ void Boss::Boss_Rotate_Stand() {
     vector.y = 0;
     vector.Normalized();
 
-    auto q = CreateLookAt(vector);
-    // auto speed = (rotate_speed_ - box_->GetAngularVelocity().Magnitude());
-    box_->SetAngularVelocity(math::Vector3::kUpVector /** q.w*/ *
-                             rotate_speed_);
+    box_->SetAngularVelocity(math::Vector3::kUpVector * rotate_speed_);
 
     if (box_->GetAngularVelocity().Magnitude() > 0.1f) {
       if (!is_play_spin_se_) {
@@ -237,6 +241,8 @@ void Boss::Boss_Rotate_Stand() {
     }
   }
 }
+
+//直進行動
 void Boss::Boss_Rush_Move() {
   if (is_rush_) {
     auto position = GetPosition();
@@ -244,7 +250,7 @@ void Boss::Boss_Rush_Move() {
     direction.y = 0;
     direction = direction.Normalized();
 
-    {
+    { // 前方にプレイヤーがいればそちらに曲げる
       auto vector =
           (mediator_->GetPlayer()->GetPosition() - GetPosition()).Normalized();
       vector.y = 0;

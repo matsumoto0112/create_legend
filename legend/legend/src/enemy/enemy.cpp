@@ -24,6 +24,7 @@ Enemy::~Enemy() {}
 bool Enemy::Init(actor::IActorMediator* mediator,
                  const InitializeParameter& parameter) {
   if (enemy::EnemyActor::Init(mediator, parameter)) {
+    // ƒ‚ƒfƒ‹”Ô†‚©‚çƒ‚ƒfƒ‹İ’è
     auto model_id = util::resource::resource_names::model::ENEMY_ERASER_01;
     switch (parameter.model_id) {
       case 0:
@@ -56,6 +57,7 @@ bool Enemy::Init(actor::IActorMediator* mediator,
   return false;
 }
 
+// Õ“Ë”»’è
 void Enemy::OnHit(bullet::Collider* other) {
   enemy::EnemyActor::OnHit(other);
   system::Mode turn_mode = mediator_->GetCurrentTurn();

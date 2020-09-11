@@ -82,13 +82,15 @@ void SkillManager::EquipmentProductionUpdate() {
 
   //‘•”õ’Ç‰Á‚ğI‚¦‚Ä‚È‚¯‚ê‚Îã¸ó‘Ô‚ÉØ‚è‘Ö‚¦
   if (!complete_eqquipment_) {
-    player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
-    current_mode_ = Mode::RISE_PLAYER;
     if (!is_play_fly_se_) {
       auto& audio = game::GameDevice::GetInstance()->GetAudioManager();
       audio.Start(util::resource::resource_names::audio::SKILL_FITOUT_UP, 1.0f);
+      player_->GetCollider()->SetVelocity(math::Vector3::kZeroVector);
+      player_->GetCollider()->SetAngularVelocity(math::Vector3::kZeroVector);
       is_play_fly_se_ = true;
     }
+    player_->GetCollider()->ApplyCentralImpulse(math::Vector3(0, 1, 0));
+    current_mode_ = Mode::RISE_PLAYER;
   }
 
   //ã¸
@@ -100,6 +102,11 @@ void SkillManager::EquipmentProductionUpdate() {
           AddSkill(skill);
         }
         complete_eqquipment_ = true;
+        math::Quaternion rotation =
+            math::Quaternion(0.0f, player_->GetTransform().GetRotation().y,
+                             0.0f, player_->GetTransform().GetRotation().w);
+        player_->SetRotation(rotation);
+        player_->GetCollider()->SetTransform(player_->GetTransform());
       }
       //‰º~ó‘Ô‚ÉØ‚è‘Ö‚¦
       current_mode_ = Mode::FALL_PLAYER;

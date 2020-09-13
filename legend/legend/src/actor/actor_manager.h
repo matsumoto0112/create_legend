@@ -89,6 +89,10 @@ class ActorManager : public actor::IActorMediator {
    */
   bool IsAllEnemeyStop();
   /**
+   * @brief ボスが止まっているかどうか
+   */
+  bool IsBossStop();
+  /**
    * @brief 全てのアクターが止まっているかどうか
    */
   bool IsAllActorStop();

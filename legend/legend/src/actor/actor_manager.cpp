@@ -268,13 +268,11 @@ bool ActorManager::GenerateActors(i32 currnt_turn) {
 bool ActorManager::IsGameClear() const { return enemy_manager_.IsGameClear(); }
 
 bool legend::actor::ActorManager::IsPlayerStop() {
-
   return player_->GetVelocity().MagnitudeSquared() < 0.001f;
 }
 
 bool legend::actor::ActorManager::IsAllEnemeyStop() {
   for (auto&& velocity : enemy_manager_.GetVelocities()) {
-
     if (velocity.MagnitudeSquared() >= 0.001f) {
       return false;
     }
@@ -283,12 +281,19 @@ bool legend::actor::ActorManager::IsAllEnemeyStop() {
   return true;
 }
 
+bool legend::actor::ActorManager::IsBossStop() {
+  //¶¬‚³‚ê‚Ä‚È‚¢‚È‚çtrue
+  if (!is_boss_generated_) return true;
+
+  return enemy_manager_.GetBoss()->GetVelocity().MagnitudeSquared() >= 0.001f;
+}
+
 i32 legend::actor::ActorManager::GetEnemiesSize() {
   return enemy_manager_.GetEnemiesSize();
 }
 
 bool legend::actor::ActorManager::IsAllActorStop() {
-  return IsPlayerStop() && IsAllEnemeyStop();
+  return IsPlayerStop() && IsAllEnemeyStop() && IsBossStop();
 }
 
 enemy::EnemyManager* legend::actor::ActorManager::GetEnemyManager() {

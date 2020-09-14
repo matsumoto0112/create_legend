@@ -247,7 +247,7 @@ bool TurnSystem::PlayerMoveReady() {
 bool TurnSystem::PlayerMoving() { return true; }
 
 bool TurnSystem::WaitEnemyMoveStart() {
-  if (actor_manager_.GetEnemiesSize() == 0 && actor_manager_.IsBossGenerated()) {
+  if (actor_manager_.GetEnemiesSize() == 0 && !actor_manager_.IsBossGenerated()) {
     before_mode_ = current_mode_;
     current_mode_ = Mode::PLAYER_SKILL_AFTER_MOVED;
     return true;

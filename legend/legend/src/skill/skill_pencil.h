@@ -88,6 +88,8 @@ class SkillPencil : public Skill {
   float shoot_theta_;
   //! ë¨ìx
   math::Vector3 velocity_;
+  //! èâë¨ìx
+  math::Vector3 initial_velocity_;
 };
 
 }  // namespace skill

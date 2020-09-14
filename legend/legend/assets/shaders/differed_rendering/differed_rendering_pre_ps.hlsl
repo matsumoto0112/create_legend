@@ -16,7 +16,7 @@ PSOutput main(const PSInput i) {
   result.normal = float4(i.normal.xyz * 0.5 + 0.5, depth);
   result.diffuse = g_albedo.Sample(g_sampler_warp, i.uv);
 
-  clip(result.diffuse.a - 0.01);
+  clip(result.diffuse.a - 0.08);
   return result;
 }
 

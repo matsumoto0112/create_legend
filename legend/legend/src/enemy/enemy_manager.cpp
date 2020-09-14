@@ -111,23 +111,17 @@ void EnemyManager::EnemyAction(search::SearchManager* search_manaegr) {
       pPos.y = 0;
       ePos.y = 0;
       auto vector = next - ePos;
+      auto length = math::util::Clamp(vector.Magnitude(), move_speed_min_,
+                                      move_speed_max_);
+      if ((next - pPos).Magnitude() < 1.0f) {
+        length = move_speed_max_;
+      }
+      vector = vector.Normalized() * length;
 
       if ((boss_ != nullptr) &&
           (_collider->GetOwner() == boss_->GetCollider()->GetOwner())) {
-        auto length = math::util::Clamp(vector.Magnitude(), move_speed_min_,
-                                        move_speed_max_ * 3.0f);
-        if ((next - pPos).Magnitude() < 1.0f) {
-          length = move_speed_max_;
-        }
-        vector = vector.Normalized() * length;
         boss_->SetVelocity(vector);
       } else {
-        auto length = math::util::Clamp(vector.Magnitude(), move_speed_min_,
-                                        move_speed_max_);
-        if ((next - pPos).Magnitude() < 1.0f) {
-          length = move_speed_max_;
-        }
-        vector = vector.Normalized() * length;
         enemys_[action_enemy_index_]->SetVelocity(vector);
       }
     }
@@ -159,16 +153,13 @@ void EnemyManager::AddBoss(const EnemyActor::InitializeParameter& paramater) {
   }
 
   auto enemy_count = enemys_.size();
-  // for (i32 i = 0; i < enemy_count; i++) {
-  //  Destroy(0);
-  //}
-
   boss_ = std::make_unique<Boss>();
   boss_->Init(actor_mediator_, paramater);
   boss_->UpdateStrength(std::max(0.0f, static_cast<float>(enemy_count)) *
                         0.05f);
 }
 
+// ìGÇÉ{ÉXÇ…èWçáÇ≥ÇπÇÈ
 bool EnemyManager::AbsorpEnemies() {
   if (boss_ == nullptr) return false;
   bool isAbsorp = false;

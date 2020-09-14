@@ -210,8 +210,9 @@ void EnemyActor::OnHit(bullet::Collider* other) {
     skill::SkillPaste* paste =
         dynamic_cast<skill::SkillPaste*>(other->GetOwner());
     if (paste) {
-      //åªèÛÅAé~Ç‹ÇÈÇÊÇ§Ç…
+      //é~Ç‹ÇÈÇÊÇ§Ç…
       GetCollider()->ApplyCentralImpulse(-0.1f * GetVelocity());
+      GetCollider()->SetAngularVelocity(-0.1f * GetCollider()->GetAngularVelocity());
     }
   }
   //è·äQï®Ç…êGÇÍÇΩ

@@ -285,7 +285,9 @@ bool legend::actor::ActorManager::IsBossStop() {
   //¶¬‚³‚ê‚Ä‚È‚¢‚È‚çtrue
   if (!is_boss_generated_) return true;
 
-  return enemy_manager_.GetBoss()->GetVelocity().MagnitudeSquared() >= 0.001f;
+  if (enemy_manager_.GetBoss() == nullptr) return true;
+
+  return enemy_manager_.GetBoss()->GetVelocity().MagnitudeSquared() <= 0.001f;
 }
 
 i32 legend::actor::ActorManager::GetEnemiesSize() {

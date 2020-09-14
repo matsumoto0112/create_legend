@@ -59,7 +59,7 @@ class EnemyManager {
    */
   void AddBoss(const EnemyActor::InitializeParameter& paramater);
   /**
-   * @brief ボスを追加
+   * @brief 敵をボスに集合させる
    * @return 回収終了
    */
   bool AbsorpEnemies();

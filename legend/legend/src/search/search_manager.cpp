@@ -322,6 +322,10 @@ bool SearchManager::OnCollision(math::Vector3 start, math::Vector3 end) {
         continue;
       }
     }
+    // スキルとの衝突を無視
+    if (dynamic_cast<skill::Skill*>(act->GetOwner()) != nullptr) {
+      continue;
+    }
     // スキルボックスとの衝突を無視
     if (dynamic_cast<skill::SkillItemBox*>(act->GetOwner()) != nullptr) {
       continue;

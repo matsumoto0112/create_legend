@@ -130,17 +130,14 @@ void SkillPencil::Action() {
   shoot_theta_ =
       mediator_->GetMainCameraThetaAngle() + math::util::DEG_2_RAD * 90.0f;
   mediator_->PlayerSkillActivate();
-  math::Vector3 position = transform_.GetPosition() + math::Vector3::kUpVector;
+  math::Vector3 position =
+      transform_.GetPosition() + math::Vector3::kUpVector * 0.5f;
   transform_.SetPosition(position);
 
   initial_velocity_ = math::Matrix4x4::MultiplyCoord(
       math::Vector3::kForwardVector,
       math::Matrix4x4::CreateRotationY(-shoot_theta_));
   velocity_ = initial_velocity_;
-
-  const float update_time =
-      game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
-  velocity_.y += g * 0.5f * update_time;
 }
 
 //演出の更新
@@ -148,12 +145,12 @@ void SkillPencil::ProductionUpdate() {
   const float update_time =
       game::GameDevice::GetInstance()->GetFPSCounter().GetDeltaSeconds<float>();
 
+  //落下処理
+  velocity_.y = initial_velocity_.y * update_time + 0.5f * (g * update_time);
   transform_.SetPosition(transform_.GetPosition() + velocity_);
   //先端部分を進行方向に向かせる
   transform_.SetRotation(LookAt(velocity_));
   box_->SetTransform(transform_);
-  //落下処理
-  velocity_.y = initial_velocity_.y * update_time + 0.5f * (g * update_time);
 
   if (transform_.GetPosition().y <= -2.0f) EndAction();
 }
